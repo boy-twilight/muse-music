@@ -1,0 +1,307 @@
+<template>
+  <div class="playlist-container scroll-container">
+    <!-- 批量操作 -->
+    <OnlineBatch
+      v-show="showSelect"
+      :song-id-mapper="songIdMapper"
+      :songs="playListSong"
+      @close-select="closeSelect" />
+    <!-- 歌单头部 -->
+    <div
+      class="header"
+      v-show="!showSelect">
+      <img
+        :src="playList.image"
+        class="left-image" />
+      <div class="right">
+        <p class="title">{{ playList.name }}</p>
+        <div class="creator">
+          <el-image :src="playList.creator.avatarUrl" />
+          <span class="creator-name">{{ playList.creator.nickname }}</span>
+          <div class="tag">
+            <span
+              v-for="item in playList.tag"
+              :key="item"
+              >#{{ item }}</span
+            >
+          </div>
+        </div>
+
+        <p class="description">
+          {{ playList.description }}
+        </p>
+        <div class="header-operation">
+          <PlayButton :songs="playListSong" />
+          <DecoratedButton
+            :name="playList.isLove ? '取消收藏' : '收藏'"
+            :icon="playList.isLove ? '&#xe760;' : '&#xe761;'"
+            :icon-style="playList.isLove ? 'color:#ff6a6a;' : ''"
+            @click.native="
+              user.addLove(playList, user.lovePlaylist, user.lovePlaylistId)
+            " />
+          <!-- 更多 -->
+          <MoreButton
+            v-if="!showSelect"
+            :share-to="sharePlaylist"
+            @open-select="openSelect" />
+        </div>
+      </div>
+    </div>
+    <!-- 歌单主题 -->
+    <Tab
+      v-show="!showSelect"
+      active="song"
+      class="playlist-tab"
+      @getActive="getActive">
+      <template #content>
+        <el-tab-pane
+          :label="`歌曲 ${playListSong.length}`"
+          name="song">
+          <SongList
+            :songs="playListSong"
+            :song-id-mapper="songIdMapper" />
+        </el-tab-pane>
+        <el-tab-pane
+          :label="`评论 ${
+            playlistComments.length < 10
+              ? playlistComments.length + 10
+              : playlistComments.length
+          }`"
+          name="comment">
+          <Comments
+            :comments="playlistComments"
+            v-if="!showNo" />
+          <NoSearch v-else />
+        </el-tab-pane>
+      </template>
+    </Tab>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { reactive, Ref, ref, inject, computed } from 'vue';
+import { useRoute } from 'vue-router';
+import {
+  elMessage,
+  getMusicUrls,
+  getMusicInfos,
+  getTheme,
+  getRequset,
+  share,
+  getComment,
+} from '@/utils/util';
+import { elMessageType } from '@/model/enum';
+import {
+  getPlayListDetail,
+  getPlayListSong,
+  getPlaylistComment,
+} from '@/api/api';
+import { Playlist, Song, Comment } from '@/model';
+import useUserStore from '@/store/user';
+import OnlineBatch from '@components/batch/OnlineBatch.vue';
+import SongList from '@components/table/SongList.vue';
+import Tab from '@components/tab/Tab.vue';
+import PlayButton from '@components/button/PlayButton.vue';
+import DecoratedButton from '@components/button/DecoratedButton.vue';
+import MoreButton from '@components/button/MoreButton.vue';
+import Comments from '@/components/common/Comment.vue';
+import NoSearch from '@/components/common/NoSearch.vue';
+
+//设置主题
+const fontColor = getTheme().get('fontColor');
+const fontBlack = getTheme().get('fontBlack');
+const boxShadow = getTheme().get('shadow');
+const fontGray = inject('fontGray');
+
+//是否展示占位图片
+const showNo = ref<boolean>(false);
+
+const user = useUserStore();
+//路由参数
+const route = useRoute();
+const id = route.query.id + '';
+//歌单详情
+const playList = reactive<Playlist>({
+  id,
+  name: '',
+  image: '',
+  playCount: '',
+  tag: [],
+  description: '',
+  creator: {
+    nickname: '',
+    avatarUrl: '',
+  },
+});
+//歌单歌曲
+const playListSong = reactive<Song[]>([]);
+//歌单评论
+const playlistComments = reactive<Comment[]>([]);
+//歌曲id与Index对应的map
+const songIdMapper = computed(
+  () => new Map(playListSong.map((item, index) => [item.id, index]))
+);
+//页面进入时的动画
+const first = inject('firstLoading') as Ref<boolean>;
+//设置隐藏滚动条
+const hideScroll = inject('hideScroll') as Function;
+//批量操作相关
+//是否加载选择框进入批量操作模式
+const showSelect = ref<boolean>(false);
+//关闭批量操作
+const closeSelect = (close: boolean) => {
+  showSelect.value = close;
+};
+//打开批量操作
+const openSelect = (open: boolean) => {
+  hideScroll();
+  showSelect.value = open;
+};
+
+//分享歌单
+const sharePlaylist = () => {
+  share(
+    '我有一个精品歌单分享给你：' +
+      playList.name +
+      '，地址：' +
+      import.meta.env.VITE_APP_URL +
+      route.fullPath
+  );
+};
+
+//活得当前活跃的tab项
+const getActive = () => {
+  hideScroll();
+};
+
+//获取歌曲详情和音乐
+getRequset(async () => {
+  //获取歌单详情
+  try {
+    const pResponse: any = await getPlayListDetail(id);
+    const {
+      playlist: { name, coverImgUrl, description, tags, creator, playCount },
+    } = pResponse;
+    playList.name = name;
+    playList.image = coverImgUrl;
+    playList.description = description;
+    playList.tag = tags;
+    playList.creator.avatarUrl = creator.avatarUrl;
+    playList.creator.nickname = creator.nickname;
+    playList.playCount = playCount;
+    //初始化歌单喜欢状态
+    user.initLoveStatus(playList, user.lovePlaylistId);
+  } catch (err: any) {
+    elMessage(elMessageType.ERROR, err.message);
+  }
+  //获取歌单下的音乐
+  try {
+    const response: any = await getPlayListSong(id);
+    const { songs } = response;
+    const ids: string[] = [];
+    songs.forEach((item: any) => {
+      //获取音乐的基本信息
+      getMusicInfos(ids, playListSong, item);
+    });
+    user.initLoveMusic(playListSong);
+    //获取音乐的url
+    getMusicUrls(ids.join(','), playListSong);
+  } catch (err: any) {
+    elMessage(elMessageType.ERROR, err.message);
+  }
+  //关闭动画
+
+  //获取歌单评论
+  try {
+    const response: any = await getPlaylistComment(id, 100);
+    const { comments, hotComments } = response;
+    getComment(hotComments, playlistComments);
+    getComment(comments, playlistComments);
+    showNo.value = playlistComments.length == 0 ? true : false;
+    first.value = false;
+  } catch (err: any) {
+    elMessage(elMessageType.ERROR, err.message);
+  }
+}, first);
+</script>
+
+<style lang="less" scoped>
+@font-color: v-bind(fontColor);
+@font-color-light-black: v-bind(fontBlack);
+@shadow: v-bind(boxShadow);
+@font-color-gray: v-bind(fontGray);
+@font-color-green: #1ed2a9;
+
+.playlist-container {
+  .header {
+    width: 80vw;
+    display: flex;
+    margin-bottom: 15px;
+    .left-image {
+      width: 168px;
+      height: 168px;
+      border-radius: 10px;
+      box-shadow: @shadow;
+      margin-right: 20px;
+      object-fit: cover;
+    }
+    .right {
+      display: flex;
+      flex-direction: column;
+      .title {
+        font-size: 25px;
+        font-weight: bold;
+        color: @font-color-light-black;
+        letter-spacing: 1px;
+        margin-left: 2px;
+      }
+
+      .creator {
+        margin: 12px 0 10px 0;
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        color: @font-color-gray;
+        .el-image {
+          width: 30px;
+          height: 30px;
+          object-fit: cover;
+          border-radius: 50%;
+          box-shadow: @shadow;
+        }
+        span {
+          display: inline-block;
+          margin: 0 5px;
+        }
+        .creator-name {
+          margin: 0 40px 0 10px;
+        }
+      }
+      .description {
+        font-size: 12px;
+        color: @font-color-gray;
+        text-indent: 0.5em;
+        height: 33px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+      .header-operation {
+        margin-top: 13px;
+      }
+    }
+  }
+
+  .playlist-tab {
+    &:deep(.el-tabs__item) {
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+    &:deep(.el-tabs__active-bar) {
+      left: 14px;
+    }
+  }
+}
+</style>

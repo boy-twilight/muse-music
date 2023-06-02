@@ -1,0 +1,457 @@
+<template>
+  <div class="comment-container">
+    <p class="title">精彩评论</p>
+    <div
+      class="comment"
+      v-for="(item, order) in current"
+      :key="item.commentId"
+      :class="{
+        'none-border': order == comments.length - 1,
+      }">
+      <!-- 头像 -->
+      <el-image
+        :src="item.avatar"
+        loading="lazy"
+        class="left" />
+      <div class="right">
+        <!-- 昵称 -->
+        <span class="nickname">{{ item.nickname }}</span>
+        <!-- 评论时间 -->
+        <p class="ip-time">
+          <span class="comment-time"> {{ formatCommentTime(+item.time) }}</span>
+          <span
+            class="ip"
+            v-if="item.ip"
+            >来自{{ item.ip }}</span
+          >
+        </p>
+        <!-- 评论内容 -->
+        <p class="comment-content">
+          {{ item.content }}
+        </p>
+        <!-- 点赞 -->
+        <div class="like-count">
+          <p
+            @click="love(order)"
+            v-prevent>
+            <span class="iconfont_1 like">&#xe67c;</span>
+            <span
+              v-show="+item.likeCount > 0"
+              class="count"
+              >{{ item.likeCount }}</span
+            >
+          </p>
+          <span class="reply">回复</span>
+        </div>
+        <!-- 打开回复区 -->
+        <p
+          @click="openReply(order)"
+          v-if="item.reply && item.reply.length > 0"
+          v-prevent
+          class="get-reply">
+          查看{{ item.reply?.length }}条回复<span
+            class="iconfont"
+            :class="{
+              'is-rotate': active == order,
+            }"
+            >&#xe775;</span
+          >
+        </p>
+        <!-- 评论区 -->
+        <Transition name="show">
+          <div
+            class="reply-container"
+            v-show="active == order"
+            v-if="item.reply && item.reply.length > 0">
+            <div
+              class="reply-area"
+              v-for="(reply, index) in item.reply"
+              :key="reply.commentId"
+              :class="{
+                'none-border': index == item.reply.length - 1,
+              }">
+              <el-image
+                :src="reply.avatar"
+                loading="lazy"
+                class="left" />
+              <div class="right">
+                <span class="nickname">{{ reply.nickname }}</span>
+                <p class="ip-time">
+                  <span class="comment-time">
+                    {{ getRandomTime(item.time) }}</span
+                  >
+                  <span
+                    class="ip"
+                    v-if="reply.ip"
+                    >来自{{ reply.ip }}</span
+                  >
+                </p>
+                <p class="comment-content">
+                  {{ reply.content }}
+                </p>
+                <div class="like-count">
+                  <p @click="loveReply(order, index)">
+                    <span class="iconfont_1 like">&#xe67c;</span>
+                    <span
+                      v-show="+reply.likeCount > 0"
+                      class="count"
+                      >{{ reply.likeCount }}</span
+                    >
+                  </p>
+                  <span class="reply">回复</span>
+                </div>
+              </div>
+            </div>
+            <p
+              @click="active = active == order ? -1 : order"
+              v-prevent
+              class="collapse">
+              收起 <span class="iconfont_1">&#xe655;</span>
+            </p>
+          </div>
+        </Transition>
+      </div>
+    </div>
+    <!-- 查看更多精彩评论 -->
+    <button
+      v-show="dataNum < comments.length"
+      class="more-reply"
+      @click="getMoreComment">
+      更多精彩评论<span class="iconfont">&#xe775;</span>
+    </button>
+    <!-- 收起评论 -->
+    <button
+      v-show="dataNum == comments.length"
+      class="more-reply collapse-reply"
+      @click="dataNum = 50">
+      收起评论<span class="iconfont">&#xe775;</span>
+    </button>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { ref, computed, nextTick, inject } from 'vue';
+import { Comment } from '@/model';
+import { getTheme } from '@/utils/util';
+import useConfigStore from '@/store/config';
+
+//配置主题
+const config = useConfigStore();
+const fontColor = getTheme().get('fontColor');
+const fontBlack = getTheme().get('fontBlack');
+const fontGray = inject('fontGray');
+const boxShadow = getTheme().get('shadow');
+const replyBg = computed(() =>
+  config.bgMode == 'skin' ? 'rgba(220,220,220,0.2)' : 'rgb(240,240,240)'
+);
+
+const props = defineProps<{
+  comments: Comment[];
+}>();
+
+//当前活跃的index
+const active = ref<number>(-1);
+
+const dataNum = ref<number>(50);
+
+const current = computed(() => props.comments.slice(0, dataNum.value));
+
+//加载更多评论
+const getMoreComment = () => {
+  dataNum.value += 50;
+  if (dataNum.value > props.comments.length) {
+    dataNum.value = props.comments.length;
+  }
+};
+
+//获取一个随机评论时间
+const getRandomTime = (time: string): string => {
+  const random = Math.floor(
+    Math.random() * Math.pow(10, 3) * 60 * 60 * 24 + Math.pow(10, 3) * 60 * 60
+  );
+  return formatCommentTime(random + +time);
+};
+
+//打开或关闭评论区
+const openReply = async (order: number) => {
+  if (active.value == order) {
+    active.value = -1;
+  } else {
+    if (active.value == -1) {
+      active.value = order;
+    } else {
+      active.value = -1;
+      await nextTick();
+      active.value = order;
+    }
+  }
+};
+
+//点赞
+const love = (order: number) => {
+  const { isLove, likeCount } = props.comments[order];
+  if (isLove) {
+    props.comments[order].likeCount = +likeCount - 1 + '';
+  } else {
+    props.comments[order].likeCount = +likeCount + 1 + '';
+  }
+  props.comments[order].isLove = !isLove;
+};
+
+//点赞回复
+const loveReply = (order: number, index: number) => {
+  const { isLove, likeCount } = (props.comments[order].reply as Comment[])[
+    index
+  ];
+  if (isLove) {
+    (props.comments[order].reply as Comment[])[index].likeCount =
+      +likeCount - 1 + '';
+  } else {
+    (props.comments[order].reply as Comment[])[index].likeCount =
+      +likeCount + 1 + '';
+  }
+  (props.comments[order].reply as Comment[])[index].isLove = !isLove;
+};
+
+//格式化时间
+const formatCommentTime = (timeStap: number) => {
+  const date: Date = new Date(timeStap);
+  const year = date.getFullYear() + '年';
+  const month = date.getMonth() + 1 + '月';
+  const day = date.getDate() + '日';
+  const hour =
+    date.getHours() < 10 ? '0' + date.getHours() : date.getHours() + '';
+  const minute =
+    date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+  return year + month + day + ' ' + hour + ':' + minute;
+};
+</script>
+
+<style lang="less" scoped>
+@font-color: v-bind(fontColor);
+@font-color-light-black: v-bind(fontBlack);
+@shadow: v-bind(boxShadow);
+@reply-bg: v-bind(replyBg);
+@font-color-gray: v-bind(fontGray);
+@font-color-green: #1ed2a9;
+
+.show-enter-from,
+.show-leave-to {
+  transform: scale(0);
+}
+.show-enter-to,
+.show-leave-from {
+  transform: scale(1);
+}
+.show-enter-active,
+.show-leave-active {
+  transition: 0.5s;
+}
+
+.none-border {
+  border-bottom: none !important;
+}
+
+.is-rotate {
+  transform: rotate(270deg) !important;
+}
+
+.comment-container {
+  width: 80vw;
+  display: flex;
+  flex-direction: column;
+  .title {
+    font-size: 14px;
+    color: @font-color;
+    width: 80vw;
+  }
+
+  .more-reply {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    margin: 30px 0 40px 0;
+    color: #7b7b7b;
+    background-color: rgb(240, 240, 245);
+    border: none;
+    height: 32px;
+    width: 124px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 16px;
+    cursor: pointer;
+    &:hover {
+      color: #1ed2a9;
+    }
+    &:hover span {
+      color: #1ed2a9;
+    }
+    &:active {
+      background-color: rgb(235, 235, 235);
+    }
+    span {
+      display: inline-block;
+      transform: rotate(90deg);
+      font-size: 13px;
+      margin-left: 1px;
+      color: #7b7b7b;
+    }
+  }
+
+  .collapse-reply {
+    width: 80px;
+    position: static;
+    transform: translateX(0);
+    margin: 0 0 20px 0;
+
+    span {
+      display: inline-block;
+      transform: rotate(90deg);
+      font-size: 13px;
+      margin-left: 1px;
+      color: #7b7b7b;
+    }
+  }
+
+  .comment {
+    padding: 20px 0;
+    width: 80vw;
+    border-bottom: 0.5px solid rgb(225, 225, 225);
+    display: flex;
+    .left {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+    .right {
+      flex: 1;
+      margin-left: 15px;
+      display: flex;
+      flex-direction: column;
+
+      .nickname {
+        cursor: pointer;
+        &:hover {
+          color: #1ed2a9;
+        }
+        max-width: 300px;
+      }
+
+      .nickname,
+      .comment-time,
+      .get-reply,
+      .ip {
+        font-size: 13px;
+        color: @font-color-gray;
+      }
+      .ip-time {
+        margin: 0 0 12px 0;
+        .ip {
+          margin-left: 10px;
+        }
+        .comment-time {
+          padding-top: 2px;
+        }
+      }
+
+      .comment-content {
+        font-size: 13px;
+        color: @font-color;
+        letter-spacing: 0.5px;
+        line-height: 1.5;
+      }
+
+      .like-count {
+        cursor: pointer;
+        display: flex;
+        align-items: flex-end;
+        margin: 12px 0 5px 0;
+        span {
+          display: inline-block;
+          height: 24px;
+        }
+
+        p {
+          display: flex;
+          align-items: flex-end;
+
+          .like {
+            font-size: 18px;
+            color: @font-color;
+          }
+          .count {
+            padding-top: 4.5px;
+            font-size: 15px;
+            margin-left: 6px;
+            color: @font-color;
+          }
+          &:hover .like {
+            color: #1ed2a9;
+          }
+          &:hover .count {
+            color: #1ed2a9;
+          }
+        }
+
+        .reply {
+          font-size: 13px;
+          padding-top: 6.5px;
+          margin-left: 20px;
+          color: @font-color-gray;
+          &:hover {
+            color: #1ed2a9;
+          }
+        }
+      }
+
+      .get-reply {
+        margin-top: 5px;
+        cursor: pointer;
+        width: 105px;
+        &:hover {
+          color: @font-color-green;
+        }
+        span {
+          transition: 0.4s;
+          display: inline-block;
+          font-size: 14px;
+          margin-left: 5px;
+          transform: rotate(90deg);
+        }
+      }
+      .reply-container {
+        transition: 0.5s;
+        margin-top: 10px;
+        padding: 0 25px;
+        border-radius: 5px;
+        background-color: @reply-bg;
+        transform-origin: top left;
+        .reply-area {
+          display: flex;
+          padding: 20px 0;
+          border-bottom: 0.5px solid rgb(210, 210, 210);
+        }
+        .collapse {
+          margin: 10px 0 20px 0;
+          width: 50px;
+          height: 21px;
+          cursor: pointer;
+          &:hover {
+            color: @font-color-green;
+          }
+          font-size: 13px;
+          color: @font-color-gray;
+          .iconfont_1 {
+            height: 20px;
+            display: inline-block;
+            font-size: 13px;
+            transform: rotate(-180deg);
+          }
+        }
+      }
+    }
+  }
+}
+</style>
