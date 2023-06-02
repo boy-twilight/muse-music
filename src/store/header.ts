@@ -4,7 +4,7 @@ import { getStorage, elMessage, removeStorage } from '@/utils/util';
 import { storageType, elMessageType } from '@/model/enum';
 import { User } from '@/model';
 import { getUserInfo, getUserID, loginOut } from '@/api/api';
-import avatar from '@assets/image/占位头像.jpg';
+import avatar from '@assets/image/暂无头像.svg';
 import router from '@/router';
 
 const useHeaderStore = defineStore('header', () => {

@@ -275,12 +275,14 @@ const playMV = (song: Song) => {
 let timeid: any = 0;
 const getDataOntime = () => {
   timeid = setInterval(() => {
-    const ids = props.songs.map((song) => song.id);
-    const exclude = props.songs.findIndex(
-      (song) => song.id == songList.value[current.value].id
-    );
-    if (ids.length > 0) {
-      getMusicUrls(ids.join(','), props.songs, '', exclude);
+    if (props.songs.length > 0) {
+      const ids = props.songs.map((song) => song.id);
+      const exclude = props.songs.findIndex(
+        (song) => song.id == songList.value[current.value].id
+      );
+      if (ids.length > 0) {
+        getMusicUrls(ids.join(','), props.songs, '', exclude);
+      }
     }
   }, 60 * 1000 * 5);
 };

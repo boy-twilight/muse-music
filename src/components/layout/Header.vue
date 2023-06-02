@@ -11,7 +11,7 @@
       class="dialog-login">
       <div class="login-box">
         <img
-          src="@assets/image/netease-music.png"
+          src="@assets/image/网易云.svg"
           class="logo" />
         <span class="title">登陆网易云账号</span>
         <div class="qr-image">
@@ -672,5 +672,6 @@ onMounted(() => {
   background-color: @background !important;
   box-shadow: @shadow !important;
   border-radius: 15px !important;
+  backdrop-filter: blur(10px) brightness(0.8) saturate(120%) contrast(1.2);
 }
 </style>

@@ -19,14 +19,18 @@
         @click="toSongDetail"
         v-prevent
         class="music-image">
-        <img :src="songNum > 0 ? songList[current].songImage : image" />
+        <img
+          :src="songNum > 0 ? songList[current].songImage : image"
+          :class="{
+            'has-border': songNum == 0,
+          }" />
         <span class="iconfont go">&#xe775;</span>
         <span class="iconfont go">&#xe775;</span>
       </div>
       <div class="music-info">
         <!-- 提供默认占位参数 -->
         <p>
-          {{ songNum > 0 ? songList[current].name : '开源网易云音乐' }} -
+          {{ songNum > 0 ? songList[current].name : '暮色音乐' }} -
           <span>{{
             handleSingerName(songNum > 0 ? songList[current].singer : '潇潇')
           }}</span>
@@ -276,7 +280,7 @@ import {
 } from '@/utils/util';
 import { elMessageType } from '@/model/enum';
 import { DropDownItem, Song, Comment } from '@/model';
-import image from '@assets/image/歌曲占位.jpg';
+import image from '@assets/image/暂无音乐.svg';
 
 //设置主题
 const config = useConfigStore();
@@ -504,11 +508,15 @@ const setVolume = () => {
 // 改变进度;
 const changeProcess = throttle(
   () => {
-    player.value!.currentTime =
-      (playProcess.value *
-        transformTotalTime(songList.value[current.value].time as string)) /
-      100;
-    isChanging.value = true;
+    if (songNum.value > 0) {
+      player.value!.currentTime =
+        (playProcess.value *
+          transformTotalTime(songList.value[current.value].time as string)) /
+        100;
+      isChanging.value = true;
+    } else {
+      elMessage(elMessageType.INFO, '请添加音乐！');
+    }
   },
   100,
   {
@@ -623,6 +631,10 @@ onMounted(() => {
 }
 .iconfont {
   cursor: pointer;
+}
+
+.has-border {
+  border: 2px solid rgba(230, 230, 230, 0.3);
 }
 
 .footer-container {

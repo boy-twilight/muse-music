@@ -1,7 +1,7 @@
 <template>
   <div
     class="song-detail-container"
-    :style="{ background: `url(${imageUrl}) no-repeat center -200px/cover` }">
+    :style="{ background: `url(${imageUrl}) no-repeat center/cover` }">
     <div class="main">
       <!-- 返回按钮 -->
       <span
@@ -15,7 +15,7 @@
       <div class="right">
         <div class="header">
           <h4 class="title">
-            {{ songNum == 0 ? '网易云音乐' : songList[current].name }}
+            {{ songNum == 0 ? '暮色音乐' : songList[current].name }}
           </h4>
           <p>歌手：{{ songNum == 0 ? '潇潇' : songList[current].singer }}</p>
           <p>专辑：{{ songNum == 0 ? '潇潇' : songList[current].album }}</p>
@@ -49,7 +49,7 @@ import { getLyrics } from '@/api/api';
 import { elMessage, formatToTimeStap, getTheme } from '@/utils/util';
 import { elMessageType } from '@/model/enum';
 import Footer from '@components/layout/Footer.vue';
-import image from '@assets/image/歌曲占位.jpg';
+import image from '@assets/image/暂无音乐.svg';
 
 //主题配置
 const config = useConfigStore();
@@ -78,7 +78,7 @@ const animationTime = ref<string>('0s');
 //控制动画是否继续
 const animationState = computed(() => (isPlay.value ? 'running' : 'paused'));
 //背景图片
-const imageUrl = ref<string>(
+const imageUrl = computed(() =>
   songNum.value == 0 ? image : songList.value[current.value].songImage
 );
 
@@ -162,7 +162,6 @@ watch(current, async () => {
   content.value!.scrollTop = 0;
   currentTime.value = 0;
   currentIndex.value = 0;
-  imageUrl.value = songList.value[current.value].songImage;
   await nextTick();
   getLyric();
 });
@@ -202,7 +201,10 @@ const getLyric = async () => {
   }
 };
 //请求歌词
-getLyric();
+
+if (songNum.value > 0) {
+  getLyric();
+}
 </script>
 
 <style lang="less" scoped>

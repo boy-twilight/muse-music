@@ -46,7 +46,7 @@ import { ref, inject } from 'vue';
 import { Menu } from '@/model';
 import { getStorage, setStorAge, getTheme } from '@/utils/util';
 import { storageType } from '@/model/enum';
-import logo from '@assets/image/QQ音乐-01.svg';
+import logo from '@/assets/image/logo.svg';
 import PlayAnimation from '@components/common/PlayAnimation.vue';
 //设置主题
 const fontColor = getTheme().get('fontColor');
