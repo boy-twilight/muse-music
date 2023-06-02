@@ -85,14 +85,21 @@ import {
   getComment,
 } from '@/utils/util';
 import useUserStore from '@/store/user';
+import useConfigStore from '@/store/config';
+import useFooterStore from '@/store/footer';
+import hotkeys from 'hotkeys-js';
+import { storeToRefs } from 'pinia';
 import DecoratedButton from '@components/button/DecoratedButton.vue';
 import Mv from '@components/datalist/Mv.vue';
 import Comments from '@/components/common/Comment.vue';
-import useConfigStore from '@/store/config';
-import hotkeys from 'hotkeys-js';
 
+const footer = useFooterStore();
+const { isPlay } = storeToRefs(footer);
 // 配置快捷键;
 hotkeys('space', () => {
+  if (isPlay.value) {
+    isPlay.value = false;
+  }
   if (video.value?.paused) {
     video.value?.play();
   } else {

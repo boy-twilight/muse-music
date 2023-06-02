@@ -103,6 +103,19 @@ export const getTimeStamp = (): number => {
   return new Date().getTime();
 };
 
+//将时间转换为时间戳
+export const formatToTimeStap = (time: string): number => {
+  if (time.includes('.')) {
+    const min = time.split(':')[0];
+    const ms = time.split(':')[1];
+    return +min * 60 * 1000 + +ms * 1000;
+  } else {
+    const min = time.split(':')[0];
+    const s = time.split(':')[1].split('.')[0];
+    return +min * 60 * 1000 + +s * 1000;
+  }
+};
+
 //转换时间，将毫秒的时间转为00:00类型的时间
 export const transformTime = (time: string): string => {
   const temp: number = Math.floor(+time / 1000);
@@ -208,20 +221,7 @@ export const handleSingerName = (name: string): string => {
   return name.includes('、') ? name.split('、')[0] : name;
 };
 
-//将时间转换为时间戳
-export const formatToTimeStap = (time: string): number => {
-  if (time.includes('.')) {
-    const min = time.split(':')[0];
-    const ms = time.split(':')[1];
-    return +min * 60 * 1000 + +ms * 1000;
-  } else {
-    const min = time.split(':')[0];
-    const s = time.split(':')[1].split('.')[0];
-    return +min * 60 * 1000 + +s * 1000;
-  }
-};
-
-//下载音乐
+//通过url进行下载
 export const download = async (url: string, fileName: string) => {
   try {
     const response = await axios({

@@ -94,8 +94,6 @@ import useUserStore from './store/user';
 
 //快捷键列表
 //space播放,上进入/退出音乐详情，左前一首，右后一首，f进入/退出全屏
-const route = useRoute();
-const curPath = computed(() => route.fullPath);
 const keys = ['space', 'left', 'right', 'up', 'f'];
 //绑定快捷键
 hotkeys(keys.join(','), (event: KeyboardEvent, handler: HotkeysEvent) => {
@@ -103,10 +101,7 @@ hotkeys(keys.join(','), (event: KeyboardEvent, handler: HotkeysEvent) => {
   switch (handler.key) {
     case 'space':
       {
-        const rule = /^\/videoPlayView/;
-        if (!rule.test(curPath.value)) {
-          isPlay.value = !isPlay.value;
-        }
+        isPlay.value = !isPlay.value;
       }
       break;
     case 'up':
@@ -330,7 +325,7 @@ onMounted(() => {
 // 添加皮肤时添加的一些样式
 .main-skin {
   backdrop-filter: brightness(80%);
-  border-left: 0.5px solid rgba(220, 220, 220, 0.2);
+  border-left: 1px solid rgba(220, 220, 220, 0.2);
 }
 
 .side-skin {
