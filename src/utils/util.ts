@@ -127,41 +127,40 @@ export const formatTime = (time: string): string => {
 
 //获取音乐的url
 //ids是通过，分割的多个id,list是放歌曲的容器,key字段判断要不要做持久化
-export const getMusicUrls = (
+export const getMusicUrls = async (
   ids: string,
   list: Song[],
   key?: string,
   exclude?: number
 ) => {
-  getMusicUrl(ids)
-    .then((response: any) => {
-      const { data } = response;
-      data.forEach((item: any) => {
-        const index = list.findIndex((song) => song.id == item.id);
-        if (item.url) {
-          if (exclude != undefined) {
-            if (index != exclude) {
-              list[index].url = item.url;
-              list[index].time = item.time;
-            }
-          } else {
+  try {
+    const response: any = await getMusicUrl(ids);
+    const { data } = response;
+    data.forEach((item: any) => {
+      const index = list.findIndex((song) => song.id == item.id);
+      if (item.url) {
+        if (exclude != undefined) {
+          if (index != exclude) {
             list[index].url = item.url;
             list[index].time = item.time;
           }
         } else {
-          list[index].available = '10';
-          list[index].url = '';
-          list[index].time = '0';
+          list[index].url = item.url;
+          list[index].time = item.time;
         }
-      });
-      //判断key要不要做持久化
-      if (key) {
-        setStorAge(storageType.SESSION, key, list);
+      } else {
+        list[index].available = '10';
+        list[index].url = '';
+        list[index].time = '0';
       }
-    })
-    .catch((err: any) => {
-      elMessage(elMessageType.ERROR, err.message);
     });
+    //判断key要不要做持久化
+    if (key) {
+      setStorAge(storageType.SESSION, key, list);
+    }
+  } catch (err: any) {
+    elMessage(elMessageType.ERROR, err.message);
+  }
 };
 
 //从返回数据中获取音乐信息,并放入容器
@@ -223,18 +222,19 @@ export const formatToTimeStap = (time: string): number => {
 };
 
 //下载音乐
-export const download = (url: string, fileName: string) => {
-  axios({
-    method: 'get',
-    url,
-    // 必须显式指明响应类型是一个Blob对象，这样生成二进制的数据，才能通过window.URL.createObjectURL进行创建成功
-    responseType: 'blob',
-  }).then((res) => {
-    if (!res) {
+export const download = async (url: string, fileName: string) => {
+  try {
+    const response = await axios({
+      method: 'get',
+      url,
+      // 必须显式指明响应类型是一个Blob对象，这样生成二进制的数据，才能通过window.URL.createObjectURL进行创建成功
+      responseType: 'blob',
+    });
+    if (!response) {
       return;
     }
     // 将lob对象转换为域名结合式的url
-    let blobUrl = window.URL.createObjectURL(res.data);
+    let blobUrl = window.URL.createObjectURL(response.data);
     let link = document.createElement('a');
     document.body.appendChild(link);
     link.style.display = 'none';
@@ -246,7 +246,9 @@ export const download = (url: string, fileName: string) => {
     document.body.removeChild(link);
     window.URL.revokeObjectURL(blobUrl);
     elMessage(elMessageType.SUCCESS, '下载成功！');
-  });
+  } catch (err: any) {
+    elMessage(elMessageType.ERROR, err.message);
+  }
 };
 
 //在请求数据的过程中附带加载动画
@@ -534,13 +536,6 @@ export const compressImage = (
       context.drawImage(image, 0, 0, targetWidth, targetHeight);
 
       resolve(canvas.toDataURL(file.type, quality));
-      // canvas.toBlob(
-      //   (blob) => {
-      //     resolve(blob as Blob);
-      //   },
-      //   'image/jpeg',
-      //   quality
-      // );
     };
 
     image.onerror = (err) => {
