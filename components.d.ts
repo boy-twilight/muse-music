@@ -60,6 +60,8 @@ declare module '@vue/runtime-core' {
     Tab: typeof import('./src/components/tab/Tab.vue')['default']
     UserBatch: typeof import('./src/components/batch/UserBatch.vue')['default']
     UserSongTable: typeof import('./src/components/table/UserSongTable.vue')['default']
+    Video: typeof import('./src/components/video/Video.vue')['default']
+    VideoPlayer: typeof import('./src/components/video/VideoPlayer.vue')['default']
   }
   export interface ComponentCustomProperties {
     vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']

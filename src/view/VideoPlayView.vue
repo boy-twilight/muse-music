@@ -117,7 +117,7 @@ const fontGray = inject('fontGray');
 const videoHeight = computed(() => (config.isFullScreen ? '650px' : '520px'));
 
 const user = useUserStore();
-
+//播放器实例
 const video = ref<HTMLVideoElement>();
 
 //获取视频id
@@ -294,10 +294,6 @@ onBeforeUnmount(() => {
 @font-color-green: #1ed2a9;
 
 .video-container {
-  .video-player,
-  .detail {
-    margin-left: 4px;
-  }
   .video-player {
     display: flex;
     flex-direction: column;
@@ -349,6 +345,11 @@ onBeforeUnmount(() => {
     &::-webkit-media-controls-enclosure {
       padding-right: 10px;
     }
+  }
+
+  .video-player,
+  .detail {
+    margin-left: 4px;
   }
 
   .detail {

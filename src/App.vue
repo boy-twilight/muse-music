@@ -75,7 +75,6 @@ import {
   onMounted,
 } from 'vue';
 import hotkeys, { HotkeysEvent } from 'hotkeys-js';
-import { useRoute } from 'vue-router';
 import { throttle } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 import { getTheme, getMusicUrls, setStorAge, elMessage } from '@/utils/util';

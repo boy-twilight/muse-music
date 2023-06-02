@@ -2,9 +2,9 @@
   "name": "musicplayer",
   "private": true,
   "version": "1.0.0",
-   "author": {
+  "author": {
     "name": "liyinchao"
-   },
+  },
   "type": "module",
   "scripts": {
     "dev": "vite --mode development",
