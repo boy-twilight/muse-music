@@ -71,7 +71,10 @@
           <Comments
             :comments="playlistComments"
             v-if="!showNo" />
-          <NoSearch v-else />
+          <NoSearch
+            v-else
+            :size="280"
+            text="暂无搜索结果" />
         </el-tab-pane>
       </template>
     </Tab>
@@ -209,7 +212,6 @@ getRequset(async () => {
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
-  //关闭动画
 
   //获取歌单评论
   try {
@@ -218,10 +220,11 @@ getRequset(async () => {
     getComment(hotComments, playlistComments);
     getComment(comments, playlistComments);
     showNo.value = playlistComments.length == 0 ? true : false;
-    first.value = false;
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
+  //关闭动画
+  first.value = false;
 }, first);
 </script>
 
@@ -232,6 +235,11 @@ getRequset(async () => {
 @font-color-gray: v-bind(fontGray);
 @font-color-green: #1ed2a9;
 
+.no-search {
+  &:deep(.no-data) {
+    font-size: 15px;
+  }
+}
 .playlist-container {
   .header {
     width: 80vw;

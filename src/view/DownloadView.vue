@@ -19,11 +19,13 @@
         <el-tab-pane
           :label="`下载视频`"
           name="video ">
+          <NoSearch v-show="mvDownload.length == 0" />
           <Mv
             :mvs="mvDownload"
             :show-delete="true"
             transitionName="list"
-            @get-delete-index="deleteDownLoad" />
+            @get-delete-index="deleteDownLoad"
+            v-show="mvDownload.length > 0" />
         </el-tab-pane>
       </template>
     </Tab>

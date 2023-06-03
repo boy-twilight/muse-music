@@ -37,7 +37,9 @@
           label="视频"
           name="video">
           <Loading :is-loading="isLoading" />
-          <NoSearch v-show="needNoSearch[0]" />
+          <NoSearch
+            v-show="needNoSearch[0]"
+            text="暂无搜索结果" />
           <Mv
             :mvs="videoResult"
             v-show="!needNoSearch[0]" />
@@ -46,7 +48,9 @@
           label="MV"
           name="mv">
           <Loading :is-loading="isLoading" />
-          <NoSearch v-show="needNoSearch[1]" />
+          <NoSearch
+            v-show="needNoSearch[1]"
+            text="暂无搜索结果" />
           <Mv
             :mvs="mvResult"
             v-show="!needNoSearch[1]" />
@@ -55,7 +59,9 @@
           label="专辑"
           name="album">
           <Loading :is-loading="isLoading" />
-          <NoSearch v-show="needNoSearch[2]" />
+          <NoSearch
+            v-show="needNoSearch[2]"
+            text="暂无搜索结果" />
           <Albums
             :albums="albumResult"
             v-show="!needNoSearch[2]" />
@@ -64,7 +70,9 @@
           label="歌单"
           name="playList">
           <Loading :is-loading="isLoading" />
-          <NoSearch v-show="needNoSearch[3]" />
+          <NoSearch
+            v-show="needNoSearch[3]"
+            text="暂无搜索结果" />
           <PlayList
             :playlists="playlistResult"
             v-show="!needNoSearch[3]" />
@@ -73,7 +81,9 @@
           label="歌手"
           name="singer">
           <Loading :is-loading="isLoading" />
-          <NoSearch v-show="needNoSearch[4]" />
+          <NoSearch
+            v-show="needNoSearch[4]"
+            text="暂无搜索结果" />
           <div
             v-show="!needNoSearch[4]"
             class="singers">

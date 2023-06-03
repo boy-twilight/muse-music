@@ -168,8 +168,8 @@ watch(current, async () => {
 
 //获取歌词
 const getLyric = async () => {
-  try {
-    if (songNum.value > 0) {
+  if (songNum.value > 0) {
+    try {
       const response: any = await getLyrics(songList.value[current.value].id);
       const {
         lrc: { lyric },
@@ -193,11 +193,11 @@ const getLyric = async () => {
           }
         }
       });
-    } else {
-      elMessage(elMessageType.INFO, '请添加音乐！');
+    } catch (err: any) {
+      elMessage(elMessageType.ERROR, err.message);
     }
-  } catch (err: any) {
-    elMessage(elMessageType.ERROR, err.message);
+  } else {
+    elMessage(elMessageType.INFO, '请添加音乐！');
   }
 };
 //请求歌词

@@ -20,11 +20,13 @@
         <el-tab-pane
           :label="`视频`"
           name="video ">
+          <NoSearch v-show="videoRecord.length == 0" />
           <Mv
             :mvs="videoRecord"
             :show-delete="true"
             transitionName="list"
-            @get-delete-index="deleteVideoRecord" />
+            @get-delete-index="deleteVideoRecord"
+            v-show="videoRecord.length > 0" />
         </el-tab-pane>
       </template>
     </Tab>
@@ -40,6 +42,7 @@ import Tab from '@components/tab/Tab.vue';
 import Mv from '@components/datalist/Mv.vue';
 import UserBatch from '@components/batch/UserBatch.vue';
 import UserSongTable from '@components/table/UserSongTable.vue';
+import NoSearch from '@/components/common/NoSearch.vue';
 
 //配置主题
 const fontColor = getTheme().get('fontColor');

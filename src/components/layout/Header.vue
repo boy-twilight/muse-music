@@ -11,7 +11,7 @@
       class="dialog-login">
       <div class="login-box">
         <img
-          src="@assets/image/网易云.svg"
+          :src="logo"
           class="logo" />
         <span class="title">登陆网易云账号</span>
         <div class="qr-image">
@@ -205,6 +205,7 @@ import { DropDownItem, HotSearch } from '@/model';
 import useHeaderStore from '@/store/header';
 import useConfigStore from '@/store/config';
 import useThemeStore from '@/store/theme';
+import logo from '@assets/image/网易云.svg';
 
 //配置主题
 const theme = useThemeStore();

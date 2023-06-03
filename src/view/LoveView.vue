@@ -19,41 +19,49 @@
         <el-tab-pane
           :label="`视频`"
           name="video">
+          <NoSearch v-show="loveVideo.length == 0" />
           <Mv
             :mvs="loveVideo"
             transitionName="list"
             :showDelete="true"
-            @get-delete-index="deleteLoveVideo" />
+            @get-delete-index="deleteLoveVideo"
+            v-show="loveVideo.length > 0" />
         </el-tab-pane>
         <el-tab-pane
           :label="`歌单`"
           name="playlist">
+          <NoSearch v-show="lovePlaylist.length == 0" />
           <PlayList
             :playlists="lovePlaylist"
             transitionName="list"
             :showDelete="true"
-            @get-delete-index="deleteLovePlaylist" />
+            @get-delete-index="deleteLovePlaylist"
+            v-show="lovePlaylist.length > 0" />
         </el-tab-pane>
         <el-tab-pane
           :label="`歌手`"
           name="singer">
+          <NoSearch v-show="loveSinger.length == 0" />
           <div class="singers">
             <Singer
               :singer-list="loveSinger"
               transitionName="list"
               :showDelete="true"
               :show-all-avatar="false"
-              @get-delete-index="deleteLoveSinger" />
+              @get-delete-index="deleteLoveSinger"
+              v-show="loveSinger.length > 0" />
           </div>
         </el-tab-pane>
         <el-tab-pane
           :label="`专辑`"
           name="album">
+          <NoSearch v-show="loveAlbum.length == 0" />
           <Albums
             :albums="loveAlbum"
             transitionName="list"
             :showDelete="true"
-            @get-delete-index="deleteLoveAlbum" />
+            @get-delete-index="deleteLoveAlbum"
+            v-show="loveAlbum.length >= 0" />
         </el-tab-pane>
       </template>
     </Tab>
@@ -72,6 +80,7 @@ import Albums from '@components/datalist/Albums.vue';
 import PlayList from '@components/datalist/PlayList.vue';
 import UserBatch from '@components/batch/UserBatch.vue';
 import UserSongTable from '@components/table/UserSongTable.vue';
+import NoSearch from '@/components/common/NoSearch.vue';
 
 // 配置主题
 const fontGray = inject('fontGray');
@@ -138,7 +147,7 @@ getRequset(async () => {
       letter-spacing: 1px;
     }
     &:deep(.el-tabs__active-bar) {
-      left: 5.5px;
+      left: 5.1px;
       width: 20px !important;
       height: 3px;
       border-radius: 1.5px;

@@ -122,6 +122,7 @@ import Tab from '@components/tab/Tab.vue';
 import SongList from '@components/table/SongList.vue';
 import OnlineBatch from '@components/batch/OnlineBatch.vue';
 import Loading from '@components/common/Loading.vue';
+import NoSearch from '@/components/common/NoSearch.vue';
 
 //主题设置
 const fontColor = getTheme().get('fontColor');

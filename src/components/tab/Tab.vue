@@ -44,7 +44,8 @@ const tabClick = (tab: TabsPaneContext) => {
     background-color: @font-color-green;
     width: 22px !important;
     left: 5px;
-    height: 2px;
+    height: 3px;
+    border-radius: 1.5px;
   }
   &:deep(.el-tabs__nav-wrap) {
     &::after {

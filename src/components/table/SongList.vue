@@ -391,6 +391,10 @@ onBeforeRouteLeave(() => {
   .ascending .sort-caret.ascending {
     border-bottom-color: @font-color-green;
   }
+
+  .el-table__empty-block {
+    background: @background;
+  }
 }
 
 /* 表格内背景颜色 */

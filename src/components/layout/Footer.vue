@@ -1,7 +1,6 @@
 <template>
   <div class="footer-container">
-    <!-- 播放器
-     -->
+    <!-- 播放器  -->
     <audio
       ref="player"
       :src="songNum > 0 ? songList[current].url : ''"></audio>
