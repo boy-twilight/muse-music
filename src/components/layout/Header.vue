@@ -75,7 +75,15 @@
                 >
               </h2>
               <el-divider class="divider-h" />
-              <ul class="keywords">
+              <div
+                v-show="userSearch.length == 0"
+                class="no-history">
+                <img :src="history" />
+                <span>暂无搜索历史</span>
+              </div>
+              <ul
+                class="keywords"
+                v-show="userSearch.length != 0">
                 <li
                   v-for="item in userSearch"
                   :key="item"
@@ -206,6 +214,7 @@ import useHeaderStore from '@/store/header';
 import useConfigStore from '@/store/config';
 import useThemeStore from '@/store/theme';
 import logo from '@assets/image/网易云.svg';
+import history from '@assets/image/暂无搜索结果.svg';
 
 //配置主题
 const theme = useThemeStore();
@@ -549,6 +558,24 @@ onMounted(() => {
       &::-webkit-scrollbar {
         display: none;
       }
+    }
+  }
+}
+
+.content-right {
+  .no-history {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-left: 5px;
+    img {
+      width: 200px;
+      height: 200px;
+    }
+    span {
+      font-size: 14px;
+      letter-spacing: 1px;
+      color: @font-color-gray;
     }
   }
 }

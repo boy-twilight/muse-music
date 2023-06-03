@@ -9,7 +9,9 @@
 
 <script lang="ts" setup>
 import noSearch from '@assets/image/暂无搜索结果.svg';
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
+
+const fontGray = inject('fontGray');
 
 const props = withDefaults(
   defineProps<{
@@ -44,7 +46,7 @@ const imageSize = computed(() => props.size + 'px');
     bottom: 0;
     font-size: 18px;
     font-weight: 520;
-    color: rgba(230, 230, 230, 0.8);
+    color: v-bind(fontGray);
   }
 }
 </style>

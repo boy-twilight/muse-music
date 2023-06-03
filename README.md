@@ -19,7 +19,6 @@
 1. 本项目仅供学习，请不要用于其它任何用途
 2. 本项目不提供后端服务，要使用后端请去https://binaryify.github.io/NeteaseCloudMusicApi下载后端
 3. 项目的后端接口为 http://localhoust 3000，要修改可以去 request.ts 修改
-4. ui 文件夹是我为了放置 md 图片资源的，可用删除
 
 ---
 
