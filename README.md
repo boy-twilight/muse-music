@@ -9,9 +9,8 @@
 
 1. 此版本更新迭代了全屏模式与皮肤模式
 2. 修复了一些小 bug
-3. 更新了几个快捷键空格：播放/暂停，左/右：上一首/下一首，f：全屏/退出全屏，上：进入/离开音乐详情
-4. 预览：
-   ![全屏](./ui/%E8%83%8C%E6%99%AF%E7%9A%AE%E8%82%A4.png)
+3. 预览：
+   ![全屏](https://chart-twilight.gitee.io/image/%E8%83%8C%E6%99%AF%E7%9A%AE%E8%82%A4.png)
 
 ---
 
@@ -35,30 +34,30 @@
 ## 项目截图
 
 1. 首页
-   ![首页](./ui/%E9%A6%96%E9%A1%B5.png)
+   ![首页](https://chart-twilight.gitee.io/image/%E9%A6%96%E9%A1%B5.png)
 2. 歌单页
-   ![歌单详情页](./ui/%E6%AD%8C%E5%8D%95%E9%A1%B5.png)
+   ![歌单详情页](https://chart-twilight.gitee.io/image/%E6%AD%8C%E5%8D%95%E9%A1%B5.png)
 3. 视频推荐页
-   ![视频推荐页](./ui/%E8%A7%86%E9%A2%91%E6%8E%A8%E8%8D%90%E9%A1%B5.png)
+   ![视频推荐页](https://chart-twilight.gitee.io/image/%E8%A7%86%E9%A2%91%E6%8E%A8%E8%8D%90%E9%A1%B5.png)
 4. 视频播放页
-   ![视频播放页](./ui/%E8%A7%86%E9%A2%91%E6%92%AD%E6%94%BE%E9%A1%B5.png)
+   ![视频播放页](https://chart-twilight.gitee.io/image/%E8%A7%86%E9%A2%91%E6%92%AD%E6%94%BE%E9%A1%B5.png)
 5. 歌手页
-   ![歌手页](./ui/%E6%AD%8C%E6%89%8B%E9%A1%B5.png)
+   ![歌手页](https://chart-twilight.gitee.io/image/%E6%AD%8C%E6%89%8B%E9%A1%B5.png)
 6. 歌手详情页，在此页面可用查看歌手的专辑，视频，详情，热门歌曲
-   ![歌手详情页](./ui/%E6%AD%8C%E6%89%8B%E8%AF%A6%E6%83%85%E9%A1%B5.png)
+   ![歌手详情页](https://chart-twilight.gitee.io/image/%E6%AD%8C%E6%89%8B%E8%AF%A6%E6%83%85%E9%A1%B5.png)
 7. 专辑页，在此页面可用查看专辑歌曲和其它专辑
-   ![专辑](./ui/%E6%9C%80%E8%BF%91%E6%92%AD%E6%94%BE%E9%A1%B5.png)
+   ![专辑](https://chart-twilight.gitee.io/image/%E4%B8%93%E8%BE%91%E9%A1%B5.png)
 8. 搜索页，可根据关键词搜索歌曲，歌单，歌手，视频，专辑
-   ![搜索页](./ui/%E6%90%9C%E7%B4%A2%E9%A1%B5.png)
+   ![搜索页](https://chart-twilight.gitee.io/image/%E6%90%9C%E7%B4%A2%E9%A1%B5.png)
 9. 歌曲详情页
-   ![歌曲详情页](./ui/%E6%AD%8C%E6%9B%B2%E8%AF%A6%E6%83%85%E9%A1%B5.png)
+   ![歌曲详情页](https://chart-twilight.gitee.io/image/%E6%AD%8C%E6%9B%B2%E8%AF%A6%E6%83%85%E9%A1%B5.png)
 10. 音乐馆页
-    ![音乐馆页](./ui/%E9%9F%B3%E4%B9%90%E9%A6%86.png)
+    ![音乐馆页](https://chart-twilight.gitee.io/image/%E9%9F%B3%E4%B9%90%E9%A6%86.png)
 11. 黑夜模式
-    ![黑夜模式](./ui/%E9%BB%91%E5%A4%9C%E6%A8%A1%E5%BC%8F.png)
+    ![黑夜模式](https://chart-twilight.gitee.io/image/%E9%BB%91%E5%A4%9C%E6%A8%A1%E5%BC%8F.png)
 12. 用户喜欢的音乐页
-    ![喜欢音乐页](./ui/%E7%94%A8%E6%88%B7%E5%96%9C%E6%AC%A2%E9%A1%B5.png)
+    ![喜欢音乐页](https://chart-twilight.gitee.io/image/%E7%94%A8%E6%88%B7%E5%96%9C%E6%AC%A2%E9%A1%B5.png)
 13. 用户最近播放页，在此页面可查看用户最近播放的音乐视频
-    ![最近播放页](./ui/%E6%9C%80%E8%BF%91%E6%92%AD%E6%94%BE%E9%A1%B5.png)
+    ![最近播放页](https://chart-twilight.gitee.io/image/%E6%9C%80%E8%BF%91%E6%92%AD%E6%94%BE%E9%A1%B5.png)
 14. 下载记录页，在此页面用户可以查看自己下载的记录  
-    ![下载页](./ui/%E4%B8%8B%E8%BD%BD%E9%A1%B5.png)
+    ![下载页](https://chart-twilight.gitee.io/image/%E4%B8%8B%E8%BD%BD%E9%A1%B5.png)

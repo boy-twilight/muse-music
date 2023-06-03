@@ -4,13 +4,13 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  font-family: "阿里黑体";
+  /* font-family: "黑体"; */
 }
 
-@font-face {
-  font-family: "阿里黑体";
-  src: url("./assets/font/DingTalk_JinBuTi_Regular.woff");
-}
+/* @font-face {
+  font-family: "黑体";
+  src: url("https://arrive-lee.github.io/font/dingding.woff2") format('truetype');
+} */
 
 @font-face {
   font-family: 'iconfont';
