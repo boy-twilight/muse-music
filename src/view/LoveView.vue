@@ -19,7 +19,9 @@
         <el-tab-pane
           :label="`视频`"
           name="video">
-          <NoSearch v-show="loveVideo.length == 0" />
+          <NoSearch
+            v-show="loveVideo.length == 0"
+            text="暂无收藏视频" />
           <Mv
             :mvs="loveVideo"
             transitionName="list"
@@ -30,7 +32,9 @@
         <el-tab-pane
           :label="`歌单`"
           name="playlist">
-          <NoSearch v-show="lovePlaylist.length == 0" />
+          <NoSearch
+            v-show="lovePlaylist.length == 0"
+            text="暂无收藏歌单" />
           <PlayList
             :playlists="lovePlaylist"
             transitionName="list"
@@ -41,7 +45,9 @@
         <el-tab-pane
           :label="`歌手`"
           name="singer">
-          <NoSearch v-show="loveSinger.length == 0" />
+          <NoSearch
+            v-show="loveSinger.length == 0"
+            text="暂无收藏歌手" />
           <div class="singers">
             <Singer
               :singer-list="loveSinger"
@@ -55,7 +61,9 @@
         <el-tab-pane
           :label="`专辑`"
           name="album">
-          <NoSearch v-show="loveAlbum.length == 0" />
+          <NoSearch
+            v-show="loveAlbum.length == 0"
+            text="暂无收藏专辑" />
           <Albums
             :albums="loveAlbum"
             transitionName="list"

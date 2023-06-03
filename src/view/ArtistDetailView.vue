@@ -59,14 +59,26 @@
           <el-tab-pane
             label="专辑"
             name="album">
+            <NoSearch
+              v-show="needNoSearch[0]"
+              text="歌手暂无专辑"
+              :size="280" />
             <Loading :isLoading="isLoading" />
-            <Albums :albums="artistAlbum" />
+            <Albums
+              :albums="artistAlbum"
+              v-show="!needNoSearch[0]" />
           </el-tab-pane>
           <el-tab-pane
             label="视频"
             name="mv">
+            <NoSearch
+              v-show="needNoSearch[1]"
+              text="歌手暂无视频"
+              :size="280" />
             <Loading :isLoading="isLoading" />
-            <Mv :mvs="artistMv" />
+            <Mv
+              :mvs="artistMv"
+              v-show="!needNoSearch[1]" />
           </el-tab-pane>
           <el-tab-pane
             label="详情"
@@ -142,6 +154,8 @@ const isLoading = ref<boolean>(false);
 const first = inject('firstLoading') as Ref<boolean>;
 //设置隐藏滚动条
 const hideScroll = inject('hideScroll') as Function;
+//是否需要占位图片
+const needNoSearch = reactive<boolean[]>([false, false]);
 
 //歌手基本信息
 const singer = reactive<Artist>({
@@ -190,30 +204,7 @@ const shareSinger = () => {
 const getActive = (active: string) => {
   hideScroll();
   //点击加载数据
-  if (active == 'mv' && artistMv.length == 0) {
-    //获取歌手的Mv
-    getRequset(async () => {
-      try {
-        const response: any = await getArtistMv(id);
-        const { mvs } = response;
-        mvs.forEach((mv: any) => {
-          const { id, name, artistName, imgurl16v9, playCount } = mv;
-          artistMv.push({
-            id,
-            name,
-            artist: artistName,
-            image: imgurl16v9,
-            playCount,
-          });
-        });
-      } catch (err: any) {
-        elMessage(elMessageType.ERROR, err.message);
-      }
-      setTimeout(() => {
-        isLoading.value = false;
-      }, 500);
-    }, isLoading);
-  } else if (active == 'album' && artistAlbum.length == 0) {
+  if (active == 'album' && artistAlbum.length == 0) {
     //获取歌手专辑
     getRequset(async () => {
       try {
@@ -233,6 +224,36 @@ const getActive = (active: string) => {
         elMessage(elMessageType.ERROR, err.message);
       }
       setTimeout(() => {
+        if (artistAlbum.length == 0) {
+          needNoSearch[0] = true;
+        }
+        isLoading.value = false;
+      }, 500);
+    }, isLoading);
+  } else if (active == 'mv' && artistMv.length == 0) {
+    //获取歌手的Mv
+    getRequset(async () => {
+      try {
+        const response: any = await getArtistMv(id);
+        const { mvs } = response;
+        mvs.forEach((mv: any) => {
+          const { id, name, artistName, imgurl16v9, playCount } = mv;
+          artistMv.push({
+            id,
+            name,
+            artist: artistName,
+            image: imgurl16v9,
+            playCount,
+          });
+        });
+      } catch (err: any) {
+        elMessage(elMessageType.ERROR, err.message);
+      }
+
+      setTimeout(() => {
+        if (artistMv.length == 0) {
+          needNoSearch[1] = true;
+        }
         isLoading.value = false;
       }, 500);
     }, isLoading);
@@ -301,6 +322,12 @@ getRequset(async () => {
 @font-color-gray: v-bind(fontGray);
 @shadow: v-bind(boxShadow);
 @font-color-green: #1ed2a9;
+
+.no-search {
+  &:deep(.no-data) {
+    font-size: 15px;
+  }
+}
 
 .artist-detail-container {
   .loading {

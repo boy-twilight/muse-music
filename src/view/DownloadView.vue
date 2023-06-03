@@ -19,7 +19,9 @@
         <el-tab-pane
           :label="`下载视频`"
           name="video ">
-          <NoSearch v-show="mvDownload.length == 0" />
+          <NoSearch
+            v-show="mvDownload.length == 0"
+            text="暂无视频下载记录" />
           <Mv
             :mvs="mvDownload"
             :show-delete="true"

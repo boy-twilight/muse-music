@@ -74,7 +74,7 @@
           <NoSearch
             v-else
             :size="280"
-            text="暂无搜索结果" />
+            text="暂无评论数据" />
         </el-tab-pane>
       </template>
     </Tab>

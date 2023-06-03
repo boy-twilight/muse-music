@@ -20,7 +20,9 @@
         <el-tab-pane
           :label="`视频`"
           name="video ">
-          <NoSearch v-show="videoRecord.length == 0" />
+          <NoSearch
+            v-show="videoRecord.length == 0"
+            text="暂无视频播放记录" />
           <Mv
             :mvs="videoRecord"
             :show-delete="true"

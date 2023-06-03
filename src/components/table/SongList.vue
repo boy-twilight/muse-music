@@ -308,6 +308,13 @@ onBeforeRouteLeave(() => {
 }
 
 .songs-table {
+  background-color: @background;
+  th,
+  tr,
+  td,
+  .el-table__expanded-cell {
+    background-color: @background;
+  }
   .iconfont {
     font-size: 16px;
     margin-right: 6px;
@@ -340,7 +347,6 @@ onBeforeRouteLeave(() => {
     font-size: 13px;
     color: @font-color;
     padding: 12px 0 12px 1px;
-    background: @background !important;
     &:first-child {
       border-top-left-radius: 5px;
       border-bottom-left-radius: 5px;
