@@ -177,9 +177,12 @@ const dmHeight = musicFooterHeight;
 const firstLoading = ref<boolean>(true);
 //设置隐藏滚动条
 const hideScroll = () => {
-  showScroll.value = 'none';
-  left.value = '0';
+  if (showScroll.value != 'none') {
+    showScroll.value = 'none';
+    left.value = '0';
+  }
 };
+
 provide<Ref<boolean>>('firstLoading', firstLoading);
 provide<Function>('hideScroll', hideScroll);
 
@@ -196,9 +199,7 @@ const autoHide = throttle(
       clearTimeout(timeid);
     }
     timeid = setTimeout(() => {
-      if (showScroll.value != 'none') {
-        hideScroll();
-      }
+      hideScroll();
     }, 3000);
   },
   600,

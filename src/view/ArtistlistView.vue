@@ -29,11 +29,7 @@
       </li>
     </ul>
     <h4 class="title">全部歌手</h4>
-    <div class="ranks">
-      <Singer
-        :singer-list="searchResult"
-        :show-all-avatar="false" />
-    </div>
+    <Singer :singer-list="searchResult" />
   </div>
 </template>
 
@@ -59,6 +55,7 @@ const artistlist = reactive<Artist[]>([]);
 const searchResult = computed(() =>
   artistlist.filter((artist) => artist.name.includes(content.value))
 );
+
 const content = ref<string>('');
 //缓存已经加载的结果
 const resultCache = reactive<Map<string, Artist[]>>(new Map());
@@ -222,12 +219,6 @@ getData();
         cursor: pointer;
       }
     }
-  }
-
-  .ranks {
-    display: flex;
-    width: 81vw;
-    flex-wrap: wrap;
   }
 }
 </style>

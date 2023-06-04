@@ -84,13 +84,9 @@
           <NoSearch
             v-show="needNoSearch[4]"
             text="暂无搜索结果" />
-          <div
+          <Singer
             v-show="!needNoSearch[4]"
-            class="singers">
-            <Singer
-              :singer-list="singerResult"
-              :show-all-avatar="false" />
-          </div>
+            :singer-list="singerResult" />
         </el-tab-pane>
       </template>
     </Tab>
@@ -390,10 +386,11 @@ getRequset(async () => {
     }
   }
 
-  .singers {
-    display: flex;
-    width: 80vw;
-    flex-wrap: wrap;
+  .singer-container {
+    &:deep(.singer-list) {
+      width: 80vw;
+    }
+
     &:deep(.singer .el-image) {
       width: 187.5px;
     }

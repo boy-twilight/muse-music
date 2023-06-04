@@ -365,8 +365,8 @@ export const share = (content: string, tip?: string) => {
   );
 };
 
-//分享歌词
-export const shareLyric = async (song: Song) => {
+//下载歌词
+export const downloadLyric = async (song: Song) => {
   try {
     const response: any = await getLyrics(song.id);
     const {
@@ -387,7 +387,18 @@ export const shareLyric = async (song: Song) => {
         }
       }
     });
-    share(words.join('\n'), '已成功复制歌词！');
+    const blob: Blob = new Blob([words.join('\r\n')], {
+      type: 'type:text/plain; charset=utf-8',
+    });
+    const data = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.style.display = 'none';
+    link.href = data;
+    link.download = song.name + '-' + handleSingerName(song.name) + '.txt';
+    document.body.append(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(data);
   } catch (err: any) {
     elMessage(elMessageType.ERROR, '获取歌词出错！');
   }

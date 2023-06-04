@@ -48,15 +48,12 @@
           <NoSearch
             v-show="loveSinger.length == 0"
             text="暂无收藏歌手" />
-          <div class="singers">
-            <Singer
-              :singer-list="loveSinger"
-              transitionName="list"
-              :showDelete="true"
-              :show-all-avatar="false"
-              @get-delete-index="deleteLoveSinger"
-              v-show="loveSinger.length > 0" />
-          </div>
+          <Singer
+            :singer-list="loveSinger"
+            transitionName="list"
+            :showDelete="true"
+            @get-delete-index="deleteLoveSinger"
+            v-show="loveSinger.length > 0" />
         </el-tab-pane>
         <el-tab-pane
           :label="`专辑`"
@@ -162,10 +159,11 @@ getRequset(async () => {
     }
   }
 
-  .singers {
-    display: flex;
-    width: 80vw;
-    flex-wrap: wrap;
+  .singer-container {
+    &:deep(.singer-list) {
+      width: 80vw;
+    }
+    padding-bottom: 15px;
     &:deep(.singer .el-image) {
       width: 187.5px;
     }

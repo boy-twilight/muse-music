@@ -273,9 +273,9 @@ import {
   handleSingerName,
   getSimiSong,
   playVideo,
-  shareLyric,
   shareMuiscInfo,
   getSourceComments,
+  downloadLyric,
 } from '@/utils/util';
 import { elMessageType } from '@/model/enum';
 import { DropDownItem, Song, Comment } from '@/model';
@@ -349,10 +349,10 @@ const moreDropItems: DropDownItem[] = [
     command: 'copyMusicInfo',
   },
   {
-    name: '复制歌词',
+    name: '下载歌词',
     icon: '\ue602',
     style: 'margin: 0 7px 0 2px;',
-    command: 'copy',
+    command: 'downloadLyric',
   },
 
   {
@@ -439,8 +439,8 @@ const handleMore = async (command: string) => {
         user.loveSongs,
         user.loveMusicId
       );
-    } else if (command == 'copy') {
-      shareLyric(songList.value[current.value]);
+    } else if (command == 'downloadLyric') {
+      downloadLyric(songList.value[current.value]);
     } else if (command == 'copyMusicInfo') {
       shareMuiscInfo(songList.value[current.value]);
     } else if (command == 'comment') {

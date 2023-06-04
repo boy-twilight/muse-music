@@ -224,9 +224,7 @@ const getActive = (active: string) => {
         elMessage(elMessageType.ERROR, err.message);
       }
       setTimeout(() => {
-        if (artistAlbum.length == 0) {
-          needNoSearch[0] = true;
-        }
+        needNoSearch[0] = artistAlbum.length == 0;
         isLoading.value = false;
       }, 500);
     }, isLoading);
@@ -251,9 +249,7 @@ const getActive = (active: string) => {
       }
 
       setTimeout(() => {
-        if (artistMv.length == 0) {
-          needNoSearch[1] = true;
-        }
+        needNoSearch[1] = artistMv.length == 0;
         isLoading.value = false;
       }, 500);
     }, isLoading);

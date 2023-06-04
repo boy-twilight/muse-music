@@ -43,6 +43,9 @@ const searchColor = computed(() =>
     : 'rgba(210,210,210,0.2)'
 );
 
+//设置隐藏滚动条
+const hideScroll = inject('hideScroll') as Function;
+
 //搜索结果回传
 const emits = defineEmits<{
   (e: 'getContent', param: string): void;
@@ -58,6 +61,7 @@ const content = ref<string>('');
 const searchMusic = () => {
   throttle(
     () => {
+      hideScroll();
       emits('getContent', content.value);
     },
     800,

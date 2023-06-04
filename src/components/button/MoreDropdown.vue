@@ -44,9 +44,9 @@ import {
   getTheme,
   getSimiSong,
   elMessage,
-  shareLyric,
   shareMuiscInfo,
   getSourceComments,
+  downloadLyric,
 } from '@/utils/util';
 import { Song, DropDownItem, Comment } from '@/model';
 import { elMessageType } from '@/model/enum';
@@ -121,12 +121,6 @@ const dropItems: DropDownItem[] = [
     style: 'margin: 1px 7px 0 4px;',
     command: 'copyMusic',
   },
-  {
-    name: '复制歌词',
-    icon: '&#xe602;',
-    style: 'margin: 0 7px 0 4px;',
-    command: 'copy',
-  },
 
   {
     name: '我喜欢',
@@ -142,7 +136,14 @@ const dropItems: DropDownItem[] = [
   },
 
   {
-    name: '下载',
+    name: '下载歌词',
+    icon: '&#xe602;',
+    style: 'margin: 0 7px 0 4px;',
+    command: 'downLyric',
+  },
+
+  {
+    name: '下载歌曲',
     icon: '&#xf0304;',
     style: 'margin: 0 8px 0 3px; font-size: 16px;',
     command: 'downloadMusic',
@@ -208,8 +209,8 @@ const handleMore = (command: string) => {
     props.play(song);
   } else if (command == 'playNext') {
     playNext(song);
-  } else if (command == 'copy') {
-    shareLyric(song);
+  } else if (command == 'downLyric') {
+    downloadLyric(song);
   } else if (command == 'copyMusic') {
     shareMuiscInfo(song);
   } else if (command == 'comment') {
