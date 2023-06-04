@@ -116,9 +116,9 @@ const getSortChoice = (sortType: boolean[], isCancelSort: boolean) => {
 
 //清除全部播放
 const clearAll = () => {
-  if (props.pageName == 'loveView') {
+  if (props.pageName == 'LoveView') {
     loveSongs.value.splice(0);
-  } else if (props.pageName == 'recentPlayView') {
+  } else if (props.pageName == 'RecentPlayView') {
     songRecord.value.splice(0);
   } else {
     musicDownload.value.splice(0);
