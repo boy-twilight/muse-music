@@ -21,27 +21,35 @@ const useThemeStore = defineStore('theme', () => {
   const drak_box_shadow =
     'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px';
   const drak_active_color = 'rgba(0,0,0,0.5)';
+  //字体颜色
   const fontColor = ref<string>(
     getStorage(storageType.LOCAL, 'theme')?.fontColor || light_font_color
   );
+  //字体黑色
   const fontBlack = ref<string>(
     getStorage(storageType.LOCAL, 'theme')?.fontBlack || light_font_black
   );
+  //菜单背景颜色
   const menuColor = ref<string>(
     getStorage(storageType.LOCAL, 'theme')?.menuColor || light_menu_color
   );
+  //主背景颜色
   const background = ref<string>(
     getStorage(storageType.LOCAL, 'theme')?.backgound || light_background
   );
+  //table hover背景色
   const tableHover = ref<string>(
     getStorage(storageType.LOCAL, 'theme')?.tableHover || light_table_hover
   );
+  //boxshadow
   const shadow = ref<string>(
     getStorage(storageType.LOCAL, 'theme')?.shadow || light_box_shadow
   );
+  //搜索框的背景色
   const searchBg = ref<string>(
     getStorage(storageType.LOCAL, 'theme')?.searchBg || light_search_bg
   );
+  //菜单在活跃时的背景色
   const active = ref<string>(
     getStorage(storageType.LOCAL, 'theme')?.active || light_active_color
   );

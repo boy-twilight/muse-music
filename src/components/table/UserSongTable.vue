@@ -76,9 +76,9 @@ const songIdMapper = computed(
 
 //按钮名字
 const buttonName = computed(() => {
-  if (props.pageName == 'loveView') {
+  if (props.pageName == 'LoveView') {
     return '清空全部收藏';
-  } else if (props.pageName == 'recentPlayView') {
+  } else if (props.pageName == 'RecentPlayView') {
     return '清空播放记录';
   } else {
     return '清空下载记录';

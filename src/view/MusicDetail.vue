@@ -186,7 +186,6 @@ const getLyric = async () => {
           const word = item[1] ? item[1].trim() : item[1];
           //获取歌词的时间戳
           const time = formatToTimeStap(item[0].slice(1));
-
           if (time < totalTime && word) {
             timeStaps.push(time);
             words.push(word);

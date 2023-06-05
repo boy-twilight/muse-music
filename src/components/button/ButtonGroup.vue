@@ -61,6 +61,7 @@ const changeActive = (index: number) => {
   background-color: @font-color-green !important;
   color: #ffffff !important;
 }
+
 .type {
   width: 81vw;
   margin-top: 20px;
