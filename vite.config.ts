@@ -23,6 +23,7 @@ export default defineConfig({
       '@assets': join(__dirname, 'src/assets/'),
     },
   },
+
   build: {
     chunkSizeWarningLimit: 1000,
     sourcemap: false,
