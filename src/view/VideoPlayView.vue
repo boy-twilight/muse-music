@@ -6,6 +6,7 @@
       controls
       ref="video"
       class="video-player"></video>
+    <!-- <div ref="video"></div> -->
     <div class="detail">
       <p class="title">{{ mv.name }}</p>
       <div class="artist-info">
@@ -295,9 +296,6 @@ onBeforeUnmount(() => {
 
 .video-container {
   .video-player {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     width: 80vw;
     height: @video-height;
     object-fit: cover;
