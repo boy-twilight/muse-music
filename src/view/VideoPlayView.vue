@@ -1,12 +1,10 @@
 <template>
   <div class="video-container scroll-container">
-    <video
-      :src="mv.url"
-      :poster="mv.image"
-      controls
-      ref="video"
-      class="video-player"></video>
-    <!-- <div ref="video"></div> -->
+    <div class="players-container">
+      <div
+        ref="video"
+        class="players"></div>
+    </div>
     <div class="detail">
       <p class="title">{{ mv.name }}</p>
       <div class="artist-info">
@@ -63,7 +61,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, Ref, inject, ref, computed, onBeforeUnmount } from 'vue';
+import { reactive, Ref, inject, ref, computed, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { MV, Comment } from '@/model';
 import { elMessageType } from '@/model/enum';
@@ -87,26 +85,10 @@ import {
 } from '@/utils/util';
 import useUserStore from '@/store/user';
 import useConfigStore from '@/store/config';
-import useFooterStore from '@/store/footer';
-import hotkeys from 'hotkeys-js';
-import { storeToRefs } from 'pinia';
 import DecoratedButton from '@components/button/DecoratedButton.vue';
 import Mv from '@components/datalist/Mv.vue';
 import Comments from '@/components/common/Comment.vue';
-
-const footer = useFooterStore();
-const { isPlay } = storeToRefs(footer);
-// 配置快捷键;
-hotkeys('space', () => {
-  if (isPlay.value) {
-    isPlay.value = false;
-  }
-  if (video.value?.paused) {
-    video.value?.play();
-  } else {
-    video.value?.pause();
-  }
-});
+import DPlayer from 'dplayer';
 
 //设置主题
 const config = useConfigStore();
@@ -119,7 +101,9 @@ const videoHeight = computed(() => (config.isFullScreen ? '650px' : '520px'));
 
 const user = useUserStore();
 //播放器实例
-const video = ref<HTMLVideoElement>();
+const video = ref<HTMLDivElement>();
+//dplayer实例
+const dplayer = ref<DPlayer>();
 
 //获取视频id
 const route = useRoute();
@@ -156,6 +140,49 @@ const shareVideo = () => {
       mv.name +
       ',快来和我一起观看把！'
   );
+};
+//初始化播放器
+const init = async () => {
+  await nextTick();
+  dplayer.value = new DPlayer({
+    container: video.value as HTMLDivElement,
+    video: {
+      url: mv.url as string,
+      thumbnails: mv.image,
+      type: 'video/mp4',
+      pic: mv.image,
+    },
+    autoplay: false,
+    loop: true,
+    hotkey: true,
+    theme: '#1ed2a9',
+    chromecast: true,
+    lang: 'zh-cn',
+    screenshot: true,
+    preload: 'auto',
+    volume: 0.9,
+    playbackSpeed: [0.75, 1, 1.25, 1.5, 1.75, 2.0],
+    contextmenu: [
+      {
+        text: '下载',
+        click: () => {
+          user.addVideoDownload(mv);
+        },
+      },
+      {
+        text: '收藏',
+        click: () => {
+          user.addLove(mv, user.loveVideo, user.loveVideoId);
+        },
+      },
+      {
+        text: '分享',
+        click: () => {
+          shareVideo();
+        },
+      },
+    ],
+  });
 };
 
 getRequset(async () => {
@@ -277,81 +304,65 @@ getRequset(async () => {
   user.addRecord<MV>(mv, user.videoRecord, user.videoRecordId);
   //初始化喜欢状态
   user.initLoveStatus(mv, user.loveVideoId);
+  init();
   //关闭动画
   first.value = false;
 }, first);
-
-onBeforeUnmount(() => {
-  hotkeys.unbind('space');
-});
 </script>
 
 <style lang="less" scoped>
 @font-color: v-bind(fontColor);
 @font-color-light-black: v-bind(fontBlack);
-@shadow: v-bind(boxShadow);
 @font-color-gray: v-bind(fontGray);
 @video-height: v-bind(videoHeight);
+@shadow: v-bind(boxShadow);
 @font-color-green: #1ed2a9;
 
 .video-container {
-  .video-player {
-    width: 80vw;
+  .players-container {
     height: @video-height;
-    object-fit: cover;
-    border-radius: 7px;
-    box-shadow: @shadow;
-    outline: none;
-    &::-webkit-media-controls-timeline {
-      height: 3px !important;
-      position: absolute;
-      bottom: 60px !important;
-      width: 95%;
-      left: 1vw;
-      padding-bottom: 0 !important;
-    }
-    &::-webkit-media-controls-current-time-display {
-      font-size: 13px;
-      position: absolute;
-      left: 77px;
-    }
-    //剩余时间
-    &::-webkit-media-controls-time-remaining-display {
-      font-size: 13px;
-      position: absolute;
-      left: 103px;
-    }
-    //播放按钮
-    &::-webkit-media-controls-play-button {
-      position: absolute;
-      color: #ffffff;
-      left: 2.2vw;
-      background-size: 20px !important;
-    }
-    &::-webkit-media-controls-volume-control-container {
-      position: absolute;
-      right: 120px;
-    }
-    &::-webkit-media-controls-mute-button {
-      background-size: 20px;
-    }
-    &::-webkit-media-controls-fullscreen-button {
-      position: absolute;
-      right: 60px;
-      background-size: 20px !important;
-    }
-    &::-webkit-media-controls-enclosure {
-      padding-right: 10px;
-    }
-  }
-
-  .video-player,
-  .detail {
+    width: 80vw;
     margin-left: 4px;
+    .players {
+      border-radius: 7px;
+      box-shadow: @shadow;
+      height: 100%;
+      &:deep(.dplayer-video) {
+        object-fit: cover;
+      }
+      &:deep(.dplayer-setting-box) {
+        border-radius: 5px;
+        padding: 0;
+        background-color: rgba(20, 20, 20, 0.8);
+        box-shadow: @shadow;
+      }
+      &:deep(.dplayer-bar-wrap .dplayer-bar) {
+        border-radius: 1.5px;
+      }
+      &:deep(.dplayer-bar-wrap .dplayer-bar .dplayer-played) {
+        border-radius: 1.5px;
+      }
+      &:deep(.dplayer-menu) {
+        border-radius: 5px;
+        padding: 0;
+        background-color: rgba(20, 20, 20, 0.8);
+        box-shadow: @shadow;
+      }
+      &:deep(.dplayer-menu-item) {
+        padding-left: 10px;
+        letter-spacing: 1px;
+        &:nth-child(n + 5) {
+          display: none;
+        }
+      }
+      &:deep(.dplayer-menu-item a) {
+        text-decoration: none;
+      }
+    }
   }
-
   .detail {
     width: 80vw;
+    margin-left: 4px;
     .title {
       font-size: 14px;
       color: @font-color;

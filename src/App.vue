@@ -90,17 +90,24 @@ import Footer from '@components/layout/Footer.vue';
 import Drawer from '@components/drawer/Drawer.vue';
 import CommentDialog from './components/common/CommentDialog.vue';
 import useUserStore from './store/user';
+import { useRoute } from 'vue-router';
 
 //快捷键列表
 //space播放,上进入/退出音乐详情，左前一首，右后一首，f进入/退出全屏
 const keys = ['space', 'left', 'right', 'up', 'f'];
+const route = useRoute();
+const curPath = computed(() => route.fullPath);
+const rule = /^\/video/;
 //绑定快捷键
 hotkeys(keys.join(','), (event: KeyboardEvent, handler: HotkeysEvent) => {
   event.preventDefault();
   switch (handler.key) {
     case 'space':
       {
-        isPlay.value = !isPlay.value;
+        //在视频播放页面不设置快捷键
+        if (!rule.test(curPath.value)) {
+          isPlay.value = !isPlay.value;
+        }
       }
       break;
     case 'up':
