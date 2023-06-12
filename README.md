@@ -9,7 +9,7 @@
 
 1. 此版本重写了video控件实现了更多功能
 2. 预览:
-3. ![首页]( https://chart-twilight.gitee.io/image/%E9%A2%84%E8%A7%88.png)
+3. ![预览](https://chart-twilight.gitee.io/image/%E9%A2%84%E8%A7%88.png)
 
 ---
 
