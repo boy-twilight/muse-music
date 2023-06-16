@@ -1,23 +1,38 @@
 <template>
   <div class="video-container scroll-container">
     <div class="players-container">
-      <!-- <div class="recommend-video">
-        <el-image
-          :src="mv.image"
-          class="image" />
-        <div class="mask">
-          <span
-            class="iconfont play"
-            v-prevent
-            >&#xea82;</span
-          >
+      <Transition name="show">
+        <div
+          class="recommend-container"
+          v-show="showRecommned">
+          <h4 v-show="reMvs.length > 1">精彩视频</h4>
+          <div class="content">
+            <div
+              class="recommend-video"
+              v-for="(mv, index) in reMvs"
+              :key="mv.id">
+              <el-image
+                :src="mv.image"
+                class="image" />
+              <div class="mask">
+                <span
+                  class="iconfont play"
+                  @click="playRe(index)"
+                  v-prevent
+                  >&#xea82;</span
+                >
+              </div>
+            </div>
+          </div>
         </div>
-      </div> -->
+      </Transition>
       <div class="players"></div>
     </div>
     <!-- 视频相关信息 -->
     <div class="detail">
-      <p class="title">{{ mv.name }}</p>
+      <p class="title">
+        {{ mv.name }}
+      </p>
       <div class="artist-info">
         <span>{{
           /.*[A-Z]+.*/.test(id) ? '创作者：' + mv.artist : '演唱：' + mv.artist
@@ -53,7 +68,7 @@
     </div>
     <!-- 相关视频推荐 -->
     <Mv
-      v-show="!showComments"
+      v-show="!showComments && mvSimi.length > 0"
       :mvs="mvSimi"
       title="相关推荐" />
     <!-- 评论 -->
@@ -73,7 +88,15 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, Ref, inject, ref, computed, nextTick } from 'vue';
+import {
+  reactive,
+  Ref,
+  inject,
+  ref,
+  computed,
+  nextTick,
+  onBeforeUnmount,
+} from 'vue';
 import { useRoute } from 'vue-router';
 import { MV, Comment } from '@/model';
 import { elMessageType } from '@/model/enum';
@@ -101,6 +124,7 @@ import useConfigStore from '@/store/config';
 import DecoratedButton from '@components/button/DecoratedButton.vue';
 import Mv from '@components/datalist/Mv.vue';
 import Comments from '@/components/common/Comment.vue';
+import { useRouter } from 'vue-router';
 
 //设置主题
 const config = useConfigStore();
@@ -110,7 +134,7 @@ const boxShadow = getTheme().get('shadow');
 const fontGray = inject('fontGray');
 
 //全屏模式改变播放器高度
-const videoHeight = computed(() => (config.isFullScreen ? '650px' : '520px'));
+const videoHeight = computed(() => (config.isFullScreen ? '695px' : '555px'));
 
 const user = useUserStore();
 //dplayer实例
@@ -118,6 +142,7 @@ const dplayer = ref<DPlayer>();
 
 //获取视频id
 const route = useRoute();
+const router = useRouter();
 const id = route.query.id + '';
 //mv信息
 const mv = reactive<MV>({
@@ -133,10 +158,13 @@ const mv = reactive<MV>({
 });
 //相似的mv推荐
 const mvSimi = reactive<MV[]>([]);
-//视频
-const mvs = reactive<MV[]>([]);
+//视频结束后的推荐
+const reMvs = computed(() => [mv, ...mvSimi]);
+
 //页面第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
+//是否展示推荐
+const showRecommned = ref<boolean>(false);
 
 //视频评论
 const videoComments = reactive<Comment[]>([]);
@@ -166,7 +194,7 @@ const init = async () => {
       pic: mv.image,
     },
     autoplay: false,
-    loop: true,
+    loop: false,
     hotkey: true,
     theme: '#1ed2a9',
     chromecast: true,
@@ -196,6 +224,26 @@ const init = async () => {
       },
     ],
   });
+  //视频结束时推荐其他视频
+  const video = document.querySelector('.dplayer-video') as HTMLVideoElement;
+  video.onended = () => {
+    showRecommned.value = true;
+  };
+};
+//播放推荐
+const playRe = (index: number) => {
+  if (index == 0) {
+    showRecommned.value = false;
+    const video = document.querySelector('.dplayer-video') as HTMLVideoElement;
+    video.play();
+  } else {
+    router.push({
+      name: 'video',
+      query: {
+        id: mv.id,
+      },
+    });
+  }
 };
 
 getRequset(async () => {
@@ -209,11 +257,11 @@ getRequset(async () => {
         data: { name, artistName, cover, playCount, duration, publishTime },
       } = response;
       mv.name = name;
+      mv.playCount = playCount;
       mv.image = cover;
       mv.artist = artistName;
-      mv.playCount = playCount;
       mv.time = duration;
-      mv.publishTime = publishTime;
+      mv.publishTime = formatTime(publishTime);
     } catch (err: any) {
       elMessage(elMessageType.ERROR, err.message);
     }
@@ -238,12 +286,13 @@ getRequset(async () => {
       const { mvs } = response;
       if (mvs) {
         mvs.forEach((item: any) => {
+          const { id, cover, name, artistName, playCount } = item;
           mvSimi.push({
-            id: item.id as string,
-            image: item.cover as string,
-            name: item.name as string,
-            artist: item.artistName as string,
-            playCount: item.playCount as string,
+            id,
+            image: cover,
+            name,
+            artist: artistName,
+            playCount,
           });
         });
       }
@@ -321,6 +370,12 @@ getRequset(async () => {
   //关闭动画
   first.value = false;
 }, first);
+
+onBeforeUnmount(() => {
+  const video = document.querySelector('.dplayer-video') as HTMLVideoElement;
+  video.onended = null;
+  dplayer.value?.destroy();
+});
 </script>
 
 <style lang="less" scoped>
@@ -332,46 +387,95 @@ getRequset(async () => {
 @font-color-green: #1ed2a9;
 @font-color-white: #ffffff;
 
-//视频播放完结束部分
-.recommend-video {
+.show-enter-from,
+.show-leave-to {
+  opacity: 0;
+}
+.show-enter-to,
+.show-leave-from {
+  opacity: 1;
+}
+
+.show-enter-active,
+.show-leave-active {
+  transition: all 0.5s ease-out;
+}
+
+.recommend-container {
+  height: @video-height;
+  width: 80vw;
   position: absolute;
+  top: 0;
   z-index: 1000;
+  border-radius: 7px;
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   flex-direction: column;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  justify-content: center;
+  align-items: center;
 
-  .mask {
-    width: 235px;
-    height: 140px;
-    background-color: transparent;
-    position: absolute;
-    top: 0;
-    border-radius: 10px;
+  h4 {
+    color: rgba(235, 235, 235, 0.5);
+    font-size: 23px;
+    font-weight: 520;
+    align-self: flex-start;
+    margin: -20px 0 -15px 13.5vw;
+  }
+
+  .content {
+    width: 54vw;
     display: flex;
-    justify-content: center;
+    flex-wrap: wrap;
     align-items: center;
-    span {
-      display: inline-block;
-      font-size: 40px;
-      transition: 0.4s;
-      cursor: pointer;
-      color: rgba(230, 230, 230, 0.9);
-      &:hover {
-        color: @font-color-green;
+    justify-content: center;
+    .recommend-video {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      margin: 30px 10px 0 10px;
+
+      &:hover .image {
+        transform: translateY(-5px);
+      }
+      &:hover .mask {
+        transform: translateY(-5px);
+      }
+
+      .mask,
+      .image {
+        width: 255px;
+        height: 180px;
+        border-radius: 10px;
+        transition: 0.4s;
+      }
+      .mask {
+        position: absolute;
+        background-color: transparent;
+        top: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        span {
+          display: inline-block;
+          font-size: 50px;
+          transition: 0.4s;
+          cursor: pointer;
+          color: rgba(230, 230, 230, 0.9);
+          &:hover {
+            color: @font-color-green;
+          }
+        }
+      }
+      .image {
+        object-fit: cover;
+        border: 1px solid rgba(230, 230, 230, 0.2);
       }
     }
   }
-  .image {
-    width: 235px;
-    height: 140px;
-    object-fit: cover;
-    border-radius: 10px;
-    box-shadow: @shadow;
-  }
 }
+//视频播放完结束部分
 .video-container {
+  padding-top: 0 !important;
   .players-container {
     height: @video-height;
     width: 80vw;
