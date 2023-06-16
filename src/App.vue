@@ -104,7 +104,7 @@ hotkeys(keys.join(','), (event: KeyboardEvent, handler: HotkeysEvent) => {
   switch (handler.key) {
     case 'space':
       {
-        //在视频播放页面不设置快捷键
+        //在视频播放页面不设置快捷键,避免冲突
         if (!rule.test(curPath.value)) {
           isPlay.value = !isPlay.value;
         }
@@ -112,28 +112,37 @@ hotkeys(keys.join(','), (event: KeyboardEvent, handler: HotkeysEvent) => {
       break;
     case 'up':
       {
-        isPlay.value = false;
-        playProcess.value = 0;
-        playTime.value = 0;
-        showDetail.value = !showDetail.value;
+        if (!rule.test(curPath.value)) {
+          isPlay.value = false;
+          playProcess.value = 0;
+          playTime.value = 0;
+          showDetail.value = !showDetail.value;
+        }
       }
       break;
     case 'left':
       {
-        if (songNum.value > 0) {
-          current.value =
-            --current.value < 0 ? songNum.value - 1 : current.value;
-        } else {
-          elMessage(elMessageType.INFO, '暂无音乐，请您添加音乐');
+        //在视频播放页面不设置快捷键,避免冲突
+        if (!rule.test(curPath.value)) {
+          if (songNum.value > 0) {
+            current.value =
+              --current.value < 0 ? songNum.value - 1 : current.value;
+          } else {
+            elMessage(elMessageType.INFO, '暂无音乐，请您添加音乐');
+          }
         }
       }
       break;
     case 'right':
       {
-        if (songNum.value > 0) {
-          current.value = ++current.value >= songNum.value ? 0 : current.value;
-        } else {
-          elMessage(elMessageType.INFO, '暂无音乐，请您添加音乐');
+        //在视频播放页面不设置快捷键,避免冲突
+        if (!rule.test(curPath.value)) {
+          if (songNum.value > 0) {
+            current.value =
+              ++current.value >= songNum.value ? 0 : current.value;
+          } else {
+            elMessage(elMessageType.INFO, '暂无音乐，请您添加音乐');
+          }
         }
       }
       break;

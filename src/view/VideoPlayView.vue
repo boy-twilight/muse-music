@@ -1,10 +1,21 @@
 <template>
   <div class="video-container scroll-container">
     <div class="players-container">
-      <div
-        ref="video"
-        class="players"></div>
+      <!-- <div class="recommend-video">
+        <el-image
+          :src="mv.image"
+          class="image" />
+        <div class="mask">
+          <span
+            class="iconfont play"
+            v-prevent
+            >&#xea82;</span
+          >
+        </div>
+      </div> -->
+      <div class="players"></div>
     </div>
+    <!-- 视频相关信息 -->
     <div class="detail">
       <p class="title">{{ mv.name }}</p>
       <div class="artist-info">
@@ -40,11 +51,12 @@
           class="operate" />
       </div>
     </div>
+    <!-- 相关视频推荐 -->
     <Mv
       v-show="!showComments"
       :mvs="mvSimi"
       title="相关推荐" />
-
+    <!-- 评论 -->
     <div
       v-show="showComments"
       class="comment-area">
@@ -83,12 +95,12 @@ import {
   share,
   getComment,
 } from '@/utils/util';
+import DPlayer from 'dplayer';
 import useUserStore from '@/store/user';
 import useConfigStore from '@/store/config';
 import DecoratedButton from '@components/button/DecoratedButton.vue';
 import Mv from '@components/datalist/Mv.vue';
 import Comments from '@/components/common/Comment.vue';
-import DPlayer from 'dplayer';
 
 //设置主题
 const config = useConfigStore();
@@ -96,12 +108,11 @@ const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');
 const boxShadow = getTheme().get('shadow');
 const fontGray = inject('fontGray');
+
 //全屏模式改变播放器高度
 const videoHeight = computed(() => (config.isFullScreen ? '650px' : '520px'));
 
 const user = useUserStore();
-//播放器实例
-const video = ref<HTMLDivElement>();
 //dplayer实例
 const dplayer = ref<DPlayer>();
 
@@ -122,6 +133,8 @@ const mv = reactive<MV>({
 });
 //相似的mv推荐
 const mvSimi = reactive<MV[]>([]);
+//视频
+const mvs = reactive<MV[]>([]);
 //页面第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
 
@@ -145,7 +158,7 @@ const shareVideo = () => {
 const init = async () => {
   await nextTick();
   dplayer.value = new DPlayer({
-    container: video.value as HTMLDivElement,
+    container: document.querySelector('.players'),
     video: {
       url: mv.url as string,
       thumbnails: mv.image,
@@ -317,12 +330,54 @@ getRequset(async () => {
 @video-height: v-bind(videoHeight);
 @shadow: v-bind(boxShadow);
 @font-color-green: #1ed2a9;
+@font-color-white: #ffffff;
 
+//视频播放完结束部分
+.recommend-video {
+  position: absolute;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  .mask {
+    width: 235px;
+    height: 140px;
+    background-color: transparent;
+    position: absolute;
+    top: 0;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    span {
+      display: inline-block;
+      font-size: 40px;
+      transition: 0.4s;
+      cursor: pointer;
+      color: rgba(230, 230, 230, 0.9);
+      &:hover {
+        color: @font-color-green;
+      }
+    }
+  }
+  .image {
+    width: 235px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: @shadow;
+  }
+}
 .video-container {
   .players-container {
     height: @video-height;
     width: 80vw;
     margin-left: 4px;
+    position: relative;
+
     .players {
       border-radius: 7px;
       box-shadow: @shadow;
@@ -336,12 +391,7 @@ getRequset(async () => {
         background-color: rgba(20, 20, 20, 0.8);
         box-shadow: @shadow;
       }
-      &:deep(.dplayer-bar-wrap .dplayer-bar) {
-        border-radius: 1.5px;
-      }
-      &:deep(.dplayer-bar-wrap .dplayer-bar .dplayer-played) {
-        border-radius: 1.5px;
-      }
+
       &:deep(.dplayer-menu) {
         border-radius: 5px;
         padding: 0;
