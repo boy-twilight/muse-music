@@ -7,10 +7,9 @@
 
 ## 更新
 
-1. 此版本更新迭代了全屏模式与皮肤模式
-2. 修复了一些小 bug
-3. 预览：
-   ![全屏](https://chart-twilight.gitee.io/image/%E8%83%8C%E6%99%AF%E7%9A%AE%E8%82%A4.png)
+1. 此版本重写了video控件实现了更多功能
+2. 预览:
+3. ![预览](https://chart-twilight.gitee.io/image/%E9%A2%84%E8%A7%88.png)
 
 ---
 
