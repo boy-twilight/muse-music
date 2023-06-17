@@ -63,7 +63,7 @@ const menuData: Menu[][] = [
       label: '推荐',
       icon: '\ue73d',
       index: '/recommend',
-      spanClass: '',
+      spanClass: 'recommend',
     },
     {
       label: '音乐馆',
@@ -76,6 +76,12 @@ const menuData: Menu[][] = [
       icon: '\ue622',
       index: '/rvideo',
       spanClass: 'video',
+    },
+    {
+      label: '电台',
+      icon: '\ue693',
+      index: '/station',
+      spanClass: 'station',
     },
     {
       label: '歌手榜',
@@ -176,6 +182,9 @@ const changeActive = (index: string) => {
     .iconfont {
       margin: 0 6px;
     }
+    .recommend {
+      margin: 0 9px 0 6px;
+    }
     .hall {
       font-size: 20px;
       margin-left: 4px;
@@ -205,6 +214,11 @@ const changeActive = (index: string) => {
 
     .download {
       font-size: 16px;
+      margin: 0 8px 0 5px;
+    }
+
+    .station {
+      font-size: 18px;
       margin: 0 8px 0 5px;
     }
   }

@@ -132,6 +132,22 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        path: '/station',
+        name: 'station',
+        component: () => import('../view/RadioView.vue'),
+        meta: {
+          title: '精彩电台',
+        },
+      },
+      {
+        path: '/radio',
+        name: 'radio',
+        component: () => import('../view/RadioDetailView.vue'),
+        meta: {
+          title: '电台详情',
+        },
+      },
+      {
         path: '/download',
         name: 'download',
         component: () => import('../view/DownloadView.vue'),

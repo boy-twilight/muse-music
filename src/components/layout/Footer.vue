@@ -101,7 +101,9 @@
                         ? lovetyle
                         : dropItem.style
                     "
-                    class="iconfont"></span>
+                    :class="
+                      dropItem.isIcon1 ? 'iconfont_1' : 'iconfont'
+                    "></span>
                   {{ dropItem.name }}
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -338,9 +340,10 @@ const user = useUserStore();
 const moreDropItems: DropDownItem[] = [
   {
     name: '播放相似单曲',
-    icon: '\ue693',
-    style: 'margin-right: 7px',
+    icon: '\ue602',
+    style: 'margin: 0 7px 0 2px',
     command: 'playSimi',
+    isIcon1: true,
   },
   {
     name: '复制歌曲信息',

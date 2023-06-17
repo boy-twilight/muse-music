@@ -22,7 +22,7 @@
           <span
             v-html="dropItem.command == 'love' ? loveIcon : dropItem.icon"
             :style="dropItem.command == 'love' ? lovetyle : dropItem.style"
-            class="iconfont"></span>
+            :class="dropItem.isIcon1 ? 'iconfont_1' : 'iconfont'"></span>
           {{ dropItem.name }}
         </el-dropdown-item>
       </el-dropdown-menu>
@@ -100,20 +100,21 @@ const dropItems: DropDownItem[] = [
   {
     name: '播放',
     icon: '&#xea6e;',
-    style: 'margin: 0 8px 0 2px; font-size: 15px;',
+    style: 'margin: 0 9px 0 2px; font-size: 15px;',
     command: 'playMusic',
   },
   {
     name: '下一首播放',
     icon: '&#xe63c;',
-    style: 'margin: 0 6px 0 0px; font-size: 20px',
+    style: 'margin: 0 7px 0 0px; font-size: 20px',
     command: 'playNext',
   },
   {
     name: '播放相似单曲',
-    icon: '&#xe693;',
-    style: 'margin: 0 7px 0 3px;',
+    icon: '&#xe602;',
+    style: 'margin: 0 8px 0 3px;',
     command: 'playSimi',
+    isIcon1: true,
   },
   {
     name: '复制歌曲信息',

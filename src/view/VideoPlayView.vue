@@ -17,7 +17,7 @@
               <div class="mask">
                 <span
                   class="iconfont play"
-                  @click="playRe(index)"
+                  @click="playRe(index, mv.id)"
                   v-prevent
                   >&#xea82;</span
                 >
@@ -165,7 +165,6 @@ const reMvs = computed(() => [mv, ...mvSimi]);
 const first = inject('firstLoading') as Ref<boolean>;
 //是否展示推荐
 const showRecommned = ref<boolean>(false);
-
 //视频评论
 const videoComments = reactive<Comment[]>([]);
 //是否打开评论区
@@ -231,7 +230,7 @@ const init = async () => {
   };
 };
 //播放推荐
-const playRe = (index: number) => {
+const playRe = (index: number, id: string) => {
   if (index == 0) {
     showRecommned.value = false;
     const video = document.querySelector('.dplayer-video') as HTMLVideoElement;
@@ -240,7 +239,7 @@ const playRe = (index: number) => {
     router.push({
       name: 'video',
       query: {
-        id: mv.id,
+        id,
       },
     });
   }
