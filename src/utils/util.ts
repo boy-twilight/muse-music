@@ -155,16 +155,13 @@ export const getMusicUrls = async (
         if (exclude != undefined) {
           if (index != exclude) {
             list[index].url = item.url;
-            list[index].time = item.time;
           }
         } else {
           list[index].url = item.url;
-          list[index].time = item.time;
         }
       } else {
         list[index].available = '10';
         list[index].url = '';
-        list[index].time = '0';
       }
     });
     //判断key要不要做持久化
@@ -178,7 +175,7 @@ export const getMusicUrls = async (
 
 //从返回数据中获取音乐信息,并放入容器
 export const getMusicInfos = (ids: string[], list: Song[], data: any) => {
-  const { id, name, ar, al, fee } = data;
+  const { id, name, ar, al, fee, dt } = data;
   ids.push(id);
   list.push({
     id: id,
@@ -187,8 +184,8 @@ export const getMusicInfos = (ids: string[], list: Song[], data: any) => {
     songImage: al.picUrl,
     album: al.name,
     available: fee,
+    time: dt,
     url: '',
-    time: '',
   });
 };
 

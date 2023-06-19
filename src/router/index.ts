@@ -140,14 +140,6 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
-        path: '/radio',
-        name: 'radio',
-        component: () => import('../view/RadioDetailView.vue'),
-        meta: {
-          title: '电台详情',
-        },
-      },
-      {
         path: '/download',
         name: 'download',
         component: () => import('../view/DownloadView.vue'),

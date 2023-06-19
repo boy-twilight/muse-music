@@ -56,17 +56,19 @@ const router = useRouter();
 //设置隐藏滚动条
 const hideScroll = inject('hideScroll') as Function;
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     playlists: Playlist[];
     title?: string;
     showDelete?: boolean;
     transitionName?: string;
+    type?: string;
   }>(),
   {
     title: '',
     showDelete: false,
     transitionName: '',
+    type: 'playlist',
   }
 );
 
@@ -80,6 +82,7 @@ const toPlayList = (list: Playlist) => {
     name: 'playlist',
     query: {
       id: list.id,
+      type: props.type,
     },
   });
 };

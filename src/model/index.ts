@@ -172,3 +172,13 @@ export interface Comment {
   //恢复
   reply?: Comment[];
 }
+
+export interface Banner {
+  id: string;
+  pic: string;
+}
+
+export interface RadioType {
+  id: string;
+  name: string;
+}

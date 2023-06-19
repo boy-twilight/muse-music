@@ -198,3 +198,21 @@ export const getComments = (
 //获取热门评论
 export const getHotComments = (id: string, type: string, limit: number) =>
   request.get(`/comment/hot?id=${id}&type=${type}&limit=${limit}`);
+
+//获取电台banner
+export const getRadioBanner = () => request.get('/dj/banner');
+
+//获取电台详情
+export const getRadioDetail = (rid: string) =>
+  request.get(`/dj/detail?rid=${rid}`);
+
+//获取电台对应的歌曲
+export const getRadioSong = (rid: string, limit: number) =>
+  request.get(`/dj/program?rid=${rid}&limit=${limit}`);
+
+//获取电台分类
+export const getRadioType = () => request.get('/dj/catelist');
+
+//获取分类下的电台
+export const getRadios = (type: string) =>
+  request.get(`/dj/recommend/type?type=${type}`);

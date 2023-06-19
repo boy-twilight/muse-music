@@ -92,12 +92,15 @@ import {
   getRequset,
   share,
   getComment,
+  getSourceComments,
 } from '@/utils/util';
 import { elMessageType } from '@/model/enum';
 import {
   getPlayListDetail,
   getPlayListSong,
   getPlaylistComment,
+  getRadioDetail,
+  getRadioSong,
 } from '@/api/api';
 import { Playlist, Song, Comment } from '@/model';
 import useUserStore from '@/store/user';
@@ -123,6 +126,7 @@ const user = useUserStore();
 //路由参数
 const route = useRoute();
 const id = route.query.id + '';
+const type = route.query.type + '';
 //歌单详情
 const playList = reactive<Playlist>({
   id,
@@ -179,51 +183,113 @@ const getActive = () => {
 
 //获取歌曲详情和音乐
 getRequset(async () => {
-  //获取歌单详情
-  try {
-    const pResponse: any = await getPlayListDetail(id);
-    const {
-      playlist: { name, coverImgUrl, description, tags, creator, playCount },
-    } = pResponse;
-    playList.name = name;
-    playList.image = coverImgUrl;
-    playList.description = description;
-    playList.tag = tags;
-    playList.creator.avatarUrl = creator.avatarUrl;
-    playList.creator.nickname = creator.nickname;
-    playList.playCount = playCount;
-    //初始化歌单喜欢状态
-    user.initLoveStatus(playList, user.lovePlaylistId);
-  } catch (err: any) {
-    elMessage(elMessageType.ERROR, err.message);
-  }
-  //获取歌单下的音乐
-  try {
-    const response: any = await getPlayListSong(id);
-    const { songs } = response;
-    const ids: string[] = [];
-    songs.forEach((item: any) => {
-      //获取音乐的基本信息
-      getMusicInfos(ids, playListSong, item);
-    });
-    user.initLoveMusic(playListSong);
-    //获取音乐的url
-    getMusicUrls(ids.join(','), playListSong);
-  } catch (err: any) {
-    elMessage(elMessageType.ERROR, err.message);
-  }
+  if (type == 'playlist') {
+    //获取歌单详情
+    try {
+      const pResponse: any = await getPlayListDetail(id);
+      const {
+        playlist: { name, coverImgUrl, description, tags, creator, playCount },
+      } = pResponse;
+      playList.name = name;
+      playList.image = coverImgUrl;
+      playList.description = description;
+      playList.tag = tags;
+      playList.creator.avatarUrl = creator.avatarUrl;
+      playList.creator.nickname = creator.nickname;
+      playList.playCount = playCount;
+      //初始化歌单喜欢状态
+      user.initLoveStatus(playList, user.lovePlaylistId);
+    } catch (err: any) {
+      elMessage(elMessageType.ERROR, err.message);
+    }
+    //获取歌单下的音乐
+    try {
+      const response: any = await getPlayListSong(id);
+      const { songs } = response;
+      const ids: string[] = [];
+      songs.forEach((item: any) => {
+        //获取音乐的基本信息
+        getMusicInfos(ids, playListSong, item);
+      });
+      user.initLoveMusic(playListSong);
+      //获取音乐的url
+      getMusicUrls(ids.join(','), playListSong);
+    } catch (err: any) {
+      elMessage(elMessageType.ERROR, err.message);
+    }
 
-  //获取歌单评论
-  try {
-    const response: any = await getPlaylistComment(id, 100);
-    const { comments, hotComments } = response;
-    getComment(hotComments, playlistComments);
-    getComment(comments, playlistComments);
-    showNo.value = playlistComments.length == 0 ? true : false;
-  } catch (err: any) {
-    elMessage(elMessageType.ERROR, err.message);
+    //获取歌单评论
+    try {
+      const response: any = await getPlaylistComment(id, 100);
+      const { comments, hotComments } = response;
+      getComment(hotComments, playlistComments);
+      getComment(comments, playlistComments);
+      showNo.value = playlistComments.length == 0 ? true : false;
+    } catch (err: any) {
+      elMessage(elMessageType.ERROR, err.message);
+    }
+  } else {
+    //获取电台详情
+    try {
+      const response = await getRadioDetail(id);
+      const {
+        data: {
+          name,
+          dj: { avatarUrl, nickname },
+          picUrl,
+          desc,
+          subCount,
+        },
+      } = response;
+      playList.name = name;
+      playList.id = id;
+      playList.description = desc;
+      playList.image = picUrl;
+      playList.playCount = subCount;
+      playList.creator.nickname = nickname;
+      playList.creator.avatarUrl = avatarUrl;
+    } catch (err: any) {
+      elMessage(elMessageType.ERROR, err.message);
+    }
+
+    //获取电台歌曲
+    try {
+      const response: any = await getRadioSong(id, 100);
+      const { programs } = response;
+      const ids: string[] = [];
+      programs.forEach((item: any) => {
+        const {
+          mainSong: {
+            name,
+            id,
+            fee,
+            artists,
+            album: { name: albumName, picUrl },
+            duration,
+          },
+        } = item;
+        ids.push(id);
+        playListSong.push({
+          id,
+          name,
+          singer: artists[0].name,
+          songImage: picUrl,
+          album: albumName,
+          available: fee,
+          time: duration,
+        });
+      });
+      user.initLoveMusic(playListSong);
+      getMusicUrls(ids.join(','), playListSong);
+    } catch (err: any) {
+      elMessage(elMessageType.ERROR, err.message);
+    }
+
+    //获取电台评论
+    getSourceComments(id, '7', playlistComments, () => {
+      showNo.value = playlistComments.length == 0;
+    });
   }
-  //关闭动画
   first.value = false;
 }, first);
 </script>
