@@ -43,6 +43,20 @@
             v-show="lovePlaylist.length > 0" />
         </el-tab-pane>
         <el-tab-pane
+          :label="`电台`"
+          name="radio">
+          <NoSearch
+            v-show="loveRadio.length == 0"
+            text="暂无收藏电台" />
+          <PlayList
+            :playlists="loveRadio"
+            type="radio"
+            transitionName="list"
+            :showDelete="true"
+            @get-delete-index="deleteLoveRadio"
+            v-show="loveRadio.length > 0" />
+        </el-tab-pane>
+        <el-tab-pane
           :label="`歌手`"
           name="singer">
           <NoSearch
@@ -92,7 +106,7 @@ const fontGray = inject('fontGray');
 
 //获取用户数据
 const user = useUserStore();
-const { loveSongs, loveVideo, loveSinger, lovePlaylist, loveAlbum } =
+const { loveSongs, loveVideo, loveSinger, lovePlaylist, loveAlbum, loveRadio } =
   storeToRefs(user);
 
 //第一次加载的动画
@@ -131,6 +145,10 @@ const deleteLoveSinger = (index: number) => {
 //删除收藏的歌单
 const deleteLovePlaylist = (index: number) => {
   lovePlaylist.value.splice(index, 1);
+};
+//删除收藏的电台
+const deleteLoveRadio = (index: number) => {
+  loveRadio.value.splice(index, 1);
 };
 
 getRequset(async () => {

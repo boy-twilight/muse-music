@@ -36,9 +36,7 @@
             :name="playList.isLove ? '取消收藏' : '收藏'"
             :icon="playList.isLove ? '&#xe760;' : '&#xe761;'"
             :icon-style="playList.isLove ? 'color:#ff6a6a;' : ''"
-            @click.native="
-              user.addLove(playList, user.lovePlaylist, user.lovePlaylistId)
-            " />
+            @click.native="addLove" />
           <!-- 更多 -->
           <MoreButton
             v-if="!showSelect"
@@ -175,6 +173,14 @@ const sharePlaylist = () => {
       route.fullPath
   );
 };
+//收藏歌单
+const addLove = () => {
+  if (type == 'playlist') {
+    user.addLove(playList, user.lovePlaylist, user.lovePlaylistId);
+  } else {
+    user.addLove(playList, user.loveRadio, user.loveRadioId);
+  }
+};
 
 //活得当前活跃的tab项
 const getActive = () => {
@@ -248,6 +254,8 @@ getRequset(async () => {
       playList.playCount = subCount;
       playList.creator.nickname = nickname;
       playList.creator.avatarUrl = avatarUrl;
+      //初始化歌单喜欢状态
+      user.initLoveStatus(playList, user.loveRadioId);
     } catch (err: any) {
       elMessage(elMessageType.ERROR, err.message);
     }

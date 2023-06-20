@@ -276,6 +276,7 @@ const {
   mvDownload,
   songRecord,
   videoRecord,
+  loveRadio,
 } = storeToRefs(user);
 onMounted(() => {
   window.addEventListener('beforeunload', () => {
@@ -306,6 +307,7 @@ onMounted(() => {
     setStorAge(storageType.LOCAL, 'mvDownload', mvDownload.value);
     setStorAge(storageType.LOCAL, 'songRecord', songRecord.value);
     setStorAge(storageType.LOCAL, 'videoRecord', videoRecord.value);
+    setStorAge(storageType.LOCAL, 'loveRadio', loveRadio.value);
   });
 });
 </script>

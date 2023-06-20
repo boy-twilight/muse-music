@@ -153,6 +153,26 @@ getRequset(async () => {
     height: 50px;
     margin: 20px 0;
   }
+  .playlist {
+    @common: 186px;
+    &:deep(.content) {
+      width: 80vw;
+    }
+    &:deep(.content .list .mask) {
+      width: @common;
+      height: @common;
+    }
+    &:deep(.content .list .playcount) {
+      top: 155px;
+    }
+    &:deep(.content .list .el-image) {
+      width: @common;
+      height: @common;
+    }
+    &:deep(.content .list .name) {
+      width: @common;
+    }
+  }
 
   .r-title {
     font-weight: 520;

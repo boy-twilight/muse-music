@@ -35,6 +35,11 @@ const useUserStore = defineStore('user', () => {
   const loveAlbum = reactive<Album[]>(
     getStorage(storageType.LOCAL, 'loveAlbum') || []
   );
+  //收藏的电台
+  const loveRadio = reactive<Playlist[]>(
+    getStorage(storageType.LOCAL, 'loveRadio') || []
+  );
+
   //歌曲播放记录，实现
   const songRecord = reactive<Song[]>(
     getStorage(storageType.LOCAL, 'songRecord') || []
@@ -88,6 +93,14 @@ const useUserStore = defineStore('user', () => {
   const loveAlbumId = computed(() => {
     const map: Map<string, number> = new Map();
     loveAlbum.forEach((item, index) => {
+      map.set(item.id, index);
+    });
+    return map;
+  });
+  //喜欢歌单id对应的map
+  const loveRadioId = computed(() => {
+    const map: Map<string, number> = new Map();
+    loveRadio.forEach((item, index) => {
       map.set(item.id, index);
     });
     return map;
@@ -221,6 +234,7 @@ const useUserStore = defineStore('user', () => {
     loveVideo,
     loveSinger,
     loveAlbum,
+    loveRadio,
     songRecord,
     videoRecord,
     loveMusicId,
@@ -231,6 +245,7 @@ const useUserStore = defineStore('user', () => {
     songRecordId,
     videoRecordId,
     musicDownloadId,
+    loveRadioId,
     addLove,
     addRecord,
     addMuiscDownload,

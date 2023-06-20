@@ -78,14 +78,26 @@
             v-show="!needNoSearch[3]" />
         </el-tab-pane>
         <el-tab-pane
-          label="歌手"
-          name="singer">
+          label="电台"
+          name="radio">
           <Loading :is-loading="isLoading" />
           <NoSearch
             v-show="needNoSearch[4]"
             text="暂无搜索结果" />
+          <PlayList
+            :playlists="radioResult"
+            type="radio"
+            v-show="!needNoSearch[4]" />
+        </el-tab-pane>
+        <el-tab-pane
+          label="歌手"
+          name="singer">
+          <Loading :is-loading="isLoading" />
+          <NoSearch
+            v-show="needNoSearch[5]"
+            text="暂无搜索结果" />
           <Singer
-            v-show="!needNoSearch[4]"
+            v-show="!needNoSearch[5]"
             :singer-list="singerResult" />
         </el-tab-pane>
       </template>
@@ -165,6 +177,8 @@ const mvResult = reactive<MV[]>([]);
 const albumResult = reactive<Album[]>([]);
 //歌单搜索结果
 const playlistResult = reactive<Playlist[]>([]);
+//电台的搜索结果
+const radioResult = reactive<Playlist[]>([]);
 //歌手的搜索结果
 const singerResult = reactive<Artist[]>([]);
 //加载数据的动画
@@ -174,7 +188,14 @@ const first = inject('firstLoading') as Ref<boolean>;
 //设置隐藏滚动条
 const hideScroll = inject('hideScroll') as Function;
 //是否展示占位图片
-const needNoSearch = reactive<boolean[]>([false, false, false, false, false]);
+const needNoSearch = reactive<boolean[]>([
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+]);
 
 //根据当前的活跃请求搜索结果
 const getActive = (active: string) => {
@@ -264,7 +285,7 @@ const getActive = (active: string) => {
         isLoading.value = false;
       }, 500);
       //判断是否需要占位图片
-      needNoSearch[2] = mvResult.length == 0;
+      needNoSearch[2] = albumResult.length == 0;
     }, isLoading);
   } else if (active == 'playList' && playlistResult.length == 0) {
     getRequset(async () => {
@@ -295,7 +316,20 @@ const getActive = (active: string) => {
         isLoading.value = false;
       }, 500);
       //判断是否需要占位图片
-      needNoSearch[3] = mvResult.length == 0;
+      needNoSearch[3] = playlistResult.length == 0;
+    }, isLoading);
+  } else if (active == 'radio') {
+    getRequset(async () => {
+      try {
+      } catch (err: any) {
+        elMessage(elMessageType.ERROR, err.message);
+      }
+      //关闭动画
+      setTimeout(() => {
+        isLoading.value = false;
+      }, 500);
+      //判断是否需要占位图片
+      needNoSearch[4] = radioResult.length == 0;
     }, isLoading);
   } else if (active == 'singer' && singerResult.length == 0) {
     getRequset(async () => {
@@ -323,7 +357,7 @@ const getActive = (active: string) => {
         isLoading.value = false;
       }, 500);
       //判断是否需要占位图片
-      needNoSearch[4] = mvResult.length == 0;
+      needNoSearch[5] = singerResult.length == 0;
     }, isLoading);
   }
 };
