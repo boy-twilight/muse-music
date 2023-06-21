@@ -122,6 +122,8 @@ export interface Artist {
   alias?: string[];
   briefDesc?: string;
   isLove?: boolean;
+  mvSize?: string;
+  albumSize?: string;
 }
 
 //歌手细节

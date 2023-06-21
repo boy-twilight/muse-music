@@ -67,6 +67,7 @@ const openSelect = (open: boolean) => {
 };
 //关闭批量操作
 const closeSelect = (close: boolean) => {
+  hideScroll();
   showSelect.value = close;
 };
 

@@ -6,6 +6,37 @@
       :songs="musicResult"
       :song-id-mapper="songIdMapper"
       @close-select="closeSelect" />
+
+    <div
+      class="result-singer"
+      v-show="firstSinger.name"
+      @click="
+        router.push({
+          name: 'artist',
+          query: {
+            id: firstSinger.id,
+            score: firstSinger.score,
+          },
+        })
+      ">
+      <img
+        :src="firstSinger.avatar"
+        class="left-singer" />
+      <div class="right-singer">
+        <h4 class="singer-name">歌手：{{ firstSinger.name }}</h4>
+        <p class="singer-info">
+          <span>专辑：{{ firstSinger.albumSize }}</span>
+          <span>视频：{{ firstSinger.mvSize }}</span>
+        </p>
+      </div>
+      <DecoratedButton
+        :name="firstSinger.isLove ? '取消关注' : '关注歌手'"
+        :icon="firstSinger.isLove ? '&#xe760;' : '&#xe761;'"
+        :icon-style="firstSinger.isLove ? 'color:#ff6a6a;' : ''"
+        @click.native.stop="
+          user.addLove(firstSinger, user.loveSinger, user.loveSingerId)
+        " />
+    </div>
     <Tab
       v-show="!showSelect"
       @getActive="getActive"
@@ -29,8 +60,7 @@
             </div>
             <SongList
               :songs="musicResult"
-              :song-id-mapper="songIdMapper"
-              :height="tableHeight" />
+              :song-id-mapper="songIdMapper" />
           </div>
         </el-tab-pane>
         <el-tab-pane
@@ -117,6 +147,7 @@ import {
   formatTime,
   getRequset,
   getMusicInfos,
+  getTheme,
 } from '@/utils/util';
 import { searchMusic, getMusicDetail } from '@/api/api';
 import useUserStore from '@/store/user';
@@ -131,14 +162,40 @@ import PlayList from '@components/datalist/PlayList.vue';
 import Singer from '@components/datalist/Singer.vue';
 import Loading from '@components/common/Loading.vue';
 import NoSearch from '@components/common/NoSearch.vue';
+import { useRouter } from 'vue-router';
 import useConfigStore from '@/store/config';
 
 //配置主题
-//全屏模式改变table的高
 const config = useConfigStore();
-const { isFullScreen } = storeToRefs(config);
-const tableHeight = computed(() => (isFullScreen.value ? '580px' : '440px'));
+const { bgMode } = storeToRefs(config);
 const fontGray = inject('fontGray');
+const boxShadow = getTheme().get('shadow');
+const fontColor = getTheme().get('fontColor');
+const singerBg = computed(() => {
+  if (bgMode.value == 'skin') {
+    return 'rgba(220, 220, 220, 0.1)';
+  } else {
+    if (fontColor?.value == '#ffffff') {
+      return 'rgba(30, 30, 30, 0.2)';
+    } else {
+      return 'rgba(220, 220, 220, 0.25)';
+    }
+  }
+});
+const buttonBg = computed(() => {
+  if (bgMode.value == 'skin') {
+    return 'rgba(230, 230, 230, 0.25)';
+  } else {
+    if (fontColor?.value == '#ffffff') {
+      return 'rgba(30, 30, 30, 1)';
+    } else {
+      return 'rgba(220, 220, 220, 0.8)';
+    }
+  }
+});
+
+//路由器
+const router = useRouter();
 
 //获取用户喜欢数据
 const user = useUserStore();
@@ -147,6 +204,7 @@ const { loveMusicId, loveSongs } = storeToRefs(user);
 const showSelect = ref<boolean>(false);
 //关闭批量操作
 const closeSelect = (close: boolean) => {
+  hideScroll();
   showSelect.value = close;
 };
 //喜欢歌曲
@@ -181,6 +239,19 @@ const playlistResult = reactive<Playlist[]>([]);
 const radioResult = reactive<Playlist[]>([]);
 //歌手的搜索结果
 const singerResult = reactive<Artist[]>([]);
+//第一位歌手
+const firstSinger = computed(() =>
+  singerResult.length > 0
+    ? singerResult[0]
+    : ({
+        name: '',
+        avatar: '',
+        id: '',
+        score: '',
+        albumSize: '',
+        mvSize: '',
+      } as Artist)
+);
 //加载数据的动画
 const isLoading = ref<boolean>(false);
 //页面第一次加载的动画
@@ -349,34 +420,6 @@ const getActive = (active: string) => {
       //判断是否需要占位图片
       needNoSearch[4] = radioResult.length == 0;
     }, isLoading);
-  } else if (active == 'singer' && singerResult.length == 0) {
-    getRequset(async () => {
-      try {
-        const response: any = await searchMusic(100, 60, keyWord);
-        const {
-          result: { artists },
-        } = response;
-        if (artists && artists.length > 0) {
-          artists.forEach((item: any) => {
-            const { id, name, picUrl, accountId } = item;
-            singerResult.push({
-              id,
-              name,
-              avatar: picUrl,
-              score: accountId,
-            });
-          });
-        }
-      } catch (err: any) {
-        elMessage(elMessageType.ERROR, err.message);
-      }
-      //关闭动画
-      setTimeout(() => {
-        isLoading.value = false;
-      }, 500);
-      //判断是否需要占位图片
-      needNoSearch[5] = singerResult.length == 0;
-    }, isLoading);
   }
 };
 //获取音乐搜索结果
@@ -404,6 +447,30 @@ getRequset(async () => {
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
+  //获取搜索歌手
+  try {
+    const response: any = await searchMusic(100, 60, keyWord);
+    const {
+      result: { artists },
+    } = response;
+    if (artists && artists.length > 0) {
+      artists.forEach((item: any) => {
+        const { id, name, picUrl, accountId, albumSize, mvSize } = item;
+        singerResult.push({
+          id,
+          name,
+          avatar: picUrl,
+          score: accountId,
+          albumSize,
+          mvSize,
+        });
+      });
+    }
+    needNoSearch[5] = singerResult.length == 0;
+  } catch (err: any) {
+    elMessage(elMessageType.ERROR, err.message);
+  }
+
   //关闭动画
   first.value = false;
 }, first);
@@ -412,7 +479,73 @@ getRequset(async () => {
 <style lang="less" scoped>
 @font-color-gray: v-bind(fontGray);
 @font-color-green: #1ed2a9;
+@font-color: v-bind(fontColor);
+@box-shadow: v-bind(boxShadow);
+
+.result-singer {
+  cursor: pointer;
+  width: 80vw;
+  margin: 5px 0;
+  display: flex;
+  padding: 15px 0 15px 30px;
+  background-color: v-bind(singerBg);
+  align-items: center;
+  border-radius: 5px;
+  position: relative;
+  .left-singer {
+    height: 70px;
+    width: 70px;
+    border-radius: 50%;
+    box-shadow: @box-shadow;
+  }
+
+  .el-button {
+    height: 30px;
+    width: 100px;
+    font-size: 12px;
+    border-radius: 15px;
+    position: absolute;
+    right: 60px;
+    background-color: v-bind(buttonBg);
+    &:deep(span) {
+      color: @font-color;
+    }
+    box-shadow: none;
+    &:deep(.iconfont) {
+      font-size: 15px;
+    }
+    &:active {
+      background-color: rgba(230, 230, 230, 0.4);
+    }
+  }
+  .right-singer {
+    margin-left: 20px;
+    .singer-name {
+      font-size: 17px;
+      letter-spacing: 1px;
+      color: @font-color;
+      font-weight: 530;
+      &:hover {
+        color: @font-color-green;
+      }
+    }
+    .singer-info {
+      margin-top: 5px;
+      font-size: 13px;
+      color: @font-color-gray;
+      span {
+        &:last-child {
+          margin-left: 15px;
+        }
+        &:hover {
+          color: @font-color-green;
+        }
+      }
+    }
+  }
+}
 .search-container {
+  padding-top: 0 !important;
   .loading {
     position: absolute;
     top: 0;

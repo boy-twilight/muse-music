@@ -155,6 +155,7 @@ const hideScroll = inject('hideScroll') as Function;
 const showSelect = ref<boolean>(false);
 //关闭批量操作
 const closeSelect = (close: boolean) => {
+  hideScroll();
   showSelect.value = close;
 };
 //打开批量操作

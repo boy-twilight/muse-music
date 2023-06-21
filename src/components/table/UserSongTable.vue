@@ -17,8 +17,7 @@
       :songs="songs"
       :song-id-mapper="songIdMapper"
       :sort="sortChoice"
-      :is-cancel-sort="cancelSort"
-      :height="height" />
+      :is-cancel-sort="cancelSort" />
   </div>
 </template>
 
@@ -34,11 +33,6 @@ import PlayButton from '@components/button/PlayButton.vue';
 import DecoratedButton from '@components/button/DecoratedButton.vue';
 import SearchButton from '@components/button/SearchButton.vue';
 import SortButton from '@components/button/SortButton.vue';
-import useConfigStore from '@/store/config';
-
-//主题配置
-const config = useConfigStore();
-const { isFullScreen } = storeToRefs(config);
 
 //获取用户播放数据
 const user = useUserStore();
@@ -82,15 +76,6 @@ const buttonName = computed(() => {
     return '清空播放记录';
   } else {
     return '清空下载记录';
-  }
-});
-
-//表格高度
-const height = computed(() => {
-  if (isFullScreen.value) {
-    return props.pageName == 'RecentPlayView' ? '560px' : '580px';
-  } else {
-    return props.pageName == 'RecentPlayView' ? '420px' : '440px';
   }
 });
 

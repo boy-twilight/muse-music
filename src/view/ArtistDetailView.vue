@@ -22,8 +22,9 @@
           </p>
           <p class="job">职业：歌手、词曲创作者</p>
         </div>
-        <span class="fans">粉丝数：{{ score }}</span>
+        <span class="fans">粉丝数：{{ singer.score }}</span>
         <div class="header-operation">
+          <PlayButton :songs="hotSongList" />
           <DecoratedButton
             :name="singer.isLove ? '取消关注' : '关注'"
             :icon="singer.isLove ? '&#xe760;' : '&#xe761;'"
@@ -31,9 +32,6 @@
             @click.native="
               user.addLove(singer, user.loveSinger, user.loveSingerId)
             " />
-          <DecoratedButton
-            icon="&#xe693;"
-            name="歌手电台" />
           <MoreButton
             v-if="!showSelect"
             :share-to="shareSinger"
@@ -91,7 +89,7 @@
               <template
                 v-for="item in introduce"
                 :key="item.title"
-                v-if="introduce.length > 0">
+                v-show="introduce.length > 0">
                 <h4>{{ item.title }}</h4>
                 <p>{{ item.content }}</p>
               </template>
@@ -135,6 +133,7 @@ import SongList from '@components/table/SongList.vue';
 import OnlineBatch from '@components/batch/OnlineBatch.vue';
 import Loading from '@components/common/Loading.vue';
 import NoSearch from '@/components/common/NoSearch.vue';
+import PlayButton from '@/components/button/PlayButton.vue';
 
 //主题设置
 const fontColor = getTheme().get('fontColor');
@@ -147,7 +146,7 @@ const user = useUserStore();
 //路由参数获取
 const route = useRoute();
 const id = route.query.id + '';
-const score = route.query.score;
+const score = route.query.score + '';
 //加载数据的动画
 const isLoading = ref<boolean>(false);
 //页面第一次加载的动画
@@ -160,7 +159,7 @@ const needNoSearch = reactive<boolean[]>([false, false]);
 //歌手基本信息
 const singer = reactive<Artist>({
   name: '',
-  score: Math.floor(Number.parseInt(score as string) / 10000) + '万',
+  score,
   id: id,
   avatar: '',
   alias: [],
@@ -183,6 +182,7 @@ const artistAlbum = reactive<Album[]>([]);
 const showSelect = ref<boolean>(false);
 //关闭批量操作
 const closeSelect = (close: boolean) => {
+  hideScroll();
   showSelect.value = close;
 };
 //打开批量操作
