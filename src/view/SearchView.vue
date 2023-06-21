@@ -482,70 +482,70 @@ getRequset(async () => {
 @font-color: v-bind(fontColor);
 @box-shadow: v-bind(boxShadow);
 
-.result-singer {
-  cursor: pointer;
-  width: 80vw;
-  margin: 5px 0;
-  display: flex;
-  padding: 15px 0 15px 30px;
-  background-color: v-bind(singerBg);
-  align-items: center;
-  border-radius: 5px;
-  position: relative;
-  .left-singer {
-    height: 70px;
-    width: 70px;
-    border-radius: 50%;
-    box-shadow: @box-shadow;
-  }
+.search-container {
+  padding-top: 0 !important;
+  .result-singer {
+    cursor: pointer;
+    width: 82vw;
+    margin: 5px 0;
+    display: flex;
+    padding: 15px 0 15px 1vw;
+    background-color: v-bind(singerBg);
+    align-items: center;
+    border-radius: 5px;
+    position: relative;
+    .left-singer {
+      height: 70px;
+      width: 70px;
+      border-radius: 50%;
+      box-shadow: @box-shadow;
+    }
 
-  .el-button {
-    height: 30px;
-    width: 100px;
-    font-size: 12px;
-    border-radius: 15px;
-    position: absolute;
-    right: 60px;
-    background-color: v-bind(buttonBg);
-    &:deep(span) {
-      color: @font-color;
-    }
-    box-shadow: none;
-    &:deep(.iconfont) {
-      font-size: 15px;
-    }
-    &:active {
-      background-color: rgba(230, 230, 230, 0.4);
-    }
-  }
-  .right-singer {
-    margin-left: 20px;
-    .singer-name {
-      font-size: 17px;
-      letter-spacing: 1px;
-      color: @font-color;
-      font-weight: 530;
-      &:hover {
-        color: @font-color-green;
+    .el-button {
+      height: 30px;
+      width: 100px;
+      font-size: 12px;
+      border-radius: 15px;
+      position: absolute;
+      right: 30px;
+      background-color: v-bind(buttonBg);
+      &:deep(span) {
+        color: @font-color;
+      }
+      box-shadow: none;
+      &:deep(.iconfont) {
+        font-size: 15px;
+      }
+      &:active {
+        background-color: rgba(230, 230, 230, 0.4);
       }
     }
-    .singer-info {
-      margin-top: 5px;
-      font-size: 13px;
-      color: @font-color-gray;
-      span {
-        &:last-child {
-          margin-left: 15px;
-        }
+    .right-singer {
+      margin-left: 20px;
+      .singer-name {
+        font-size: 17px;
+        letter-spacing: 1px;
+        color: @font-color;
+        font-weight: 530;
         &:hover {
           color: @font-color-green;
         }
       }
+      .singer-info {
+        margin-top: 5px;
+        font-size: 13px;
+        color: @font-color-gray;
+        span {
+          &:last-child {
+            margin-left: 15px;
+          }
+          &:hover {
+            color: @font-color-green;
+          }
+        }
+      }
     }
   }
-}
-.search-container {
-  padding-top: 0 !important;
   .loading {
     position: absolute;
     top: 0;
