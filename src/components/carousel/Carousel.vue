@@ -7,15 +7,17 @@
     <el-carousel-item
       v-for="picture in pictures"
       :key="picture">
-      <img :src="picture" />
+      <img :src="picture.pic" />
     </el-carousel-item>
   </el-carousel>
 </template>
 
 <script lang="ts" setup>
+import { Banner } from '@/model';
+
 defineProps<{
   //图片数组
-  pictures: string[];
+  pictures: Banner[];
   //走马灯类型，卡片或者其它
   type: string;
   //走马灯高度

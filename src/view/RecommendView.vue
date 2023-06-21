@@ -1,7 +1,7 @@
 <template>
   <div class="main-container">
     <Carousel
-      :pictures="pictures.slice(0, 5)"
+      :pictures="banners.slice(0, 5)"
       type="card"
       height="230px" />
     <!-- 推荐歌单 -->
@@ -53,7 +53,7 @@ import {
   getRequset,
 } from '@/utils/util';
 import { elMessageType } from '@/model/enum';
-import { Playlist, Song, MV } from '@/model';
+import { Playlist, Song, MV, Banner } from '@/model';
 import Carousel from '@components/carousel/Carousel.vue';
 import PlayList from '@components/datalist/PlayList.vue';
 import Mv from '@components/datalist/Mv.vue';
@@ -71,7 +71,7 @@ const { songList, current, isPlay, playProcess, playTime, songListId } =
 const user = useUserStore();
 
 //轮播图片
-const pictures = reactive<string[]>([]);
+const banners = reactive<Banner[]>([]);
 //推荐歌单
 const playLists = reactive<Playlist[]>([]);
 //推荐歌曲
@@ -119,11 +119,15 @@ getRequset(async () => {
   //获取轮播图片
   try {
     const response: any = await getBanner();
-    const { banners } = response;
-    banners.forEach((banner: any) => {
-      const { imageUrl } = banner;
-      pictures.push(imageUrl);
+    const { banners: banner } = response;
+    banner.forEach((item: any) => {
+      const { imageUrl, targetId } = item;
+      banners.push({
+        id: targetId,
+        pic: imageUrl,
+      });
     });
+    console.log(banners);
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }

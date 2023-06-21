@@ -22,7 +22,7 @@
           </p>
           <p class="job">职业：歌手、词曲创作者</p>
         </div>
-        <span class="fans">粉丝数：{{ singer.score }}</span>
+        <span class="fans">粉丝数：{{ score }}</span>
         <div class="header-operation">
           <DecoratedButton
             :name="singer.isLove ? '取消关注' : '关注'"

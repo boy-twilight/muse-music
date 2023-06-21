@@ -321,6 +321,24 @@ const getActive = (active: string) => {
   } else if (active == 'radio') {
     getRequset(async () => {
       try {
+        const response: any = await searchMusic(1009, 60, keyWord);
+        const {
+          result: { djRadios },
+        } = response;
+        if (djRadios && djRadios.length > 0) {
+          djRadios.forEach((item: any) => {
+            const { id, name, picUrl, playCount } = item;
+            radioResult.push({
+              name,
+              id,
+              image: picUrl,
+              playCount,
+              creator: { nickname: '', avatarUrl: '' },
+              tag: [],
+              description: '',
+            });
+          });
+        }
       } catch (err: any) {
         elMessage(elMessageType.ERROR, err.message);
       }
