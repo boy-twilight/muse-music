@@ -6,7 +6,7 @@
       :songs="musicResult"
       :song-id-mapper="songIdMapper"
       @close-select="closeSelect" />
-
+    <!-- 顶部歌手搜索结果展示 -->
     <div
       class="result-singer"
       v-show="firstSinger.name"
@@ -97,26 +97,26 @@
             v-show="!needNoSearch[2]" />
         </el-tab-pane>
         <el-tab-pane
-          label="歌单"
-          name="playList">
+          label="电台"
+          name="radio">
           <Loading :is-loading="isLoading" />
           <NoSearch
             v-show="needNoSearch[3]"
             text="暂无搜索结果" />
           <PlayList
-            :playlists="playlistResult"
+            :playlists="radioResult"
+            type="radio"
             v-show="!needNoSearch[3]" />
         </el-tab-pane>
         <el-tab-pane
-          label="电台"
-          name="radio">
+          label="歌单"
+          name="playList">
           <Loading :is-loading="isLoading" />
           <NoSearch
             v-show="needNoSearch[4]"
             text="暂无搜索结果" />
           <PlayList
-            :playlists="radioResult"
-            type="radio"
+            :playlists="playlistResult"
             v-show="!needNoSearch[4]" />
         </el-tab-pane>
         <el-tab-pane
@@ -130,13 +130,92 @@
             v-show="!needNoSearch[5]"
             :singer-list="singerResult" />
         </el-tab-pane>
+        <el-tab-pane
+          label="歌词"
+          name="lyric">
+          <Loading :is-loading="isLoading" />
+          <NoSearch
+            v-show="needNoSearch[6]"
+            text="暂无搜索结果" />
+          <div class="lyric-container">
+            <div
+              class="lyric"
+              v-for="(song, index) in lyricResult"
+              :key="song.id">
+              <div class="lyric-operation">
+                <span
+                  class="iconfont play-music"
+                  @click="play(song)"
+                  v-prevent
+                  >&#xea6e;</span
+                >
+                <span
+                  class="iconfont music-info"
+                  @click="shareMuiscInfo(song)"
+                  v-prevent
+                  >&#xe63b;</span
+                >
+                <span
+                  class="iconfont"
+                  @click="downloadLyric(song)"
+                  v-prevent
+                  >&#xe61a;</span
+                >
+                <span
+                  class="open-lyric"
+                  @click="openLyric(index)"
+                  v-prevent
+                  >{{
+                    lyricLen[index] == song.lyric?.length
+                      ? '收起歌词'
+                      : '展开歌词'
+                  }}</span
+                >
+                <span
+                  class="copy-lyric"
+                  @click="
+                    share(
+                      song.name + '\r\n' + song.lyric!.join('\r\n'),
+                      '歌词复制成功！'
+                    )
+                  "
+                  v-prevent
+                  >复制歌词</span
+                >
+              </div>
+              <div class="lyric-left">
+                <p class="song-name">
+                  <span>{{ song.name }}</span
+                  ><span
+                    class="is-vip iconfont"
+                    v-show="song.available == '10' || song.available == '1'"
+                    >&#xe607;</span
+                  >
+                </p>
+                <p
+                  v-for="(item, index1) in song.lyric"
+                  :key="index1"
+                  v-show="index1 < lyricLen[index]">
+                  {{ item.trim() }}
+                </p>
+              </div>
+              <div class="lyric-center">
+                <span>{{ song.singer }}</span>
+              </div>
+              <div class="lyric-right">
+                <span>{{ song.album }}</span>
+                <span>{{ transformTime(song.time as string) }}</span>
+              </div>
+            </div>
+          </div>
+        </el-tab-pane>
       </template>
     </Tab>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, inject, Ref, computed } from 'vue';
+import { ref, reactive, inject, Ref, computed, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { MV, Song, Album, Playlist, Artist } from '@/model';
@@ -148,6 +227,10 @@ import {
   getRequset,
   getMusicInfos,
   getTheme,
+  transformTime,
+  downloadLyric,
+  share,
+  shareMuiscInfo,
 } from '@/utils/util';
 import { searchMusic, getMusicDetail } from '@/api/api';
 import useUserStore from '@/store/user';
@@ -164,6 +247,7 @@ import Loading from '@components/common/Loading.vue';
 import NoSearch from '@components/common/NoSearch.vue';
 import { useRouter } from 'vue-router';
 import useConfigStore from '@/store/config';
+import useFooterStore from '@/store/footer';
 
 //配置主题
 const config = useConfigStore();
@@ -218,6 +302,10 @@ const loveAll = () => {
   });
 };
 
+const footer = useFooterStore();
+const { songListId, songList, current, playProcess, playTime, isPlay } =
+  storeToRefs(footer);
+
 //获取搜索关键词
 const route = useRoute();
 const keyWord = route.query.keyWord + '';
@@ -239,7 +327,7 @@ const playlistResult = reactive<Playlist[]>([]);
 const radioResult = reactive<Playlist[]>([]);
 //歌手的搜索结果
 const singerResult = reactive<Artist[]>([]);
-//第一位歌手
+//第一位歌手，用以页面顶部展示
 const firstSinger = computed(() =>
   singerResult.length > 0
     ? singerResult[0]
@@ -252,6 +340,8 @@ const firstSinger = computed(() =>
         mvSize: '',
       } as Artist)
 );
+//歌词的搜索结果
+const lyricResult = reactive<Song[]>([]);
 //加载数据的动画
 const isLoading = ref<boolean>(false);
 //页面第一次加载的动画
@@ -266,7 +356,49 @@ const needNoSearch = reactive<boolean[]>([
   false,
   false,
   false,
+  false,
 ]);
+//当前展示歌词的长度
+const lyricLen = reactive<number[]>([]);
+//展开或者关闭歌词
+const openLyric = (index: number) => {
+  lyricLen[index] =
+    lyricLen[index] == lyricResult[index].lyric!.length
+      ? 3
+      : lyricResult[index].lyric!.length;
+};
+//播放歌词对应的音乐
+const play = async (song: Song) => {
+  if (song.available == '0' || song.available == '8') {
+    const index = songListId.value.get(song.id);
+    if (index == undefined) {
+      user.addRecord(song, user.songRecord, user.loveMusicId);
+      if (current.value == 0) {
+        if (isPlay) {
+          isPlay.value = false;
+        }
+        playProcess.value = 0;
+        playTime.value = 0;
+        songList.value.unshift(song);
+        await nextTick();
+        isPlay.value = true;
+      } else {
+        songList.value.unshift(song);
+        current.value = 0;
+      }
+    } else {
+      if (current.value != index) {
+        current.value = index;
+      } else {
+        isPlay.value = true;
+      }
+    }
+  } else if (song.available == '1') {
+    elMessage(elMessageType.INFO, '此歌曲为vip专属');
+  } else if (song.available == '10') {
+    elMessage(elMessageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
+  }
+};
 
 //根据当前的活跃请求搜索结果
 const getActive = (active: string) => {
@@ -358,37 +490,6 @@ const getActive = (active: string) => {
       //判断是否需要占位图片
       needNoSearch[2] = albumResult.length == 0;
     }, isLoading);
-  } else if (active == 'playList' && playlistResult.length == 0) {
-    getRequset(async () => {
-      try {
-        const response: any = await searchMusic(1000, 60, keyWord);
-        const {
-          result: { playlists },
-        } = response;
-        if (playlists && playlists.length > 0) {
-          playlists.forEach((item: any) => {
-            const { id, name, coverImgUrl, playCount } = item;
-            playlistResult.push({
-              id,
-              name,
-              image: coverImgUrl,
-              playCount,
-              description: '',
-              tag: [],
-              creator: { nickname: '', avatarUrl: '' },
-            });
-          });
-        }
-      } catch (err: any) {
-        elMessage(elMessageType.ERROR, err.message);
-      }
-      //关闭动画
-      setTimeout(() => {
-        isLoading.value = false;
-      }, 500);
-      //判断是否需要占位图片
-      needNoSearch[3] = playlistResult.length == 0;
-    }, isLoading);
   } else if (active == 'radio') {
     getRequset(async () => {
       try {
@@ -418,7 +519,78 @@ const getActive = (active: string) => {
         isLoading.value = false;
       }, 500);
       //判断是否需要占位图片
-      needNoSearch[4] = radioResult.length == 0;
+      needNoSearch[3] = radioResult.length == 0;
+    }, isLoading);
+  } else if (active == 'playList' && playlistResult.length == 0) {
+    getRequset(async () => {
+      try {
+        const response: any = await searchMusic(1000, 60, keyWord);
+        const {
+          result: { playlists },
+        } = response;
+        if (playlists && playlists.length > 0) {
+          playlists.forEach((item: any) => {
+            const { id, name, coverImgUrl, playCount } = item;
+            playlistResult.push({
+              id,
+              name,
+              image: coverImgUrl,
+              playCount,
+              description: '',
+              tag: [],
+              creator: { nickname: '', avatarUrl: '' },
+            });
+          });
+        }
+      } catch (err: any) {
+        elMessage(elMessageType.ERROR, err.message);
+      }
+      //关闭动画
+      setTimeout(() => {
+        isLoading.value = false;
+      }, 500);
+      //判断是否需要占位图片
+      needNoSearch[4] = playlistResult.length == 0;
+    }, isLoading);
+  } else if (active == 'lyric') {
+    //获取歌词的搜索结果并进行处理
+    getRequset(async () => {
+      try {
+        const response: any = await searchMusic(1006, 60, keyWord);
+        const {
+          result: { songs },
+        } = response;
+        if (songs && songs.length > 0) {
+          //获取id
+          const ids = songs.map((item: any) => item.id).join(',');
+          //重新获取图片
+          const dResponse: any = await getMusicDetail(ids);
+          const { songs: muiscs } = dResponse;
+          muiscs.forEach((item: any) => {
+            lyricLen.push(3);
+            getMusicInfos([] as string[], lyricResult, item);
+          });
+          //获取歌词
+          songs.forEach((item: any, index: number) => {
+            const {
+              lyrics: { txt },
+            } = item;
+            lyricResult[index].lyric = txt.split('\n');
+          });
+          //获取搜索歌曲的urls
+          getMusicUrls(ids, lyricResult);
+          //初始化歌曲喜欢状态
+          user.initLoveMusic(musicResult);
+        }
+      } catch (err: any) {
+        elMessage(elMessageType.ERROR, err.message);
+      }
+      //关闭动画
+      setTimeout(() => {
+        isLoading.value = false;
+      }, 500);
+      //判断是否需要占位图片
+      needNoSearch[6] = lyricResult.length == 0;
     }, isLoading);
   }
 };
@@ -481,6 +653,119 @@ getRequset(async () => {
 @font-color-green: #1ed2a9;
 @font-color: v-bind(fontColor);
 @box-shadow: v-bind(boxShadow);
+
+.lyric-container {
+  display: flex;
+  flex-direction: column;
+  width: 80vw;
+  .lyric {
+    width: 80vw;
+    position: relative;
+
+    display: flex;
+    margin: 10px 0;
+    .lyric-operation {
+      height: 100px;
+      width: 80vw;
+      position: absolute;
+      top: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      span {
+        cursor: pointer;
+        color: @font-color-gray;
+        &:hover {
+          color: @font-color-green;
+        }
+      }
+      .copy-lyric,
+      .open-lyric {
+        font-size: 12px;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        letter-spacing: 1px;
+        z-index: 10;
+      }
+      .open-lyric {
+        right: 80px;
+      }
+      &:hover .iconfont {
+        opacity: 1;
+      }
+
+      .iconfont {
+        opacity: 0;
+        &:first-child {
+          margin-left: 100px;
+        }
+        margin-right: 10px;
+      }
+
+      .music-info {
+        padding-top: 1px;
+        font-size: 15px;
+      }
+      .play-music {
+        padding-top: 2px;
+        font-size: 14px;
+      }
+    }
+    .lyric-left {
+      flex: 3;
+      display: flex;
+      flex-direction: column;
+      p {
+        height: 26px;
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        color: @font-color-gray;
+      }
+      .song-name {
+        span {
+          letter-spacing: 1px;
+          color: @font-color;
+          &:not(.iconfont) {
+            font-size: 12px;
+          }
+        }
+        .is-vip {
+          padding-top: 0.5px;
+          display: inline-block;
+          font-size: 12px;
+          color: @font-color-green;
+          margin-left: 4px;
+        }
+      }
+    }
+    .lyric-center,
+    .lyric-right {
+      flex: 1;
+      display: flex;
+      span {
+        height: 26px;
+        display: inline-block;
+        line-height: 26px;
+        letter-spacing: 1px;
+        font-size: 12px;
+        color: @font-color;
+      }
+    }
+    .lyric-right {
+      position: relative;
+      span {
+        &:last-child {
+          position: absolute;
+          right: 0;
+          color: @font-color-gray;
+          font-size: 11px !important;
+        }
+      }
+    }
+  }
+}
 
 .search-container {
   padding-top: 0 !important;

@@ -8,8 +8,9 @@
 ## 更新
 
 1. 此版本更新了电台页
-2. 预览:
-3. ![预览](https://chart-twilight.gitee.io/image/%E7%94%B5%E5%8F%B0%E9%A1%B5.png)
+2. 更新了搜索歌词和电台
+3. 预览:
+4. ![预览](https://chart-twilight.gitee.io/image/%E7%94%B5%E5%8F%B0%E9%A1%B5.png)
 
 ---
 

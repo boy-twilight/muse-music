@@ -5,7 +5,7 @@
         <div
           class="recommend-container"
           v-show="showRecommned">
-          <h4 v-show="reMvs.length > 1">精彩视频</h4>
+          <h4 v-show="reMvs.length > 1">相关推荐</h4>
           <div class="content">
             <div
               class="recommend-video"
@@ -370,6 +370,7 @@ getRequset(async () => {
   first.value = false;
 }, first);
 
+//卸载播放器，取消事件监听
 onBeforeUnmount(() => {
   const video = document.querySelector('.dplayer-video') as HTMLVideoElement;
   video.onended = null;

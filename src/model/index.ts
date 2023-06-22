@@ -41,6 +41,8 @@ export interface Song {
   available?: string;
   //用户是否喜欢这首歌
   isLove?: boolean;
+  //歌词
+  lyric?: string[];
 }
 
 //歌单

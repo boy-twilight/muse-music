@@ -108,9 +108,9 @@ const playSong = async (song: Song) => {
         isPlay.value = true;
       }
     }
-  } else if ((song.available = '1')) {
+  } else if (song.available == '1') {
     elMessage(elMessageType.INFO, '此歌曲为vip专属');
-  } else if ((song.available = '10')) {
+  } else if (song.available == '10') {
     elMessage(elMessageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
   }
 };
