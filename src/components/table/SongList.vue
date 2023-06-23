@@ -226,7 +226,8 @@ const enter = (row: Song) => {
 };
 //当鼠标离开时
 const leave = (row: Song) => {
-  getNodeList()[props.songIdMapper.get(row.id) as number].style.opacity = '0';
+  if (getNodeList()[props.songIdMapper.get(row.id) as number])
+    getNodeList()[props.songIdMapper.get(row.id) as number].style.opacity = '0';
 };
 
 //播放相关

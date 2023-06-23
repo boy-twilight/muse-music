@@ -490,7 +490,7 @@ const getActive = (active: string) => {
       //判断是否需要占位图片
       needNoSearch[2] = albumResult.length == 0;
     }, isLoading);
-  } else if (active == 'radio') {
+  } else if (active == 'radio' && radioResult.length == 0) {
     getRequset(async () => {
       try {
         const response: any = await searchMusic(1009, 60, keyWord);
@@ -552,7 +552,7 @@ const getActive = (active: string) => {
       //判断是否需要占位图片
       needNoSearch[4] = playlistResult.length == 0;
     }, isLoading);
-  } else if (active == 'lyric') {
+  } else if (active == 'lyric' && lyricResult.length == 0) {
     //获取歌词的搜索结果并进行处理
     getRequset(async () => {
       try {
@@ -594,8 +594,9 @@ const getActive = (active: string) => {
     }, isLoading);
   }
 };
-//获取音乐搜索结果
+
 getRequset(async () => {
+  //获取音乐搜索结果
   try {
     const response: any = await searchMusic(1, 100, keyWord);
     const {
@@ -653,119 +654,6 @@ getRequset(async () => {
 @font-color-green: #1ed2a9;
 @font-color: v-bind(fontColor);
 @box-shadow: v-bind(boxShadow);
-
-.lyric-container {
-  display: flex;
-  flex-direction: column;
-  width: 80vw;
-  .lyric {
-    width: 80vw;
-    position: relative;
-
-    display: flex;
-    margin: 10px 0;
-    .lyric-operation {
-      height: 100px;
-      width: 80vw;
-      position: absolute;
-      top: 0;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      span {
-        cursor: pointer;
-        color: @font-color-gray;
-        &:hover {
-          color: @font-color-green;
-        }
-      }
-      .copy-lyric,
-      .open-lyric {
-        font-size: 12px;
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        letter-spacing: 1px;
-        z-index: 10;
-      }
-      .open-lyric {
-        right: 80px;
-      }
-      &:hover .iconfont {
-        opacity: 1;
-      }
-
-      .iconfont {
-        opacity: 0;
-        &:first-child {
-          margin-left: 100px;
-        }
-        margin-right: 10px;
-      }
-
-      .music-info {
-        padding-top: 1px;
-        font-size: 15px;
-      }
-      .play-music {
-        padding-top: 2px;
-        font-size: 14px;
-      }
-    }
-    .lyric-left {
-      flex: 3;
-      display: flex;
-      flex-direction: column;
-      p {
-        height: 26px;
-        display: flex;
-        align-items: center;
-        font-size: 12px;
-        color: @font-color-gray;
-      }
-      .song-name {
-        span {
-          letter-spacing: 1px;
-          color: @font-color;
-          &:not(.iconfont) {
-            font-size: 12px;
-          }
-        }
-        .is-vip {
-          padding-top: 0.5px;
-          display: inline-block;
-          font-size: 12px;
-          color: @font-color-green;
-          margin-left: 4px;
-        }
-      }
-    }
-    .lyric-center,
-    .lyric-right {
-      flex: 1;
-      display: flex;
-      span {
-        height: 26px;
-        display: inline-block;
-        line-height: 26px;
-        letter-spacing: 1px;
-        font-size: 12px;
-        color: @font-color;
-      }
-    }
-    .lyric-right {
-      position: relative;
-      span {
-        &:last-child {
-          position: absolute;
-          right: 0;
-          color: @font-color-gray;
-          font-size: 11px !important;
-        }
-      }
-    }
-  }
-}
 
 .search-container {
   padding-top: 0 !important;
@@ -831,6 +719,119 @@ getRequset(async () => {
       }
     }
   }
+  .lyric-container {
+    display: flex;
+    flex-direction: column;
+    width: 80vw;
+    .lyric {
+      width: 80vw;
+      position: relative;
+
+      display: flex;
+      margin: 10px 0;
+      .lyric-operation {
+        height: 100px;
+        width: 80vw;
+        position: absolute;
+        top: 0;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        span {
+          cursor: pointer;
+          color: @font-color-gray;
+          &:hover {
+            color: @font-color-green;
+          }
+        }
+        .copy-lyric,
+        .open-lyric {
+          font-size: 12px;
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          letter-spacing: 1px;
+          z-index: 10;
+        }
+        .open-lyric {
+          right: 80px;
+        }
+        &:hover .iconfont {
+          opacity: 1;
+        }
+
+        .iconfont {
+          opacity: 0;
+          &:first-child {
+            margin-left: 100px;
+          }
+          margin-right: 10px;
+        }
+
+        .music-info {
+          padding-top: 1px;
+          font-size: 15px;
+        }
+        .play-music {
+          padding-top: 2px;
+          font-size: 14px;
+        }
+      }
+      .lyric-left {
+        flex: 3;
+        display: flex;
+        flex-direction: column;
+        p {
+          height: 26px;
+          display: flex;
+          align-items: center;
+          font-size: 12px;
+          color: @font-color-gray;
+        }
+        .song-name {
+          span {
+            letter-spacing: 1px;
+            color: @font-color;
+            &:not(.iconfont) {
+              font-size: 12px;
+            }
+          }
+          .is-vip {
+            padding-top: 0.5px;
+            display: inline-block;
+            font-size: 12px;
+            color: @font-color-green;
+            margin-left: 4px;
+          }
+        }
+      }
+      .lyric-center,
+      .lyric-right {
+        flex: 1;
+        display: flex;
+        span {
+          height: 26px;
+          display: inline-block;
+          line-height: 26px;
+          letter-spacing: 1px;
+          font-size: 12px;
+          color: @font-color;
+        }
+      }
+      .lyric-right {
+        position: relative;
+        span {
+          &:last-child {
+            position: absolute;
+            right: 0;
+            color: @font-color-gray;
+            font-size: 11px !important;
+          }
+        }
+      }
+    }
+  }
+
   .loading {
     position: absolute;
     top: 0;

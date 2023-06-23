@@ -1,4 +1,4 @@
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElNotification } from 'element-plus';
 import { Ref, nextTick } from 'vue';
 import { storeToRefs } from 'pinia';
 import axios from 'axios';
@@ -19,16 +19,32 @@ import router from '@/router';
 export const elMessage = (type: string = 'success', msg: string): void => {
   switch (type) {
     case elMessageType.SUCCESS:
-      ElMessage.success(msg);
+      ElNotification.success({
+        title: 'Success',
+        message: msg,
+        duration: 1000,
+      });
       break;
     case elMessageType.ERROR:
-      ElMessage.error(msg);
+      ElNotification.error({
+        title: 'Error',
+        message: msg,
+        duration: 1000,
+      });
       break;
     case elMessageType.INFO:
-      ElMessage.info(msg);
+      ElNotification.info({
+        title: 'Infomation',
+        message: msg,
+        duration: 1000,
+      });
       break;
     case elMessageType.WARNING:
-      ElMessage.warning(msg);
+      ElNotification.info({
+        title: 'Warning',
+        message: msg,
+        duration: 1000,
+      });
       break;
   }
 };

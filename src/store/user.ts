@@ -152,6 +152,7 @@ const useUserStore = defineStore('user', () => {
     const downloadIndex = musicDownloadId.value.get(source.id);
     if (source.isLove) {
       sourceList.push(source);
+      elMessage(elMessageType.SUCCESS, '收藏成功！');
       //添加对应页面的喜欢
       if (playIndex != undefined)
         songList.value[playIndex as number].isLove = true;
@@ -161,6 +162,7 @@ const useUserStore = defineStore('user', () => {
         musicDownload[recordIndex as number].isLove = true;
     } else {
       sourceList.splice(idMap.get(source.id) as number, 1);
+      elMessage(elMessageType.SUCCESS, '取消收藏成功！');
       //移除对应页面的喜欢
       if (playIndex != undefined)
         songList.value[playIndex as number].isLove = false;
