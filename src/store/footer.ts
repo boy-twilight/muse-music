@@ -21,11 +21,15 @@ const useFooterStore = defineStore('footer', () => {
     return map;
   });
   //播放模式
-  const playMode = ref<string>('2');
+  const playMode = ref<string>(
+    getStorage(storageType.LOCAL, 'playMode') || '2'
+  );
   //歌曲数目
   const songNum = computed<number>(() => songList.length);
   //当前播放的索引
-  const current = ref<number>(0);
+  const current = ref<number>(
+    getStorage(storageType.LOCAL, 'currentPlay') || 0
+  );
   //当前播放的进度
   const playProcess = ref<number>(0);
   //用户是否改变进度

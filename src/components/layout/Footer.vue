@@ -11,7 +11,10 @@
       @input="changeProcess()"
       :show-tooltip="false"
       class="music-process" />
-    <div class="run_way"></div>
+    <!-- 进度条宽度为100%会撑开容器，这个容器用来替换进度条防止容器被撑开 -->
+    <div class="run_way">
+      <div class="run_body"></div>
+    </div>
     <!-- 左边边歌曲展示部分 -->
     <div class="left">
       <div
@@ -645,22 +648,23 @@ onMounted(() => {
   align-items: center;
 
   .run_way {
-    width: 2%;
-    height: 3px;
-    background-color: @process-bg;
+    height: 32px;
     position: absolute;
-    top: -0.15vh;
-    right: 2px;
-    z-index: 100;
+    top: -16px;
+    right: 0px;
+    display: flex;
+    align-items: center;
+    width: 2%;
+    z-index: 101;
+    .run_body {
+      width: 100%;
+      height: 3px;
+      background-color: @process-bg;
+      border-bottom-right-radius: 1.5px;
+      border-top-right-radius: 1.5px;
+    }
   }
 
-  .left,
-  .middle,
-  .right {
-    flex: 1;
-    padding-top: 4px;
-    height: 10vh;
-  }
   .music-process {
     z-index: 100;
     position: absolute;
@@ -681,7 +685,17 @@ onMounted(() => {
     &:deep(.el-slider__runway) {
       height: 3px;
       background-color: @process-bg;
+      border-radius: 0;
+      border-bottom-left-radius: 1.5px;
+      border-top-left-radius: 1.5px;
     }
+  }
+  .left,
+  .middle,
+  .right {
+    flex: 1;
+    padding-top: 4px;
+    height: 10vh;
   }
 
   .left {

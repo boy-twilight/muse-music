@@ -231,6 +231,7 @@ const {
   playTime,
   showDetail,
   songNum,
+  playMode,
 } = storeToRefs(footer);
 const soucreComments = reactive<Comment[]>([]);
 //是否展示歌曲评论区
@@ -297,6 +298,10 @@ onMounted(() => {
     //全屏模式
     setStorAge(storageType.LOCAL, 'isFullScreen', isFullScreen.value);
     //用户数据
+    //记录当前播放的歌曲
+    setStorAge(storageType.LOCAL, 'currentPlay', current.value);
+    //记录当前播放的模式
+    setStorAge(storageType.LOCAL, 'playMode', playMode.value);
     setStorAge(storageType.LOCAL, 'userPlaylist', songList.value);
     setStorAge(storageType.LOCAL, 'loveSongs', loveSongs.value);
     setStorAge(storageType.LOCAL, 'loveAlbum', loveAlbum.value);
@@ -438,6 +443,7 @@ onMounted(() => {
   }
 }
 
+//动态改变主容器高度
 .scroll-container {
   height: v-bind(mHeight);
 }
