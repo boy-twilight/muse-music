@@ -573,7 +573,6 @@ onBeforeUnmount(() => {
       }
       span {
         display: inline-block;
-
         font-size: 13px;
         margin-left: 1px;
         color: @color-gray;

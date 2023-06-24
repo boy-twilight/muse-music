@@ -141,7 +141,7 @@ const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');
 const fontGray = inject('fontGray');
 const boxShadow = getTheme().get('shadow');
-const themeColor = getTheme().get('themeColor')
+const themeColor = getTheme().get('themeColor');
 const replyBg = computed(() =>
   config.bgMode == 'skin' ? 'rgba(220,220,220,0.2)' : 'rgb(240,240,240)'
 );
@@ -235,6 +235,8 @@ const formatCommentTime = (timeStap: number) => {
 @reply-bg: v-bind(replyBg);
 @font-color-gray: v-bind(fontGray);
 @theme-color: v-bind(themeColor);
+@color-gray: #7b7b7b;
+@color-light-white: #e1e1e1;
 
 .show-enter-from,
 .show-leave-to {
@@ -274,7 +276,7 @@ const formatCommentTime = (timeStap: number) => {
     font-size: 13px;
     letter-spacing: 0.5px;
     margin: 30px 0 40px 0;
-    color: @font-color-gray;
+    color: @color-gray;
     background-color: rgb(240, 240, 245);
     border: none;
     height: 32px;
@@ -282,12 +284,13 @@ const formatCommentTime = (timeStap: number) => {
     line-height: 32px;
     text-align: center;
     border-radius: 16px;
+    box-shadow: @shadow;
     cursor: pointer;
-    &:hover {
-      color: @font-color;
-    }
     &:hover span {
-      color: @font-color;
+      color: @theme-color;
+    }
+    &:hover {
+      color: @theme-color;
     }
     &:active {
       background-color: rgb(235, 235, 235);
@@ -297,22 +300,22 @@ const formatCommentTime = (timeStap: number) => {
       transform: rotate(90deg);
       font-size: 13px;
       margin-left: 1px;
-      color: @font-color-gray;
+      color: @color-gray;
     }
   }
 
   .collapse-reply {
-    width: 80px;
+    width: 100px;
     position: static;
     transform: translateX(0);
     margin: 0 0 20px 0;
 
     span {
       display: inline-block;
-      transform: rotate(90deg);
+      transform: rotate(-90deg);
       font-size: 13px;
       margin-left: 1px;
-      color: #7b7b7b;
+      color: @color-gray;
     }
   }
 

@@ -21,9 +21,13 @@ const useThemeStore = defineStore('theme', () => {
   const drak_box_shadow =
     'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px';
   const drak_active_color = 'rgba(0,0,0,0.5)';
-  //字体颜色
+  //字体主色调颜色
   const fontColor = ref<string>(
     getStorage(storageType.LOCAL, 'theme')?.fontColor || light_font_color
+  );
+  //字体副色调
+  const fontGray = ref<string>(
+    getStorage(storageType.LOCAL, 'theme').fontGray || '#7b7b7b'
   );
   //字体黑色
   const fontBlack = ref<string>(
@@ -37,11 +41,11 @@ const useThemeStore = defineStore('theme', () => {
   const background = ref<string>(
     getStorage(storageType.LOCAL, 'theme')?.backgound || light_background
   );
-  //table hover背景色
+  //播放列表激活时背景色
   const tableHover = ref<string>(
     getStorage(storageType.LOCAL, 'theme')?.tableHover || light_table_hover
   );
-  //boxshadow
+  //盒子阴影
   const shadow = ref<string>(
     getStorage(storageType.LOCAL, 'theme')?.shadow || light_box_shadow
   );
@@ -55,8 +59,9 @@ const useThemeStore = defineStore('theme', () => {
   );
   //主题色
   const themeColor = ref<string>(
-    getStorage(storageType.LOCAL, 'themeColor') || '#1ed2a9'
+    getStorage(storageType.LOCAL, 'theme').themeColor || '#1ed2a9'
   );
+
   //白昼模式
   function changeLight(): void {
     fontColor.value = light_font_color;
@@ -67,6 +72,7 @@ const useThemeStore = defineStore('theme', () => {
     shadow.value = light_box_shadow;
     searchBg.value = light_search_bg;
     active.value = light_active_color;
+    fontGray.value = '#7b7b7b';
   }
   //黑夜模式
   function changeDark(): void {
@@ -78,6 +84,7 @@ const useThemeStore = defineStore('theme', () => {
     shadow.value = drak_box_shadow;
     searchBg.value = dark_search_bg;
     active.value = drak_active_color;
+    fontGray.value = '#7b7b7b';
   }
   // 切换皮肤模式
   function changeSkinMode(): void {
@@ -90,6 +97,7 @@ const useThemeStore = defineStore('theme', () => {
     searchBg.value = 'transparent';
     active.value = 'rgba(210,210,210,0.5)';
     tableHover.value = 'rgba(210,210,210,0.3)';
+    fontGray.value = 'rgb(215,215,215)';
   }
 
   return {
@@ -102,6 +110,7 @@ const useThemeStore = defineStore('theme', () => {
     searchBg,
     active,
     themeColor,
+    fontGray,
     changeLight,
     changeDark,
     changeSkinMode,

@@ -33,20 +33,22 @@ withDefaults(
 </script>
 
 <style lang="less" scoped>
+@button-color: #e1e1e1;
+@button-font-color: #334155;
 .el-button {
   .iconfont {
     margin-right: 5px;
   }
   border: none;
   box-shadow: v-bind(boxShadow);
-  background-color: #e1e1e1;
-  color: #334155;
+  background-color: @button-color;
+  color: @button-font-color;
   border-radius: 18px;
   font-size: 14px;
   width: 120px;
   height: 34px;
   &:active {
-    background-color: rgba(200, 200, 200, 0.8);
+    opacity: 0.7;
   }
 }
 </style>

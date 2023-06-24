@@ -79,19 +79,21 @@ const operateMore = (command: string) => {
 </script>
 
 <style lang="less" scoped>
+@button-color: #e1e1e1;
+@button-font-color: #334155;
 .more-btn {
   height: 34px;
   width: 34px;
   line-height: 34px;
   text-align: center;
   border-radius: 50%;
-  background-color: #e1e1e1;
+  background-color: @button-color;
   border: none;
   transition: 0.2s;
-  color: rgb(60, 60, 60);
+  color: @button-font-color;
   box-shadow: v-bind(boxShadow);
   &:active {
-    background-color: rgb(210, 210, 210);
+    opacity: 0.7;
   }
   margin-left: 10px;
 }

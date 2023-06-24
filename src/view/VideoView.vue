@@ -311,7 +311,7 @@ getData();
       color: @theme-color;
     }
     &:hover span {
-      color: @font-color;
+      color: @theme-color;
     }
     &:active {
       background-color: rgb(235, 235, 235);

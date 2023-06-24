@@ -174,14 +174,11 @@ const {
 } = storeToRefs(config);
 const menu = getTheme().get('menuColor');
 const bg = getTheme().get('background') as Ref<string>;
+const fontGrayColor = getTheme().get('fontGray') as Ref<string>;
 const loadingBg = computed(() =>
   bgMode.value == 'color' ? bg.value : 'rgb(0,0,0,0.9)'
 );
-//配合皮肤让字体颜色变亮一点
-const fontGray = computed(() =>
-  bgMode.value == 'skin' ? 'rgb(215,215,215)' : '#7b7b7b'
-);
-provide<ComputedRef<string>>('fontGray', fontGray);
+provide<Ref<string>>('fontGray', fontGrayColor);
 provide<ComputedRef<string>>('loadingBg', loadingBg);
 //在全屏模式改变屏占比,看起来更加合理
 const mHeight = contentHeight;
@@ -266,6 +263,7 @@ const {
   searchBg,
   active,
   themeColor,
+  fontGray,
 } = storeToRefs(theme);
 const user = useUserStore();
 const {
@@ -293,6 +291,7 @@ onMounted(() => {
       searchBg: searchBg.value,
       active: active.value,
       themeColor: themeColor.value,
+      fontGray: fontGray.value,
     });
     //背景模式
     setStorAge(storageType.LOCAL, 'skin', skin.value);

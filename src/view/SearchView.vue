@@ -656,7 +656,7 @@ getRequset(async () => {
 @font-color: v-bind(fontColor);
 @box-shadow: v-bind(boxShadow);
 @color-white: #ffffff;
-
+@theme-color: v-bind(themeColor);
 .search-container {
   padding-top: 0 !important;
   .result-singer {
