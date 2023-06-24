@@ -3,7 +3,7 @@
     <!-- 批量操作 -->
     <OnlineBatch
       v-show="showSelect"
-      :songs="musicResult"
+      :songs="curList"
       :song-id-mapper="songIdMapper"
       @close-select="closeSelect" />
     <!-- 顶部歌手搜索结果展示 -->
@@ -48,7 +48,7 @@
           name="song">
           <div class="song">
             <div class="header-operation">
-              <PlayButton :songs="musicResult" />
+              <PlayButton :songs="curList" />
               <DecoratedButton
                 icon="&#xe761;"
                 @click.native="loveAll"
@@ -59,8 +59,14 @@
                 @click.native="showSelect = !showSelect" />
             </div>
             <SongList
-              :songs="musicResult"
+              :songs="curList"
               :song-id-mapper="songIdMapper" />
+            <Pagination
+              v-show="pageSize < total"
+              :cur-page="curPage"
+              :page-size="pageSize"
+              :total="total"
+              @page-change="pageChange" />
           </div>
         </el-tab-pane>
         <el-tab-pane
@@ -310,8 +316,22 @@ const { songListId, songList, current, playProcess, playTime, isPlay } =
 //获取搜索关键词
 const route = useRoute();
 const keyWord = route.query.keyWord + '';
+//当前页数
+const curPage = ref<number>(1);
+//一页多少数据
+const pageSize = ref<number>(50);
 //音乐搜索的结果
 const musicResult = reactive<Song[]>([]);
+//当前展示的歌曲列表
+const curList = computed(() =>
+  musicResult.slice(curPage.value - 1, curPage.value * pageSize.value)
+);
+//总的数据数
+const total = computed(() => musicResult.length);
+//页数变化
+const pageChange = (page: number) => {
+  curPage.value = page;
+};
 //歌曲id与Index对应的map
 const songIdMapper = computed(
   () => new Map(musicResult.map((item, index) => [item.id, index]))
@@ -657,8 +677,12 @@ getRequset(async () => {
 @box-shadow: v-bind(boxShadow);
 @color-white: #ffffff;
 @theme-color: v-bind(themeColor);
+.pagination-container {
+  margin: 10px 0;
+}
 .search-container {
   padding-top: 0 !important;
+
   .result-singer {
     cursor: pointer;
     width: 82vw;

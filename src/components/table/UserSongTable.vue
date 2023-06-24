@@ -18,6 +18,12 @@
       :song-id-mapper="songIdMapper"
       :sort="sortChoice"
       :is-cancel-sort="cancelSort" />
+    <Pagination
+      v-show="pageSize < total"
+      :cur-page="curPage"
+      :page-size="pageSize"
+      :total="total"
+      @page-change="pageChange" />
   </div>
 </template>
 
@@ -33,6 +39,7 @@ import PlayButton from '@components/button/PlayButton.vue';
 import DecoratedButton from '@components/button/DecoratedButton.vue';
 import SearchButton from '@components/button/SearchButton.vue';
 import SortButton from '@components/button/SortButton.vue';
+import Pagination from '../pagination/Pagination.vue';
 
 //获取用户播放数据
 const user = useUserStore();
@@ -46,15 +53,28 @@ const emits = defineEmits<{
   (e: 'openSelect', showSelect: boolean): void;
 }>();
 
+//当前页数
+const curPage = ref<number>(1);
+//一页多少数据
+const pageSize = ref<number>(50);
 //歌曲
 const songs = computed(() => {
   let songs = reactive<Song[]>([]);
   if (props.pageName == 'LoveView') {
-    songs = loveSongs.value;
+    songs = loveSongs.value.slice(
+      curPage.value - 1,
+      curPage.value * pageSize.value
+    );
   } else if (props.pageName == 'RecentPlayView') {
-    songs = songRecord.value;
+    songs = songRecord.value.slice(
+      curPage.value - 1,
+      curPage.value * pageSize.value
+    );
   } else {
-    songs = musicDownload.value;
+    songs = musicDownload.value.slice(
+      curPage.value - 1,
+      curPage.value * pageSize.value
+    );
   }
   return songs.filter(
     (song) =>
@@ -63,6 +83,22 @@ const songs = computed(() => {
       song.singer.includes(content.value)
   );
 });
+
+//总的数据数
+const total = computed(() => {
+  if (props.pageName == 'LoveView') {
+    return loveSongs.value.length;
+  } else if (props.pageName == 'RecentPlayView') {
+    return songRecord.value.length;
+  } else {
+    return musicDownload.value.length;
+  }
+});
+//页数变化
+const pageChange = (page: number) => {
+  curPage.value = page;
+};
+
 //歌曲id与Index的映射
 const songIdMapper = computed(
   () => new Map(songs.value.map((item, index) => [item.id, index]))
@@ -114,6 +150,9 @@ const clearAll = () => {
 
 <style lang="less" scoped>
 .user-container {
+  .pagination-container {
+    margin: 10px 0;
+  }
   .top-operation {
     margin: 15px 0 15px 10px;
     position: relative;

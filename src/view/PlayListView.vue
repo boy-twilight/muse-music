@@ -4,7 +4,7 @@
     <OnlineBatch
       v-show="showSelect"
       :song-id-mapper="songIdMapper"
-      :songs="playListSong"
+      :songs="curList"
       @close-select="closeSelect" />
     <!-- 歌单头部 -->
     <div
@@ -31,7 +31,7 @@
           {{ playList.description }}
         </p>
         <div class="header-operation">
-          <PlayButton :songs="playListSong" />
+          <PlayButton :songs="curList" />
           <DecoratedButton
             :name="playList.isLove ? '取消收藏' : '收藏'"
             :icon="playList.isLove ? '&#xe760;' : '&#xe761;'"
@@ -56,8 +56,14 @@
           :label="`歌曲 ${playListSong.length}`"
           name="song">
           <SongList
-            :songs="playListSong"
+            :songs="curList"
             :song-id-mapper="songIdMapper" />
+          <Pagination
+            v-show="pageSize < total"
+            :cur-page="curPage"
+            :page-size="pageSize"
+            :total="total"
+            @page-change="pageChange" />
         </el-tab-pane>
         <el-tab-pane
           :label="`评论 ${
@@ -125,6 +131,10 @@ const user = useUserStore();
 const route = useRoute();
 const id = route.query.id + '';
 const type = route.query.type + '';
+//当前页数
+const curPage = ref<number>(1);
+//一页多少数据
+const pageSize = ref<number>(50);
 //歌单详情
 const playList = reactive<Playlist>({
   id,
@@ -140,6 +150,10 @@ const playList = reactive<Playlist>({
 });
 //歌单歌曲
 const playListSong = reactive<Song[]>([]);
+//当前展示的歌曲列表
+const curList = computed(() =>
+  playListSong.slice(curPage.value - 1, curPage.value * pageSize.value)
+);
 //歌单评论
 const playlistComments = reactive<Comment[]>([]);
 //歌曲id与Index对应的map
@@ -150,6 +164,12 @@ const songIdMapper = computed(
 const first = inject('firstLoading') as Ref<boolean>;
 //设置隐藏滚动条
 const hideScroll = inject('hideScroll') as Function;
+//总的数据数
+const total = computed(() => playListSong.length);
+//页数变化
+const pageChange = (page: number) => {
+  curPage.value = page;
+};
 //批量操作相关
 //是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
@@ -315,6 +335,10 @@ getRequset(async () => {
   }
 }
 .playlist-container {
+  .pagination-container {
+    margin: 10px 0;
+  }
+
   .header {
     width: 80vw;
     display: flex;

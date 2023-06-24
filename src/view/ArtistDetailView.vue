@@ -4,7 +4,7 @@
 
     <OnlineBatch
       v-show="showSelect"
-      :songs="hotSongList"
+      :songs="curList"
       :song-id-mapper="songIdMapper"
       @close-select="closeSelect" />
 
@@ -24,7 +24,7 @@
         </div>
         <span class="fans">粉丝数：{{ singer.score }}</span>
         <div class="header-operation">
-          <PlayButton :songs="hotSongList" />
+          <PlayButton :songs="curList" />
           <DecoratedButton
             :name="singer.isLove ? '取消关注' : '关注'"
             :icon="singer.isLove ? '&#xe760;' : '&#xe761;'"
@@ -51,8 +51,14 @@
             label="精选"
             name="hot">
             <SongList
-              :songs="hotSongList"
+              :songs="curList"
               :song-id-mapper="songIdMapper" />
+            <Pagination
+              v-show="pageSize < total"
+              :cur-page="curPage"
+              :page-size="pageSize"
+              :total="total"
+              @page-change="pageChange" />
           </el-tab-pane>
           <el-tab-pane
             label="专辑"
@@ -167,8 +173,22 @@ const singer = reactive<Artist>({
 });
 //歌手基本简介
 const introduce = reactive<ArtistDesc[]>([]);
+//当前页数
+const curPage = ref<number>(1);
+//一页多少数据
+const pageSize = ref<number>(50);
 //热门歌曲列表
 const hotSongList = reactive<Song[]>([]);
+//当前展示的歌曲列表
+const curList = computed(() =>
+  hotSongList.slice(curPage.value - 1, curPage.value * pageSize.value)
+);
+//总的数据数
+const total = computed(() => hotSongList.length);
+//页数变化
+const pageChange = (page: number) => {
+  curPage.value = page;
+};
 //歌曲id与Index对应的map
 const songIdMapper = computed(
   () => new Map(hotSongList.map((item, index) => [item.id, index]))
@@ -328,6 +348,10 @@ getRequset(async () => {
 }
 
 .artist-detail-container {
+  .pagination-container {
+    margin: 10px 0;
+  }
+
   .loading {
     position: absolute;
     z-index: 100;

@@ -196,7 +196,7 @@ const init = async () => {
     autoplay: false,
     loop: false,
     hotkey: true,
-    theme: '#1ed2a9',
+    theme: themeColor?.value,
     chromecast: true,
     lang: 'zh-cn',
     screenshot: true,

@@ -416,6 +416,11 @@ onMounted(() => {
 </style>
 
 <style lang="less">
+#nprogress {
+  .bar {
+    background: #1ed2a9 !important;
+  }
+}
 .el-popover {
   min-width: 60px !important;
 }
