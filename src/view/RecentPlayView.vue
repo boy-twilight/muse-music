@@ -92,7 +92,7 @@ getRequset(async () => {
 <style lang="less" scoped>
 @font-color: v-bind(fontColor);
 @font-color-gray: v-bind(fontGray);
-@font-color-green: #1ed2a9;
+
 .recent-container {
   .tab {
     &:deep(.el-tabs__item) {

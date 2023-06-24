@@ -141,6 +141,7 @@ const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');
 const fontGray = inject('fontGray');
 const boxShadow = getTheme().get('shadow');
+const themeColor = getTheme().get('themeColor')
 const replyBg = computed(() =>
   config.bgMode == 'skin' ? 'rgba(220,220,220,0.2)' : 'rgb(240,240,240)'
 );
@@ -233,7 +234,7 @@ const formatCommentTime = (timeStap: number) => {
 @shadow: v-bind(boxShadow);
 @reply-bg: v-bind(replyBg);
 @font-color-gray: v-bind(fontGray);
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
 
 .show-enter-from,
 .show-leave-to {
@@ -273,7 +274,7 @@ const formatCommentTime = (timeStap: number) => {
     font-size: 13px;
     letter-spacing: 0.5px;
     margin: 30px 0 40px 0;
-    color: #7b7b7b;
+    color: @font-color-gray;
     background-color: rgb(240, 240, 245);
     border: none;
     height: 32px;
@@ -283,10 +284,10 @@ const formatCommentTime = (timeStap: number) => {
     border-radius: 16px;
     cursor: pointer;
     &:hover {
-      color: #1ed2a9;
+      color: @font-color;
     }
     &:hover span {
-      color: #1ed2a9;
+      color: @font-color;
     }
     &:active {
       background-color: rgb(235, 235, 235);
@@ -296,7 +297,7 @@ const formatCommentTime = (timeStap: number) => {
       transform: rotate(90deg);
       font-size: 13px;
       margin-left: 1px;
-      color: #7b7b7b;
+      color: @font-color-gray;
     }
   }
 
@@ -334,7 +335,7 @@ const formatCommentTime = (timeStap: number) => {
       .nickname {
         cursor: pointer;
         &:hover {
-          color: #1ed2a9;
+          color: @theme-color;
         }
         max-width: 300px;
       }
@@ -388,10 +389,10 @@ const formatCommentTime = (timeStap: number) => {
             color: @font-color;
           }
           &:hover .like {
-            color: #1ed2a9;
+            color: @theme-color;
           }
           &:hover .count {
-            color: #1ed2a9;
+            color: @theme-color;
           }
         }
 
@@ -401,7 +402,7 @@ const formatCommentTime = (timeStap: number) => {
           margin-left: 20px;
           color: @font-color-gray;
           &:hover {
-            color: #1ed2a9;
+            color: @theme-color;
           }
         }
       }
@@ -411,7 +412,7 @@ const formatCommentTime = (timeStap: number) => {
         cursor: pointer;
         width: 105px;
         &:hover {
-          color: @font-color-green;
+          color: @theme-color;
         }
         span {
           transition: 0.4s;
@@ -439,7 +440,7 @@ const formatCommentTime = (timeStap: number) => {
           height: 21px;
           cursor: pointer;
           &:hover {
-            color: @font-color-green;
+            color: @theme-color;
           }
           font-size: 13px;
           color: @font-color-gray;

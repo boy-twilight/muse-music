@@ -130,7 +130,6 @@ const changeActive = (index: string) => {
 @menu-background: v-bind(menuColor);
 @font-color-gray: v-bind(fontGray);
 @active-menu-background: v-bind(activeColor);
-@font-color-green: #1ed2a9;
 @font-color-white: #ffffff;
 @actvie-menu-color: #ffffff;
 

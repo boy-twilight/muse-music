@@ -227,7 +227,6 @@ getRequset(async () => {
 @font-color-light-black: v-bind(fontBlack);
 @shadow: v-bind(boxShadow);
 @font-color-gray: v-bind(fontGray);
-@font-color-green: #1ed2a9;
 
 .album-detail-container {
   .header {

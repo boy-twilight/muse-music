@@ -255,6 +255,7 @@ const { bgMode } = storeToRefs(config);
 const fontGray = inject('fontGray');
 const boxShadow = getTheme().get('shadow');
 const fontColor = getTheme().get('fontColor');
+const themeColor = getTheme().get('themeColor');
 const singerBg = computed(() => {
   if (bgMode.value == 'skin') {
     return 'rgba(220, 220, 220, 0.1)';
@@ -651,9 +652,10 @@ getRequset(async () => {
 
 <style lang="less" scoped>
 @font-color-gray: v-bind(fontGray);
-@font-color-green: #1ed2a9;
+@font-color-green: v-bind(themeColor);
 @font-color: v-bind(fontColor);
 @box-shadow: v-bind(boxShadow);
+@color-white: #ffffff;
 
 .search-container {
   padding-top: 0 !important;
@@ -701,7 +703,7 @@ getRequset(async () => {
         color: @font-color;
         font-weight: 530;
         &:hover {
-          color: @font-color-green;
+          color: @theme-color;
         }
       }
       .singer-info {
@@ -713,7 +715,7 @@ getRequset(async () => {
             margin-left: 15px;
           }
           &:hover {
-            color: @font-color-green;
+            color: @theme-color;
           }
         }
       }
@@ -741,7 +743,7 @@ getRequset(async () => {
           cursor: pointer;
           color: @font-color-gray;
           &:hover {
-            color: @font-color-green;
+            color: @theme-color;
           }
         }
         .copy-lyric,
@@ -800,7 +802,7 @@ getRequset(async () => {
             padding-top: 0.5px;
             display: inline-block;
             font-size: 12px;
-            color: @font-color-green;
+            color: @theme-color;
             margin-left: 4px;
           }
         }
@@ -898,8 +900,8 @@ getRequset(async () => {
       width: 125px !important;
     }
     .play {
-      background-color: @font-color-green;
-      color: white;
+      background-color: @theme-color;
+      color: @color-white;
     }
   }
 

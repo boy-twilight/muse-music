@@ -34,10 +34,14 @@ import { storeToRefs } from 'pinia';
 import { Song } from '@/model';
 import useFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
-import { elMessage } from '@/utils/util';
+import { elMessage, getTheme } from '@/utils/util';
 import { elMessageType } from '@/model/enum';
 import DecoratedButton from '@components/button/DecoratedButton.vue';
 import SongList from '@components/table/SongList.vue';
+
+//配置主题
+const themeColor = getTheme().get('themeColor');
+
 const footer = useFooterStore();
 const { isPlay, songList, songListId, playProcess, playTime, current } =
   storeToRefs(footer);
@@ -133,7 +137,7 @@ const close = () => {
 </script>
 
 <style lang="less" scoped>
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
 @font-color-white: #ffffff;
 .operation-select {
   margin: 15px 0 15px 10px;
@@ -143,7 +147,7 @@ const close = () => {
     width: 100px !important;
   }
   .play {
-    background-color: @font-color-green;
+    background-color: @theme-color;
     color: @font-color-white;
   }
 }

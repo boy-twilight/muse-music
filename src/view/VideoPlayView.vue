@@ -131,6 +131,7 @@ const config = useConfigStore();
 const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');
 const boxShadow = getTheme().get('shadow');
+const themeColor = getTheme().get('themeColor');
 const fontGray = inject('fontGray');
 
 //全屏模式改变播放器高度
@@ -384,7 +385,8 @@ onBeforeUnmount(() => {
 @font-color-gray: v-bind(fontGray);
 @video-height: v-bind(videoHeight);
 @shadow: v-bind(boxShadow);
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
+@color-gray: #7b7b7b;
 @font-color-white: #ffffff;
 
 .show-enter-from,
@@ -462,7 +464,7 @@ onBeforeUnmount(() => {
           cursor: pointer;
           color: rgba(230, 230, 230, 0.9);
           &:hover {
-            color: @font-color-green;
+            color: @theme-color;
           }
         }
       }
@@ -550,7 +552,7 @@ onBeforeUnmount(() => {
       top: 30px;
       font-size: 13px;
       letter-spacing: 0.5px;
-      color: #7b7b7b;
+      color: @color-gray;
       background-color: rgb(240, 240, 245);
       box-shadow: @shadow;
       border: none;
@@ -561,10 +563,10 @@ onBeforeUnmount(() => {
       border-radius: 15px;
       cursor: pointer;
       &:hover {
-        color: #1ed2a9;
+        color: @theme-color;
       }
       &:hover span {
-        color: #1ed2a9;
+        color: @theme-color;
       }
       &:active {
         background-color: rgb(235, 235, 235);
@@ -574,7 +576,7 @@ onBeforeUnmount(() => {
 
         font-size: 13px;
         margin-left: 1px;
-        color: #7b7b7b;
+        color: @color-gray;
       }
     }
     .title {

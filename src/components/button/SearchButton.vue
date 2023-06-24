@@ -37,6 +37,7 @@ import useConfigStore from '@/store/config';
 const config = useConfigStore();
 const fontColor = getTheme().get('fontColor');
 const fontGray = inject('fontGray');
+const themeColor = getTheme().get('themeColor');
 const searchColor = computed(() =>
   config.bgMode == 'color'
     ? getTheme().get('searchBg')?.value
@@ -97,7 +98,7 @@ const closeSearch = () => {
 @font-color: v-bind(fontColor);
 @search-bg: v-bind(searchColor);
 @font-color-gray: v-bind(fontGray);
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
 
 .hide {
   opacity: 0;
@@ -158,7 +159,7 @@ const closeSearch = () => {
       cursor: pointer;
       color: @font-color-gray;
       &:hover {
-        color: @font-color-green;
+        color: @theme-color;
       }
     }
   }

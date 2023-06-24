@@ -132,6 +132,7 @@ const fontColor = getTheme().get('fontColor');
 const hover = getTheme().get('tableHover');
 const bg = getTheme().get('background');
 const fontGray = inject('fontGray');
+const themeColor = getTheme().get('themeColor');
 
 //设置隐藏滚动条
 const hideScroll = inject('hideScroll') as Function;
@@ -298,7 +299,7 @@ onBeforeRouteLeave(() => {
 @table-hover: v-bind(hover);
 @background: v-bind(bg);
 @font-color-gray: v-bind(fontGray);
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
 
 .is-active {
   opacity: 1 !important;
@@ -323,7 +324,7 @@ onBeforeRouteLeave(() => {
     transition: 0.4s;
     color: @font-color-gray;
     &:hover {
-      color: rgba(31, 207, 158, 0.8);
+      color: @theme-color;
     }
   }
   .playmv {
@@ -332,7 +333,7 @@ onBeforeRouteLeave(() => {
   }
 
   .vip {
-    color: @font-color-green;
+    color: @theme-color;
     font-size: 15px;
     margin: 0 0 0 5px;
   }
@@ -393,10 +394,10 @@ onBeforeRouteLeave(() => {
   }
 
   .descending .sort-caret.descending {
-    border-top-color: @font-color-green;
+    border-top-color: @theme-color;
   }
   .ascending .sort-caret.ascending {
-    border-bottom-color: @font-color-green;
+    border-bottom-color: @theme-color;
   }
 
   .el-table__empty-block {

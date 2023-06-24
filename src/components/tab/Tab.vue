@@ -13,6 +13,7 @@ import { TabsPaneContext } from 'element-plus';
 import { getTheme } from '@/utils/util';
 //配置主题
 const fontColor = getTheme().get('fontColor');
+const themeColor = getTheme().get('themeColor');
 
 const props = defineProps<{
   active: string;
@@ -31,7 +32,7 @@ const tabClick = (tab: TabsPaneContext) => {
 
 <style lang="less" scoped>
 @font-color: v-bind(fontColor);
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
 .tab {
   width: 80vw;
   &:deep(.el-tabs__item) {
@@ -41,7 +42,7 @@ const tabClick = (tab: TabsPaneContext) => {
     letter-spacing: 2px;
   }
   &:deep(.el-tabs__active-bar) {
-    background-color: @font-color-green;
+    background-color: @theme-color;
     width: 22px !important;
     left: 5px;
     height: 3px;
@@ -53,7 +54,7 @@ const tabClick = (tab: TabsPaneContext) => {
     }
   }
   &:deep(.el-tabs__item.is-active) {
-    color: @font-color-green;
+    color: @theme-color;
   }
 }
 </style>

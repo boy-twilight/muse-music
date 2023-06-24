@@ -52,6 +52,7 @@ import { getTheme } from '@/utils/util';
 //设置主题
 const fontColor = getTheme().get('fontColor');
 const boxShadow = getTheme().get('shadow');
+const themeColor = getTheme().get('themeColor');
 const fontGray = inject('fontGray');
 
 withDefaults(
@@ -92,7 +93,7 @@ const toMv = (id: string) => {
 @font-color: v-bind(fontColor);
 @shadow: v-bind(boxShadow);
 @font-color-gray: v-bind(fontGray);
-@font-color-green: #1ed2a9;
+@font-color-green: v-bind(themeColor);
 @font-color-white: #ffffff;
 
 .list-move,

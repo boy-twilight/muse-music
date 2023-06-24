@@ -56,6 +56,7 @@ const config = useConfigStore();
 const { lyricHeight, lyricContentHeight, firstLyricMargin, imageHeight } =
   storeToRefs(config);
 const boxShadow = getTheme().get('shadow');
+const themeColor = getTheme().get('themeColor');
 const fontGray = inject('fontGray');
 const lHeight = lyricHeight;
 const lcHeight = lyricContentHeight;
@@ -212,7 +213,9 @@ if (songNum.value > 0) {
 @lyric-content-height: v-bind(lcHeight);
 @first-lyric-margin: v-bind(lMargin);
 @image-height: v-bind(iHeight);
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
+@color-white: #ffffff;
+@light-white: rgba(240, 240, 240, 0.8);
 
 // 背景填充动画
 @keyframes scan {
@@ -253,7 +256,7 @@ if (songNum.value > 0) {
     position: absolute;
     top: 10px;
     left: 25px;
-    color: rgba(240, 240, 240, 0.8);
+    color: @light-white;
     z-index: 2;
     transform: rotate(90deg);
     transition: 0.4s;
@@ -300,11 +303,11 @@ if (songNum.value > 0) {
           text-align: center;
           span {
             letter-spacing: 1px;
-            color: #ffffff;
-            background: #ffffff -webkit-linear-gradient(
+            color: @color-white;
+            background: @color-white -webkit-linear-gradient(
                 left,
-                @font-color-green,
-                @font-color-green
+                @theme-color,
+                @theme-color
               ) no-repeat 0 0;
             -webkit-text-fill-color: transparent;
             -webkit-background-clip: text;
@@ -320,14 +323,14 @@ if (songNum.value > 0) {
         height: 120px;
         text-align: center;
         h4 {
-          color: #ffffff;
+          color: @color-white;
           font-size: 25px;
           font-weight: 520;
           margin-bottom: 15px;
           letter-spacing: 1px;
         }
         p {
-          color: rgba(240, 240, 240, 0.8);
+          color: @light-white;
           font-size: 14px;
           letter-spacing: 1px;
         }
@@ -346,24 +349,24 @@ if (songNum.value > 0) {
         margin-left: 0px !important;
         .operation {
           .iconfont {
-            color: rgba(240, 240, 240, 0.8);
+            color: @light-white;
           }
         }
       }
     }
     &:deep(.middle) {
       span {
-        color: rgba(240, 240, 240, 0.8);
+        color: @light-white;
       }
       .continue {
-        color: @font-color-green;
+        color: @theme-color;
       }
       .stop {
-        color: @font-color-green;
+        color: @theme-color;
       }
       .play-mode {
         .iconfont {
-          color: rgba(240, 240, 240, 0.8);
+          color: @light-white;
         }
       }
     }
@@ -371,7 +374,7 @@ if (songNum.value > 0) {
       padding-right: 2vw;
       span {
         &:first-child {
-          color: rgba(240, 240, 240, 0.8);
+          color: @light-white;
         }
       }
     }

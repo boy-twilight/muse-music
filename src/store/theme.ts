@@ -53,6 +53,10 @@ const useThemeStore = defineStore('theme', () => {
   const active = ref<string>(
     getStorage(storageType.LOCAL, 'theme')?.active || light_active_color
   );
+  //主题色
+  const themeColor = ref<string>(
+    getStorage(storageType.LOCAL, 'themeColor') || '#1ed2a9'
+  );
   //白昼模式
   function changeLight(): void {
     fontColor.value = light_font_color;
@@ -97,6 +101,7 @@ const useThemeStore = defineStore('theme', () => {
     shadow,
     searchBg,
     active,
+    themeColor,
     changeLight,
     changeDark,
     changeSkinMode,

@@ -43,6 +43,7 @@ import useConfigStore from '@/store/config';
 const config = useConfigStore();
 const fontColor = getTheme().get('fontColor') as Ref<string>;
 const bg = getTheme().get('background');
+const themeColor = getTheme().get('themeColor');
 const searchColor = computed(() =>
   config.bgMode == 'color'
     ? getTheme().get('searchBg')?.value
@@ -106,10 +107,10 @@ const emits = defineEmits<{
 @font-color: v-bind(fontColor);
 @search-bg: v-bind(searchColor);
 @font-color-gray: #7b7b7b;
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
 
 .is-choose {
-  color: @font-color-green;
+  color: @theme-color;
 }
 
 .sort {

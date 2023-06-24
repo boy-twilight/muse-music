@@ -47,6 +47,7 @@ import SearchButton from '@components/button/SearchButton.vue';
 const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');
 const boxShadow = getTheme().get('shadow');
+const themeColor = getTheme().get('themeColor');
 const fontGray = inject('fontGray');
 
 //歌手榜单
@@ -171,7 +172,7 @@ getData();
 @font-color-light-black: v-bind(fontBlack);
 @font-color-gray: v-bind(fontGray);
 @shadow: v-bind(boxShadow);
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
 
 .loading {
   height: 50px;
@@ -179,7 +180,7 @@ getData();
 }
 
 .is-active {
-  color: @font-color-green !important;
+  color: @theme-color!important;
 }
 .artistlist-container {
   padding-bottom: 20px;
@@ -215,7 +216,7 @@ getData();
       color: @font-color-gray;
       font-size: 14px;
       &:hover {
-        color: @font-color-green;
+        color: @theme-color;
         cursor: pointer;
       }
     }

@@ -265,6 +265,7 @@ const {
   shadow,
   searchBg,
   active,
+  themeColor,
 } = storeToRefs(theme);
 const user = useUserStore();
 const {
@@ -291,6 +292,7 @@ onMounted(() => {
       shadow: shadow.value,
       searchBg: searchBg.value,
       active: active.value,
+      themeColor: themeColor.value,
     });
     //背景模式
     setStorAge(storageType.LOCAL, 'skin', skin.value);

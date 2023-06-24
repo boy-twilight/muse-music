@@ -162,7 +162,6 @@ getRequset(async () => {
 
 <style lang="less" scoped>
 @font-color-gray: v-bind(fontGray);
-@font-color-green: #1ed2a9;
 
 .love-container {
   .tab {

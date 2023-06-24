@@ -414,7 +414,6 @@ getRequset(async () => {
 @font-color: v-bind(fontColor);
 @font-color-gray: v-bind(fontGray);
 @shadow: v-bind(boxShadow);
-@font-color-green: #1ed2a9;
 
 .tab {
   width: 87vw;

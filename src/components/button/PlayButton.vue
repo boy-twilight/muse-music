@@ -13,6 +13,7 @@ import { elMessageType } from '@/model/enum';
 
 //配置主题
 const boxShadow = getTheme().get('shadow');
+const themeColor = getTheme().get('themeColor');
 
 const props = withDefaults(
   defineProps<{
@@ -49,6 +50,7 @@ const playAll = () => {
 </script>
 
 <style lang="less" scoped>
+@theme-color: v-bind(themeColor);
 .el-button {
   .iconfont {
     margin-right: 5px;
@@ -56,13 +58,13 @@ const playAll = () => {
   border: none;
   box-shadow: v-bind(boxShadow);
   color: #ffffff;
-  background-color: #1fcf9e;
+  background-color: @theme-color;
   border-radius: 18px;
   font-size: 14px;
   width: 120px;
   height: 34px;
   &:active {
-    background-color: rgba(31, 207, 158, 0.7);
+    opacity: 0.7;
     border: none;
   }
 }

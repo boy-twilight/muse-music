@@ -139,6 +139,7 @@ import PlayButton from '@/components/button/PlayButton.vue';
 const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');
 const boxShadow = getTheme().get('shadow');
+const themeColor = getTheme().get('themeColor');
 const fontGray = inject('fontGray');
 
 const user = useUserStore();
@@ -317,7 +318,8 @@ getRequset(async () => {
 @font-color-light-black: v-bind(fontBlack);
 @font-color-gray: v-bind(fontGray);
 @shadow: v-bind(boxShadow);
-@font-color-green: #1ed2a9;
+@themeColor: v-bind(themeColor);
+@color-white: #ffffff;
 
 .no-search {
   &:deep(.no-data) {
@@ -378,8 +380,8 @@ getRequset(async () => {
           color: #000;
 
           &:first-child {
-            background-color: #1fce9b;
-            color: #ffffff;
+            background-color: @themeColor;
+            color: @color-white;
             &:deep(.iconfont) {
               font-size: 15px;
             }

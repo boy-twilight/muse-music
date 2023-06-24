@@ -23,6 +23,7 @@ import { getTheme } from '@/utils/util';
 const bg = getTheme().get('background');
 const fontColor = getTheme().get('fontColor');
 const boxShadow = getTheme().get('shadow');
+const themeColor = getTheme().get('themeColor');
 
 defineProps<{
   comments: Comment[];
@@ -61,7 +62,7 @@ const showComments = inject('showComments') as Ref<boolean>;
 @shadow: v-bind(boxShadow);
 
 @background: v-bind(bg);
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
 .comment-dialog {
   box-shadow: @shadow !important;
   border-radius: 10px !important;
@@ -76,7 +77,7 @@ const showComments = inject('showComments') as Ref<boolean>;
 
     .el-dialog__headerbtn {
       &:hover .el-dialog__close {
-        color: @font-color-green;
+        color: @theme-color;
       }
     }
   }

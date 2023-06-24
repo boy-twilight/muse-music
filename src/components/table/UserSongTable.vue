@@ -113,8 +113,6 @@ const clearAll = () => {
 </script>
 
 <style lang="less" scoped>
-@font-color-green: #1ed2a9;
-
 .user-container {
   .top-operation {
     margin: 15px 0 15px 10px;

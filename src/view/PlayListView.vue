@@ -308,7 +308,6 @@ getRequset(async () => {
 @font-color-light-black: v-bind(fontBlack);
 @shadow: v-bind(boxShadow);
 @font-color-gray: v-bind(fontGray);
-@font-color-green: #1ed2a9;
 
 .no-search {
   &:deep(.no-data) {

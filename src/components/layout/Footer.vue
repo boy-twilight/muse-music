@@ -290,6 +290,7 @@ import image from '@assets/image/暂无音乐.svg';
 const config = useConfigStore();
 const fontColor = getTheme().get('fontColor') as Ref<string>;
 const boxShadow = getTheme().get('shadow');
+const themeColor = getTheme().get('themeColor');
 const bg = getTheme().get('background') as Ref<string>;
 const fontGray = inject('fontGray');
 const processColor = computed(() =>
@@ -629,7 +630,7 @@ onMounted(() => {
 @background: v-bind(bg);
 @process-bg: v-bind(processColor);
 @font-color-gray: v-bind(fontGray);
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
 
 .is-love {
   color: #ff6a6a !important;
@@ -675,12 +676,12 @@ onMounted(() => {
       height: 12px;
       width: 12px;
       border: none;
-      background-color: @font-color-green;
+      background-color: @theme-color;
       display: none;
     }
     &:deep(.el-slider__bar) {
       height: 3px;
-      background-color: @font-color-green;
+      background-color: @theme-color;
     }
     &:deep(.el-slider__runway) {
       height: 3px;
@@ -780,7 +781,7 @@ onMounted(() => {
           margin-right: 10px;
           color: @font-color;
           &:hover {
-            color: @font-color-green;
+            color: @theme-color;
           }
         }
         .playmv {
@@ -814,7 +815,7 @@ onMounted(() => {
     .stop,
     .continue {
       font-size: 38px;
-      color: @font-color-green;
+      color: @theme-color;
       margin: 0 5px;
     }
     .pre,
@@ -842,12 +843,12 @@ onMounted(() => {
       color: @font-color-gray;
       &:last-child {
         font-size: 12px;
-        color: @font-color-green;
+        color: @theme-color;
       }
     }
     .iconfont {
       font-size: 18px;
-      color: @font-color-green;
+      color: @theme-color;
       margin: 0 2px 0 10px;
     }
   }
@@ -859,7 +860,7 @@ onMounted(() => {
 @shadow: v-bind(boxShadow);
 @font-color-gray: v-bind(fontGray);
 @background: v-bind(bg);
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
 .volume-setting-container {
   display: flex;
   flex-direction: column;
@@ -871,11 +872,11 @@ onMounted(() => {
       width: 12px;
       margin-left: -2px;
       border: none;
-      background-color: @font-color-green;
+      background-color: @theme-color;
     }
     .el-slider__bar {
       width: 4px !important;
-      background-color: @font-color-green;
+      background-color: @theme-color;
     }
     .el-slider__runway {
       width: 4px !important;

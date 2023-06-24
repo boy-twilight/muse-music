@@ -50,6 +50,7 @@ import { getTheme } from '@/utils/util';
 //设置主题
 const boxShadow = getTheme().get('shadow');
 const fontColor = getTheme().get('fontColor');
+const themeColor = getTheme().get('themeColor');
 const fontGray = inject('fontGray');
 
 const router = useRouter();
@@ -92,7 +93,7 @@ const toPlayList = (list: Playlist) => {
 @font-color: v-bind(fontColor);
 @shadow: v-bind(boxShadow);
 @font-color-gray: v-bind(fontGray);
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
 @font-color-white: #ffffff;
 @common-width: 230px;
 .list-move,
@@ -160,7 +161,7 @@ const toPlayList = (list: Playlist) => {
           font-size: 50px;
           cursor: pointer;
           &:hover {
-            color: @font-color-green;
+            color: @theme-color;
           }
         }
       }

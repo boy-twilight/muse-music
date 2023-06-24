@@ -25,6 +25,7 @@ import { getTheme } from '@/utils/util';
 //配置主题
 const fontColor = getTheme().get('fontColor');
 const boxShadow = getTheme().get('shadow');
+const themeColor = getTheme().get('themeColor');
 
 //什么接受值
 const props = withDefaults(
@@ -55,10 +56,10 @@ const changeActive = (index: number) => {
 <style lang="less" scoped>
 @font-color: v-bind(fontColor);
 @shadow: v-bind(boxShadow);
+@theme-color: v-bind(themeColor);
 @font-color-gray: #7b7b7b;
-@font-color-green: #1ed2a9;
 .is-active {
-  background-color: @font-color-green !important;
+  background-color: @theme-color !important;
   color: #ffffff !important;
 }
 
@@ -78,7 +79,7 @@ const changeActive = (index: number) => {
     border-radius: 15px;
     box-shadow: @shadow;
     &:hover {
-      color: @font-color-green;
+      color: @theme-color;
       background: rgba(220, 220, 220, 0.6);
     }
   }

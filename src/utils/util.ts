@@ -217,6 +217,7 @@ export const getTheme = (): Map<string, Ref<string>> => {
     tableHover,
     shadow,
     active,
+    themeColor,
   } = storeToRefs(themes);
   const themeMap: Map<string, Ref<string>> = new Map();
   themeMap.set('fontBlack', fontBlack);
@@ -227,6 +228,7 @@ export const getTheme = (): Map<string, Ref<string>> => {
   themeMap.set('tableHover', tableHover);
   themeMap.set('shadow', shadow);
   themeMap.set('active', active);
+  themeMap.set('themeColor', themeColor);
   return themeMap;
 };
 

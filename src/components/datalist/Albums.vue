@@ -45,6 +45,7 @@ import { getTheme } from '@/utils/util';
 const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');
 const boxShadow = getTheme().get('shadow');
+const themeColor = getTheme().get('themeColor');
 const fontGray = inject('fontGray');
 
 const router = useRouter();
@@ -91,7 +92,7 @@ const toAlbumDetail = (id: string, artistId: string) => {
 @font-color-light-black: v-bind(fontBlack);
 @shadow: v-bind(boxShadow);
 @font-color-gray: v-bind(fontGray);
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
 
 .list-move,
 .list-enter-active,
@@ -179,7 +180,7 @@ const toAlbumDetail = (id: string, artistId: string) => {
         opacity: 0;
         cursor: pointer;
         &:hover {
-          color: @font-color-green;
+          color: @theme-color;
         }
         cursor: pointer;
       }
@@ -209,7 +210,7 @@ const toAlbumDetail = (id: string, artistId: string) => {
         bottom: 0;
         right: 20px;
         &:hover {
-          color: @font-color-green;
+          color: @theme-color;
         }
       }
     }

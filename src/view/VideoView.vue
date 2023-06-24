@@ -55,6 +55,7 @@ import Loading from '@components/common/Loading.vue';
 const fontColor = getTheme().get('fontColor');
 const boxShadow = getTheme().get('shadow');
 const fontBlack = getTheme().get('fontBlack');
+const themeColor = getTheme().get('themeColor');
 const fontGray = inject('fontGray');
 
 //mv地区分类
@@ -259,7 +260,8 @@ getData();
 @font-color-light-black: v-bind(fontBlack);
 @font-color-gray: v-bind(fontGray);
 @shadow: v-bind(boxShadow);
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
+@color-gray: #7b7b7b;
 
 .rvideo-container {
   overflow-x: hidden !important;
@@ -296,7 +298,7 @@ getData();
     font-size: 13px;
     letter-spacing: 0.5px;
     margin: 0 0 30px 0;
-    color: #7b7b7b;
+    color: @color-gray;
     background-color: rgb(240, 240, 245);
     border: none;
     height: 32px;
@@ -306,10 +308,10 @@ getData();
     border-radius: 16px;
     cursor: pointer;
     &:hover {
-      color: #1ed2a9;
+      color: @theme-color;
     }
     &:hover span {
-      color: #1ed2a9;
+      color: @font-color;
     }
     &:active {
       background-color: rgb(235, 235, 235);
@@ -319,7 +321,7 @@ getData();
       transform: rotate(90deg);
       font-size: 13px;
       margin-left: 1px;
-      color: #7b7b7b;
+      color: @color-gray;
     }
   }
 

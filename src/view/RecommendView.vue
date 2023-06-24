@@ -62,6 +62,7 @@ import Mv from '@components/datalist/Mv.vue';
 const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');
 const boxShadow = getTheme().get('shadow');
+const themeColor = getTheme().get('themeColor');
 const fontGray = inject('fontGray');
 
 const footer = useFooterStore();
@@ -205,7 +206,7 @@ getRequset(async () => {
 @font-color-light-black: v-bind(fontBlack);
 @shadow: v-bind(boxShadow);
 @font-color-gray: v-bind(fontGray);
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
 
 .main-container {
   display: flex;
@@ -263,7 +264,7 @@ getRequset(async () => {
             color: rgba(255, 255, 255, 0.4);
             transition: 0.4s;
             &:hover {
-              color: @font-color-green;
+              color: @theme-color;
               cursor: pointer;
             }
           }

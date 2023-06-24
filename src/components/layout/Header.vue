@@ -222,6 +222,7 @@ const fontColor = getTheme().get('fontColor') as Ref<string>;
 const fontGray = inject('fontGray');
 const bg = getTheme().get('background');
 const boxShadow = getTheme().get('shadow');
+const themeColor = getTheme().get('themeColor');
 const searchColor = getTheme().get('searchBg');
 
 //下列框处于哪种模式
@@ -494,7 +495,8 @@ onMounted(() => {
 @shadow: v-bind(boxShadow);
 @search-bg: v-bind(searchColor);
 @font-color-gray: v-bind(fontGray);
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
+@color-white: #ffffff;
 
 .search-tip-content {
   display: flex;
@@ -522,7 +524,7 @@ onMounted(() => {
         cursor: pointer;
         color: @font-color-gray;
         &:hover {
-          color: @font-color-green;
+          color: @theme-color;
         }
       }
     }
@@ -620,7 +622,7 @@ onMounted(() => {
         padding-left: 20px;
         background-color: @search-bg;
         color: @font-color;
-        border: 1px solid #ffffff;
+        border: 1px solid @color-white;
         &::placeholder {
           color: @font-color-gray;
         }

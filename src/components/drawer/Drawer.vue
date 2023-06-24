@@ -100,6 +100,7 @@ const { skinUrl, bgMode } = storeToRefs(config);
 const fontColor = getTheme().get('fontColor');
 const fontGray = inject('fontGray');
 const boxShadow = getTheme().get('shadow');
+const themeColor = getTheme().get('themeColor');
 const bg = getTheme().get('background') as Ref<string>;
 //设置隐藏滚动条
 const hideScroll = inject('hideScroll') as Function;
@@ -207,7 +208,7 @@ watch(
 @shadow: v-bind(boxShadow);
 @background: v-bind(bg);
 @font-color-gray: v-bind(fontGray);
-@font-color-green: #1ed2a9;
+@theme-color: v-bind(themeColor);
 .drawer-container {
   .playlist-drawer {
     height: 100%;
@@ -273,7 +274,7 @@ watch(
           }
 
           &:hover {
-            color: @font-color-green;
+            color: @theme-color;
           }
         }
         .playmv {
