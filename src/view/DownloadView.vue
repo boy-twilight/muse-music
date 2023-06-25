@@ -26,7 +26,8 @@
             :mvs="mvDownload"
             :show-delete="true"
             transitionName="list"
-            @get-delete-index="deleteDownLoad"
+            :show-pagination="true"
+            @get-delete-id="deleteDownLoad"
             v-show="mvDownload.length > 0" />
         </el-tab-pane>
       </template>
@@ -72,7 +73,8 @@ const closeSelect = (close: boolean) => {
 };
 
 //删除播放的视频记录
-const deleteDownLoad = (index: number) => {
+const deleteDownLoad = (id: string) => {
+  const index = mvDownload.value.findIndex((item) => item.id == id);
   mvDownload.value.splice(index, 1);
 };
 

@@ -73,6 +73,7 @@ import {
   computed,
   ComputedRef,
   onMounted,
+  nextTick,
 } from 'vue';
 import hotkeys, { HotkeysEvent } from 'hotkeys-js';
 import { throttle } from 'lodash-es';
@@ -188,6 +189,10 @@ const dmHeight = musicFooterHeight;
 
 //页面加载动画
 const firstLoading = ref<boolean>(true);
+provide<Ref<boolean>>('firstLoading', firstLoading);
+
+//计时器判断是否显示进度条
+let timeid: any = 0;
 //设置隐藏滚动条
 const hideScroll = () => {
   if (showScroll.value != 'none') {
@@ -195,12 +200,7 @@ const hideScroll = () => {
     left.value = '0';
   }
 };
-
-provide<Ref<boolean>>('firstLoading', firstLoading);
 provide<Function>('hideScroll', hideScroll);
-
-//计时器判断是否显示进度条
-let timeid: any = 0;
 //自动隐藏进度条
 const autoHide = throttle(
   () => {

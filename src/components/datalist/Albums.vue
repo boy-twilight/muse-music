@@ -8,7 +8,7 @@
     <div class="content">
       <TransitionGroup :name="transitionName">
         <div
-          v-for="(item, index) in albums"
+          v-for="item in curShow"
           :key="item.id"
           class="album">
           <el-image
@@ -25,21 +25,29 @@
           <span
             v-prevent
             v-if="showDelete"
-            @click="emits('getDeleteIndex', index)"
+            @click="emits('getDeleteId', item.id)"
             class="delete iconfont"
             >&#xe60e;</span
           >
         </div>
       </TransitionGroup>
+      <Pagination
+        v-if="showPagination && albums.length > pageSize"
+        :cur-page="curPage"
+        :page-size="pageSize"
+        @page-change="pageChange"
+        text="个专辑"
+        :total="total" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { inject } from 'vue';
+import { inject, ref, computed, nextTick, onBeforeUpdate } from 'vue';
 import { useRouter } from 'vue-router';
 import { Album } from '@/model';
 import { getTheme } from '@/utils/util';
+import Pagination from '@components/pagination/Pagination.vue';
 
 //主题配置
 const fontColor = getTheme().get('fontColor');
@@ -54,25 +62,48 @@ const router = useRouter();
 const hideScroll = inject('hideScroll') as Function;
 //声明组件接受值
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     //专辑数组
     albums: Album[];
     //标题
     title?: string;
+    //是否展示删除按钮
     showDelete?: boolean;
+    //是否展示过渡
     transitionName?: string;
+    //是否展示分页
+    showPagination?: boolean;
   }>(),
   {
     title: '',
     showDelete: false,
     transitionName: '',
+    showPagination: false,
   }
 );
 
 const emits = defineEmits<{
-  (e: 'getDeleteIndex', index: number): void;
+  (e: 'getDeleteId', id: string): void;
 }>();
+
+//当前页数
+const curPage = ref<number>(1);
+//一页多少数据
+const pageSize = ref<number>(24);
+//总的数据数
+const total = computed(() => props.albums.length);
+//当前展示的专辑
+const curShow = computed(() =>
+  props.albums.slice(
+    (curPage.value - 1) * pageSize.value,
+    curPage.value * pageSize.value
+  )
+);
+//页数变化
+const pageChange = (page: number) => {
+  curPage.value = page;
+};
 
 //跳转专辑详情
 const toAlbumDetail = (id: string, artistId: string) => {
@@ -85,6 +116,10 @@ const toAlbumDetail = (id: string, artistId: string) => {
     },
   });
 };
+
+onBeforeUpdate(() => {
+  hideScroll();
+});
 </script>
 
 <style lang="less" scoped>
@@ -113,6 +148,10 @@ const toAlbumDetail = (id: string, artistId: string) => {
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
+
+  .pagination-container {
+    margin: 10px 0;
+  }
 
   .title {
     font-weight: 520;

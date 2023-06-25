@@ -173,15 +173,23 @@ const singer = reactive<Artist>({
 });
 //歌手基本简介
 const introduce = reactive<ArtistDesc[]>([]);
+//热门歌曲列表
+const hotSongList = reactive<Song[]>([]);
+//歌曲id与Index对应的map
+const songIdMapper = computed(
+  () => new Map(hotSongList.map((item, index) => [item.id, index]))
+);
+//用于分页
 //当前页数
 const curPage = ref<number>(1);
 //一页多少数据
 const pageSize = ref<number>(50);
-//热门歌曲列表
-const hotSongList = reactive<Song[]>([]);
 //当前展示的歌曲列表
 const curList = computed(() =>
-  hotSongList.slice(curPage.value - 1, curPage.value * pageSize.value)
+  hotSongList.slice(
+    (curPage.value - 1) * pageSize.value,
+    curPage.value * pageSize.value
+  )
 );
 //总的数据数
 const total = computed(() => hotSongList.length);
@@ -189,10 +197,7 @@ const total = computed(() => hotSongList.length);
 const pageChange = (page: number) => {
   curPage.value = page;
 };
-//歌曲id与Index对应的map
-const songIdMapper = computed(
-  () => new Map(hotSongList.map((item, index) => [item.id, index]))
-);
+
 //歌手mv
 const artistMv = reactive<MV[]>([]);
 //歌手专辑

@@ -7,11 +7,6 @@
   /* font-family: "黑体"; */
 }
 
-/* @font-face {
-  font-family: "黑体";
-  src: url("https://arrive-lee.github.io/font/dingding.woff2") format('truetype');
-} */
-
 @font-face {
   font-family: 'iconfont';
   src: url('./assets/font/iconfont.ttf') format('truetype');
@@ -23,7 +18,7 @@
 }
 
 .iconfont {
-  font-family: "iconfont" !important;
+  font-family: 'iconfont' !important;
   font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
@@ -31,7 +26,7 @@
 }
 
 .iconfont_1 {
-  font-family: "iconfont1" !important;
+  font-family: 'iconfont1' !important;
   font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
@@ -111,6 +106,7 @@ select {
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
+  box-sizing: border-box;
 }
 
 ::-webkit-scrollbar-track {

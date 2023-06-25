@@ -208,7 +208,7 @@ const sortBySong = (a: Song, b: Song) => a.name.localeCompare(b.name);
 const sortBySinger = (a: Song, b: Song) => a.singer.localeCompare(b.singer);
 const sortByAlbum = (a: Song, b: Song) => a.album.localeCompare(b.album);
 const sortByTime = (a: Song, b: Song) =>
-  +(a.time as string) - +(b.name as string);
+  +(a.time as string) - +(b.time as string);
 //当退出排序时清空排序内容
 watch(cancelSort, (newVal) => {
   if (newVal) {
@@ -223,7 +223,8 @@ const getNodeList = (): NodeListOf<HTMLDivElement> => {
 };
 //当鼠标进入时
 const enter = (row: Song) => {
-  getNodeList()[props.songIdMapper.get(row.id) as number].style.opacity = '1';
+  if (getNodeList()[props.songIdMapper.get(row.id) as number])
+    getNodeList()[props.songIdMapper.get(row.id) as number].style.opacity = '1';
 };
 //当鼠标离开时
 const leave = (row: Song) => {

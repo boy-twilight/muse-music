@@ -26,7 +26,8 @@
             :mvs="loveVideo"
             transitionName="list"
             :showDelete="true"
-            @get-delete-index="deleteLoveVideo"
+            :show-pagination="true"
+            @get-delete-id="deleteLoveVideo"
             v-show="loveVideo.length > 0" />
         </el-tab-pane>
         <el-tab-pane
@@ -39,7 +40,8 @@
             :playlists="lovePlaylist"
             transitionName="list"
             :showDelete="true"
-            @get-delete-index="deleteLovePlaylist"
+            :show-pagination="false"
+            @get-delete-id="deleteLovePlaylist"
             v-show="lovePlaylist.length > 0" />
         </el-tab-pane>
         <el-tab-pane
@@ -52,8 +54,9 @@
             :playlists="loveRadio"
             type="radio"
             transitionName="list"
+            :show-pagination="false"
             :showDelete="true"
-            @get-delete-index="deleteLoveRadio"
+            @get-delete-id="deleteLoveRadio"
             v-show="loveRadio.length > 0" />
         </el-tab-pane>
         <el-tab-pane
@@ -79,7 +82,8 @@
             :albums="loveAlbum"
             transitionName="list"
             :showDelete="true"
-            @get-delete-index="deleteLoveAlbum"
+            :show-pagination="false"
+            @get-delete-id="deleteLoveAlbum"
             v-show="loveAlbum.length >= 0" />
         </el-tab-pane>
       </template>
@@ -88,7 +92,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, inject, Ref } from 'vue';
+import { ref, inject, Ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { getMusicUrls, getRequset } from '@/utils/util';
 import useUserStore from '@/store/user';
@@ -106,8 +110,18 @@ const fontGray = inject('fontGray');
 
 //获取用户数据
 const user = useUserStore();
-const { loveSongs, loveVideo, loveSinger, lovePlaylist, loveAlbum, loveRadio } =
-  storeToRefs(user);
+const {
+  loveSongs,
+  loveVideo,
+  loveSinger,
+  lovePlaylist,
+  loveAlbum,
+  loveRadio,
+  loveAlbumId,
+  loveVideoId,
+  lovePlaylistId,
+  loveRadioId,
+} = storeToRefs(user);
 
 //第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
@@ -132,11 +146,13 @@ const closeSelect = (close: boolean) => {
 };
 
 //删除收藏的视频
-const deleteLoveVideo = (index: number) => {
+const deleteLoveVideo = (id: string) => {
+  const index = loveVideoId.value.get(id) as number;
   loveVideo.value.splice(index, 1);
 };
 //删除收藏的专辑
-const deleteLoveAlbum = (index: number) => {
+const deleteLoveAlbum = (id: string) => {
+  const index = loveAlbumId.value.get(id) as number;
   loveAlbum.value.splice(index, 1);
 };
 //删除收藏的歌手
@@ -144,11 +160,13 @@ const deleteLoveSinger = (index: number) => {
   loveSinger.value.splice(index, 1);
 };
 //删除收藏的歌单
-const deleteLovePlaylist = (index: number) => {
+const deleteLovePlaylist = (id: string) => {
+  const index = lovePlaylistId.value.get(id) as number;
   lovePlaylist.value.splice(index, 1);
 };
 //删除收藏的电台
-const deleteLoveRadio = (index: number) => {
+const deleteLoveRadio = (id: string) => {
+  const index = loveRadioId.value.get(id) as number;
   loveRadio.value.splice(index, 1);
 };
 
@@ -200,7 +218,7 @@ getRequset(async () => {
   }
 
   .playlist {
-    @common: 186px;
+    @common: 186.5px;
     &:deep(.content) {
       width: 80vw;
     }

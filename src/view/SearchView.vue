@@ -316,15 +316,24 @@ const { songListId, songList, current, playProcess, playTime, isPlay } =
 //获取搜索关键词
 const route = useRoute();
 const keyWord = route.query.keyWord + '';
+
+//音乐搜索的结果
+const musicResult = reactive<Song[]>([]);
+//歌曲id与Index对应的map
+const songIdMapper = computed(
+  () => new Map(musicResult.map((item, index) => [item.id, index]))
+);
+//用于分页
 //当前页数
 const curPage = ref<number>(1);
 //一页多少数据
 const pageSize = ref<number>(50);
-//音乐搜索的结果
-const musicResult = reactive<Song[]>([]);
 //当前展示的歌曲列表
 const curList = computed(() =>
-  musicResult.slice(curPage.value - 1, curPage.value * pageSize.value)
+  musicResult.slice(
+    (curPage.value - 1) * pageSize.value,
+    curPage.value * pageSize.value
+  )
 );
 //总的数据数
 const total = computed(() => musicResult.length);
@@ -332,10 +341,6 @@ const total = computed(() => musicResult.length);
 const pageChange = (page: number) => {
   curPage.value = page;
 };
-//歌曲id与Index对应的map
-const songIdMapper = computed(
-  () => new Map(musicResult.map((item, index) => [item.id, index]))
-);
 //视频搜索结果
 const videoResult = reactive<MV[]>([]);
 //mv搜索结果
@@ -897,7 +902,7 @@ getRequset(async () => {
   }
 
   .playlist {
-    @common: 186px;
+    @common: 186.5px;
     &:deep(.content) {
       width: 80vw;
     }

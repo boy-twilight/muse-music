@@ -131,10 +131,7 @@ const user = useUserStore();
 const route = useRoute();
 const id = route.query.id + '';
 const type = route.query.type + '';
-//当前页数
-const curPage = ref<number>(1);
-//一页多少数据
-const pageSize = ref<number>(50);
+
 //歌单详情
 const playList = reactive<Playlist>({
   id,
@@ -150,26 +147,36 @@ const playList = reactive<Playlist>({
 });
 //歌单歌曲
 const playListSong = reactive<Song[]>([]);
-//当前展示的歌曲列表
-const curList = computed(() =>
-  playListSong.slice(curPage.value - 1, curPage.value * pageSize.value)
-);
 //歌单评论
 const playlistComments = reactive<Comment[]>([]);
 //歌曲id与Index对应的map
 const songIdMapper = computed(
   () => new Map(playListSong.map((item, index) => [item.id, index]))
 );
-//页面进入时的动画
-const first = inject('firstLoading') as Ref<boolean>;
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
+//用于分页
+//当前页数
+const curPage = ref<number>(1);
+//一页多少数据
+const pageSize = ref<number>(50);
+//当前展示的歌曲列表
+const curList = computed(() =>
+  playListSong.slice(
+    (curPage.value - 1) * pageSize.value,
+    curPage.value * pageSize.value
+  )
+);
 //总的数据数
 const total = computed(() => playListSong.length);
 //页数变化
 const pageChange = (page: number) => {
   curPage.value = page;
 };
+
+//页面进入时的动画
+const first = inject('firstLoading') as Ref<boolean>;
+//设置隐藏滚动条
+const hideScroll = inject('hideScroll') as Function;
+
 //批量操作相关
 //是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);

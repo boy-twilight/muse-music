@@ -27,7 +27,8 @@
             :mvs="videoRecord"
             :show-delete="true"
             transitionName="list"
-            @get-delete-index="deleteVideoRecord"
+            :show-pagination="true"
+            @get-delete-id="deleteVideoRecord"
             v-show="videoRecord.length > 0" />
         </el-tab-pane>
       </template>
@@ -75,7 +76,8 @@ const closeSelect = (close: boolean) => {
 };
 
 //删除播放记录的视频
-const deleteVideoRecord = (index: number) => {
+const deleteVideoRecord = (id: string) => {
+  const index = videoRecord.value.findIndex((item) => item.id == id);
   videoRecord.value.splice(index, 1);
 };
 

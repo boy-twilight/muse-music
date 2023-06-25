@@ -1,6 +1,6 @@
 <template>
   <div class="pagination-container">
-    <span class="total">一共{{ total }}首歌曲</span>
+    <span class="total">一共{{ total }}{{ text }}</span>
     <el-pagination
       layout="prev, pager, next"
       :total="total"
@@ -21,16 +21,22 @@
 
 <script lang="ts" setup>
 import { getTheme } from '@/utils/util';
-import { ref } from 'vue';
+import { ref, inject, nextTick } from 'vue';
 
 const themeColor = getTheme().get('themeColor');
 const fontColor = getTheme().get('fontColor');
 
-defineProps<{
-  total: number;
-  curPage: number;
-  pageSize: number;
-}>();
+withDefaults(
+  defineProps<{
+    text?: string;
+    total: number;
+    curPage: number;
+    pageSize: number;
+  }>(),
+  {
+    text: '首歌曲',
+  }
+);
 
 const emits = defineEmits<{
   (e: 'pageChange', page: number): void;
@@ -44,8 +50,13 @@ const checkValid = () => {
   }
 };
 
+//设置隐藏滚动条
+const hideScroll = inject('hideScroll') as Function;
+
 //当页数发生改变时
-const changePage = (page: number) => {
+const changePage = async (page: number) => {
+  hideScroll();
+  await nextTick();
   if (page) {
     emits('pageChange', page);
   }

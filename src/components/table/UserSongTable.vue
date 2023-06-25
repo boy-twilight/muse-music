@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, reactive } from 'vue';
+import { computed, ref, reactive, inject } from 'vue';
 import { storeToRefs } from 'pinia';
 import useUserStore from '@/store/user';
 import { elMessageType } from '@/model/enum';
@@ -53,56 +53,47 @@ const emits = defineEmits<{
   (e: 'openSelect', showSelect: boolean): void;
 }>();
 
+//设置隐藏滚动条
+const hideScroll = inject('hideScroll') as Function;
+//根据页面传递的参数加载歌曲
+const target = computed(() => {
+  let songs = reactive<Song[]>([]);
+  if (props.pageName == 'LoveView') {
+    songs = loveSongs.value;
+  } else if (props.pageName == 'RecentPlayView') {
+    songs = songRecord.value;
+  } else {
+    songs = musicDownload.value;
+  }
+  return songs;
+});
+//歌曲id与Index的映射
+const songIdMapper = computed(
+  () => new Map(target.value.map((item, index) => [item.id, index]))
+);
+
+//用于分页
 //当前页数
 const curPage = ref<number>(1);
 //一页多少数据
 const pageSize = ref<number>(50);
 //歌曲
 const songs = computed(() => {
-  let songs = reactive<Song[]>([]);
-  if (props.pageName == 'LoveView') {
-    songs = loveSongs.value.slice(
-      curPage.value - 1,
-      curPage.value * pageSize.value
+  return target.value
+    .slice((curPage.value - 1) * pageSize.value, curPage.value * pageSize.value)
+    .filter(
+      (song) =>
+        song.name.includes(content.value) ||
+        song.album.includes(content.value) ||
+        song.singer.includes(content.value)
     );
-  } else if (props.pageName == 'RecentPlayView') {
-    songs = songRecord.value.slice(
-      curPage.value - 1,
-      curPage.value * pageSize.value
-    );
-  } else {
-    songs = musicDownload.value.slice(
-      curPage.value - 1,
-      curPage.value * pageSize.value
-    );
-  }
-  return songs.filter(
-    (song) =>
-      song.name.includes(content.value) ||
-      song.album.includes(content.value) ||
-      song.singer.includes(content.value)
-  );
 });
-
 //总的数据数
-const total = computed(() => {
-  if (props.pageName == 'LoveView') {
-    return loveSongs.value.length;
-  } else if (props.pageName == 'RecentPlayView') {
-    return songRecord.value.length;
-  } else {
-    return musicDownload.value.length;
-  }
-});
+const total = computed(() => target.value.length);
 //页数变化
 const pageChange = (page: number) => {
   curPage.value = page;
 };
-
-//歌曲id与Index的映射
-const songIdMapper = computed(
-  () => new Map(songs.value.map((item, index) => [item.id, index]))
-);
 
 //按钮名字
 const buttonName = computed(() => {

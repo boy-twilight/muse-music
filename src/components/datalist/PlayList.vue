@@ -8,7 +8,7 @@
     <div class="content">
       <TransitionGroup :name="transitionName">
         <div
-          v-for="(item, index) in playlists"
+          v-for="item in curShow"
           :key="item.id"
           class="list">
           <div class="mask">
@@ -21,7 +21,7 @@
             <span
               v-prevent
               v-if="showDelete"
-              @click="emits('getDeleteIndex', index)"
+              @click="emits('getDeleteId', item.id)"
               class="delete iconfont"
               >&#xe60e;</span
             >
@@ -37,12 +37,19 @@
           >
         </div>
       </TransitionGroup>
+      <Pagination
+        v-if="showPagination && playlists.length > pageSize"
+        :cur-page="curPage"
+        :page-size="pageSize"
+        text="个歌单"
+        @page-change="pageChange"
+        :total="total" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { inject } from 'vue';
+import { inject, ref, computed, nextTick, onUpdated } from 'vue';
 import { useRouter } from 'vue-router';
 import { Playlist } from '@/model';
 import { getTheme } from '@/utils/util';
@@ -63,19 +70,39 @@ const props = withDefaults(
     title?: string;
     showDelete?: boolean;
     transitionName?: string;
+    showPagination?: boolean;
     type?: string;
   }>(),
   {
     title: '',
     showDelete: false,
     transitionName: '',
+    showPagination: false,
     type: 'playlist',
   }
 );
 
 const emits = defineEmits<{
-  (e: 'getDeleteIndex', index: number): void;
+  (e: 'getDeleteId', id: string): void;
 }>();
+
+//当前页数
+const curPage = ref<number>(1);
+//一页多少数据
+const pageSize = ref<number>(12);
+//总的数据数
+const total = computed(() => props.playlists.length);
+//当前展示的专辑
+const curShow = computed(() =>
+  props.playlists.slice(
+    (curPage.value - 1) * pageSize.value,
+    curPage.value * pageSize.value
+  )
+);
+//页数变化
+const pageChange = async (page: number) => {
+  curPage.value = page;
+};
 
 const toPlayList = (list: Playlist) => {
   hideScroll();
@@ -116,6 +143,10 @@ const toPlayList = (list: Playlist) => {
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
+
+  .pagination-container {
+    margin: 10px 0;
+  }
 
   .title {
     font-weight: 520;
