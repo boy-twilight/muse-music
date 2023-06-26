@@ -75,7 +75,7 @@
     <div
       v-show="showComments"
       class="comment-area">
-      <h4 class="title">全部评论{{ `(${videoComments.length})` }}</h4>
+      <h4 class="title">全部评论</h4>
       <button
         class="exit"
         @click="showComments = false">

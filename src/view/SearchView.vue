@@ -60,6 +60,7 @@
             </div>
             <SongList
               :songs="curList"
+              :page-size="pageSize"
               :song-id-mapper="songIdMapper" />
             <Pagination
               v-show="pageSize < total"

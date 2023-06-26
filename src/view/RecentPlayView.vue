@@ -14,7 +14,6 @@
           <UserSongTable
             @open-select="openSelect"
             page-name="RecentPlayView" />
-          <p class="tip">自动同步该账号下最近一周播放的歌曲</p>
         </el-tab-pane>
         <el-tab-pane
           :label="`视频`"
@@ -110,12 +109,6 @@ getRequset(async () => {
     &:deep(.mv-recommend) {
       width: 232px;
     }
-  }
-
-  .tip {
-    font-size: 14px;
-    color: @font-color-gray;
-    margin-left: 10px;
   }
 }
 </style>

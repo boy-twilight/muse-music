@@ -45,7 +45,8 @@
             @click="playMV(scope.row)"
             >&#xe611;</span
           >
-          <div :class="randomClass">
+          <!-- 后面这个showheader用以区别批量操作和正常操作 -->
+          <div :class="`operation-area operation${showHeader}`">
             <!-- 播放音乐 -->
             <span
               @click="play(scope.row)"
@@ -124,6 +125,7 @@ import useUserStore from '@/store/user';
 import { elMessageType } from '@/model/enum';
 import MoreDropdown from '@components/button/MoreDropdown.vue';
 import useConfigStore from '@/store/config';
+import { throttle } from 'lodash-es';
 
 //设置主题
 const config = useConfigStore();
@@ -158,12 +160,15 @@ const props = withDefaults(
     isCancelSort?: boolean;
     // 是否展示表头
     showHeader?: boolean;
+    //分页的数据大小,0代表未分页
+    pageSize?: number;
   }>(),
   {
     showSelectBox: false,
     sort: undefined,
     isCancelSort: false,
     showHeader: true,
+    pageSize: 0,
   }
 );
 
@@ -174,11 +179,6 @@ const emits = defineEmits<{
 
 //table容器
 const tableContainer = ref<InstanceType<typeof ElTable>>();
-//随机类名，避免筛选节点冲突
-const randomClass = ref<string>(
-  'operation-area operation' +
-    Number.parseInt(Math.random() * 1000000000000 + '')
-);
 
 //表格多选
 //是否展开选择框
@@ -217,19 +217,44 @@ watch(cancelSort, (newVal) => {
 });
 
 //鼠标进入移出时隐藏操作区
-//获取对应的dom节点
+//获取domlist
 const getNodeList = (): NodeListOf<HTMLDivElement> => {
-  return document.querySelectorAll('.' + randomClass.value.split(' ')[1]);
+  return document.querySelectorAll(`.operation${props.showHeader}`);
 };
 //当鼠标进入时
 const enter = (row: Song) => {
-  if (getNodeList()[props.songIdMapper.get(row.id) as number])
-    getNodeList()[props.songIdMapper.get(row.id) as number].style.opacity = '1';
+  //根据是否分页来判断当前的操作行的下标
+  let index = 0;
+  if (props.pageSize > 0) {
+    const curPage = Math.floor(
+      (props.songIdMapper.get(row.id) as number) / props.pageSize
+    );
+    index =
+      (props.songIdMapper.get(row.id) as number) - curPage * props.pageSize;
+  } else {
+    index = props.songIdMapper.get(row.id) as number;
+  }
+  const curOpera = getNodeList()[index];
+  if (curOpera) {
+    curOpera.style.opacity = '1';
+  }
 };
 //当鼠标离开时
 const leave = (row: Song) => {
-  if (getNodeList()[props.songIdMapper.get(row.id) as number])
-    getNodeList()[props.songIdMapper.get(row.id) as number].style.opacity = '0';
+  let index = 0;
+  if (props.pageSize > 0) {
+    const curPage = Math.floor(
+      (props.songIdMapper.get(row.id) as number) / props.pageSize
+    );
+    index =
+      (props.songIdMapper.get(row.id) as number) - curPage * props.pageSize;
+  } else {
+    index = props.songIdMapper.get(row.id) as number;
+  }
+  const curOpera = getNodeList()[index];
+  if (curOpera) {
+    curOpera.style.opacity = '0';
+  }
 };
 
 //播放相关
@@ -290,6 +315,7 @@ const getDataOntime = () => {
   }, 60 * 1000 * 5);
 };
 getDataOntime();
+//离开路由时销毁
 onBeforeRouteLeave(() => {
   clearInterval(timeid);
 });
@@ -301,10 +327,6 @@ onBeforeRouteLeave(() => {
 @background: v-bind(bg);
 @font-color-gray: v-bind(fontGray);
 @theme-color: v-bind(themeColor);
-
-.is-active {
-  opacity: 1 !important;
-}
 
 .is-love {
   color: #ff6a6a !important;
@@ -405,7 +427,6 @@ onBeforeRouteLeave(() => {
     background: @background;
   }
 }
-
 /* 表格内背景颜色 */
 .skin-table {
   background-color: transparent;

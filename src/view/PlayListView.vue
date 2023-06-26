@@ -56,6 +56,7 @@
           name="song">
           <SongList
             :songs="curList"
+            :page-size="pageSize"
             :song-id-mapper="songIdMapper" />
           <Pagination
             v-show="pageSize < total"
@@ -333,7 +334,7 @@ getRequset(async () => {
 }
 .playlist-container {
   .pagination-container {
-    margin: 10px 0;
+    margin: 15px 0;
   }
 
   .header {

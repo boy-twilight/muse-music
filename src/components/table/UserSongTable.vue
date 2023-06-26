@@ -17,6 +17,7 @@
       :songs="songs"
       :song-id-mapper="songIdMapper"
       :sort="sortChoice"
+      :page-size="pageSize"
       :is-cancel-sort="cancelSort" />
     <Pagination
       v-show="pageSize < total"
@@ -28,7 +29,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, reactive, inject } from 'vue';
+import { computed, ref, reactive } from 'vue';
 import { storeToRefs } from 'pinia';
 import useUserStore from '@/store/user';
 import { elMessageType } from '@/model/enum';

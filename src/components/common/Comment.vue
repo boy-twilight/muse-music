@@ -3,10 +3,10 @@
     <p class="title">精彩评论</p>
     <div
       class="comment"
-      v-for="(item, order) in showPagination ? curList : current"
+      v-for="(item, order) in curList"
       :key="item.commentId"
       :class="{
-        'none-border': order == comments.length - 1,
+        'none-border': order == curList.length - 1,
       }">
       <!-- 头像 -->
       <el-image
@@ -32,7 +32,7 @@
         <!-- 点赞 -->
         <div class="like-count">
           <p
-            @click="love(order)"
+            @click="love(item.commentId)"
             v-prevent>
             <span class="iconfont_1 like">&#xe67c;</span>
             <span
@@ -45,14 +45,14 @@
         </div>
         <!-- 打开回复区 -->
         <p
-          @click="openReply(order)"
+          @click="openReply(item.commentId)"
           v-if="item.reply && item.reply.length > 0"
           v-prevent
           class="get-reply">
           查看{{ item.reply?.length }}条回复<span
             class="iconfont"
             :class="{
-              'is-rotate': active == order,
+              'is-rotate': activeId == item.commentId,
             }"
             >&#xe775;</span
           >
@@ -61,7 +61,7 @@
         <Transition name="show">
           <div
             class="reply-container"
-            v-show="active == order"
+            v-show="activeId == item.commentId"
             v-if="item.reply && item.reply.length > 0">
             <div
               class="reply-area"
@@ -90,7 +90,7 @@
                   {{ reply.content }}
                 </p>
                 <div class="like-count">
-                  <p @click="loveReply(order, index)">
+                  <p @click="loveReply(item.commentId, index)">
                     <span class="iconfont_1 like">&#xe67c;</span>
                     <span
                       v-show="+reply.likeCount > 0"
@@ -103,7 +103,9 @@
               </div>
             </div>
             <p
-              @click="active = active == order ? -1 : order"
+              @click="
+                activeId = activeId == item.commentId ? '' : item.commentId
+              "
               v-prevent
               class="collapse">
               收起 <span class="iconfont_1">&#xe655;</span>
@@ -112,27 +114,13 @@
         </Transition>
       </div>
     </div>
-    <!-- 不采取分页 -->
-    <!-- 查看更多精彩评论 -->
-    <button
-      v-if="dataNum < comments.length && !showPagination"
-      class="more-reply"
-      @click="getMoreComment">
-      更多精彩评论<span class="iconfont">&#xe775;</span>
-    </button>
-    <!-- 收起评论 -->
-    <button
-      v-if="dataNum == comments.length && !showPagination"
-      class="more-reply collapse-reply"
-      @click="dataNum = 50">
-      收起评论<span class="iconfont">&#xe775;</span>
-    </button>
     <!-- 分页 -->
     <Pagination
-      v-if="pageSize < total && showPagination"
+      v-if="pageSize < total"
       :cur-page="curPage"
       :page-size="pageSize"
       :total="total"
+      text="个评论"
       @page-change="pageChange" />
   </div>
 </template>
@@ -142,6 +130,7 @@ import { ref, computed, nextTick, inject } from 'vue';
 import { Comment } from '@/model';
 import { getTheme } from '@/utils/util';
 import useConfigStore from '@/store/config';
+import Pagination from '../pagination/Pagination.vue';
 
 //配置主题
 const config = useConfigStore();
@@ -154,27 +143,22 @@ const replyBg = computed(() =>
   config.bgMode == 'skin' ? 'rgba(220,220,220,0.2)' : 'rgb(240,240,240)'
 );
 
-const props = withDefaults(
-  defineProps<{
-    comments: Comment[];
-    showPagination?: boolean;
-  }>(),
-  {
-    showPagination: false,
-  }
+const props = defineProps<{
+  comments: Comment[];
+}>();
+
+//评论id的映射
+const mapper = computed(
+  () => new Map(props.comments.map((item, index) => [item.commentId, index]))
 );
 
-//不采取分页的情况
-//当前活跃的index
-const active = ref<number>(-1);
-const dataNum = ref<number>(50);
-const current = computed(() => props.comments.slice(0, dataNum.value));
+//当前活跃的当评论
+const activeId = ref<string>('');
 
-//采取分页的情况
 //当前页数
 const curPage = ref<number>(1);
 //一页多少数据
-const pageSize = ref<number>(25);
+const pageSize = ref<number>(20);
 //当前展示的歌曲列表
 const curList = computed(() =>
   props.comments.slice(
@@ -189,14 +173,6 @@ const pageChange = (page: number) => {
   curPage.value = page;
 };
 
-//加载更多评论
-const getMoreComment = () => {
-  dataNum.value += 50;
-  if (dataNum.value > props.comments.length) {
-    dataNum.value = props.comments.length;
-  }
-};
-
 //获取一个随机评论时间
 const getRandomTime = (time: string): string => {
   const random = Math.floor(
@@ -206,44 +182,38 @@ const getRandomTime = (time: string): string => {
 };
 
 //打开或关闭评论区
-const openReply = async (order: number) => {
-  if (active.value == order) {
-    active.value = -1;
+const openReply = async (commentId: string) => {
+  if (activeId.value == commentId) {
+    activeId.value = '';
   } else {
-    if (active.value == -1) {
-      active.value = order;
-    } else {
-      active.value = -1;
+    if (activeId.value) {
+      activeId.value = '';
       await nextTick();
-      active.value = order;
+      activeId.value = commentId;
+    } else {
+      activeId.value = commentId;
     }
   }
 };
 
 //点赞
-const love = (order: number) => {
-  const { isLove, likeCount } = props.comments[order];
-  if (isLove) {
-    props.comments[order].likeCount = +likeCount - 1 + '';
-  } else {
-    props.comments[order].likeCount = +likeCount + 1 + '';
-  }
-  props.comments[order].isLove = !isLove;
+const love = (commentId: string) => {
+  //找到当前评论
+  const curComment = props.comments[mapper.value.get(commentId) as number];
+  const { isLove, likeCount } = curComment;
+  curComment.likeCount = isLove ? +likeCount - 1 + '' : +likeCount + 1 + '';
+  curComment.isLove = !isLove;
 };
 
 //点赞回复
-const loveReply = (order: number, index: number) => {
-  const { isLove, likeCount } = (props.comments[order].reply as Comment[])[
-    index
-  ];
-  if (isLove) {
-    (props.comments[order].reply as Comment[])[index].likeCount =
-      +likeCount - 1 + '';
-  } else {
-    (props.comments[order].reply as Comment[])[index].likeCount =
-      +likeCount + 1 + '';
-  }
-  (props.comments[order].reply as Comment[])[index].isLove = !isLove;
+const loveReply = (commentId: string, index: number) => {
+  //找到这个子评论
+  const curReply = (
+    props.comments[mapper.value.get(commentId) as number].reply as Comment[]
+  )[index];
+  const { isLove, likeCount } = curReply;
+  curReply.likeCount = isLove ? +likeCount - 1 + '' : +likeCount + 1 + '';
+  curReply.isLove = !isLove;
 };
 
 //格式化时间
@@ -300,55 +270,8 @@ const formatCommentTime = (timeStap: number) => {
     color: @font-color;
     width: 80vw;
   }
-
-  .more-reply {
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 13px;
-    letter-spacing: 0.5px;
-    margin: 30px 0 40px 0;
-    color: @color-gray;
-    background-color: rgb(240, 240, 245);
-    border: none;
-    height: 32px;
-    width: 124px;
-    line-height: 32px;
-    text-align: center;
-    border-radius: 16px;
-    box-shadow: @shadow;
-    cursor: pointer;
-    &:hover span {
-      color: @theme-color;
-    }
-    &:hover {
-      color: @theme-color;
-    }
-    &:active {
-      background-color: rgb(235, 235, 235);
-    }
-    span {
-      display: inline-block;
-      transform: rotate(90deg);
-      font-size: 13px;
-      margin-left: 1px;
-      color: @color-gray;
-    }
-  }
-
-  .collapse-reply {
-    width: 100px;
-    position: static;
-    transform: translateX(0);
-    margin: 0 0 20px 0;
-
-    span {
-      display: inline-block;
-      transform: rotate(-90deg);
-      font-size: 13px;
-      margin-left: 1px;
-      color: @color-gray;
-    }
+  .pagination-container {
+    margin-bottom: 20px;
   }
 
   .comment {
