@@ -53,8 +53,6 @@ const emits = defineEmits<{
   (e: 'openSelect', showSelect: boolean): void;
 }>();
 
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
 //根据页面传递的参数加载歌曲
 const target = computed(() => {
   let songs = reactive<Song[]>([]);

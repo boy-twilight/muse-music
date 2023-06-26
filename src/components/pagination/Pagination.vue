@@ -21,7 +21,7 @@
 
 <script lang="ts" setup>
 import { getTheme } from '@/utils/util';
-import { ref, inject, nextTick } from 'vue';
+import { ref } from 'vue';
 
 const themeColor = getTheme().get('themeColor');
 const fontColor = getTheme().get('fontColor');
@@ -50,13 +50,8 @@ const checkValid = () => {
   }
 };
 
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
-
 //当页数发生改变时
 const changePage = async (page: number) => {
-  hideScroll();
-  await nextTick();
   if (page) {
     emits('pageChange', page);
   }

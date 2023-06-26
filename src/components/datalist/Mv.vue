@@ -9,7 +9,7 @@
       <TransitionGroup :name="transitionName">
         <div
           class="mv-recommend"
-          v-for="item in curShow"
+          v-for="item in showPagination ? curShow : mvs"
           :key="item.id">
           <el-image
             :src="item.image"
@@ -114,10 +114,6 @@ const toMv = (id: string) => {
     },
   });
 };
-
-onBeforeUpdate(() => {
-  hideScroll();
-});
 </script>
 
 <style lang="less" scoped>

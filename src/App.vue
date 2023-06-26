@@ -73,7 +73,6 @@ import {
   computed,
   ComputedRef,
   onMounted,
-  nextTick,
 } from 'vue';
 import hotkeys, { HotkeysEvent } from 'hotkeys-js';
 import { throttle } from 'lodash-es';
@@ -191,22 +190,32 @@ const dmHeight = musicFooterHeight;
 const firstLoading = ref<boolean>(true);
 provide<Ref<boolean>>('firstLoading', firstLoading);
 
+const scrollVisible = showScroll;
+const leftDis = left;
 //计时器判断是否显示进度条
 let timeid: any = 0;
 //设置隐藏滚动条
 const hideScroll = () => {
   if (showScroll.value != 'none') {
     showScroll.value = 'none';
-    left.value = '0';
   }
 };
+
+//需要滚动的页面地址映射
+const mapper = new Map([
+  ['/video', '/video'],
+  ['/hall', '/hall'],
+  ['/station', '/station'],
+  ['rvideo', 'rvideo'],
+  ['/artistlist', '/artistlist'],
+]);
+
 provide<Function>('hideScroll', hideScroll);
 //自动隐藏进度条
 const autoHide = throttle(
   () => {
     if (showScroll.value != 'block') {
       showScroll.value = 'block';
-      left.value = '6px';
     }
     if (timeid) {
       clearTimeout(timeid);
@@ -404,9 +413,9 @@ onMounted(() => {
           display: none;
         }
         .view {
-          padding-left: v-bind(left);
+          padding-left: v-bind(leftDis);
           &::-webkit-scrollbar {
-            display: v-bind(showScroll);
+            display: v-bind(scrollVisible);
           }
         }
       }

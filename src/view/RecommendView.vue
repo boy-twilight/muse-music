@@ -128,7 +128,6 @@ getRequset(async () => {
         pic: imageUrl,
       });
     });
-    console.log(banners);
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }

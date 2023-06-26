@@ -8,7 +8,7 @@ const useConfigStore = defineStore('config', () => {
   //是否展示滚动条
   const showScroll = ref<string>('none');
   //主页的左内边距，目的是防止数据加载时抖动
-  const left = ref<string>('0px');
+  const left = computed(() => (showScroll.value == 'none' ? '0px' : '6px'));
   //此部分用来设置全屏部分的宽高比例
   //是否全屏
   const isFullScreen = ref<boolean>(false);

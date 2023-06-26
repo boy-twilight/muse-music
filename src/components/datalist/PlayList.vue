@@ -8,7 +8,7 @@
     <div class="content">
       <TransitionGroup :name="transitionName">
         <div
-          v-for="item in curShow"
+          v-for="item in showPagination ? curShow : playlists"
           :key="item.id"
           class="list">
           <div class="mask">

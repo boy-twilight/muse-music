@@ -8,7 +8,7 @@
     <div class="content">
       <TransitionGroup :name="transitionName">
         <div
-          v-for="item in curShow"
+          v-for="item in showPagination ? curShow : albums"
           :key="item.id"
           class="album">
           <el-image
@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, ref, computed, nextTick, onBeforeUpdate } from 'vue';
+import { inject, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { Album } from '@/model';
 import { getTheme } from '@/utils/util';
@@ -116,10 +116,6 @@ const toAlbumDetail = (id: string, artistId: string) => {
     },
   });
 };
-
-onBeforeUpdate(() => {
-  hideScroll();
-});
 </script>
 
 <style lang="less" scoped>
