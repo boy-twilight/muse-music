@@ -90,7 +90,7 @@ const emits = defineEmits<{
 //当前页数
 const curPage = ref<number>(1);
 //一页多少数据
-const pageSize = ref<number>(24);
+const pageSize = ref<number>(18);
 //总的数据数
 const total = computed(() => props.albums.length);
 //当前展示的专辑
@@ -146,7 +146,7 @@ const toAlbumDetail = (id: string, artistId: string) => {
   margin-bottom: 20px;
 
   .pagination-container {
-    margin: 10px 0;
+    margin-top: 10px;
   }
 
   .title {

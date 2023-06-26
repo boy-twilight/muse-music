@@ -70,6 +70,7 @@
             <Loading :isLoading="isLoading" />
             <Albums
               :albums="artistAlbum"
+              :show-pagination="true"
               v-show="!needNoSearch[0]" />
           </el-tab-pane>
           <el-tab-pane
@@ -82,6 +83,7 @@
             <Loading :isLoading="isLoading" />
             <Mv
               :mvs="artistMv"
+              :show-pagination="true"
               v-show="!needNoSearch[1]" />
           </el-tab-pane>
           <el-tab-pane
@@ -158,8 +160,7 @@ const score = route.query.score + '';
 const isLoading = ref<boolean>(false);
 //页面第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
+
 //是否需要占位图片
 const needNoSearch = reactive<boolean[]>([false, false]);
 
@@ -183,7 +184,7 @@ const songIdMapper = computed(
 //当前页数
 const curPage = ref<number>(1);
 //一页多少数据
-const pageSize = ref<number>(50);
+const pageSize = ref<number>(30);
 //当前展示的歌曲列表
 const curList = computed(() =>
   hotSongList.slice(
@@ -208,12 +209,10 @@ const artistAlbum = reactive<Album[]>([]);
 const showSelect = ref<boolean>(false);
 //关闭批量操作
 const closeSelect = (close: boolean) => {
-  hideScroll();
   showSelect.value = close;
 };
 //打开批量操作
 const openSelect = (open: boolean) => {
-  hideScroll();
   showSelect.value = open;
 };
 //分享歌手
@@ -228,7 +227,6 @@ const shareSinger = () => {
 };
 //获取当前活跃的选项，并根据选项加载数据
 const getActive = (active: string) => {
-  hideScroll();
   //点击加载数据
   if (active == 'album' && artistAlbum.length == 0) {
     //获取歌手专辑

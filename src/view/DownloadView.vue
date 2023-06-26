@@ -6,8 +6,7 @@
       @close-select="closeSelect" />
     <Tab
       v-show="!showSelect"
-      active="song"
-      @get-active="getActive">
+      active="song">
       <template #content>
         <el-tab-pane
           :label="`下载歌曲`"
@@ -54,11 +53,6 @@ const { mvDownload, musicDownload } = storeToRefs(user);
 
 //第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
-const getActive = () => {
-  hideScroll();
-};
 
 //是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
@@ -68,7 +62,6 @@ const openSelect = (open: boolean) => {
 };
 //关闭批量操作
 const closeSelect = (close: boolean) => {
-  hideScroll();
   showSelect.value = close;
 };
 

@@ -163,22 +163,36 @@ export const getMusicUrls = async (
   exclude?: number
 ) => {
   try {
-    const response: any = await getMusicUrl(ids);
-    const { data } = response;
-    data.forEach((item: any) => {
-      const index = list.findIndex((song) => song.id == item.id);
-      if (item.url) {
-        if (exclude != undefined) {
-          if (index != exclude) {
+    //id映射
+    const mapper: Map<string, number> = new Map(
+      list.map((item, index) => [item.id, index])
+    );
+    //当数据量过大时分批请求
+    const idArr = list.map((item) => item.id);
+    const requestArr: any[] = [];
+    for (let i = 0; i < Math.ceil(idArr.length / 100); i++) {
+      requestArr.push(
+        getMusicUrl(idArr.slice(i * 100, (i + 1) * 100).join(','))
+      );
+    }
+    const responseArr = await Promise.all(requestArr);
+    responseArr.forEach((response: any) => {
+      const { data } = response;
+      data.forEach((item: any) => {
+        const index = mapper.get(item.id) as number;
+        if (item.url) {
+          if (exclude != undefined) {
+            if (index != exclude) {
+              list[index].url = item.url;
+            }
+          } else {
             list[index].url = item.url;
           }
         } else {
-          list[index].url = item.url;
+          list[index].available = '10';
+          list[index].url = '';
         }
-      } else {
-        list[index].available = '10';
-        list[index].url = '';
-      }
+      });
     });
     //判断key要不要做持久化
     if (key) {

@@ -89,7 +89,7 @@ const emits = defineEmits<{
 //当前页数
 const curPage = ref<number>(1);
 //一页多少数据
-const pageSize = ref<number>(12);
+const pageSize = ref<number>(18);
 //总的数据数
 const total = computed(() => props.playlists.length);
 //当前展示的专辑
@@ -145,7 +145,7 @@ const toPlayList = (list: Playlist) => {
   margin-bottom: 20px;
 
   .pagination-container {
-    margin: 10px 0;
+    margin-top: 10px;
   }
 
   .title {

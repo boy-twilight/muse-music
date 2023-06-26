@@ -190,6 +190,7 @@ const dmHeight = musicFooterHeight;
 const firstLoading = ref<boolean>(true);
 provide<Ref<boolean>>('firstLoading', firstLoading);
 
+//解决页面抖动问题
 const scrollVisible = showScroll;
 const leftDis = left;
 //计时器判断是否显示进度条
@@ -200,13 +201,12 @@ const hideScroll = () => {
     showScroll.value = 'none';
   }
 };
-
 //需要滚动的页面地址映射
 const mapper = new Map([
   ['/video', '/video'],
   ['/hall', '/hall'],
   ['/station', '/station'],
-  ['rvideo', 'rvideo'],
+  ['/rvideo', 'rvideo'],
   ['/artistlist', '/artistlist'],
 ]);
 
@@ -214,15 +214,17 @@ provide<Function>('hideScroll', hideScroll);
 //自动隐藏进度条
 const autoHide = throttle(
   () => {
-    if (showScroll.value != 'block') {
-      showScroll.value = 'block';
+    if (mapper.get(route.fullPath.split('?')[0])) {
+      if (showScroll.value != 'block') {
+        showScroll.value = 'block';
+      }
+      if (timeid) {
+        clearTimeout(timeid);
+      }
+      timeid = setTimeout(() => {
+        hideScroll();
+      }, 3000);
     }
-    if (timeid) {
-      clearTimeout(timeid);
-    }
-    timeid = setTimeout(() => {
-      hideScroll();
-    }, 3000);
   },
   600,
   { leading: true, trailing: false }

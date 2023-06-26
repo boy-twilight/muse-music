@@ -3,7 +3,7 @@
     <p class="title">精彩评论</p>
     <div
       class="comment"
-      v-for="(item, order) in current"
+      v-for="(item, order) in showPagination ? curList : current"
       :key="item.commentId"
       :class="{
         'none-border': order == comments.length - 1,
@@ -112,20 +112,28 @@
         </Transition>
       </div>
     </div>
+    <!-- 不采取分页 -->
     <!-- 查看更多精彩评论 -->
     <button
-      v-show="dataNum < comments.length"
+      v-if="dataNum < comments.length && !showPagination"
       class="more-reply"
       @click="getMoreComment">
       更多精彩评论<span class="iconfont">&#xe775;</span>
     </button>
     <!-- 收起评论 -->
     <button
-      v-show="dataNum == comments.length"
+      v-if="dataNum == comments.length && !showPagination"
       class="more-reply collapse-reply"
       @click="dataNum = 50">
       收起评论<span class="iconfont">&#xe775;</span>
     </button>
+    <!-- 分页 -->
+    <Pagination
+      v-if="pageSize < total && showPagination"
+      :cur-page="curPage"
+      :page-size="pageSize"
+      :total="total"
+      @page-change="pageChange" />
   </div>
 </template>
 
@@ -146,16 +154,40 @@ const replyBg = computed(() =>
   config.bgMode == 'skin' ? 'rgba(220,220,220,0.2)' : 'rgb(240,240,240)'
 );
 
-const props = defineProps<{
-  comments: Comment[];
-}>();
+const props = withDefaults(
+  defineProps<{
+    comments: Comment[];
+    showPagination?: boolean;
+  }>(),
+  {
+    showPagination: false,
+  }
+);
 
+//不采取分页的情况
 //当前活跃的index
 const active = ref<number>(-1);
-
 const dataNum = ref<number>(50);
-
 const current = computed(() => props.comments.slice(0, dataNum.value));
+
+//采取分页的情况
+//当前页数
+const curPage = ref<number>(1);
+//一页多少数据
+const pageSize = ref<number>(25);
+//当前展示的歌曲列表
+const curList = computed(() =>
+  props.comments.slice(
+    (curPage.value - 1) * pageSize.value,
+    curPage.value * pageSize.value
+  )
+);
+//总的数据数
+const total = computed(() => props.comments.length);
+//页数变化
+const pageChange = (page: number) => {
+  curPage.value = page;
+};
 
 //加载更多评论
 const getMoreComment = () => {

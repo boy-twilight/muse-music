@@ -49,8 +49,7 @@
     <Tab
       v-show="!showSelect"
       active="song"
-      class="playlist-tab"
-      @getActive="getActive">
+      class="playlist-tab">
       <template #content>
         <el-tab-pane
           :label="`歌曲 ${playListSong.length}`"
@@ -157,7 +156,7 @@ const songIdMapper = computed(
 //当前页数
 const curPage = ref<number>(1);
 //一页多少数据
-const pageSize = ref<number>(50);
+const pageSize = ref<number>(30);
 //当前展示的歌曲列表
 const curList = computed(() =>
   playListSong.slice(
@@ -174,20 +173,16 @@ const pageChange = (page: number) => {
 
 //页面进入时的动画
 const first = inject('firstLoading') as Ref<boolean>;
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
 
 //批量操作相关
 //是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
 //关闭批量操作
 const closeSelect = (close: boolean) => {
-  hideScroll();
   showSelect.value = close;
 };
 //打开批量操作
 const openSelect = (open: boolean) => {
-  hideScroll();
   showSelect.value = open;
 };
 
@@ -208,11 +203,6 @@ const addLove = () => {
   } else {
     user.addLove(playList, user.loveRadio, user.loveRadioId);
   }
-};
-
-//活得当前活跃的tab项
-const getActive = () => {
-  hideScroll();
 };
 
 //获取歌曲详情和音乐

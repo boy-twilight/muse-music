@@ -38,9 +38,7 @@
     <div
       class="content"
       v-show="!showSelect">
-      <Tab
-        active="songs"
-        @getActive="getActive">
+      <Tab active="songs">
         <template #content>
           <el-tab-pane
             label="歌曲"
@@ -135,20 +133,16 @@ const songIdMapper = computed(
 );
 //页面第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
 
 //批量操作相关
 //是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
 //关闭批量操作
 const closeSelect = (close: boolean) => {
-  hideScroll();
   showSelect.value = close;
 };
 //打开批量操作
 const openSelect = (open: boolean) => {
-  hideScroll();
   showSelect.value = open;
 };
 
@@ -161,11 +155,6 @@ const shareAlbum = () => {
       import.meta.env.VITE_APP_URL +
       route.fullPath
   );
-};
-
-//获取当前活跃的tab
-const getActive = () => {
-  hideScroll();
 };
 
 //请求页面数据

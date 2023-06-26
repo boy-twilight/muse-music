@@ -145,7 +145,7 @@ const toMv = (id: string) => {
   margin-bottom: 20px;
 
   .pagination-container {
-    margin: 10px 0;
+    margin-top: 10px;
   }
 
   .title {

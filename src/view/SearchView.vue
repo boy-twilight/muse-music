@@ -78,6 +78,7 @@
             text="暂无搜索结果" />
           <Mv
             :mvs="videoResult"
+            :show-pagination="true"
             v-show="!needNoSearch[0]" />
         </el-tab-pane>
         <el-tab-pane
@@ -89,6 +90,7 @@
             text="暂无搜索结果" />
           <Mv
             :mvs="mvResult"
+            :show-pagination="true"
             v-show="!needNoSearch[1]" />
         </el-tab-pane>
         <el-tab-pane
@@ -100,6 +102,7 @@
             text="暂无搜索结果" />
           <Albums
             :albums="albumResult"
+            :show-pagination="true"
             v-show="!needNoSearch[2]" />
         </el-tab-pane>
         <el-tab-pane
@@ -111,6 +114,7 @@
             text="暂无搜索结果" />
           <PlayList
             :playlists="radioResult"
+            :show-pagination="true"
             type="radio"
             v-show="!needNoSearch[3]" />
         </el-tab-pane>
@@ -123,6 +127,7 @@
             text="暂无搜索结果" />
           <PlayList
             :playlists="playlistResult"
+            :show-pagination="true"
             v-show="!needNoSearch[4]" />
         </el-tab-pane>
         <el-tab-pane
@@ -295,7 +300,6 @@ const { loveMusicId, loveSongs } = storeToRefs(user);
 const showSelect = ref<boolean>(false);
 //关闭批量操作
 const closeSelect = (close: boolean) => {
-  hideScroll();
   showSelect.value = close;
 };
 //喜欢歌曲
@@ -327,7 +331,7 @@ const songIdMapper = computed(
 //当前页数
 const curPage = ref<number>(1);
 //一页多少数据
-const pageSize = ref<number>(50);
+const pageSize = ref<number>(30);
 //当前展示的歌曲列表
 const curList = computed(() =>
   musicResult.slice(
@@ -372,8 +376,6 @@ const lyricResult = reactive<Song[]>([]);
 const isLoading = ref<boolean>(false);
 //页面第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
 //是否展示占位图片
 const needNoSearch = reactive<boolean[]>([
   false,
@@ -428,11 +430,10 @@ const play = async (song: Song) => {
 
 //根据当前的活跃请求搜索结果
 const getActive = (active: string) => {
-  hideScroll();
   if (active == 'video' && videoResult.length == 0) {
     getRequset(async () => {
       try {
-        const response: any = await searchMusic(1014, 60, keyWord);
+        const response: any = await searchMusic(1014, 100, keyWord);
         const {
           result: { videos },
         } = response;
@@ -461,7 +462,7 @@ const getActive = (active: string) => {
   } else if (active == 'mv' && mvResult.length == 0) {
     getRequset(async () => {
       try {
-        const response: any = await searchMusic(1004, 60, keyWord);
+        const response: any = await searchMusic(1004, 100, keyWord);
         const {
           result: { mvs },
         } = response;
@@ -519,7 +520,7 @@ const getActive = (active: string) => {
   } else if (active == 'radio' && radioResult.length == 0) {
     getRequset(async () => {
       try {
-        const response: any = await searchMusic(1009, 60, keyWord);
+        const response: any = await searchMusic(1009, 100, keyWord);
         const {
           result: { djRadios },
         } = response;
@@ -550,7 +551,7 @@ const getActive = (active: string) => {
   } else if (active == 'playList' && playlistResult.length == 0) {
     getRequset(async () => {
       try {
-        const response: any = await searchMusic(1000, 60, keyWord);
+        const response: any = await searchMusic(1000, 100, keyWord);
         const {
           result: { playlists },
         } = response;
@@ -582,7 +583,7 @@ const getActive = (active: string) => {
     //获取歌词的搜索结果并进行处理
     getRequset(async () => {
       try {
-        const response: any = await searchMusic(1006, 60, keyWord);
+        const response: any = await searchMusic(1006, 100, keyWord);
         const {
           result: { songs },
         } = response;
@@ -648,7 +649,7 @@ getRequset(async () => {
   }
   //获取搜索歌手
   try {
-    const response: any = await searchMusic(100, 60, keyWord);
+    const response: any = await searchMusic(100, 100, keyWord);
     const {
       result: { artists },
     } = response;
@@ -687,13 +688,14 @@ getRequset(async () => {
 }
 .search-container {
   padding-top: 0 !important;
+  padding-bottom: 0 !important;
 
   .result-singer {
     cursor: pointer;
     width: 82vw;
     margin: 5px 0;
     display: flex;
-    padding: 15px 0 15px 1vw;
+    padding: 15px 0 20px 1vw;
     background-color: v-bind(singerBg);
     align-items: center;
     border-radius: 5px;
