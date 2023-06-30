@@ -152,7 +152,7 @@
           <div class="lyric-container">
             <div
               class="lyric"
-              v-for="(song, index) in lyricResult"
+              v-for="song in curList"
               :key="song.id">
               <div class="lyric-operation">
                 <span
@@ -175,10 +175,11 @@
                 >
                 <span
                   class="open-lyric"
-                  @click="openLyric(index)"
+                  @click="openLyric(lyricMapper.get(song.id) as number)"
                   v-prevent
                   >{{
-                    lyricLen[index] == song.lyric?.length
+                    lyricLen[lyricMapper.get(song.id) as number] ==
+                    song.lyric?.length
                       ? '收起歌词'
                       : '展开歌词'
                   }}</span
@@ -207,7 +208,7 @@
                 <p
                   v-for="(item, index1) in song.lyric"
                   :key="index1"
-                  v-show="index1 < lyricLen[index]">
+                  v-show="index1 < lyricLen[lyricMapper.get(song.id) as number]">
                   {{ item.trim() }}
                 </p>
               </div>
@@ -219,6 +220,13 @@
                 <span>{{ transformTime(song.time as string) }}</span>
               </div>
             </div>
+            <Pagination
+              v-show="pageSize < total"
+              class="lyric-pagination"
+              :cur-page="curPage"
+              :page-size="pageSize"
+              :total="total"
+              @page-change="pageChange" />
           </div>
         </el-tab-pane>
       </template>
@@ -260,6 +268,7 @@ import NoSearch from '@components/common/NoSearch.vue';
 import { useRouter } from 'vue-router';
 import useConfigStore from '@/store/config';
 import useFooterStore from '@/store/footer';
+import Pagination from '@/components/pagination/Pagination.vue';
 
 //配置主题
 const config = useConfigStore();
@@ -321,6 +330,8 @@ const { songListId, songList, current, playProcess, playTime, isPlay } =
 //获取搜索关键词
 const route = useRoute();
 const keyWord = route.query.keyWord + '';
+//当前活跃的tab选型
+const activeTab = ref<string>('song');
 
 //音乐搜索的结果
 const musicResult = reactive<Song[]>([]);
@@ -328,24 +339,6 @@ const musicResult = reactive<Song[]>([]);
 const songIdMapper = computed(
   () => new Map(musicResult.map((item, index) => [item.id, index]))
 );
-//用于分页
-//当前页数
-const curPage = ref<number>(1);
-//一页多少数据
-const pageSize = ref<number>(30);
-//当前展示的歌曲列表
-const curList = computed(() =>
-  musicResult.slice(
-    (curPage.value - 1) * pageSize.value,
-    curPage.value * pageSize.value
-  )
-);
-//总的数据数
-const total = computed(() => musicResult.length);
-//页数变化
-const pageChange = (page: number) => {
-  curPage.value = page;
-};
 //视频搜索结果
 const videoResult = reactive<MV[]>([]);
 //mv搜索结果
@@ -373,6 +366,10 @@ const firstSinger = computed(() =>
 );
 //歌词的搜索结果
 const lyricResult = reactive<Song[]>([]);
+//歌词顺序的隐射
+const lyricMapper = computed(
+  () => new Map(lyricResult.map((item, index) => [item.id, index]))
+);
 //加载数据的动画
 const isLoading = ref<boolean>(false);
 //页面第一次加载的动画
@@ -428,9 +425,34 @@ const play = async (song: Song) => {
     elMessage(elMessageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
   }
 };
+//用于分页,复用歌曲与歌词的分页
+//当前页数
+const curPage = ref<number>(1);
+//一页多少数据
+const pageSize = computed(() => (activeTab.value == 'song' ? 30 : 10));
+//当前的结果
+const curResult = computed(() =>
+  activeTab.value == 'song' ? musicResult : lyricResult
+);
+//当前展示的歌曲列表
+const curList = computed(() =>
+  curResult.value.slice(
+    (curPage.value - 1) * pageSize.value,
+    curPage.value * pageSize.value
+  )
+);
+//总的数据数
+const total = computed(() =>
+  activeTab.value == 'song' ? musicResult.length : lyricResult.length
+);
+//页数变化
+const pageChange = (page: number) => {
+  curPage.value = page;
+};
 
 //根据当前的活跃请求搜索结果
 const getActive = (active: string) => {
+  activeTab.value = active;
   if (active == 'video' && videoResult.length == 0) {
     getRequset(async () => {
       try {
@@ -686,6 +708,9 @@ getRequset(async () => {
 @theme-color: v-bind(themeColor);
 .pagination-container {
   margin: 10px 0;
+}
+.lyric-pagination {
+  margin-bottom: 20px;
 }
 .search-container {
   padding-top: 0 !important;
