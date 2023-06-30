@@ -585,3 +585,68 @@ export const compressImage = (
     };
   });
 };
+
+//将rgb,rgba转换成hex格式
+export const colorToHex = (color: string): string => {
+  const regexHex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+
+  if (regexHex.test(color)) {
+    // 输入的值已经是 Hex 格式
+    return color;
+  }
+
+  const regexRGB = /^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/;
+  const regexRGBA =
+    /^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d*\.?\d+)\s*\)$/;
+
+  let values: RegExpExecArray | null;
+
+  if (regexRGBA.test(color)) {
+    values = regexRGBA.exec(color);
+    if (!values || values.length !== 5) {
+      // 颜色值不符合 rgba() 格式要求
+      return color;
+    }
+  } else if (regexRGB.test(color)) {
+    values = regexRGB.exec(color);
+    if (!values || values.length !== 4) {
+      // 颜色值不符合 rgb() 格式要求
+      return color;
+    }
+  } else {
+    // 不支持的颜色值格式
+    return color;
+  }
+
+  let red, green, blue;
+  let alpha = 255;
+
+  if (values.length === 4) {
+    red = parseInt(values[1], 10);
+    green = parseInt(values[2], 10);
+    blue = parseInt(values[3], 10);
+    alpha = parseFloat(values[4]);
+    alpha = Math.min(Math.max(alpha, 0), 1);
+    alpha = Math.round(alpha * 255);
+  } else {
+    red = parseInt(values[1], 10);
+    green = parseInt(values[2], 10);
+    blue = parseInt(values[3], 10);
+  }
+
+  red = Math.min(Math.max(red, 0), 255);
+  green = Math.min(Math.max(green, 0), 255);
+  blue = Math.min(Math.max(blue, 0), 255);
+
+  const hexColor = `#${(
+    (1 << 24) |
+    (red << 16) |
+    (green << 8) |
+    blue |
+    (alpha << 24)
+  )
+    .toString(16)
+    .slice(1)}`;
+
+  return hexColor;
+};

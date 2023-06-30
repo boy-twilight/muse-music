@@ -42,6 +42,8 @@ const useConfigStore = defineStore('config', () => {
   const skin = ref<string>(getStorage(storageType.LOCAL, 'skin') || '');
   //皮肤地址
   const skinUrl = computed(() => (bgMode.value == 'color' ? '' : skin.value));
+  //抽屉模式
+  const drawerMode = ref<string>('playlist');
   //设置背景模式
   function changeColor() {
     bgMode.value = 'color';
@@ -66,6 +68,7 @@ const useConfigStore = defineStore('config', () => {
     bgMode,
     skin,
     skinUrl,
+    drawerMode,
     changeColor,
     changeSkin,
   };

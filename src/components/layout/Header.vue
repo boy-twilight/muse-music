@@ -215,6 +215,7 @@ import useConfigStore from '@/store/config';
 import useThemeStore from '@/store/theme';
 import logo from '@assets/image/网易云.svg';
 import history from '@assets/image/暂无搜索结果.svg';
+import useFooterStore from '@/store/footer';
 
 //配置主题
 const theme = useThemeStore();
@@ -242,7 +243,8 @@ const router = useRouter();
 const header = useHeaderStore();
 const { showLogin, cookie, user } = storeToRefs(header);
 const config = useConfigStore();
-const { isFullScreen, bgMode, skin } = storeToRefs(config);
+const { isFullScreen, bgMode, skin, drawerMode } = storeToRefs(config);
+const footer = useFooterStore();
 //路由返回上一级
 const back = () => {
   hideScroll();
@@ -410,6 +412,12 @@ const dropDownItems = reactive<DropDownItem[]>([
     command: 'skin',
     style: 'font-size:15px;margin:0 7px 0 4px;',
   },
+  {
+    name: '主题设置',
+    icon: '\ueb6f',
+    command: 'theme',
+    style: 'font-size:18px;margin:0 7px 0 1.8px;',
+  },
 ]);
 //下拉框选择处理
 const handleClick = async (command: string) => {
@@ -431,6 +439,9 @@ const handleClick = async (command: string) => {
     await nextTick();
     config.changeSkin();
     theme.changeSkinMode();
+  } else if (command == 'theme') {
+    drawerMode.value = 'theme';
+    footer.showList = true;
   }
 };
 

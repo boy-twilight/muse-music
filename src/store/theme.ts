@@ -99,6 +99,15 @@ const useThemeStore = defineStore('theme', () => {
     tableHover.value = 'rgba(210,210,210,0.3)';
     fontGray.value = 'rgb(215,215,215)';
   }
+  //设置主题
+  function setTheme(themes: string[]): void {
+    themeColor.value = themes[0];
+    fontColor.value = themes[1];
+    fontGray.value = themes[2];
+    background.value = themes[3];
+    menuColor.value = themes[4];
+    active.value = themes[5];
+  }
 
   return {
     fontColor,
@@ -114,6 +123,7 @@ const useThemeStore = defineStore('theme', () => {
     changeLight,
     changeDark,
     changeSkinMode,
+    setTheme,
   };
 });
 

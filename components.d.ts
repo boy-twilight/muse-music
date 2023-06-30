@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     Albums: typeof import('./src/components/datalist/Albums.vue')['default']
     ButtonGroup: typeof import('./src/components/button/ButtonGroup.vue')['default']
     Carousel: typeof import('./src/components/carousel/Carousel.vue')['default']
+    ColorPicker: typeof import('./src/components/button/ColorPicker.vue')['default']
     Comment: typeof import('./src/components/common/Comment.vue')['default']
     CommentDialog: typeof import('./src/components/common/CommentDialog.vue')['default']
     DecoratedButton: typeof import('./src/components/button/DecoratedButton.vue')['default']

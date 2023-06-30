@@ -8,9 +8,13 @@
       :destroy-on-close="true"
       class="playlist-drawer">
       <template #header>
-        <div class="playlist-header">
+        <div
+          v-show="drawerMode == 'playlist'"
+          class="playlist-header">
           <h4>播放列表</h4>
-          <div class="header-operation">
+          <div
+            v-show="drawerMode == 'playlist'"
+            class="header-operation">
             <span>{{ songNum }}首歌曲</span>
             <!-- 关闭侧边栏 -->
             <span
@@ -28,7 +32,7 @@
           </div>
         </div>
       </template>
-      <ul>
+      <ul v-show="drawerMode == 'playlist'">
         <li
           v-for="(song, index) in songList"
           :key="song.id"
@@ -76,12 +80,37 @@
           </div>
         </li>
       </ul>
+      <div
+        v-show="drawerMode == 'theme'"
+        class="theme-container">
+        <h4>主题设置</h4>
+        <div
+          class="color-item"
+          v-for="(item, index) in titleArr"
+          :key="item">
+          <span>{{ item }}</span>
+          <ColorPicker v-model:color="valueArr[index].value" />
+        </div>
+        <div class="theme-operation">
+          <DecoratedButton
+            @click.native="cancel"
+            name="取消"
+            icon="&#xe647;"
+            :is-icon-one="true" />
+          <DecoratedButton
+            @click.native="changeTheme"
+            name="保存"
+            class="save"
+            icon="&#xe606;"
+            :is-icon-one="true" />
+        </div>
+      </div>
     </el-drawer>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, inject, Ref, watch } from 'vue';
+import { nextTick, inject, Ref, watch, reactive, ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { Song } from '@/model';
 import useFooterStore from '@/store/footer';
@@ -90,20 +119,22 @@ import {
   getTheme,
   playVideo,
   handleSingerName,
+  elMessage,
 } from '@/utils/util';
-import MoreDropdown from '@components/button/MoreDropdown.vue';
 import useConfigStore from '@/store/config';
+import useThemeStore from '@/store/theme';
+import MoreDropdown from '@components/button/MoreDropdown.vue';
+import DecoratedButton from '../button/DecoratedButton.vue';
+import { elMessageType } from '@/model/enum';
 
 // 配置主题
 const config = useConfigStore();
-const { skinUrl, bgMode } = storeToRefs(config);
-const fontColor = getTheme().get('fontColor');
-const fontGray = inject('fontGray');
-const boxShadow = getTheme().get('shadow');
-const themeColor = getTheme().get('themeColor');
-const bg = getTheme().get('background') as Ref<string>;
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
+const { skinUrl, bgMode, drawerMode } = storeToRefs(config);
+const fontColort = getTheme().get('fontColor');
+const fontGrayt = inject('fontGray');
+const boxShadowt = getTheme().get('shadow');
+const themeColort = getTheme().get('themeColor');
+const bgt = getTheme().get('background') as Ref<string>;
 
 const footer = useFooterStore();
 const {
@@ -179,7 +210,6 @@ const deleteAll = async () => {
 //播放mv
 const playMV = (song: Song) => {
   playVideo(song, () => {
-    hideScroll();
     if (showDetail.value) {
       playTime.value = 0;
       playProcess.value = 0;
@@ -188,27 +218,70 @@ const playMV = (song: Song) => {
     }
   });
 };
-
 // 动态切换皮肤
 watch(
   bgMode,
   async () => {
     await nextTick();
     const drawer = document.querySelector('.playlist-drawer') as HTMLDivElement;
-    drawer.style.background = `${bg.value} url(${skinUrl.value}) no-repeat center/cover`;
+    drawer.style.background = `${bgt.value} url(${skinUrl.value}) no-repeat center/cover`;
   },
   {
     immediate: true,
   }
 );
+
+//设置主题相关
+const theme = useThemeStore();
+const { fontColor, fontGray, background, menuColor, themeColor, active } =
+  storeToRefs(theme);
+//标题数组
+const titleArr = reactive<string[]>([
+  '请选择主题色调：',
+  '请选择字体主题色调：',
+  '请选择字体副色调：',
+  '请选择背景色调：',
+  '请选择菜单色调：',
+  '请选择菜单激活时的色调：',
+]);
+//值数组
+let valueArr = reactive<Ref<string>[]>([
+  ref<string>(themeColor.value),
+  ref<string>(fontColor.value),
+  ref<string>(fontGray.value),
+  ref<string>(background.value),
+  ref<string>(menuColor.value),
+  ref<string>(active.value),
+]);
+
+//设置主题
+const changeTheme = () => {
+  theme.setTheme(valueArr.map((item) => item.value));
+  showList.value = false;
+  elMessage(elMessageType.SUCCESS, '主题保存成功！');
+};
+
+//取消设置
+const cancel = () => {
+  showList.value = false;
+  valueArr = reactive<Ref<string>[]>([
+    ref<string>(themeColor.value),
+    ref<string>(fontColor.value),
+    ref<string>(fontGray.value),
+    ref<string>(background.value),
+    ref<string>(menuColor.value),
+    ref<string>(active.value),
+  ]);
+  elMessage(elMessageType.SUCCESS, '主题取消保存成功！');
+};
 </script>
 
 <style lang="less">
-@font-color: v-bind(fontColor);
-@shadow: v-bind(boxShadow);
-@background: v-bind(bg);
-@font-color-gray: v-bind(fontGray);
-@theme-color: v-bind(themeColor);
+@font-color: v-bind(fontColort);
+@shadow: v-bind(boxShadowt);
+@background: v-bind(bgt);
+@font-color-gray: v-bind(fontGrayt);
+@theme-color: v-bind(themeColort);
 .drawer-container {
   .playlist-drawer {
     height: 100%;
@@ -220,14 +293,13 @@ watch(
       cursor: pointer;
     }
 
+    h4 {
+      color: @font-color;
+      font-size: 20px;
+      font-weight: 500;
+    }
     .playlist-header {
       padding-left: 10px;
-      h4 {
-        color: @font-color;
-        font-size: 20px;
-        font-weight: 500;
-      }
-
       .header-operation {
         display: flex;
         align-items: center;
@@ -242,6 +314,33 @@ watch(
           font-size: 14px;
           margin: 0 10px 0 200px;
         }
+      }
+    }
+    .theme-container {
+      .color-item {
+        margin: 15px 0 15px 30px;
+        span {
+          font-size: 13px;
+          display: inline-block;
+          letter-spacing: 1px;
+          color: v-bind(fontColor);
+        }
+        .color-btn {
+          margin-top: 7px;
+        }
+      }
+    }
+    .theme-operation {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 50px;
+      .el-button {
+        width: 90px;
+        height: 30px;
+        font-size: 12px;
+      }
+      .save {
+        background-color: #1ed2a9;
       }
     }
 

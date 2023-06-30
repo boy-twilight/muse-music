@@ -251,7 +251,7 @@
         }}</span
       >
       <span
-        @click="showList = true"
+        @click="openDrawer"
         v-prevent
         class="iconfont"
         >&#xe86a;</span
@@ -499,6 +499,12 @@ const volume = ref<number>(80);
 const isMuted = ref<boolean>(false);
 //计时器
 let timeId: any = 0;
+
+//打开播放列表
+const openDrawer = () => {
+  showList.value = true;
+  config.drawerMode = 'playlist';
+};
 
 //切换播放模式
 const changeMode = (command: string) => {

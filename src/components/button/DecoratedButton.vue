@@ -13,6 +13,7 @@ import { getTheme } from '@/utils/util';
 
 //配主题
 const boxShadow = getTheme().get('shadow');
+const themeColor = getTheme().get('themeColor');
 
 withDefaults(
   defineProps<{
@@ -36,7 +37,8 @@ withDefaults(
 @button-color: #e1e1e1;
 @button-font-color: #334155;
 .el-button {
-  .iconfont {
+  .iconfont,
+  .iconfont_1 {
     margin-right: 5px;
   }
   border: none;
@@ -47,6 +49,10 @@ withDefaults(
   font-size: 14px;
   width: 120px;
   height: 34px;
+
+  &:hover {
+    color: v-bind(themeColor);
+  }
   &:active {
     opacity: 0.7;
   }
