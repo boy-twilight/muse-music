@@ -87,6 +87,7 @@
         <div
           class="color-item"
           v-for="(item, index) in titleArr"
+          v-show="valueArr[index].value != 'transparent'"
           :key="item">
           <span>{{ item }}</span>
           <ColorPicker v-model:color="valueArr[index].value" />
@@ -110,7 +111,7 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, inject, Ref, watch, reactive, ref, computed } from 'vue';
+import { nextTick, inject, Ref, watch, reactive, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { Song } from '@/model';
 import useFooterStore from '@/store/footer';
@@ -253,14 +254,12 @@ let valueArr = reactive<Ref<string>[]>([
   ref<string>(menuColor.value),
   ref<string>(active.value),
 ]);
-
 //设置主题
 const changeTheme = () => {
   theme.setTheme(valueArr.map((item) => item.value));
   showList.value = false;
   elMessage(elMessageType.SUCCESS, '主题保存成功！');
 };
-
 //取消设置
 const cancel = () => {
   showList.value = false;
