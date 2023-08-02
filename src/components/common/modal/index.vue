@@ -8,7 +8,7 @@
       draggable
       title="歌曲评论"
       class="comment-dialog">
-      <Comments :comments="comments" />
+      <SourceComment :comments="comments" />
     </el-dialog>
   </div>
 </template>
@@ -17,6 +17,7 @@
 import { inject, Ref } from 'vue';
 import { Comment } from '@/model';
 import { getTheme } from '@/utils';
+import { SourceComment } from '@/components/common';
 
 // 配置主题
 const bg = getTheme().get('background');

@@ -73,7 +73,7 @@ const deleteVideoRecord = (id: string) => {
 };
 
 // 获取初始数据
-getRequset(async () => {
+getRequset(async() => {
   const ids = songRecord.value.map((item) => item.id).join(',');
   getMusicUrls(ids, songRecord.value);
   user.initLoveMusic(songRecord.value);

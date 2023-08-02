@@ -79,7 +79,7 @@ const props = withDefaults(
     showDelete: false,
     transitionName: '',
     showPagination: false,
-    type: 'playlist',
+    type: 'playlist'
   }
 );
 
@@ -101,7 +101,7 @@ const curShow = computed(() =>
   )
 );
 // 页数变化
-const pageChange = async (page: number) => {
+const pageChange = async(page: number) => {
   curPage.value = page;
 };
 
@@ -111,8 +111,8 @@ const toPlayList = (list: Playlist) => {
     name: 'playlist',
     query: {
       id: list.id,
-      type: props.type,
-    },
+      type: props.type
+    }
   });
 };
 </script>

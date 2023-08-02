@@ -82,7 +82,7 @@
         <span class="iconfont_1">&#xe62c; </span>
         退出
       </button>
-      <Comments :comments="videoComments" />
+      <SourceComment :comments="videoComments" />
     </div>
   </div>
 </template>
@@ -95,7 +95,7 @@ import {
   ref,
   computed,
   nextTick,
-  onBeforeUnmount,
+  onBeforeUnmount
 } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { MV, Comment } from '@/model';
@@ -108,7 +108,7 @@ import {
   getVideoUrl,
   getSimiVideo,
   getVideoComment,
-  getMvComment,
+  getMvComment
 } from '@/api';
 import {
   elMessage,
@@ -116,14 +116,14 @@ import {
   getRequset,
   formatTime,
   share,
-  getComment,
+  getComment
 } from '@/utils';
 import DPlayer from 'dplayer';
 import useUserStore from '@/store/user';
 import useConfigStore from '@/store/config';
 import { CommonButton } from '@components/button';
 import { ArtistMv } from '@components/datalist';
-import Comments from '@components/common/Comment.vue';
+import { SourceComment } from '@components/common';
 
 // 设置主题
 const config = useConfigStore();
@@ -154,7 +154,7 @@ const mv = reactive<MV>({
   url: '',
   time: '',
   publishTime: '',
-  available: '',
+  available: ''
 });
 // 相似的mv推荐
 const mvSimi = reactive<MV[]>([]);
@@ -182,7 +182,7 @@ const shareVideo = () => {
   );
 };
 // 初始化播放器
-const init = async () => {
+const init = async() => {
   await nextTick();
   dplayer.value = new DPlayer({
     container: document.querySelector('.players'),
@@ -190,7 +190,7 @@ const init = async () => {
       url: mv.url as string,
       thumbnails: mv.image,
       type: 'video/mp4',
-      pic: mv.image,
+      pic: mv.image
     },
     autoplay: false,
     loop: false,
@@ -207,21 +207,21 @@ const init = async () => {
         text: '下载',
         click: () => {
           user.addVideoDownload(mv);
-        },
+        }
       },
       {
         text: '收藏',
         click: () => {
           user.addLove(mv, user.loveVideo, user.loveVideoId);
-        },
+        }
       },
       {
         text: '分享',
         click: () => {
           shareVideo();
-        },
-      },
-    ],
+        }
+      }
+    ]
   });
   // 视频结束时推荐其他视频
   const video = document.querySelector('.dplayer-video') as HTMLVideoElement;
@@ -239,13 +239,13 @@ const playRe = (index: number, id: string) => {
     router.push({
       name: 'video',
       query: {
-        id,
-      },
+        id
+      }
     });
   }
 };
 
-getRequset(async () => {
+getRequset(async() => {
   // 判断地址是否包含字母，有则用视频接口请求地址
   const rule = /.*[A-Z]+.*/;
   if (!rule.test(id)) {
@@ -253,7 +253,7 @@ getRequset(async () => {
     try {
       const response: any = await getMvDetail(id);
       const {
-        data: { name, artistName, cover, playCount, duration, publishTime },
+        data: { name, artistName, cover, playCount, duration, publishTime }
       } = response;
       mv.name = name;
       mv.playCount = playCount;
@@ -268,7 +268,7 @@ getRequset(async () => {
     try {
       const response: any = await getMvUrl(id);
       const {
-        data: { url, fee },
+        data: { url, fee }
       } = response;
       if (url) {
         mv.url = url;
@@ -291,7 +291,7 @@ getRequset(async () => {
             image: cover,
             name,
             artist: artistName,
-            playCount,
+            playCount
           });
         });
       }
@@ -312,7 +312,7 @@ getRequset(async () => {
     try {
       const response: any = await getVideoDetail(id);
       const {
-        data: { title, coverUrl, publishTime, playTime, creator },
+        data: { title, coverUrl, publishTime, playTime, creator }
       } = response;
       mv.name = title;
       mv.image = coverUrl;
@@ -345,7 +345,7 @@ getRequset(async () => {
           name: title,
           image: coverUrl,
           playCount: playTime,
-          artist: creator[0].userName,
+          artist: creator[0].userName
         });
       });
     } catch (err: any) {
