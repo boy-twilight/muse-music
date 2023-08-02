@@ -46,10 +46,10 @@
 import { inject, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { Album } from '@/model';
-import { getTheme } from '@/utils/util';
+import { getTheme } from '@/utils';
 import Pagination from '@components/pagination/Pagination.vue';
 
-//主题配置
+// 主题配置
 const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');
 const boxShadow = getTheme().get('shadow');
@@ -58,28 +58,28 @@ const fontGray = inject('fontGray');
 
 const router = useRouter();
 
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
-//声明组件接受值
+// 设置隐藏滚动条
+const hideScroll = inject('hideScroll') as () => void;
+// 声明组件接受值
 
 const props = withDefaults(
   defineProps<{
-    //专辑数组
+    // 专辑数组
     albums: Album[];
-    //标题
+    // 标题
     title?: string;
-    //是否展示删除按钮
+    // 是否展示删除按钮
     showDelete?: boolean;
-    //是否展示过渡
+    // 是否展示过渡
     transitionName?: string;
-    //是否展示分页
+    // 是否展示分页
     showPagination?: boolean;
   }>(),
   {
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false,
+    showPagination: false
   }
 );
 
@@ -87,33 +87,33 @@ const emits = defineEmits<{
   (e: 'getDeleteId', id: string): void;
 }>();
 
-//当前页数
+// 当前页数
 const curPage = ref<number>(1);
-//一页多少数据
+// 一页多少数据
 const pageSize = ref<number>(18);
-//总的数据数
+// 总的数据数
 const total = computed(() => props.albums.length);
-//当前展示的专辑
+// 当前展示的专辑
 const curShow = computed(() =>
   props.albums.slice(
     (curPage.value - 1) * pageSize.value,
     curPage.value * pageSize.value
   )
 );
-//页数变化
+// 页数变化
 const pageChange = (page: number) => {
   curPage.value = page;
 };
 
-//跳转专辑详情
+// 跳转专辑详情
 const toAlbumDetail = (id: string, artistId: string) => {
   hideScroll();
   router.push({
     name: 'album',
     query: {
       id,
-      artistId,
-    },
+      artistId
+    }
   });
 };
 </script>

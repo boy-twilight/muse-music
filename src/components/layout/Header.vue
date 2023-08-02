@@ -196,7 +196,7 @@ import {
   computed,
   onMounted,
   nextTick,
-  Ref,
+  Ref
 } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
@@ -205,10 +205,10 @@ import {
   setStorAge,
   getStorage,
   compressImage,
-  getTheme,
-} from '@/utils/util';
+  getTheme
+} from '@/utils';
 import { elMessageType, storageType } from '@/model/enum';
-import { createKey, createQrCode, checkStatus, getHotSearch } from '@/api/api';
+import { createKey, createQrCode, checkStatus, getHotSearch } from '@/api';
 import { DropDownItem, HotSearch } from '@/model';
 import useHeaderStore from '@/store/header';
 import useConfigStore from '@/store/config';
@@ -217,7 +217,7 @@ import logo from '@assets/image/网易云.svg';
 import history from '@assets/image/暂无搜索结果.svg';
 import useFooterStore from '@/store/footer';
 
-//配置主题
+// 配置主题
 const theme = useThemeStore();
 const fontColor = getTheme().get('fontColor') as Ref<string>;
 const fontGray = inject('fontGray');
@@ -226,7 +226,7 @@ const boxShadow = getTheme().get('shadow');
 const themeColor = getTheme().get('themeColor');
 const searchColor = getTheme().get('searchBg');
 
-//下列框处于哪种模式
+// 下列框处于哪种模式
 const dropDownMode = computed(() => {
   if (config.bgMode == 'color') {
     return fontColor.value == '#ffffff' ? 'dropdown-dark' : 'dropdown-light';
@@ -235,42 +235,42 @@ const dropDownMode = computed(() => {
   }
 });
 
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
+// 设置隐藏滚动条
+const hideScroll = inject('hideScroll') as () => void;
 
-//路由器
+// 路由器
 const router = useRouter();
 const header = useHeaderStore();
 const { showLogin, cookie, user } = storeToRefs(header);
 const config = useConfigStore();
 const { isFullScreen, bgMode, skin, drawerMode } = storeToRefs(config);
 const footer = useFooterStore();
-//路由返回上一级
+// 路由返回上一级
 const back = () => {
   hideScroll();
   router.back();
 };
 
-//路由来到下一级
+// 路由来到下一级
 const forward = () => {
   hideScroll();
   router.forward();
 };
 
-//用户搜素的内容
+// 用户搜素的内容
 const search = ref<string>('');
-//热门搜索列表
+// 热门搜索列表
 const hotSearch = reactive<HotSearch[]>(
   getStorage(storageType.SESSION, 'hotSearch') || []
 );
-//用户的搜索列表
+// 用户的搜索列表
 const userSearch = reactive<string[]>(
   getStorage(storageType.LOCAL, 'userSearch') || []
 );
-//是否展示搜索推荐列表
+// 是否展示搜索推荐列表
 const showHistory = ref<boolean>(false);
-//获取热门搜索列表内容
-//缓存列表结果
+// 获取热门搜索列表内容
+// 缓存列表结果
 if (hotSearch.length == 0) {
   getHotSearch().then((response: any) => {
     if (response) {
@@ -278,24 +278,24 @@ if (hotSearch.length == 0) {
       data.forEach((item: any) => {
         hotSearch.push({
           searchWord: item.searchWord,
-          score: item.score,
+          score: item.score
         });
       });
     }
   });
 }
 
-//以下为登陆的内容与退出登陆的内容
-//存放二维码照片的容器
+// 以下为登陆的内容与退出登陆的内容
+// 存放二维码照片的容器
 const qrcode = ref<HTMLImageElement>();
-//计时器的标志
+// 计时器的标志
 let timeid: any = 0;
-//创建产生二维码
+// 创建产生二维码
 const createKeyCode = (): void => {
   createKey()
     .then((response: any) => {
       const {
-        data: { unikey },
+        data: { unikey }
       } = response;
       creatQrImage(unikey);
       CheckLoginStatus(unikey);
@@ -304,12 +304,12 @@ const createKeyCode = (): void => {
       elMessage(elMessageType.ERROR, err.message);
     });
 };
-//产生二维码的base64并挂载到容器上
+// 产生二维码的base64并挂载到容器上
 const creatQrImage = (key: string): void => {
   createQrCode(key)
     .then((response: any) => {
       const {
-        data: { qrimg },
+        data: { qrimg }
       } = response;
       qrcode.value!.src = qrimg;
     })
@@ -317,37 +317,37 @@ const creatQrImage = (key: string): void => {
       elMessage(elMessageType.ERROR, err.message);
     });
 };
-//监测登陆状态
+// 监测登陆状态
 const CheckLoginStatus = (key: string): void => {
-  timeid = setInterval(async () => {
+  timeid = setInterval(async() => {
     const response: any = await checkStatus(key).catch((err: any) => {
       elMessage(elMessageType.ERROR, err.message);
     });
     const { code, message } = response;
-    //根据code状态判断登陆状态
+    // 根据code状态判断登陆状态
     if (code == '800') {
-      //提醒用户二维码已过期
+      // 提醒用户二维码已过期
       elMessage(elMessageType.INFO, message);
-      //清除timeid
+      // 清除timeid
       clearInterval(timeid);
-      //重新刷新二维码
+      // 重新刷新二维码
       createKeyCode();
     } else if (code == '803') {
-      //关闭登陆盒子
+      // 关闭登陆盒子
       showLogin.value = false;
-      //本地存储cookie
+      // 本地存储cookie
       cookie.value = response.cookie;
 
       // 获取用户信息
       header.getInfo();
-      //提醒用户登陆成功
+      // 提醒用户登陆成功
       elMessage(elMessageType.SUCCESS, message);
       // 清除计时器
       clearInterval(timeid);
     }
   }, 6000);
 };
-//打开登陆盒子
+// 打开登陆盒子
 const showLoginBox = () => {
   if (!cookie.value) {
     showLogin.value = true;
@@ -355,12 +355,12 @@ const showLoginBox = () => {
     elMessage(elMessageType.SUCCESS, '已成功登陆，切勿重复点击！');
   }
 };
-//关闭登陆盒子的回调
+// 关闭登陆盒子的回调
 const close = () => {
   clearInterval(timeid);
 };
 
-//检测全屏，变化文字和对应的icon
+// 检测全屏，变化文字和对应的icon
 const fullScreenIcon = computed(() =>
   !isFullScreen.value ? '\ueb99' : '\ueb98'
 );
@@ -368,7 +368,7 @@ const fullScreenName = computed(() =>
   !isFullScreen.value ? '进入全屏' : '退出全屏'
 );
 
-//切换皮肤
+// 切换皮肤
 const changeSkin = () => {
   const input = document.createElement('input');
   input.type = 'file';
@@ -376,7 +376,7 @@ const changeSkin = () => {
   input.style.display = 'none';
   document.body.appendChild(input);
   input.click();
-  input.onchange = async () => {
+  input.onchange = async() => {
     const files = input.files;
     if (files && files.length > 0) {
       const file = files[0];
@@ -392,35 +392,35 @@ const dropDownItems = reactive<DropDownItem[]>([
     name: '退出登陆',
     icon: '\ue61b',
     command: 'logout',
-    style: 'font-size:14px;margin:0 9px 0 2px;',
+    style: 'font-size:14px;margin:0 9px 0 2px;'
   },
   {
     name: '',
     icon: '',
     command: 'fullScreen',
-    style: 'font-size:18px;margin-right:7px;',
+    style: 'font-size:18px;margin-right:7px;'
   },
   {
     name: '纯色模式',
     icon: '\ue822',
     command: 'color',
-    style: 'font-size:18px;margin-right:7px;',
+    style: 'font-size:18px;margin-right:7px;'
   },
   {
     name: '皮肤模式',
     icon: '\ue743',
     command: 'skin',
-    style: 'font-size:15px;margin:0 7px 0 4px;',
+    style: 'font-size:15px;margin:0 7px 0 4px;'
   },
   {
     name: '主题设置',
     icon: '\ueb6f',
     command: 'theme',
-    style: 'font-size:18px;margin:0 7px 0 1.8px;',
-  },
+    style: 'font-size:18px;margin:0 7px 0 1.8px;'
+  }
 ]);
-//下拉框选择处理
-const handleClick = async (command: string) => {
+// 下拉框选择处理
+const handleClick = async(command: string) => {
   if (command == 'logout' && cookie.value) {
     header.logout();
   } else if (command == 'fullScreen') {
@@ -445,7 +445,7 @@ const handleClick = async (command: string) => {
   }
 };
 
-//以下为搜索的内容
+// 以下为搜索的内容
 const goSearch = () => {
   if (!userSearch.includes(search.value)) {
     userSearch.push(search.value);
@@ -454,11 +454,11 @@ const goSearch = () => {
   router.push({
     name: 'search',
     query: {
-      keyWord: search.value,
-    },
+      keyWord: search.value
+    }
   });
 };
-//点击推荐列表搜索
+// 点击推荐列表搜索
 const goSearchByRe = (keyWord: string) => {
   if (!userSearch.includes(keyWord)) {
     userSearch.push(keyWord);
@@ -468,27 +468,27 @@ const goSearchByRe = (keyWord: string) => {
   router.push({
     name: 'search',
     query: {
-      keyWord,
-    },
+      keyWord
+    }
   });
 };
 
-//检测是否展示登陆二维码
+// 检测是否展示登陆二维码
 watch(showLogin, (newVal) => {
   if (newVal) {
-    //生成二维码
+    // 生成二维码
     createKeyCode();
   }
 });
 
-//检测屏幕变化改变样式
+// 检测屏幕变化改变样式
 onMounted(() => {
-  //屏幕变化时改变值
+  // 屏幕变化时改变值
   document.addEventListener('fullscreenchange', () => {
     isFullScreen.value = !isFullScreen.value;
   });
 
-  //缓存结果
+  // 缓存结果
   window.addEventListener('beforeunload', () => {
     setStorAge(storageType.LOCAL, 'userSearch', userSearch);
     setStorAge(storageType.SESSION, 'hotSearch', hotSearch);

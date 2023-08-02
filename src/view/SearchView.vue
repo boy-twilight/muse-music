@@ -29,11 +29,11 @@
           <span>视频：{{ firstSinger.mvSize }}</span>
         </p>
       </div>
-      <DecoratedButton
+      <CommonButton
         :name="firstSinger.isLove ? '取消关注' : '关注歌手'"
         :icon="firstSinger.isLove ? '&#xe760;' : '&#xe761;'"
         :icon-style="firstSinger.isLove ? 'color:#ff6a6a;' : ''"
-        @click.native.stop="
+        @click.stop="
           user.addLove(firstSinger, user.loveSinger, user.loveSingerId)
         " />
     </div>
@@ -49,14 +49,14 @@
           <div class="song">
             <div class="header-operation">
               <PlayButton :songs="curList" />
-              <DecoratedButton
+              <CommonButton
                 icon="&#xe761;"
-                @click.native="loveAll"
+                @click="loveAll"
                 name="全部收藏" />
-              <DecoratedButton
+              <CommonButton
                 icon="&#xe617;"
                 name="批量操作"
-                @click.native="showSelect = !showSelect" />
+                @click="showSelect = !showSelect" />
             </div>
             <SongList
               :songs="curList"
@@ -77,7 +77,7 @@
           <NoSearch
             v-show="needNoSearch[0]"
             text="暂无搜索结果" />
-          <Mv
+          <ArtistMv
             :mvs="videoResult"
             :show-pagination="true"
             v-show="!needNoSearch[0]" />
@@ -89,7 +89,7 @@
           <NoSearch
             v-show="needNoSearch[1]"
             text="暂无搜索结果" />
-          <Mv
+          <ArtistMv
             :mvs="mvResult"
             :show-pagination="true"
             v-show="!needNoSearch[1]" />
@@ -101,7 +101,7 @@
           <NoSearch
             v-show="needNoSearch[2]"
             text="暂无搜索结果" />
-          <Albums
+          <ArtistAlbum
             :albums="albumResult"
             :show-pagination="true"
             v-show="!needNoSearch[2]" />
@@ -113,7 +113,7 @@
           <NoSearch
             v-show="needNoSearch[3]"
             text="暂无搜索结果" />
-          <PlayList
+          <ArtistPlaylist
             :playlists="radioResult"
             :show-pagination="true"
             type="radio"
@@ -126,7 +126,7 @@
           <NoSearch
             v-show="needNoSearch[4]"
             text="暂无搜索结果" />
-          <PlayList
+          <ArtistPlaylist
             :playlists="playlistResult"
             :show-pagination="true"
             v-show="!needNoSearch[4]" />
@@ -250,19 +250,20 @@ import {
   transformTime,
   downloadLyric,
   share,
-  shareMuiscInfo,
-} from '@/utils/util';
-import { searchMusic, getMusicDetail } from '@/api/api';
+  shareMuiscInfo
+} from '@/utils';
+import { searchMusic, getMusicDetail } from '@/api';
 import useUserStore from '@/store/user';
 import SongList from '@components/table/SongList.vue';
 import Tab from '@components/tab/Tab.vue';
-import OnlineBatch from '@components/batch/OnlineBatch.vue';
-import PlayButton from '@components/button/PlayButton.vue';
-import DecoratedButton from '@components/button/DecoratedButton.vue';
-import Mv from '@components/datalist/Mv.vue';
-import Albums from '@components/datalist/Albums.vue';
-import PlayList from '@components/datalist/PlayList.vue';
-import Singer from '@components/datalist/Singer.vue';
+import { OnlineBatch } from '@components/batch';
+import { PlayButton, CommonButton } from '@components/button';
+import {
+  ArtistAlbum,
+  ArtistMv,
+  ArtistPlaylist,
+  Singer
+} from '@components/datalist';
 import Loading from '@components/common/Loading.vue';
 import NoSearch from '@components/common/NoSearch.vue';
 import { useRouter } from 'vue-router';
@@ -270,7 +271,7 @@ import useConfigStore from '@/store/config';
 import useFooterStore from '@/store/footer';
 import Pagination from '@/components/pagination/Pagination.vue';
 
-//配置主题
+// 配置主题
 const config = useConfigStore();
 const { bgMode } = storeToRefs(config);
 const fontGray = inject('fontGray');
@@ -300,19 +301,19 @@ const buttonBg = computed(() => {
   }
 });
 
-//路由器
+// 路由器
 const router = useRouter();
 
-//获取用户喜欢数据
+// 获取用户喜欢数据
 const user = useUserStore();
 const { loveMusicId, loveSongs } = storeToRefs(user);
-//是否加载选择框进入批量操作模式
+// 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
-//关闭批量操作
+// 关闭批量操作
 const closeSelect = (close: boolean) => {
   showSelect.value = close;
 };
-//喜欢歌曲
+// 喜欢歌曲
 const loveAll = () => {
   musicResult.forEach((item) => {
     item.isLove = true;
@@ -327,54 +328,54 @@ const footer = useFooterStore();
 const { songListId, songList, current, playProcess, playTime, isPlay } =
   storeToRefs(footer);
 
-//获取搜索关键词
+// 获取搜索关键词
 const route = useRoute();
 const keyWord = route.query.keyWord + '';
-//当前活跃的tab选型
+// 当前活跃的tab选型
 const activeTab = ref<string>('song');
 
-//音乐搜索的结果
+// 音乐搜索的结果
 const musicResult = reactive<Song[]>([]);
-//歌曲id与Index对应的map
+// 歌曲id与Index对应的map
 const songIdMapper = computed(
   () => new Map(musicResult.map((item, index) => [item.id, index]))
 );
-//视频搜索结果
+// 视频搜索结果
 const videoResult = reactive<MV[]>([]);
-//mv搜索结果
+// mv搜索结果
 const mvResult = reactive<MV[]>([]);
-//专辑搜索结果
+// 专辑搜索结果
 const albumResult = reactive<Album[]>([]);
-//歌单搜索结果
+// 歌单搜索结果
 const playlistResult = reactive<Playlist[]>([]);
-//电台的搜索结果
+// 电台的搜索结果
 const radioResult = reactive<Playlist[]>([]);
-//歌手的搜索结果
+// 歌手的搜索结果
 const singerResult = reactive<Artist[]>([]);
-//第一位歌手，用以页面顶部展示
+// 第一位歌手，用以页面顶部展示
 const firstSinger = computed(() =>
   singerResult.length > 0
     ? singerResult[0]
     : ({
-        name: '',
-        avatar: '',
-        id: '',
-        score: '',
-        albumSize: '',
-        mvSize: '',
-      } as Artist)
+      name: '',
+      avatar: '',
+      id: '',
+      score: '',
+      albumSize: '',
+      mvSize: ''
+    } as Artist)
 );
-//歌词的搜索结果
+// 歌词的搜索结果
 const lyricResult = reactive<Song[]>([]);
-//歌词顺序的隐射
+// 歌词顺序的隐射
 const lyricMapper = computed(
   () => new Map(lyricResult.map((item, index) => [item.id, index]))
 );
-//加载数据的动画
+// 加载数据的动画
 const isLoading = ref<boolean>(false);
-//页面第一次加载的动画
+// 页面第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
-//是否展示占位图片
+// 是否展示占位图片
 const needNoSearch = reactive<boolean[]>([
   false,
   false,
@@ -382,19 +383,19 @@ const needNoSearch = reactive<boolean[]>([
   false,
   false,
   false,
-  false,
+  false
 ]);
-//当前展示歌词的长度
+// 当前展示歌词的长度
 const lyricLen = reactive<number[]>([]);
-//展开或者关闭歌词
+// 展开或者关闭歌词
 const openLyric = (index: number) => {
   lyricLen[index] =
     lyricLen[index] == lyricResult[index].lyric!.length
       ? 3
       : lyricResult[index].lyric!.length;
 };
-//播放歌词对应的音乐
-const play = async (song: Song) => {
+// 播放歌词对应的音乐
+const play = async(song: Song) => {
   if (song.available == '0' || song.available == '8') {
     const index = songListId.value.get(song.id);
     if (index == undefined) {
@@ -425,40 +426,40 @@ const play = async (song: Song) => {
     elMessage(elMessageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
   }
 };
-//用于分页,复用歌曲与歌词的分页
-//当前页数
+// 用于分页,复用歌曲与歌词的分页
+// 当前页数
 const curPage = ref<number>(1);
-//一页多少数据
+// 一页多少数据
 const pageSize = computed(() => (activeTab.value == 'song' ? 30 : 10));
-//当前的结果
+// 当前的结果
 const curResult = computed(() =>
   activeTab.value == 'song' ? musicResult : lyricResult
 );
-//当前展示的歌曲列表
+// 当前展示的歌曲列表
 const curList = computed(() =>
   curResult.value.slice(
     (curPage.value - 1) * pageSize.value,
     curPage.value * pageSize.value
   )
 );
-//总的数据数
+// 总的数据数
 const total = computed(() =>
   activeTab.value == 'song' ? musicResult.length : lyricResult.length
 );
-//页数变化
+// 页数变化
 const pageChange = (page: number) => {
   curPage.value = page;
 };
 
-//根据当前的活跃请求搜索结果
+// 根据当前的活跃请求搜索结果
 const getActive = (active: string) => {
   activeTab.value = active;
   if (active == 'video' && videoResult.length == 0) {
-    getRequset(async () => {
+    getRequset(async() => {
       try {
         const response: any = await searchMusic(1014, 100, keyWord);
         const {
-          result: { videos },
+          result: { videos }
         } = response;
         if (videos && videos.length > 0) {
           videos.forEach((item: any) => {
@@ -468,26 +469,26 @@ const getActive = (active: string) => {
               name: title,
               image: coverUrl,
               artist: creator[0].userName,
-              playCount: playTime,
+              playCount: playTime
             });
           });
         }
       } catch (err: any) {
         elMessage(elMessageType.ERROR, err.message);
       }
-      //关闭动画
+      // 关闭动画
       setTimeout(() => {
         isLoading.value = false;
       }, 500);
-      //判断是否需要占位图片
+      // 判断是否需要占位图片
       needNoSearch[0] = videoResult.length == 0;
     }, isLoading);
   } else if (active == 'mv' && mvResult.length == 0) {
-    getRequset(async () => {
+    getRequset(async() => {
       try {
         const response: any = await searchMusic(1004, 100, keyWord);
         const {
-          result: { mvs },
+          result: { mvs }
         } = response;
         if (mvs && mvs.length != 0) {
           mvs.forEach((item: any) => {
@@ -497,26 +498,26 @@ const getActive = (active: string) => {
               name,
               image: cover,
               artist: artistName,
-              playCount,
+              playCount
             });
           });
         }
       } catch (err: any) {
         elMessage(elMessageType.ERROR, err.message);
       }
-      //关闭动画
+      // 关闭动画
       setTimeout(() => {
         isLoading.value = false;
       }, 500);
-      //判断是否需要占位图片
+      // 判断是否需要占位图片
       needNoSearch[1] = mvResult.length == 0;
     }, isLoading);
   } else if (active == 'album' && albumResult.length == 0) {
-    getRequset(async () => {
+    getRequset(async() => {
       try {
         const response: any = await searchMusic(10, 60, keyWord);
         const {
-          result: { albums },
+          result: { albums }
         } = response;
         if (albums && albums.length > 0) {
           albums.forEach((item: any) => {
@@ -526,26 +527,26 @@ const getActive = (active: string) => {
               name,
               cover: picUrl,
               publishTime: formatTime(publishTime),
-              artistId: artist.id,
+              artistId: artist.id
             });
           });
         }
       } catch (err: any) {
         elMessage(elMessageType.ERROR, err.message);
       }
-      //关闭动画
+      // 关闭动画
       setTimeout(() => {
         isLoading.value = false;
       }, 500);
-      //判断是否需要占位图片
+      // 判断是否需要占位图片
       needNoSearch[2] = albumResult.length == 0;
     }, isLoading);
   } else if (active == 'radio' && radioResult.length == 0) {
-    getRequset(async () => {
+    getRequset(async() => {
       try {
         const response: any = await searchMusic(1009, 100, keyWord);
         const {
-          result: { djRadios },
+          result: { djRadios }
         } = response;
         if (djRadios && djRadios.length > 0) {
           djRadios.forEach((item: any) => {
@@ -557,26 +558,26 @@ const getActive = (active: string) => {
               playCount,
               creator: { nickname: '', avatarUrl: '' },
               tag: [],
-              description: '',
+              description: ''
             });
           });
         }
       } catch (err: any) {
         elMessage(elMessageType.ERROR, err.message);
       }
-      //关闭动画
+      // 关闭动画
       setTimeout(() => {
         isLoading.value = false;
       }, 500);
-      //判断是否需要占位图片
+      // 判断是否需要占位图片
       needNoSearch[3] = radioResult.length == 0;
     }, isLoading);
   } else if (active == 'playList' && playlistResult.length == 0) {
-    getRequset(async () => {
+    getRequset(async() => {
       try {
         const response: any = await searchMusic(1000, 100, keyWord);
         const {
-          result: { playlists },
+          result: { playlists }
         } = response;
         if (playlists && playlists.length > 0) {
           playlists.forEach((item: any) => {
@@ -588,93 +589,93 @@ const getActive = (active: string) => {
               playCount,
               description: '',
               tag: [],
-              creator: { nickname: '', avatarUrl: '' },
+              creator: { nickname: '', avatarUrl: '' }
             });
           });
         }
       } catch (err: any) {
         elMessage(elMessageType.ERROR, err.message);
       }
-      //关闭动画
+      // 关闭动画
       setTimeout(() => {
         isLoading.value = false;
       }, 500);
-      //判断是否需要占位图片
+      // 判断是否需要占位图片
       needNoSearch[4] = playlistResult.length == 0;
     }, isLoading);
   } else if (active == 'lyric' && lyricResult.length == 0) {
-    //获取歌词的搜索结果并进行处理
-    getRequset(async () => {
+    // 获取歌词的搜索结果并进行处理
+    getRequset(async() => {
       try {
         const response: any = await searchMusic(1006, 100, keyWord);
         const {
-          result: { songs },
+          result: { songs }
         } = response;
         if (songs && songs.length > 0) {
-          //获取id
+          // 获取id
           const ids = songs.map((item: any) => item.id).join(',');
-          //重新获取图片
+          // 重新获取图片
           const dResponse: any = await getMusicDetail(ids);
           const { songs: muiscs } = dResponse;
           muiscs.forEach((item: any) => {
             lyricLen.push(3);
             getMusicInfos([] as string[], lyricResult, item);
           });
-          //获取歌词
+          // 获取歌词
           songs.forEach((item: any, index: number) => {
             const {
-              lyrics: { txt },
+              lyrics: { txt }
             } = item;
             lyricResult[index].lyric = txt.split('\n');
           });
-          //获取搜索歌曲的urls
+          // 获取搜索歌曲的urls
           getMusicUrls(ids, lyricResult);
-          //初始化歌曲喜欢状态
+          // 初始化歌曲喜欢状态
           user.initLoveMusic(musicResult);
         }
       } catch (err: any) {
         elMessage(elMessageType.ERROR, err.message);
       }
-      //关闭动画
+      // 关闭动画
       setTimeout(() => {
         isLoading.value = false;
       }, 500);
-      //判断是否需要占位图片
+      // 判断是否需要占位图片
       needNoSearch[6] = lyricResult.length == 0;
     }, isLoading);
   }
 };
 
-getRequset(async () => {
-  //获取音乐搜索结果
+getRequset(async() => {
+  // 获取音乐搜索结果
   try {
     const response: any = await searchMusic(1, 100, keyWord);
     const {
-      result: { songs },
+      result: { songs }
     } = response;
-    //获取搜索歌曲
+    // 获取搜索歌曲
     if (songs && songs.length > 0) {
-      //获取id
+      // 获取id
       const ids = songs.map((item: any) => item.id).join(',');
-      //重新获取图片
+      // 重新获取图片
       const dResponse: any = await getMusicDetail(ids);
       const { songs: muiscs } = dResponse;
       muiscs.forEach((item: any) => {
         getMusicInfos([] as string[], musicResult, item);
       });
-      //获取搜索歌曲的urls
+      // 获取搜索歌曲的urls
       getMusicUrls(ids, musicResult);
-      //初始化歌曲喜欢状态
+      // 初始化歌曲喜欢状态
       user.initLoveMusic(musicResult);
     }
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
-  //获取搜索歌手
+  // 获取搜索歌手
   try {
     const response: any = await searchMusic(100, 100, keyWord);
     const {
-      result: { artists },
+      result: { artists }
     } = response;
     if (artists && artists.length > 0) {
       artists.forEach((item: any) => {
@@ -685,7 +686,7 @@ getRequset(async () => {
           avatar: picUrl,
           score: accountId,
           albumSize,
-          mvSize,
+          mvSize
         });
       });
     }
@@ -694,7 +695,7 @@ getRequset(async () => {
     elMessage(elMessageType.ERROR, err.message);
   }
 
-  //关闭动画
+  // 关闭动画
   first.value = false;
 }, first);
 </script>

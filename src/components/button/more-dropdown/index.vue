@@ -46,19 +46,19 @@ import {
   elMessage,
   shareMuiscInfo,
   getSourceComments,
-  downloadLyric,
-} from '@/utils/util';
+  downloadLyric
+} from '@/utils';
 import { Song, DropDownItem, Comment } from '@/model';
 import { elMessageType } from '@/model/enum';
 import useFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
 import useConfigStore from '@/store/config';
 
-//主题设置
+// 主题设置
 const config = useConfigStore();
 const bg = getTheme().get('background');
 const fontColor = getTheme().get('fontColor') as Ref<string>;
-//下列框处于哪种模式
+// 下列框处于哪种模式
 const dropDownMode = computed(() => {
   if (config.bgMode == 'color') {
     return fontColor.value == '#ffffff' ? 'dropdown-dark' : 'dropdown-light';
@@ -67,25 +67,25 @@ const dropDownMode = computed(() => {
   }
 });
 
-//评论
+// 评论
 const soucreComments = inject('soucreComments') as Comment[];
-//是否展开评论区
+// 是否展开评论区
 const showComments = inject('showComments') as Ref<boolean>;
 
 const more = ref<HTMLSpanElement>();
 
-//是否显示下拉框
+// 是否显示下拉框
 const showDrop = ref<boolean>(false);
 
-//声明接受值
+// 声明接受值
 const props = defineProps<{
-  //传入歌曲
+  // 传入歌曲
   song: Song;
-  //播放函数
-  play: Function;
+  // 播放函数
+  play: (song: Song) => void;
 }>();
 
-//用户再点击喜欢过后我喜欢的图标发送变化
+// 用户再点击喜欢过后我喜欢的图标发送变化
 const loveIcon = computed<string>(() =>
   props.song.isLove ? '&#xe760;' : '&#xe761'
 );
@@ -95,64 +95,64 @@ const lovetyle = computed<string>(() =>
     : 'margin: 0 7px 0 4px;'
 );
 
-//下拉选项
+// 下拉选项
 const dropItems: DropDownItem[] = [
   {
     name: '播放',
     icon: '&#xea6e;',
     style: 'margin: 0 9px 0 2px; font-size: 15px;',
-    command: 'playMusic',
+    command: 'playMusic'
   },
   {
     name: '下一首播放',
     icon: '&#xe63c;',
     style: 'margin: 0 7px 0 0px; font-size: 20px',
-    command: 'playNext',
+    command: 'playNext'
   },
   {
     name: '播放相似单曲',
     icon: '&#xe602;',
     style: 'margin: 0 8px 0 3px;',
     command: 'playSimi',
-    isIcon1: true,
+    isIcon1: true
   },
   {
     name: '复制歌曲信息',
     icon: '&#xe63b;',
     style: 'margin: 1px 7px 0 4px;',
-    command: 'copyMusic',
+    command: 'copyMusic'
   },
 
   {
     name: '我喜欢',
     icon: '&#xe761;',
     style: 'margin: 0 7px 0 4px;',
-    command: 'love',
+    command: 'love'
   },
   {
     name: '查看评论',
     icon: '&#xe60b;',
     style: 'margin: 1px 7px 0 4px;',
-    command: 'comment',
+    command: 'comment'
   },
 
   {
     name: '下载歌词',
     icon: '&#xe602;',
     style: 'margin: 0 7px 0 4px;',
-    command: 'downLyric',
+    command: 'downLyric'
   },
 
   {
     name: '下载歌曲',
     icon: '&#xf0304;',
     style: 'margin: 0 8px 0 3px; font-size: 16px;',
-    command: 'downloadMusic',
-  },
+    command: 'downloadMusic'
+  }
 ];
 
-//点击显示下拉框
-const showDropMenu = async () => {
+// 点击显示下拉框
+const showDropMenu = async() => {
   showDrop.value = true;
   await nextTick();
   more.value?.click();
@@ -163,7 +163,7 @@ const { songList, current, songListId } = storeToRefs(footer);
 
 const user = useUserStore();
 
-//下首播放
+// 下首播放
 const playNext = (song: Song) => {
   if (song.available == '0' || song.available == '8') {
     const index = songListId.value.get(song.id);
@@ -191,7 +191,7 @@ const playNext = (song: Song) => {
   }
 };
 
-//点击更多操作
+// 点击更多操作
 const handleMore = (command: string) => {
   const song = props.song;
   if (command == 'love') {
@@ -223,7 +223,7 @@ const handleMore = (command: string) => {
     });
   }
 };
-//监控背景颜色，修改下拉框Hover颜色
+// 监控背景颜色，修改下拉框Hover颜色
 </script>
 
 <style lang="less">

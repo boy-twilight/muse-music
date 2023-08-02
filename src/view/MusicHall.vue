@@ -15,7 +15,7 @@
             :infinite-scroll-immediate="false"
             :infinite-scroll-disabled="topDisabled"
             style="overflow: auto">
-            <PlayList
+            <ArtistPlaylist
               v-for="(playlist, index) in curTopPlaylist"
               v-show="playlist.length > 0"
               :key="topTags[index]"
@@ -35,7 +35,7 @@
             :infinite-scroll-immediate="false"
             :infinite-scroll-disabled="recDisabled"
             style="overflow: auto">
-            <PlayList
+            <ArtistPlaylist
               v-for="(playlist, index) in curRecPlaylist"
               v-show="playlist.length > 0"
               :key="recTags[index]"
@@ -55,7 +55,7 @@
             :infinite-scroll-immediate="false"
             :infinite-scroll-disabled="styleDisabled"
             style="overflow: auto">
-            <PlayList
+            <ArtistPlaylist
               v-for="(playlist, index) in stylePlaylist"
               v-show="playlist.length > 0"
               :key="styleTags[index].id"
@@ -73,7 +73,7 @@
 import { ref, reactive, inject, Ref, computed } from 'vue';
 import { throttle } from 'lodash-es';
 import { MusicStyle, Playlist } from '@/model';
-import { elMessage, getRequset, getTheme } from '@/utils/util';
+import { elMessage, getRequset, getTheme } from '@/utils';
 import { elMessageType } from '@/model/enum';
 import {
   getStyleList,
@@ -81,33 +81,33 @@ import {
   getTopPlaylist,
   getRecPlaylist,
   getRecTags,
-  getTopTags,
-} from '@/api/api';
+  getTopTags
+} from '@/api';
 import Tab from '@components/tab/Tab.vue';
-import PlayList from '@components/datalist/PlayList.vue';
+import { ArtistPlaylist } from '@components/datalist';
 import Loading from '@/components/common/Loading.vue';
 import useConfigStore from '@/store/config';
-//配置主题
+// 配置主题
 const fontColor = getTheme().get('fontColor');
 const boxShadow = getTheme().get('shadow');
 const fontGray = inject('fontGray');
-//根据是否全屏改变容器高
+// 根据是否全屏改变容器高
 const config = useConfigStore();
 const containerHeight = computed(() =>
   config.isFullScreen ? '76.3vh' : '73.3vh'
 );
 
-//防止页面抖动
+// 防止页面抖动
 const left = ref<string>('0px');
 const showScroll = ref<string>('none');
-//设置隐藏滚动条
+// 设置隐藏滚动条
 const hideScroll = () => {
   showScroll.value = 'none';
   left.value = '0';
 };
-//计时器判断是否显示进度条
+// 计时器判断是否显示进度条
 let timeid: any = 0;
-//自动隐藏进度条
+// 自动隐藏进度条
 const autoHide = throttle(
   () => {
     if (showScroll.value != 'block') {
@@ -127,28 +127,28 @@ const autoHide = throttle(
   { leading: true, trailing: false }
 );
 
-//页面进入时的动画
+// 页面进入时的动画
 const first = inject('firstLoading') as Ref<boolean>;
-//加载动画
+// 加载动画
 const isLoading = ref<boolean>(false);
 
-//精选歌单
-//总的歌单数据
+// 精选歌单
+// 总的歌单数据
 const topPlaylist = reactive<Playlist[][]>([]);
-//当前显示的精品歌单
+// 当前显示的精品歌单
 const curTopPlaylist = reactive<Playlist[][]>([]);
-//精选歌单分类
+// 精选歌单分类
 const topTags = reactive<string[]>([]);
-//默认显示数据的长度
+// 默认显示数据的长度
 const topNum = ref<number>(18);
-//当前Index
+// 当前Index
 const topCurIndex = ref<number>(0);
-//是否禁用滚动
+// 是否禁用滚动
 const topDisabled = ref<boolean>(false);
-//获取精品歌单分类学的数据
-const getTopTagPlaylist = async () => {
+// 获取精品歌单分类学的数据
+const getTopTagPlaylist = async() => {
   try {
-    //请求数据
+    // 请求数据
     const response: any = await getTopPlaylist(100, topTags[topCurIndex.value]);
     const { playlists } = response;
     playlists.forEach((playlist: any) => {
@@ -160,16 +160,16 @@ const getTopTagPlaylist = async () => {
         playCount,
         creator: {
           nickname: '',
-          avatarUrl: '',
+          avatarUrl: ''
         },
         description: '',
-        tag: [],
+        tag: []
       });
     });
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
-  //初始化当前显示歌单
+  // 初始化当前显示歌单
   if (topCurIndex.value == 0) {
     curTopPlaylist[topCurIndex.value].push(
       ...topPlaylist[topCurIndex.value].slice(0, topNum.value)
@@ -180,14 +180,14 @@ const getTopTagPlaylist = async () => {
     isLoading.value = false;
   }
 };
-//滚动加载精品歌单
+// 滚动加载精品歌单
 const loadTopData = () => {
   topDisabled.value = true;
-  //每一次都加载12个数据
+  // 每一次都加载12个数据
   topNum.value += 12;
-  //判断当前分类歌单数目是否已满
+  // 判断当前分类歌单数目是否已满
   if (topNum.value < topPlaylist[topCurIndex.value].length) {
-    //未满则添加数据
+    // 未满则添加数据
     setTimeout(() => {
       curTopPlaylist[topCurIndex.value].push(
         ...topPlaylist[topCurIndex.value].slice(topNum.value - 12, topNum.value)
@@ -196,8 +196,8 @@ const loadTopData = () => {
     }, 100);
   } else {
     isLoading.value = true;
-    //判断当前的Index是否小于总的分类长度
-    //小于则请求数据
+    // 判断当前的Index是否小于总的分类长度
+    // 小于则请求数据
     if (topCurIndex.value < topTags.length) {
       topNum.value = 0;
       curTopPlaylist[topCurIndex.value].push(
@@ -209,30 +209,30 @@ const loadTopData = () => {
       getTopTagPlaylist();
       topDisabled.value = false;
     } else {
-      //大于则进禁止滚动并提示用户已经加载完数据
+      // 大于则进禁止滚动并提示用户已经加载完数据
       isLoading.value = false;
       elMessage(elMessageType.INFO, '已经到底部啦！');
     }
   }
 };
 
-//网友推荐
-//总的歌单数据
+// 网友推荐
+// 总的歌单数据
 const recPlaylist = reactive<Playlist[][]>([]);
-//当前显示的推荐歌单
+// 当前显示的推荐歌单
 const curRecPlaylist = reactive<Playlist[][]>([]);
-//推荐歌单分类
+// 推荐歌单分类
 const recTags = reactive<string[]>([]);
-//显示歌单的数目
+// 显示歌单的数目
 const recNum = ref<number>(18);
-//当前Index
+// 当前Index
 const recCurIndex = ref<number>(0);
-//是否禁用滚动
+// 是否禁用滚动
 const recDisabled = ref<boolean>(false);
-//获取网友推荐歌单
-const getRecTagPlaylist = async () => {
+// 获取网友推荐歌单
+const getRecTagPlaylist = async() => {
   try {
-    //请求数据
+    // 请求数据
     const response: any = await getRecPlaylist(100, recTags[recCurIndex.value]);
     const { playlists } = response;
     playlists.forEach((playlist: any) => {
@@ -244,17 +244,17 @@ const getRecTagPlaylist = async () => {
         playCount,
         creator: {
           nickname: '',
-          avatarUrl: '',
+          avatarUrl: ''
         },
         description: '',
-        tag: [],
+        tag: []
       });
     });
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
   if (recCurIndex.value == 0) {
-    //初始化显示的数据
+    // 初始化显示的数据
     curRecPlaylist[recCurIndex.value].push(
       ...recPlaylist[recCurIndex.value].slice(0, recNum.value)
     );
@@ -264,7 +264,7 @@ const getRecTagPlaylist = async () => {
     isLoading.value = false;
   }
 };
-//滚动加载更多推荐歌单
+// 滚动加载更多推荐歌单
 const loadRecData = () => {
   recDisabled.value = true;
   recNum.value += 12;
@@ -294,16 +294,16 @@ const loadRecData = () => {
   }
 };
 
-//精品曲风
-//总的歌单数据
+// 精品曲风
+// 总的歌单数据
 const stylePlaylist = reactive<Playlist[][]>([]);
-//曲风分类
+// 曲风分类
 const styleTags = reactive<MusicStyle[]>([]);
-//当前的index
+// 当前的index
 const styleCurIndex = ref<number>(0);
-//是否禁用滚动
+// 是否禁用滚动
 const styleDisabled = ref<boolean>(false);
-//滚动加载更多曲风
+// 滚动加载更多曲风
 const loadStyleData = () => {
   styleDisabled.value = true;
   isLoading.value = true;
@@ -316,12 +316,12 @@ const loadStyleData = () => {
     isLoading.value = false;
   }
 };
-//获取曲风分类下的歌单数据
-const getStyleTagPlaylist = async () => {
+// 获取曲风分类下的歌单数据
+const getStyleTagPlaylist = async() => {
   try {
     const response = await getStylePlayList(styleTags[styleCurIndex.value].id);
     const {
-      data: { playlist },
+      data: { playlist }
     } = response;
     playlist.forEach((item: any) => {
       const { id, name, cover, playCount } = item;
@@ -334,8 +334,8 @@ const getStyleTagPlaylist = async () => {
         tag: [],
         creator: {
           nickname: '',
-          avatarUrl: '',
-        },
+          avatarUrl: ''
+        }
       });
     });
   } catch (err: any) {
@@ -349,7 +349,7 @@ const getStyleTagPlaylist = async () => {
   }
 };
 
-//根据当前的活跃项动态请求数据
+// 根据当前的活跃项动态请求数据
 const getActive = (active: string) => {
   hideScroll();
   if (active == 'rec' && recPlaylist[0].length == 0) {
@@ -361,15 +361,15 @@ const getActive = (active: string) => {
   }
 };
 
-//请求初始数据
-getRequset(async () => {
-  //精品歌单分类
+// 请求初始数据
+getRequset(async() => {
+  // 精品歌单分类
   try {
     const response: any = await getTopTags();
     const { tags } = response;
-    //初始化数据
+    // 初始化数据
     topTags.push(...tags.map((item: any) => item.name));
-    topTags.forEach((item) => {
+    topTags.forEach(() => {
       topPlaylist.push([]);
       curTopPlaylist.push([]);
     });
@@ -377,12 +377,12 @@ getRequset(async () => {
     elMessage(elMessageType.ERROR, err.message);
   }
 
-  //网友推荐分类
+  // 网友推荐分类
   try {
     const response: any = await getRecTags();
     const { sub } = response;
     recTags.push(...sub.map((item: any) => item.name));
-    recTags.forEach((item) => {
+    recTags.forEach(() => {
       recPlaylist.push([]);
       curRecPlaylist.push([]);
     });
@@ -390,7 +390,7 @@ getRequset(async () => {
     elMessage(elMessageType.ERROR, err.message);
   }
 
-  //曲风分类
+  // 曲风分类
   try {
     const response: any = await getStyleList();
     const { data } = response;
@@ -398,14 +398,14 @@ getRequset(async () => {
       const { tagId, tagName } = item;
       styleTags.push({
         id: tagId,
-        name: tagName,
+        name: tagName
       });
       stylePlaylist.push([]);
     });
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
-  //请求初始数据
+  // 请求初始数据
   getTopTagPlaylist();
 }, first);
 </script>

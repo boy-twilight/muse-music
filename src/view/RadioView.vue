@@ -18,7 +18,7 @@
       class="radio"
       v-for="(radio, index) in radios"
       :key="radioType[index].id">
-      <PlayList
+      <ArtistPlaylist
         :title="radioType[index].name"
         :playlists="radio"
         type="radio" />
@@ -29,38 +29,38 @@
 
 <script lang="ts" setup>
 import { ref, reactive, inject, Ref } from 'vue';
-import { elMessage, getRequset, getTheme } from '@/utils/util';
-import { getRadioBanner, getRadios, getRadioType } from '@/api/api';
+import { elMessage, getRequset, getTheme } from '@/utils';
+import { getRadioBanner, getRadios, getRadioType } from '@/api';
 import { elMessageType } from '@/model/enum';
 import { Banner, Playlist, RadioType } from '@/model';
 import { useRouter } from 'vue-router';
-import PlayList from '@/components/datalist/PlayList.vue';
+import { ArtistPlaylist } from '@/components/datalist';
 import Loading from '@/components/common/Loading.vue';
 
-//配置主题
+// 配置主题
 const boxShadow = getTheme().get('shadow');
 const fontColor = getTheme().get('fontColor');
-//路由器
+// 路由器
 const router = useRouter();
 
-//电台banner
+// 电台banner
 const banner = reactive<Banner[]>([]);
-//电台分类
+// 电台分类
 const radioType = reactive<RadioType[]>([]);
-//电台分类下的电台
+// 电台分类下的电台
 const radios = reactive<Playlist[][]>([]);
-//当前展示的分类电台数目
+// 当前展示的分类电台数目
 const curIndex = ref<number>(0);
-//第一次加载的动画
+// 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
-//隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
-//是否禁用滚动
+// 隐藏滚动条
+const hideScroll = inject('hideScroll') as () => void;
+// 是否禁用滚动
 const disabled = ref<boolean>(false);
-//是否正在加载
+// 是否正在加载
 const isLoading = ref<boolean>(false);
-//获取电台下的分类
-const getRadioData = async () => {
+// 获取电台下的分类
+const getRadioData = async() => {
   const response: any = await getRadios(radioType[curIndex.value].id);
   const { djRadios } = response;
   radios.push([]);
@@ -73,7 +73,7 @@ const getRadioData = async () => {
       playCount,
       creator: { nickname: '', avatarUrl: '' },
       tag: [],
-      description: '',
+      description: ''
     });
   });
   disabled.value = false;
@@ -92,20 +92,20 @@ const loadData = () => {
     elMessage(elMessageType.SUCCESS, '已经到达底部！');
   }
 };
-//前往banner对应的电台
+// 前往banner对应的电台
 const go = (id: string) => {
   hideScroll();
   router.push({
     name: 'playlist',
     query: {
       id: id,
-      type: 'radio',
-    },
+      type: 'radio'
+    }
   });
 };
 
-getRequset(async () => {
-  //获取电台banner
+getRequset(async() => {
+  // 获取电台banner
   try {
     const response: any = await getRadioBanner();
     const { data } = response;
@@ -113,14 +113,14 @@ getRequset(async () => {
       const { targetId, pic } = item;
       banner.push({
         id: targetId,
-        pic,
+        pic
       });
     });
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
 
-  //获取电台分类
+  // 获取电台分类
   try {
     const response: any = await getRadioType();
     const { categories } = response;
@@ -128,7 +128,7 @@ getRequset(async () => {
       const { id, name } = item;
       radioType.push({
         id,
-        name,
+        name
       });
     });
   } catch (err: any) {

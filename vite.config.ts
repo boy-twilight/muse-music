@@ -4,10 +4,14 @@ import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import { join } from 'path';
+import eslintPlugin from 'vite-plugin-eslint';
 
 export default defineConfig({
   plugins: [
     vue(),
+    // eslintPlugin({
+    //   include: ['src/**/*.ts', 'src/**/*.vue', 'src/**/**/*.vue'],
+    // }),
     AutoImport({
       resolvers: [ElementPlusResolver()],
     }),
@@ -22,6 +26,9 @@ export default defineConfig({
       '@components': join(__dirname, 'src/components/'),
       '@assets': join(__dirname, 'src/assets/'),
     },
+  },
+  server: {
+    port: 3030,
   },
 
   build: {

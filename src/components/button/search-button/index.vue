@@ -30,10 +30,10 @@
 <script lang="ts" setup>
 import { computed, inject, ref } from 'vue';
 import { throttle } from 'lodash-es';
-import { getTheme } from '@/utils/util';
+import { getTheme } from '@/utils';
 import useConfigStore from '@/store/config';
 
-//配置主题
+// 配置主题
 const config = useConfigStore();
 const fontColor = getTheme().get('fontColor');
 const fontGray = inject('fontGray');
@@ -44,20 +44,20 @@ const searchColor = computed(() =>
     : 'rgba(210,210,210,0.2)'
 );
 
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
+// 设置隐藏滚动条
+const hideScroll = inject('hideScroll') as () => void;
 
-//搜索结果回传
+// 搜索结果回传
 const emits = defineEmits<{
   (e: 'getContent', param: string): void;
 }>();
 
-//搜索容器
+// 搜索容器
 const search = ref<HTMLDivElement>();
-//隐藏文字
+// 隐藏文字
 const hideText = ref<boolean>(false);
 
-//搜索内容
+// 搜索内容
 const content = ref<string>('');
 const searchMusic = () => {
   throttle(
@@ -68,12 +68,12 @@ const searchMusic = () => {
     800,
     {
       leading: true,
-      trailing: false,
+      trailing: false
     }
   )();
 };
 
-//展示搜索框
+// 展示搜索框
 const showSearch = () => {
   hideText.value = true;
   search.value!.style.zIndex = '3';
@@ -82,7 +82,7 @@ const showSearch = () => {
   search.value!.style.opacity = '1';
 };
 
-//关闭搜索框
+// 关闭搜索框
 const closeSearch = () => {
   search.value!.style.zIndex = '-1';
   search.value!.style.height = '34px';

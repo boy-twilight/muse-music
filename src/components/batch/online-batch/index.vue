@@ -2,23 +2,23 @@
   <div class="online-batch">
     <!-- 批量操作选择 -->
     <div class="operation-select">
-      <DecoratedButton
+      <CommonButton
         icon="&#xea6e;"
         name="播放"
         class="play"
-        @click.native="playSelect" />
-      <DecoratedButton
+        @click="playSelect" />
+      <CommonButton
         icon="&#xe761;"
         name="收藏"
-        @click.native="loveSelect" />
-      <DecoratedButton
+        @click="loveSelect" />
+      <CommonButton
         icon="&#xf0304;"
-        @click.native="downloadSelect"
+        @click="downloadSelect"
         name="下载" />
-      <DecoratedButton
+      <CommonButton
         icon="&#xe617;"
         name="取消操作"
-        @click.native="emits('closeSelect', false)"
+        @click="emits('closeSelect', false)"
         class="cancel" />
     </div>
     <SongList
@@ -36,12 +36,12 @@ import { storeToRefs } from 'pinia';
 import { Song } from '@/model';
 import useFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
-import { elMessage, getTheme } from '@/utils/util';
+import { elMessage, getTheme } from '@/utils';
 import { elMessageType } from '@/model/enum';
-import DecoratedButton from '@components/button//DecoratedButton.vue';
+import { CommonButton } from '@components/button';
 import SongList from '@components/table/SongList.vue';
 
-//配置主题
+// 配置主题
 const themeColor = getTheme().get('themeColor');
 
 const footer = useFooterStore();
@@ -51,15 +51,15 @@ const user = useUserStore();
 const { loveMusicId, loveSongs } = storeToRefs(user);
 
 defineProps<{
-  //歌曲
+  // 歌曲
   songs: Song[];
-  //歌曲id与Index对应的map
+  // 歌曲id与Index对应的map
   songIdMapper: Map<string, number>;
 }>();
 
-//选择的歌曲
+// 选择的歌曲
 const selectSongs = reactive<Song[]>([]);
-//获取选择的歌曲
+// 获取选择的歌曲
 const getSelectItems = (songs: Song[]) => {
   if (selectSongs.length != 0) {
     selectSongs.splice(0);
@@ -71,8 +71,8 @@ const emits = defineEmits<{
   (e: 'closeSelect', showSelect: boolean): void;
 }>();
 
-//播放选择的歌曲
-const playSelect = async () => {
+// 播放选择的歌曲
+const playSelect = async() => {
   if (selectSongs.length > 0) {
     isPlay.value = false;
     playProcess.value = 0;
@@ -91,13 +91,13 @@ const playSelect = async () => {
     elMessage(elMessageType.INFO, '请添加歌曲！');
   }
 };
-//批量下载歌曲
+// 批量下载歌曲
 const downloadSelect = () => {
   selectSongs.forEach((item) => {
     user.addMuiscDownload(item);
   });
 };
-//喜欢选中的歌曲
+// 喜欢选中的歌曲
 const loveSelect = () => {
   selectSongs.forEach((item) => {
     item.isLove = true;

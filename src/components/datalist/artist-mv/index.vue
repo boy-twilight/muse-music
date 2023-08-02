@@ -51,21 +51,21 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, ref, computed, nextTick, onBeforeUpdate } from 'vue';
+import { inject, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { MV } from '@/model';
-import { getTheme } from '@/utils/util';
+import { getTheme } from '@/utils';
 import Pagination from '@components/pagination/Pagination.vue';
 
-//设置主题
+// 设置主题
 const fontColor = getTheme().get('fontColor');
 const boxShadow = getTheme().get('shadow');
 const themeColor = getTheme().get('themeColor');
 const fontGray = inject('fontGray');
 
 const router = useRouter();
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
+// 设置隐藏滚动条
+const hideScroll = inject('hideScroll') as () => void;
 
 const props = withDefaults(
   defineProps<{
@@ -79,39 +79,39 @@ const props = withDefaults(
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false,
+    showPagination: false
   }
 );
 
 const emits = defineEmits<{
   (e: 'getDeleteId', id: string): void;
 }>();
-//当前页数
+// 当前页数
 const curPage = ref<number>(1);
-//一页多少数据
+// 一页多少数据
 const pageSize = ref<number>(15);
-//总的数据数
+// 总的数据数
 const total = computed(() => props.mvs.length);
-//当前展示的专辑
+// 当前展示的专辑
 const curShow = computed(() =>
   props.mvs.slice(
     (curPage.value - 1) * pageSize.value,
     curPage.value * pageSize.value
   )
 );
-//页数变化
+// 页数变化
 const pageChange = (page: number) => {
   curPage.value = page;
 };
 
-//点击推荐跳转
+// 点击推荐跳转
 const toMv = (id: string) => {
   hideScroll();
   router.push({
     name: 'video',
     query: {
-      id,
-    },
+      id
+    }
   });
 };
 </script>

@@ -36,10 +36,10 @@
 
 <script lang="ts" setup>
 import { ref, reactive, computed, Ref } from 'vue';
-import { getTheme } from '@/utils/util';
+import { getTheme } from '@/utils';
 import useConfigStore from '@/store/config';
 
-//配置主题
+// 配置主题
 const config = useConfigStore();
 const fontColor = getTheme().get('fontColor') as Ref<string>;
 const bg = getTheme().get('background');
@@ -49,7 +49,7 @@ const searchColor = computed(() =>
     ? getTheme().get('searchBg')?.value
     : 'rgba(210,210,210,0.2)'
 );
-//下列框处于哪种模式
+// 下列框处于哪种模式
 const dropDownMode = computed(() => {
   if (config.bgMode == 'color') {
     return fontColor.value == '#ffffff' ? 'dropdown-dark' : 'dropdown-light';
@@ -58,16 +58,16 @@ const dropDownMode = computed(() => {
   }
 });
 
-//排序的名字
+// 排序的名字
 const sortName = reactive<string[]>([
   '歌曲排序',
   '歌手排序',
   '专辑排序',
-  '时长排序',
+  '时长排序'
 ]);
-//排序的类型
+// 排序的类型
 const sortType = reactive<boolean[]>([false, false, false, false]);
-//当前选择的项
+// 当前选择的项
 const currentChoose = ref<number>(-1);
 const sortAfter = computed(() =>
   sortType.map((item, index) => (index == currentChoose.value ? true : false))
@@ -90,7 +90,7 @@ const chooseSortType = (command: string) => {
   }
 };
 
-//获取默认排序
+// 获取默认排序
 const getDeafultSort = () => {
   if (currentChoose.value == -1) {
     currentChoose.value = 0;

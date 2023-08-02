@@ -29,7 +29,7 @@
             class="content"
             v-loading="firstLoading"
             :element-loading-background="loadingBg"
-            :element-loading-spinner="Svg">
+            :element-loading-spinner="svg">
             <router-view
               v-slot="{ Component }"
               @scroll="autoHide()"
@@ -72,13 +72,15 @@ import {
   reactive,
   computed,
   ComputedRef,
-  onMounted,
+  onMounted
 } from 'vue';
+import { useRoute } from 'vue-router';
 import hotkeys, { HotkeysEvent } from 'hotkeys-js';
 import { throttle } from 'lodash-es';
 import { storeToRefs } from 'pinia';
-import { getTheme, getMusicUrls, setStorAge, elMessage } from '@/utils/util';
-import { Svg, Comment } from '@/model';
+import { getTheme, getMusicUrls, setStorAge, elMessage } from '@/utils';
+import { Comment } from '@/model';
+import { svg } from '@/model/icon';
 import { elMessageType, storageType } from './model/enum';
 import useThemeStore from './store/theme';
 import useConfigStore from '@/store/config';
@@ -90,75 +92,74 @@ import Footer from '@components/layout/Footer.vue';
 import Drawer from '@components/drawer/Drawer.vue';
 import CommentDialog from './components/common/CommentDialog.vue';
 import useUserStore from './store/user';
-import { useRoute } from 'vue-router';
 
-//快捷键列表
-//space播放,上进入/退出音乐详情，左前一首，右后一首，f进入/退出全屏
+// 快捷键列表
+// space播放,上进入/退出音乐详情，左前一首，右后一首，f进入/退出全屏
 const keys = ['space', 'left', 'right', 'up', 'f'];
 const route = useRoute();
 const curPath = computed(() => route.fullPath);
 const rule = /^\/video/;
-//绑定快捷键
+// 绑定快捷键
 hotkeys(keys.join(','), (event: KeyboardEvent, handler: HotkeysEvent) => {
   event.preventDefault();
   switch (handler.key) {
-    case 'space':
-      {
-        //在视频播放页面不设置快捷键,避免冲突
-        if (!rule.test(curPath.value)) {
-          isPlay.value = !isPlay.value;
-        }
+  case 'space':
+    {
+      // 在视频播放页面不设置快捷键,避免冲突
+      if (!rule.test(curPath.value)) {
+        isPlay.value = !isPlay.value;
       }
-      break;
-    case 'up':
-      {
-        if (!rule.test(curPath.value)) {
-          isPlay.value = false;
-          playProcess.value = 0;
-          playTime.value = 0;
-          showDetail.value = !showDetail.value;
-        }
+    }
+    break;
+  case 'up':
+    {
+      if (!rule.test(curPath.value)) {
+        isPlay.value = false;
+        playProcess.value = 0;
+        playTime.value = 0;
+        showDetail.value = !showDetail.value;
       }
-      break;
-    case 'left':
-      {
-        //在视频播放页面不设置快捷键,避免冲突
-        if (!rule.test(curPath.value)) {
-          if (songNum.value > 0) {
-            current.value =
+    }
+    break;
+  case 'left':
+    {
+      // 在视频播放页面不设置快捷键,避免冲突
+      if (!rule.test(curPath.value)) {
+        if (songNum.value > 0) {
+          current.value =
               --current.value < 0 ? songNum.value - 1 : current.value;
-          } else {
-            elMessage(elMessageType.INFO, '暂无音乐，请您添加音乐');
-          }
-        }
-      }
-      break;
-    case 'right':
-      {
-        //在视频播放页面不设置快捷键,避免冲突
-        if (!rule.test(curPath.value)) {
-          if (songNum.value > 0) {
-            current.value =
-              ++current.value >= songNum.value ? 0 : current.value;
-          } else {
-            elMessage(elMessageType.INFO, '暂无音乐，请您添加音乐');
-          }
-        }
-      }
-      break;
-    case 'f':
-      {
-        if (isFullScreen.value) {
-          document.exitFullscreen();
         } else {
-          document.documentElement.requestFullscreen();
+          elMessage(elMessageType.INFO, '暂无音乐，请您添加音乐');
         }
       }
-      break;
+    }
+    break;
+  case 'right':
+    {
+      // 在视频播放页面不设置快捷键,避免冲突
+      if (!rule.test(curPath.value)) {
+        if (songNum.value > 0) {
+          current.value =
+              ++current.value >= songNum.value ? 0 : current.value;
+        } else {
+          elMessage(elMessageType.INFO, '暂无音乐，请您添加音乐');
+        }
+      }
+    }
+    break;
+  case 'f':
+    {
+      if (isFullScreen.value) {
+        document.exitFullscreen();
+      } else {
+        document.documentElement.requestFullscreen();
+      }
+    }
+    break;
   }
 });
 
-//配置主题
+// 配置主题
 const config = useConfigStore();
 const {
   showScroll,
@@ -170,7 +171,7 @@ const {
   skinUrl,
   skin,
   bgMode,
-  isFullScreen,
+  isFullScreen
 } = storeToRefs(config);
 const menu = getTheme().get('menuColor');
 const bg = getTheme().get('background') as Ref<string>;
@@ -180,38 +181,38 @@ const loadingBg = computed(() =>
 );
 provide<Ref<string>>('fontGray', fontGrayColor);
 provide<ComputedRef<string>>('loadingBg', loadingBg);
-//在全屏模式改变屏占比,看起来更加合理
+// 在全屏模式改变屏占比,看起来更加合理
 const mHeight = contentHeight;
 const hHeight = headerHeight;
 const dHeight = musicContentHeight;
 const dmHeight = musicFooterHeight;
 
-//页面加载动画
+// 页面加载动画
 const firstLoading = ref<boolean>(true);
 provide<Ref<boolean>>('firstLoading', firstLoading);
 
-//解决页面抖动问题
+// 解决页面抖动问题
 const scrollVisible = showScroll;
 const leftDis = left;
-//计时器判断是否显示进度条
+// 计时器判断是否显示进度条
 let timeid: any = 0;
-//设置隐藏滚动条
+// 设置隐藏滚动条
 const hideScroll = () => {
   if (showScroll.value != 'none') {
     showScroll.value = 'none';
   }
 };
-//需要滚动的页面地址映射
+// 需要滚动的页面地址映射
 const mapper = new Map([
   ['/video', '/video'],
   ['/hall', '/hall'],
   ['/station', '/station'],
   ['/rvideo', 'rvideo'],
-  ['/artistlist', '/artistlist'],
+  ['/artistlist', '/artistlist']
 ]);
 
-provide<Function>('hideScroll', hideScroll);
-//自动隐藏进度条
+provide<() => void>('hideScroll', hideScroll);
+// 自动隐藏进度条
 const autoHide = throttle(
   () => {
     if (mapper.get(route.fullPath.split('?')[0])) {
@@ -229,7 +230,7 @@ const autoHide = throttle(
   600,
   { leading: true, trailing: false }
 );
-//歌曲评论
+// 歌曲评论
 const footer = useFooterStore();
 const {
   songList,
@@ -239,15 +240,15 @@ const {
   playTime,
   showDetail,
   songNum,
-  playMode,
+  playMode
 } = storeToRefs(footer);
 const soucreComments = reactive<Comment[]>([]);
-//是否展示歌曲评论区
+// 是否展示歌曲评论区
 const showComments = ref<boolean>(false);
 provide<Comment[]>('soucreComments', soucreComments);
 provide<Ref<boolean>>('showComments', showComments);
 
-//定时重新获取musicurl
+// 定时重新获取musicurl
 const getUrlOntime = () => {
   const ids = songList.value.map((song) => song.id);
   if (ids.length > 0) {
@@ -262,7 +263,7 @@ const getUrlOntime = () => {
 };
 getUrlOntime();
 
-//关闭网页之前，缓存相关记录
+// 关闭网页之前，缓存相关记录
 const theme = useThemeStore();
 const {
   fontColor,
@@ -274,7 +275,7 @@ const {
   searchBg,
   active,
   themeColor,
-  fontGray,
+  fontGray
 } = storeToRefs(theme);
 const user = useUserStore();
 const {
@@ -287,11 +288,11 @@ const {
   mvDownload,
   songRecord,
   videoRecord,
-  loveRadio,
+  loveRadio
 } = storeToRefs(user);
 onMounted(() => {
   window.addEventListener('beforeunload', () => {
-    //主题
+    // 主题
     setStorAge(storageType.LOCAL, 'theme', {
       fontBlack: fontBlack.value,
       fontColor: fontColor.value,
@@ -302,17 +303,17 @@ onMounted(() => {
       searchBg: searchBg.value,
       active: active.value,
       themeColor: themeColor.value,
-      fontGray: fontGray.value,
+      fontGray: fontGray.value
     });
-    //背景模式
+    // 背景模式
     setStorAge(storageType.LOCAL, 'skin', skin.value);
     setStorAge(storageType.LOCAL, 'bgMode', bgMode.value);
-    //全屏模式
+    // 全屏模式
     setStorAge(storageType.LOCAL, 'isFullScreen', isFullScreen.value);
-    //用户数据
-    //记录当前播放的歌曲
+    // 用户数据
+    // 记录当前播放的歌曲
     setStorAge(storageType.LOCAL, 'currentPlay', current.value);
-    //记录当前播放的模式
+    // 记录当前播放的模式
     setStorAge(storageType.LOCAL, 'playMode', playMode.value);
     setStorAge(storageType.LOCAL, 'userPlaylist', songList.value);
     setStorAge(storageType.LOCAL, 'loveSongs', loveSongs.value);

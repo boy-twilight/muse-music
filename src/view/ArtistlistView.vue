@@ -36,80 +36,79 @@
 <script lang="ts" setup>
 import { ref, reactive, Ref, inject, computed, nextTick } from 'vue';
 import { Artist } from '@/model';
-import { getArtists } from '@/api/api';
-import { elMessage, getTheme } from '@/utils/util';
+import { getArtists } from '@/api';
+import { elMessage, getTheme } from '@/utils';
 import { elMessageType } from '@/model/enum';
-import Singer from '@components/datalist/Singer.vue';
-import ButtonGroup from '@components/button/ButtonGroup.vue';
-import SearchButton from '@components/button/SearchButton.vue';
+import { Singer } from '@components/datalist';
+import { ButtonGroup, SearchButton } from '@components/button';
 
-//配置主题
+// 配置主题
 const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');
 const boxShadow = getTheme().get('shadow');
 const themeColor = getTheme().get('themeColor');
 const fontGray = inject('fontGray');
 
-//歌手榜单
+// 歌手榜单
 const artistlist = reactive<Artist[]>([]);
-//搜索
+// 搜索
 const searchResult = computed(() =>
   artistlist.filter((artist) => artist.name.includes(content.value))
 );
 
 const content = ref<string>('');
-//缓存已经加载的结果
+// 缓存已经加载的结果
 const resultCache = reactive<Map<string, Artist[]>>(new Map());
-//类型默认活跃的Index
+// 类型默认活跃的Index
 const typeActive = ref<number>(0);
 const artistType = computed(
   () => typeMapper.get(type[typeActive.value]) as number
 );
-//歌手榜类型
+// 歌手榜类型
 const type = reactive<string[]>(['全部', '男歌手', '女歌手', '组合']);
-//类型到接口参数的映射
+// 类型到接口参数的映射
 const typeMapper = new Map([
   ['全部', -1],
   ['男歌手', 1],
   ['女歌手', 2],
-  ['组合', 3],
+  ['组合', 3]
 ]);
 
-//歌手地区默认活跃的Index
+// 歌手地区默认活跃的Index
 const areaActive = ref<number>(0);
-//映射请求参数
+// 映射请求参数
 const artistArea = computed(
   () => areaMapper.get(area[areaActive.value]) as number
 );
-//歌手地区
+// 歌手地区
 const area = ['全部', '华语', '欧美', '日本', '韩国', '其他'];
-//地区到接口参数的映射
+// 地区到接口参数的映射
 const areaMapper = new Map([
   ['全部', -1],
   ['华语', 7],
   ['欧美', 96],
   ['日本', 8],
   ['韩国', 16],
-  ['其他', 0],
+  ['其他', 0]
 ]);
 
-//姓名首字母，用于筛选
+// 姓名首字母，用于筛选
 const nameCh = reactive<string[]>(
   '全部,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,#'.split(',')
 );
-//姓名首字母的活跃
+// 姓名首字母的活跃
 const nameActive = ref<string>('全部');
 
-//页面第一次加载的动画
+// 页面第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
+// 设置隐藏滚动条
+const hideScroll = inject('hideScroll') as () => void;
 
-//获取到当前活跃的按钮切换并加载对应数据
-const getActive = async (index: number, type: string) => {
+// 获取到当前活跃的按钮切换并加载对应数据
+const getActive = async(index: number, type: string) => {
   hideScroll();
   artistlist.splice(0);
-  //切换index
+  // 切换index
   if (type == '歌手地区') {
     areaActive.value = index;
   } else if (type == '歌手类型') {
@@ -118,24 +117,24 @@ const getActive = async (index: number, type: string) => {
     nameActive.value = nameCh[index];
   }
   await nextTick();
-  //判断缓存是否存在
+  // 判断缓存是否存在
   const cache = resultCache.get(
     artistType.value + '' + artistArea.value + '' + nameActive.value
   );
-  //存在使用缓存，不存在直接请求数据
+  // 存在使用缓存，不存在直接请求数据
   if (cache) {
     artistlist.push(...cache);
   } else {
     getData();
   }
 };
-//搜索
+// 搜索
 const getContent = (search: string) => {
   content.value = search;
 };
-//请求初始数据
-const getData = async () => {
-  //第一次请求开启动画
+// 请求初始数据
+const getData = async() => {
+  // 第一次请求开启动画
   first.value = true;
   try {
     const response: any = await getArtists(
@@ -151,10 +150,10 @@ const getData = async () => {
         id,
         name,
         avatar: img1v1Url,
-        score: fansCount,
+        score: fansCount
       });
     });
-    //缓存请求结果
+    // 缓存请求结果
     resultCache.set(
       artistType.value + '' + artistArea.value + '' + nameActive.value,
       [...artistlist]

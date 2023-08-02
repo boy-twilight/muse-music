@@ -264,6 +264,8 @@
 </template>
 
 <script lang="ts" setup>
+/* eslint-disable */
+// eslint-disable-next-line vue/no-setup-props-destructure
 import { ref, nextTick, watch, onMounted, inject, Ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { throttle } from 'lodash-es';
@@ -281,12 +283,12 @@ import {
   shareMuiscInfo,
   getSourceComments,
   downloadLyric,
-} from '@/utils/util';
+} from '@/utils';
 import { elMessageType } from '@/model/enum';
 import { DropDownItem, Song, Comment } from '@/model';
 import image from '@assets/image/暂无音乐.svg';
 
-//设置主题
+// 设置主题
 const config = useConfigStore();
 const fontColor = getTheme().get('fontColor') as Ref<string>;
 const boxShadow = getTheme().get('shadow');
@@ -296,7 +298,7 @@ const fontGray = inject('fontGray');
 const processColor = computed(() =>
   config.bgMode == 'color' ? 'rgb(217,217,217)' : 'rgba(217,217,217,0.3)'
 );
-//下列框处于哪种模式
+// 下列框处于哪种模式
 const dropDownMode = computed(() => {
   if (config.bgMode == 'color') {
     return fontColor.value == '#ffffff' ? 'dropdown-dark' : 'dropdown-light';
@@ -305,15 +307,15 @@ const dropDownMode = computed(() => {
   }
 });
 
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
+// 设置隐藏滚动条
+const hideScroll = inject('hideScroll') as () => void;
 
-//评论
+// 评论
 const soucreComments = inject('soucreComments') as Comment[];
-//是否展开评论区
+// 是否展开评论区
 const showComments = inject('showComments') as Ref<boolean>;
 
-//喜欢图标的图标及样式的改变
+// 喜欢图标的图标及样式的改变
 const loveIcon = computed<string>(() =>
   songList.value[current.value].isLove ? '\ue760' : '\ue761'
 );
@@ -323,7 +325,7 @@ const lovetyle = computed<string>(() =>
     : 'margin: 0 7px 0 2px;'
 );
 
-//播放相关的设置
+// 播放相关的设置
 const footer = useFooterStore();
 const {
   isPlay,
@@ -337,10 +339,10 @@ const {
   isChanging,
   showDetail,
 } = storeToRefs(footer);
-//用户记录相关的设置
+// 用户记录相关的设置
 const user = useUserStore();
 
-//更多的下拉选择
+// 更多的下拉选择
 const moreDropItems: DropDownItem[] = [
   {
     name: '播放相似单曲',
@@ -383,7 +385,7 @@ const moreDropItems: DropDownItem[] = [
     command: 'deleteMuisc',
   },
 ];
-//进入歌曲详情页
+// 进入歌曲详情页
 const toSongDetail = () => {
   isPlay.value = false;
   playProcess.value = 0;
@@ -391,14 +393,14 @@ const toSongDetail = () => {
   showDetail.value = true;
 };
 
-//下载歌曲
+// 下载歌曲
 const downloadCurrent = () => {
   if (songNum.value > 0) {
     user.addMuiscDownload(songList.value[current.value]);
   }
 };
 
-//播放mv
+// 播放mv
 const playMv = () => {
   if (songNum.value > 0) {
     playVideo(songList.value[current.value], () => {
@@ -413,7 +415,7 @@ const playMv = () => {
   }
 };
 
-//点击更多的操作
+// 点击更多的操作
 const handleMore = async (command: string) => {
   if (songNum.value > 0) {
     if (command == 'playSimi') {
@@ -468,7 +470,7 @@ const handleMore = async (command: string) => {
   }
 };
 
-//播放模式的下拉框
+// 播放模式的下拉框
 const modeDropItems: DropDownItem[] = [
   {
     name: '单曲循环',
@@ -491,29 +493,29 @@ const modeDropItems: DropDownItem[] = [
   },
 ];
 
-//播放容器
+// 播放容器
 const player = ref<HTMLAudioElement>();
-//当前音量
+// 当前音量
 const volume = ref<number>(80);
-//判断当前是否静音
+// 判断当前是否静音
 const isMuted = ref<boolean>(false);
-//计时器
+// 计时器
 let timeId: any = 0;
 
-//打开播放列表
+// 打开播放列表
 const openDrawer = () => {
   showList.value = true;
   config.drawerMode = 'playlist';
 };
 
-//切换播放模式
+// 切换播放模式
 const changeMode = (command: string) => {
   playMode.value = command;
 };
 
-//设置音量
+// 设置音量
 const setVolume = () => {
-  //设置音量
+  // 设置音量
   player.value!.volume = volume.value / 100;
   isMuted.value = volume.value == 0 || player.value!.muted;
 };
@@ -537,13 +539,13 @@ const changeProcess = throttle(
   }
 );
 
-//设置静音
+// 设置静音
 const setMuted = () => {
   player.value!.muted = !player.value!.muted;
   isMuted.value = volume.value == 0 || player.value!.muted;
 };
 
-//下一首
+// 下一首
 const next = () => {
   if (songNum.value > 0) {
     current.value = ++current.value >= songNum.value ? 0 : current.value;
@@ -551,9 +553,9 @@ const next = () => {
     elMessage(elMessageType.INFO, '暂无音乐，请您添加音乐');
   }
 };
-//上一首
+// 上一首
 const pre = () => {
-  //切换歌曲
+  // 切换歌曲
   if (songNum.value > 0) {
     current.value = --current.value < 0 ? songNum.value - 1 : current.value;
   } else {
@@ -561,30 +563,30 @@ const pre = () => {
   }
 };
 
-//监测current的变化实现歌曲的切换
+// 监测current的变化实现歌曲的切换
 watch(current, async () => {
   if (isPlay.value) {
     isPlay.value = false;
   }
-  //清空进度条
+  // 清空进度条
   playProcess.value = 0;
-  //清空播放时间
+  // 清空播放时间
   playTime.value = 0;
   await nextTick();
   isPlay.value = true;
 });
 
-//监测isPlay实现播放
+// 监测isPlay实现播放
 watch(isPlay, async (newVal) => {
   if (newVal) {
-    //无音乐则不播放
+    // 无音乐则不播放
     if (songNum.value > 0) {
-      //判断是否具有版权
+      // 判断是否具有版权
       player.value?.play();
       timeId = setInterval(() => {
-        //转化时间
+        // 转化时间
         playTime.value = player.value!.currentTime;
-        //计算总进度
+        // 计算总进度
         playProcess.value =
           (playTime.value /
             transformTotalTime(songList.value[current.value].time as string)) *
@@ -600,7 +602,7 @@ watch(isPlay, async (newVal) => {
   }
 });
 
-//一首歌曲下载完毕过后播放另外一首
+// 一首歌曲下载完毕过后播放另外一首
 onMounted(() => {
   player.value!.onended = async () => {
     if (playMode.value == '1') {
@@ -608,9 +610,9 @@ onMounted(() => {
       current.value = Math.floor(Math.random() * songNum.value);
       if (temp == current.value) {
         isPlay.value = false;
-        //清空进度条
+        // 清空进度条
         playProcess.value = 0;
-        //清空播放时间
+        // 清空播放时间
         playTime.value = 0;
         await nextTick();
         isPlay.value = true;
@@ -619,9 +621,9 @@ onMounted(() => {
       current.value = ++current.value >= songNum.value ? 0 : current.value;
     } else {
       isPlay.value = false;
-      //清空进度条
+      // 清空进度条
       playProcess.value = 0;
-      //清空播放时间
+      // 清空播放时间
       playTime.value = 0;
       await nextTick();
       isPlay.value = true;

@@ -43,31 +43,31 @@
       <div
         class="operation"
         v-show="!showComments">
-        <DecoratedButton
+        <CommonButton
           :name="mv.isLove ? '取消收藏' : '收藏'"
           :icon="mv.isLove ? '&#xe760;' : '&#xe761;'"
           :icon-style="mv.isLove ? 'color:#ff6a6a;' : ''"
-          @click.native="user.addLove(mv, user.loveVideo, user.loveVideoId)"
+          @click="user.addLove(mv, user.loveVideo, user.loveVideoId)"
           class="operate" />
-        <DecoratedButton
+        <CommonButton
           name="下载"
-          @click.native="user.addVideoDownload(mv)"
+          @click="user.addVideoDownload(mv)"
           icon="&#xe61a;"
           class="operate" />
-        <DecoratedButton
+        <CommonButton
           name="分享"
           icon="&#xe680;"
-          @click.native="shareVideo"
+          @click="shareVideo"
           class="operate" />
-        <DecoratedButton
+        <CommonButton
           name="评论"
           icon="&#xe60b;"
-          @click.native="showComments = true"
+          @click="showComments = true"
           class="operate" />
       </div>
     </div>
     <!-- 相关视频推荐 -->
-    <Mv
+    <ArtistMv
       v-show="!showComments && mvSimi.length > 0"
       :mvs="mvSimi"
       title="相关推荐" />
@@ -95,7 +95,7 @@ import {
   ref,
   computed,
   nextTick,
-  onBeforeUnmount,
+  onBeforeUnmount
 } from 'vue';
 import { useRoute } from 'vue-router';
 import { MV, Comment } from '@/model';
@@ -108,25 +108,25 @@ import {
   getVideoUrl,
   getSimiVideo,
   getVideoComment,
-  getMvComment,
-} from '@/api/api';
+  getMvComment
+} from '@/api';
 import {
   elMessage,
   getTheme,
   getRequset,
   formatTime,
   share,
-  getComment,
-} from '@/utils/util';
+  getComment
+} from '@/utils';
 import DPlayer from 'dplayer';
 import useUserStore from '@/store/user';
 import useConfigStore from '@/store/config';
-import DecoratedButton from '@components/button/DecoratedButton.vue';
-import Mv from '@components/datalist/Mv.vue';
+import { CommonButton } from '@components/button';
+import { ArtistMv } from '@components/datalist';
 import Comments from '@/components/common/Comment.vue';
 import { useRouter } from 'vue-router';
 
-//设置主题
+// 设置主题
 const config = useConfigStore();
 const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');
@@ -134,18 +134,18 @@ const boxShadow = getTheme().get('shadow');
 const themeColor = getTheme().get('themeColor');
 const fontGray = inject('fontGray');
 
-//全屏模式改变播放器高度
+// 全屏模式改变播放器高度
 const videoHeight = computed(() => (config.isFullScreen ? '695px' : '555px'));
 
 const user = useUserStore();
-//dplayer实例
+// dplayer实例
 const dplayer = ref<DPlayer>();
 
-//获取视频id
+// 获取视频id
 const route = useRoute();
 const router = useRouter();
 const id = route.query.id + '';
-//mv信息
+// mv信息
 const mv = reactive<MV>({
   id,
   name: '',
@@ -155,23 +155,23 @@ const mv = reactive<MV>({
   url: '',
   time: '',
   publishTime: '',
-  available: '',
+  available: ''
 });
-//相似的mv推荐
+// 相似的mv推荐
 const mvSimi = reactive<MV[]>([]);
-//视频结束后的推荐
+// 视频结束后的推荐
 const reMvs = computed(() => [mv, ...mvSimi]);
 
-//页面第一次加载的动画
+// 页面第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
-//是否展示推荐
+// 是否展示推荐
 const showRecommned = ref<boolean>(false);
-//视频评论
+// 视频评论
 const videoComments = reactive<Comment[]>([]);
-//是否打开评论区
+// 是否打开评论区
 const showComments = ref<boolean>(false);
 
-//分享
+// 分享
 const shareVideo = () => {
   share(
     '我在' +
@@ -182,8 +182,8 @@ const shareVideo = () => {
       ',快来和我一起观看把！'
   );
 };
-//初始化播放器
-const init = async () => {
+// 初始化播放器
+const init = async() => {
   await nextTick();
   dplayer.value = new DPlayer({
     container: document.querySelector('.players'),
@@ -191,7 +191,7 @@ const init = async () => {
       url: mv.url as string,
       thumbnails: mv.image,
       type: 'video/mp4',
-      pic: mv.image,
+      pic: mv.image
     },
     autoplay: false,
     loop: false,
@@ -208,29 +208,29 @@ const init = async () => {
         text: '下载',
         click: () => {
           user.addVideoDownload(mv);
-        },
+        }
       },
       {
         text: '收藏',
         click: () => {
           user.addLove(mv, user.loveVideo, user.loveVideoId);
-        },
+        }
       },
       {
         text: '分享',
         click: () => {
           shareVideo();
-        },
-      },
-    ],
+        }
+      }
+    ]
   });
-  //视频结束时推荐其他视频
+  // 视频结束时推荐其他视频
   const video = document.querySelector('.dplayer-video') as HTMLVideoElement;
   video.onended = () => {
     showRecommned.value = true;
   };
 };
-//播放推荐
+// 播放推荐
 const playRe = (index: number, id: string) => {
   if (index == 0) {
     showRecommned.value = false;
@@ -240,21 +240,21 @@ const playRe = (index: number, id: string) => {
     router.push({
       name: 'video',
       query: {
-        id,
-      },
+        id
+      }
     });
   }
 };
 
-getRequset(async () => {
-  //判断地址是否包含字母，有则用视频接口请求地址
+getRequset(async() => {
+  // 判断地址是否包含字母，有则用视频接口请求地址
   const rule = /.*[A-Z]+.*/;
   if (!rule.test(id)) {
-    //获取mv详情
+    // 获取mv详情
     try {
       const response: any = await getMvDetail(id);
       const {
-        data: { name, artistName, cover, playCount, duration, publishTime },
+        data: { name, artistName, cover, playCount, duration, publishTime }
       } = response;
       mv.name = name;
       mv.playCount = playCount;
@@ -265,11 +265,11 @@ getRequset(async () => {
     } catch (err: any) {
       elMessage(elMessageType.ERROR, err.message);
     }
-    //获取mv播放地址
+    // 获取mv播放地址
     try {
       const response: any = await getMvUrl(id);
       const {
-        data: { url, fee },
+        data: { url, fee }
       } = response;
       if (url) {
         mv.url = url;
@@ -280,7 +280,7 @@ getRequset(async () => {
     } catch (err: any) {
       elMessage(elMessageType.ERROR, err.message);
     }
-    //获取相似的Mv
+    // 获取相似的Mv
     try {
       const response: any = await getSimiMv(id);
       const { mvs } = response;
@@ -292,14 +292,14 @@ getRequset(async () => {
             image: cover,
             name,
             artist: artistName,
-            playCount,
+            playCount
           });
         });
       }
     } catch (err: any) {
       elMessage(elMessageType.ERROR, err.message);
     }
-    //获取mv评论
+    // 获取mv评论
     try {
       const response: any = await getMvComment(id, 10000);
       const { comments, hotComments } = response;
@@ -309,11 +309,11 @@ getRequset(async () => {
       elMessage(elMessageType.ERROR, err.message);
     }
   } else {
-    //获取视频详情
+    // 获取视频详情
     try {
       const response: any = await getVideoDetail(id);
       const {
-        data: { title, coverUrl, publishTime, playTime, creator },
+        data: { title, coverUrl, publishTime, playTime, creator }
       } = response;
       mv.name = title;
       mv.image = coverUrl;
@@ -323,7 +323,7 @@ getRequset(async () => {
     } catch (err: any) {
       elMessage(elMessageType.ERROR, err.message);
     }
-    //获取视频播放地址
+    // 获取视频播放地址
     try {
       const response: any = await getVideoUrl(id);
       const { urls } = response;
@@ -335,7 +335,7 @@ getRequset(async () => {
     } catch (err: any) {
       elMessage(elMessageType.ERROR, err.message);
     }
-    //获取相似视频
+    // 获取相似视频
     try {
       const response: any = await getSimiVideo(id);
       const { data } = response;
@@ -346,13 +346,13 @@ getRequset(async () => {
           name: title,
           image: coverUrl,
           playCount: playTime,
-          artist: creator[0].userName,
+          artist: creator[0].userName
         });
       });
     } catch (err: any) {
       elMessage(elMessageType.ERROR, err.message);
     }
-    //获取视频评论
+    // 获取视频评论
     try {
       const response: any = await getVideoComment(id, 100);
       const { comments, hotComments } = response;
@@ -362,16 +362,16 @@ getRequset(async () => {
       elMessage(elMessageType.ERROR, err.message);
     }
   }
-  //添加视频播放记录
+  // 添加视频播放记录
   user.addRecord<MV>(mv, user.videoRecord, user.videoRecordId);
-  //初始化喜欢状态
+  // 初始化喜欢状态
   user.initLoveStatus(mv, user.loveVideoId);
   init();
-  //关闭动画
+  // 关闭动画
   first.value = false;
 }, first);
 
-//卸载播放器，取消事件监听
+// 卸载播放器，取消事件监听
 onBeforeUnmount(() => {
   const video = document.querySelector('.dplayer-video') as HTMLVideoElement;
   video.onended = null;

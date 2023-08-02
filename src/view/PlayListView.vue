@@ -32,11 +32,11 @@
         </p>
         <div class="header-operation">
           <PlayButton :songs="curList" />
-          <DecoratedButton
+          <CommonButton
             :name="playList.isLove ? '取消收藏' : '收藏'"
             :icon="playList.isLove ? '&#xe760;' : '&#xe761;'"
             :icon-style="playList.isLove ? 'color:#ff6a6a;' : ''"
-            @click.native="addLove" />
+            @click="addLove" />
           <!-- 更多 -->
           <MoreButton
             v-if="!showSelect"
@@ -96,43 +96,41 @@ import {
   getRequset,
   share,
   getComment,
-  getSourceComments,
-} from '@/utils/util';
+  getSourceComments
+} from '@/utils';
 import { elMessageType } from '@/model/enum';
 import {
   getPlayListDetail,
   getPlayListSong,
   getPlaylistComment,
   getRadioDetail,
-  getRadioSong,
-} from '@/api/api';
+  getRadioSong
+} from '@/api';
 import { Playlist, Song, Comment } from '@/model';
 import useUserStore from '@/store/user';
-import OnlineBatch from '@components/batch/OnlineBatch.vue';
+import { OnlineBatch } from '@components/batch';
 import SongList from '@components/table/SongList.vue';
 import Tab from '@components/tab/Tab.vue';
-import PlayButton from '@components/button/PlayButton.vue';
-import DecoratedButton from '@components/button/DecoratedButton.vue';
-import MoreButton from '@components/button/MoreButton.vue';
+import { PlayButton, CommonButton, MoreButton } from '@components/button';
 import Comments from '@/components/common/Comment.vue';
 import NoSearch from '@/components/common/NoSearch.vue';
 
-//设置主题
+// 设置主题
 const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');
 const boxShadow = getTheme().get('shadow');
 const fontGray = inject('fontGray');
 
-//是否展示占位图片
+// 是否展示占位图片
 const showNo = ref<boolean>(false);
 
 const user = useUserStore();
-//路由参数
+// 路由参数
 const route = useRoute();
 const id = route.query.id + '';
 const type = route.query.type + '';
 
-//歌单详情
+// 歌单详情
 const playList = reactive<Playlist>({
   id,
   name: '',
@@ -142,52 +140,52 @@ const playList = reactive<Playlist>({
   description: '',
   creator: {
     nickname: '',
-    avatarUrl: '',
-  },
+    avatarUrl: ''
+  }
 });
-//歌单歌曲
+// 歌单歌曲
 const playListSong = reactive<Song[]>([]);
-//歌单评论
+// 歌单评论
 const playlistComments = reactive<Comment[]>([]);
-//歌曲id与Index对应的map
+// 歌曲id与Index对应的map
 const songIdMapper = computed(
   () => new Map(playListSong.map((item, index) => [item.id, index]))
 );
-//用于分页
-//当前页数
+// 用于分页
+// 当前页数
 const curPage = ref<number>(1);
-//一页多少数据
+// 一页多少数据
 const pageSize = ref<number>(30);
-//当前展示的歌曲列表
+// 当前展示的歌曲列表
 const curList = computed(() =>
   playListSong.slice(
     (curPage.value - 1) * pageSize.value,
     curPage.value * pageSize.value
   )
 );
-//总的数据数
+// 总的数据数
 const total = computed(() => playListSong.length);
-//页数变化
+// 页数变化
 const pageChange = (page: number) => {
   curPage.value = page;
 };
 
-//页面进入时的动画
+// 页面进入时的动画
 const first = inject('firstLoading') as Ref<boolean>;
 
-//批量操作相关
-//是否加载选择框进入批量操作模式
+// 批量操作相关
+// 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
-//关闭批量操作
+// 关闭批量操作
 const closeSelect = (close: boolean) => {
   showSelect.value = close;
 };
-//打开批量操作
+// 打开批量操作
 const openSelect = (open: boolean) => {
   showSelect.value = open;
 };
 
-//分享歌单
+// 分享歌单
 const sharePlaylist = () => {
   share(
     '我有一个精品歌单分享给你：' +
@@ -197,7 +195,7 @@ const sharePlaylist = () => {
       route.fullPath
   );
 };
-//收藏歌单
+// 收藏歌单
 const addLove = () => {
   if (type == 'playlist') {
     user.addLove(playList, user.lovePlaylist, user.lovePlaylistId);
@@ -206,14 +204,14 @@ const addLove = () => {
   }
 };
 
-//获取歌曲详情和音乐
-getRequset(async () => {
+// 获取歌曲详情和音乐
+getRequset(async() => {
   if (type == 'playlist') {
-    //获取歌单详情
+    // 获取歌单详情
     try {
       const pResponse: any = await getPlayListDetail(id);
       const {
-        playlist: { name, coverImgUrl, description, tags, creator, playCount },
+        playlist: { name, coverImgUrl, description, tags, creator, playCount }
       } = pResponse;
       playList.name = name;
       playList.image = coverImgUrl;
@@ -222,28 +220,28 @@ getRequset(async () => {
       playList.creator.avatarUrl = creator.avatarUrl;
       playList.creator.nickname = creator.nickname;
       playList.playCount = playCount;
-      //初始化歌单喜欢状态
+      // 初始化歌单喜欢状态
       user.initLoveStatus(playList, user.lovePlaylistId);
     } catch (err: any) {
       elMessage(elMessageType.ERROR, err.message);
     }
-    //获取歌单下的音乐
+    // 获取歌单下的音乐
     try {
       const response: any = await getPlayListSong(id);
       const { songs } = response;
       const ids: string[] = [];
       songs.forEach((item: any) => {
-        //获取音乐的基本信息
+        // 获取音乐的基本信息
         getMusicInfos(ids, playListSong, item);
       });
       user.initLoveMusic(playListSong);
-      //获取音乐的url
+      // 获取音乐的url
       getMusicUrls(ids.join(','), playListSong);
     } catch (err: any) {
       elMessage(elMessageType.ERROR, err.message);
     }
 
-    //获取歌单评论
+    // 获取歌单评论
     try {
       const response: any = await getPlaylistComment(id, 100);
       const { comments, hotComments } = response;
@@ -254,7 +252,7 @@ getRequset(async () => {
       elMessage(elMessageType.ERROR, err.message);
     }
   } else {
-    //获取电台详情
+    // 获取电台详情
     try {
       const response = await getRadioDetail(id);
       const {
@@ -263,8 +261,8 @@ getRequset(async () => {
           dj: { avatarUrl, nickname },
           picUrl,
           desc,
-          subCount,
-        },
+          subCount
+        }
       } = response;
       playList.name = name;
       playList.id = id;
@@ -273,13 +271,13 @@ getRequset(async () => {
       playList.playCount = subCount;
       playList.creator.nickname = nickname;
       playList.creator.avatarUrl = avatarUrl;
-      //初始化歌单喜欢状态
+      // 初始化歌单喜欢状态
       user.initLoveStatus(playList, user.loveRadioId);
     } catch (err: any) {
       elMessage(elMessageType.ERROR, err.message);
     }
 
-    //获取电台歌曲
+    // 获取电台歌曲
     try {
       const response: any = await getRadioSong(id, 100);
       const { programs } = response;
@@ -292,8 +290,8 @@ getRequset(async () => {
             fee,
             artists,
             album: { name: albumName, picUrl },
-            duration,
-          },
+            duration
+          }
         } = item;
         ids.push(id);
         playListSong.push({
@@ -303,7 +301,7 @@ getRequset(async () => {
           songImage: picUrl,
           album: albumName,
           available: fee,
-          time: duration,
+          time: duration
         });
       });
       user.initLoveMusic(playListSong);
@@ -312,7 +310,7 @@ getRequset(async () => {
       elMessage(elMessageType.ERROR, err.message);
     }
 
-    //获取电台评论
+    // 获取电台评论
     getSourceComments(id, '7', playlistComments, () => {
       showNo.value = playlistComments.length == 0;
     });

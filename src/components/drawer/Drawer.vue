@@ -93,13 +93,13 @@
           <ColorPicker v-model:color="valueArr[index].value" />
         </div>
         <div class="theme-operation">
-          <DecoratedButton
-            @click.native="cancel"
+          <CommonButton
+            @click="cancel"
             name="取消"
             icon="&#xe647;"
             :is-icon-one="true" />
-          <DecoratedButton
-            @click.native="changeTheme"
+          <CommonButton
+            @click="changeTheme"
             name="保存"
             class="save"
             icon="&#xe606;"
@@ -120,12 +120,11 @@ import {
   getTheme,
   playVideo,
   handleSingerName,
-  elMessage,
-} from '@/utils/util';
+  elMessage
+} from '@/utils';
 import useConfigStore from '@/store/config';
 import useThemeStore from '@/store/theme';
-import MoreDropdown from '@components/button/MoreDropdown.vue';
-import DecoratedButton from '../button/DecoratedButton.vue';
+import { CommonButton, MoreDropdown } from '@components/button';
 import { elMessageType } from '@/model/enum';
 
 // 配置主题
@@ -146,10 +145,10 @@ const {
   songNum,
   playProcess,
   playTime,
-  showDetail,
+  showDetail
 } = storeToRefs(footer);
 
-//在播放列表点击播放
+// 在播放列表点击播放
 const listPlay = (index: number) => {
   if (current.value != index) {
     current.value = index;
@@ -157,8 +156,8 @@ const listPlay = (index: number) => {
     isPlay.value = true;
   }
 };
-//播放
-const play = async (song: Song) => {
+// 播放
+const play = async(song: Song) => {
   const index = songList.value.findIndex((item) => item.id == song.id);
   if (index != current.value) {
     current.value = index;
@@ -170,8 +169,8 @@ const play = async (song: Song) => {
     isPlay.value = true;
   }
 };
-//在播放列表删除歌曲
-const listDelete = async (index: number) => {
+// 在播放列表删除歌曲
+const listDelete = async(index: number) => {
   if (current.value == index) {
     if (isPlay.value) {
       isPlay.value = false;
@@ -199,8 +198,8 @@ const listDelete = async (index: number) => {
     isPlay.value = true;
   }
 };
-//列表删除全部歌曲
-const deleteAll = async () => {
+// 列表删除全部歌曲
+const deleteAll = async() => {
   if (isPlay.value) {
     isPlay.value = false;
   }
@@ -208,7 +207,7 @@ const deleteAll = async () => {
   playProcess.value = 0;
   songList.value.splice(0);
 };
-//播放mv
+// 播放mv
 const playMV = (song: Song) => {
   playVideo(song, () => {
     if (showDetail.value) {
@@ -222,45 +221,45 @@ const playMV = (song: Song) => {
 // 动态切换皮肤
 watch(
   bgMode,
-  async () => {
+  async() => {
     await nextTick();
     const drawer = document.querySelector('.playlist-drawer') as HTMLDivElement;
     drawer.style.background = `${bgt.value} url(${skinUrl.value}) no-repeat center/cover`;
   },
   {
-    immediate: true,
+    immediate: true
   }
 );
 
-//设置主题相关
+// 设置主题相关
 const theme = useThemeStore();
 const { fontColor, fontGray, background, menuColor, themeColor, active } =
   storeToRefs(theme);
-//标题数组
+// 标题数组
 const titleArr = reactive<string[]>([
   '请选择主题色调：',
   '请选择字体主题色调：',
   '请选择字体副色调：',
   '请选择背景色调：',
   '请选择菜单色调：',
-  '请选择菜单激活时的色调：',
+  '请选择菜单激活时的色调：'
 ]);
-//值数组
+// 值数组
 let valueArr = reactive<Ref<string>[]>([
   ref<string>(themeColor.value),
   ref<string>(fontColor.value),
   ref<string>(fontGray.value),
   ref<string>(background.value),
   ref<string>(menuColor.value),
-  ref<string>(active.value),
+  ref<string>(active.value)
 ]);
-//设置主题
+// 设置主题
 const changeTheme = () => {
   theme.setTheme(valueArr.map((item) => item.value));
   showList.value = false;
   elMessage(elMessageType.SUCCESS, '主题保存成功！');
 };
-//取消设置
+// 取消设置
 const cancel = () => {
   showList.value = false;
   valueArr = reactive<Ref<string>[]>([
@@ -269,7 +268,7 @@ const cancel = () => {
     ref<string>(fontGray.value),
     ref<string>(background.value),
     ref<string>(menuColor.value),
-    ref<string>(active.value),
+    ref<string>(active.value)
   ]);
   elMessage(elMessageType.SUCCESS, '主题取消保存成功！');
 };

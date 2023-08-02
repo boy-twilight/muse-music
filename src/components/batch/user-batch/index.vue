@@ -1,23 +1,23 @@
 <template>
   <div class="batch-container">
     <div class="operation-select">
-      <DecoratedButton
+      <CommonButton
         icon="&#xea6e;"
         name="播放"
         class="play"
-        @click.native="playSelect" />
-      <DecoratedButton
+        @click="playSelect" />
+      <CommonButton
         icon="&#xe60e;"
-        @click.native="deleteSelect"
+        @click="deleteSelect"
         name="删除" />
-      <DecoratedButton
+      <CommonButton
         icon="&#xf0304;"
-        @click.native="downloadSelect"
+        @click="downloadSelect"
         name="下载" />
-      <DecoratedButton
+      <CommonButton
         icon="&#xe617;"
         name="取消操作"
-        @click.native="close" />
+        @click="close" />
     </div>
     <SongList
       :songs="songs"
@@ -34,12 +34,12 @@ import { storeToRefs } from 'pinia';
 import { Song } from '@/model';
 import useFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
-import { elMessage, getTheme } from '@/utils/util';
+import { elMessage, getTheme } from '@/utils';
 import { elMessageType } from '@/model/enum';
-import DecoratedButton from '@components/button/DecoratedButton.vue';
+import { CommonButton } from '@components/button';
 import SongList from '@components/table/SongList.vue';
 
-//配置主题
+// 配置主题
 const themeColor = getTheme().get('themeColor');
 
 const footer = useFooterStore();
@@ -47,11 +47,11 @@ const { isPlay, songList, songListId, playProcess, playTime, current } =
   storeToRefs(footer);
 const user = useUserStore();
 const { songRecord, musicDownload, loveSongs } = storeToRefs(user);
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
+// 设置隐藏滚动条
+const hideScroll = inject('hideScroll') as () => void;
 
 const props = defineProps<{
-  //在哪个页面
+  // 在哪个页面
   pageName: string;
 }>();
 
@@ -59,7 +59,7 @@ const emits = defineEmits<{
   (e: 'closeSelect', showSelect: boolean): void;
 }>();
 
-//歌曲
+// 歌曲
 const songs = computed(() => {
   if (props.pageName == 'LoveView') {
     return loveSongs.value;
@@ -69,15 +69,15 @@ const songs = computed(() => {
     return musicDownload.value;
   }
 });
-//歌曲id与Index对应的map
+// 歌曲id与Index对应的map
 const songIdMapper = computed(
   () => new Map(songs.value.map((item, index) => [item.id, index]))
 );
 
-//选择的歌曲
+// 选择的歌曲
 const selectSongs = reactive<Song[]>([]);
 
-//获取选择的歌曲
+// 获取选择的歌曲
 const getSelectItems = (songs: Song[]) => {
   if (selectSongs.length != 0) {
     selectSongs.splice(0);
@@ -85,8 +85,8 @@ const getSelectItems = (songs: Song[]) => {
   selectSongs.push(...songs);
 };
 
-//播放选中的歌曲
-const playSelect = async () => {
+// 播放选中的歌曲
+const playSelect = async() => {
   if (selectSongs.length > 0) {
     isPlay.value = false;
     playProcess.value = 0;
@@ -106,23 +106,23 @@ const playSelect = async () => {
   }
 };
 
-//批量下载歌曲
+// 批量下载歌曲
 const downloadSelect = () => {
   selectSongs.forEach((item) => {
     user.addMuiscDownload(item);
   });
 };
 
-//删除选择的歌曲
+// 删除选择的歌曲
 const deleteSelect = () => {
   if (selectSongs.length > 0) {
-    //得到要删除的Id
+    // 得到要删除的Id
     const ids = selectSongs.map((item) => item.id);
-    //找出不删除的歌曲
+    // 找出不删除的歌曲
     const temp = songs.value.filter((item) => !ids.includes(item.id));
-    //清空播放列表
+    // 清空播放列表
     songs.value.splice(0);
-    //添加
+    // 添加
     songs.value.push(...temp);
     elMessage(elMessageType.SUCCESS, '已清除选中的歌曲！');
   } else {

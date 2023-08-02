@@ -8,10 +8,12 @@
 </template>
 
 <script lang="ts" setup>
+/* eslint-disable */
+// eslint-disable-next-line vue/no-setup-props-destructure
 import { ref } from 'vue';
 import { TabsPaneContext } from 'element-plus';
-import { getTheme } from '@/utils/util';
-//配置主题
+import { getTheme } from '@/utils';
+// 配置主题
 const fontColor = getTheme().get('fontColor');
 const themeColor = getTheme().get('themeColor');
 
@@ -20,7 +22,7 @@ const props = defineProps<{
 }>();
 const activeDeafault = ref<string>(props.active);
 
-//传递按当前获取的菜单项
+// 传递按当前获取的菜单项
 const emits = defineEmits<{
   (e: 'getActive', param: string): void;
 }>();

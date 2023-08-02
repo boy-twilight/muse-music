@@ -16,13 +16,13 @@
 import { Banner } from '@/model';
 
 defineProps<{
-  //图片数组
+  // 图片数组
   pictures: Banner[];
-  //走马灯类型，卡片或者其它
+  // 走马灯类型，卡片或者其它
   type: string;
-  //走马灯高度
+  // 走马灯高度
   height: string;
-  //走马灯显示器的位置
+  // 走马灯显示器的位置
   position?: string;
 }>();
 </script>

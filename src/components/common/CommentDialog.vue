@@ -17,9 +17,9 @@
 import { inject, Ref } from 'vue';
 import { Comment } from '@/model';
 import Comments from './Comment.vue';
-import { getTheme } from '@/utils/util';
+import { getTheme } from '@/utils';
 
-//配置主题
+// 配置主题
 const bg = getTheme().get('background');
 const fontColor = getTheme().get('fontColor');
 const boxShadow = getTheme().get('shadow');

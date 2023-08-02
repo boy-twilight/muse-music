@@ -21,7 +21,7 @@
           <NoSearch
             v-show="videoRecord.length == 0"
             text="暂无视频播放记录" />
-          <Mv
+          <ArtistMv
             :mvs="videoRecord"
             :show-delete="true"
             transitionName="list"
@@ -37,48 +37,48 @@
 <script lang="ts" setup>
 import { ref, inject, Ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { getTheme, getMusicUrls, getRequset } from '@/utils/util';
+import { getTheme, getMusicUrls, getRequset } from '@/utils';
 import useUserStore from '@/store/user';
 import Tab from '@components/tab/Tab.vue';
-import Mv from '@components/datalist/Mv.vue';
-import UserBatch from '@components/batch/UserBatch.vue';
+import { ArtistMv } from '@components/datalist';
+import { UserBatch } from '@components/batch';
 import UserSongTable from '@components/table/UserSongTable.vue';
 import NoSearch from '@/components/common/NoSearch.vue';
 
-//配置主题
+// 配置主题
 const fontColor = getTheme().get('fontColor');
 const fontGray = inject('fontGray');
 
-//获取用户播放数据
+// 获取用户播放数据
 const user = useUserStore();
 const { videoRecord, songRecord } = storeToRefs(user);
 
-//第一次加载的动画
+// 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
 
-//是否加载选择框进入批量操作模式
+// 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
-//打开批量操作
+// 打开批量操作
 const openSelect = (open: boolean) => {
   showSelect.value = open;
 };
-//关闭批量操作
+// 关闭批量操作
 const closeSelect = (close: boolean) => {
   showSelect.value = close;
 };
 
-//删除播放记录的视频
+// 删除播放记录的视频
 const deleteVideoRecord = (id: string) => {
   const index = videoRecord.value.findIndex((item) => item.id == id);
   videoRecord.value.splice(index, 1);
 };
 
-//获取初始数据
-getRequset(async () => {
+// 获取初始数据
+getRequset(async() => {
   const ids = songRecord.value.map((item) => item.id).join(',');
   getMusicUrls(ids, songRecord.value);
   user.initLoveMusic(songRecord.value);
-  //关闭动画
+  // 关闭动画
   first.value = false;
 }, first);
 </script>

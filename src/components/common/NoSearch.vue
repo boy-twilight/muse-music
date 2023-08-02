@@ -20,7 +20,7 @@ const props = withDefaults(
   }>(),
   {
     size: 420,
-    text: '暂无用户数据',
+    text: '暂无用户数据'
   }
 );
 

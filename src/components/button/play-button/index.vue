@@ -1,5 +1,7 @@
 <template>
-  <el-button @click="playAll"
+  <el-button
+    @click="playAll"
+    :color="themeColor"
     ><span class="iconfont">&#xea6e;</span>{{ name }}</el-button
   >
 </template>
@@ -8,10 +10,10 @@
 import { storeToRefs } from 'pinia';
 import userFooterStore from '@/store/footer';
 import { Song } from '@/model';
-import { elMessage, getTheme } from '@/utils/util';
+import { elMessage, getTheme } from '@/utils';
 import { elMessageType } from '@/model/enum';
 
-//配置主题
+// 配置主题
 const boxShadow = getTheme().get('shadow');
 const themeColor = getTheme().get('themeColor');
 
@@ -28,7 +30,7 @@ const props = withDefaults(
 const footer = userFooterStore();
 const { songList, current, songNum, songListId } = storeToRefs(footer);
 
-//播放全部
+// 播放全部
 const playAll = () => {
   if (props.songs.length > 0) {
     const temp: number = songNum.value;
@@ -58,14 +60,9 @@ const playAll = () => {
   border: none;
   box-shadow: v-bind(boxShadow);
   color: #ffffff;
-  background-color: @theme-color;
   border-radius: 18px;
   font-size: 14px;
   width: 120px;
   height: 34px;
-  &:active {
-    opacity: 0.7;
-    border: none;
-  }
 }
 </style>

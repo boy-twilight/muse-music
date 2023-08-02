@@ -16,9 +16,10 @@
 </template>
 
 <script lang="ts" setup>
+/* eslint-disable */
+// eslint-disable-next-line vue/no-setup-props-destructure
 import { ref } from 'vue';
-import { colorToHex } from '@/utils/util';
-import useConfigStore from '@/store/config';
+import { colorToHex } from '@/utils';
 
 const props = defineProps<{
   color: string;
@@ -27,11 +28,11 @@ const props = defineProps<{
 const emits = defineEmits<{
   (e: 'update:color', param: string): void;
 }>();
-//默认绑定即选取的颜色
+// 默认绑定即选取的颜色
 const selectColor = ref<string>(props.color);
-//选色器容器
+// 选色器容器
 const picker = ref<HTMLButtonElement>();
-//回传选中的颜色
+// 回传选中的颜色
 const getColor = () => {
   emits('update:color', selectColor.value);
 };

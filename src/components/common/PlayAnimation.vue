@@ -39,7 +39,7 @@ const props = defineProps<{
   showAnimation: boolean;
 }>();
 
-//是否展示动画
+// 是否展示动画
 const show = computed(() => props.showAnimation);
 </script>
 

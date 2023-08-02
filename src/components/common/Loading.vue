@@ -3,15 +3,15 @@
     v-loading="loading"
     v-show="loading"
     :element-loading-background="bg"
-    :element-loading-spinner="Svg"
+    :element-loading-spinner="svg"
     class="loading"></div>
 </template>
 
 <script lang="ts" setup>
 import { computed, inject } from 'vue';
-import { Svg } from '@/model';
+import { svg } from '@/model/icon';
 
-//配置主题
+// 配置主题
 const bg = inject('loadingBg');
 
 const props = withDefaults(
@@ -19,7 +19,7 @@ const props = withDefaults(
     isLoading: boolean;
   }>(),
   {
-    isLoading: false,
+    isLoading: false
   }
 );
 

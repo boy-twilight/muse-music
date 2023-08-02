@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, inject, Ref } from 'vue';
+import { inject, Ref } from 'vue';
 import ColorPicker from '@/components/button/ColorPicker.vue';
 import useThemeStore from '@/store/theme';
 import { storeToRefs } from 'pinia';

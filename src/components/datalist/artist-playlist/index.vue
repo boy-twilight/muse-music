@@ -49,20 +49,20 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, ref, computed, nextTick, onUpdated } from 'vue';
+import { inject, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { Playlist } from '@/model';
-import { getTheme } from '@/utils/util';
+import { getTheme } from '@/utils';
 
-//设置主题
+// 设置主题
 const boxShadow = getTheme().get('shadow');
 const fontColor = getTheme().get('fontColor');
 const themeColor = getTheme().get('themeColor');
 const fontGray = inject('fontGray');
 
 const router = useRouter();
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
+// 设置隐藏滚动条
+const hideScroll = inject('hideScroll') as () => void;
 
 const props = withDefaults(
   defineProps<{
@@ -78,7 +78,7 @@ const props = withDefaults(
     showDelete: false,
     transitionName: '',
     showPagination: false,
-    type: 'playlist',
+    type: 'playlist'
   }
 );
 
@@ -86,21 +86,21 @@ const emits = defineEmits<{
   (e: 'getDeleteId', id: string): void;
 }>();
 
-//当前页数
+// 当前页数
 const curPage = ref<number>(1);
-//一页多少数据
+// 一页多少数据
 const pageSize = ref<number>(18);
-//总的数据数
+// 总的数据数
 const total = computed(() => props.playlists.length);
-//当前展示的专辑
+// 当前展示的专辑
 const curShow = computed(() =>
   props.playlists.slice(
     (curPage.value - 1) * pageSize.value,
     curPage.value * pageSize.value
   )
 );
-//页数变化
-const pageChange = async (page: number) => {
+// 页数变化
+const pageChange = async(page: number) => {
   curPage.value = page;
 };
 
@@ -110,8 +110,8 @@ const toPlayList = (list: Playlist) => {
     name: 'playlist',
     query: {
       id: list.id,
-      type: props.type,
-    },
+      type: props.type
+    }
   });
 };
 </script>

@@ -21,7 +21,7 @@
           <NoSearch
             v-show="loveVideo.length == 0"
             text="暂无收藏视频" />
-          <Mv
+          <ArtistMv
             :mvs="loveVideo"
             transitionName="list"
             :showDelete="true"
@@ -35,7 +35,7 @@
           <NoSearch
             v-show="lovePlaylist.length == 0"
             text="暂无收藏歌单" />
-          <PlayList
+          <ArtistPlaylist
             :playlists="lovePlaylist"
             transitionName="list"
             :showDelete="true"
@@ -49,7 +49,7 @@
           <NoSearch
             v-show="loveRadio.length == 0"
             text="暂无收藏电台" />
-          <PlayList
+          <ArtistPlaylist
             :playlists="loveRadio"
             type="radio"
             transitionName="list"
@@ -77,7 +77,7 @@
           <NoSearch
             v-show="loveAlbum.length == 0"
             text="暂无收藏专辑" />
-          <Albums
+          <ArtistAlbum
             :albums="loveAlbum"
             transitionName="list"
             :showDelete="true"
@@ -91,23 +91,25 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, inject, Ref, computed } from 'vue';
+import { ref, inject, Ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { getMusicUrls, getRequset } from '@/utils/util';
+import { getMusicUrls, getRequset } from '@/utils';
 import useUserStore from '@/store/user';
 import Tab from '@components/tab/Tab.vue';
-import Mv from '@components/datalist/Mv.vue';
-import Singer from '@components/datalist/Singer.vue';
-import Albums from '@components/datalist/Albums.vue';
-import PlayList from '@components/datalist/PlayList.vue';
-import UserBatch from '@components/batch/UserBatch.vue';
+import {
+  ArtistMv,
+  Singer,
+  ArtistPlaylist,
+  ArtistAlbum
+} from '@components/datalist';
+import { UserBatch } from '@components/batch';
 import UserSongTable from '@components/table/UserSongTable.vue';
 import NoSearch from '@/components/common/NoSearch.vue';
 
 // 配置主题
 const fontGray = inject('fontGray');
 
-//获取用户数据
+// 获取用户数据
 const user = useUserStore();
 const {
   loveSongs,
@@ -119,54 +121,54 @@ const {
   loveAlbumId,
   loveVideoId,
   lovePlaylistId,
-  loveRadioId,
+  loveRadioId
 } = storeToRefs(user);
 
-//第一次加载的动画
+// 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
 
-//是否加载选择框进入批量操作模式
+// 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
 
-//打开批量操作
+// 打开批量操作
 const openSelect = (open: boolean) => {
   showSelect.value = open;
 };
 
-//关闭批量操作
+// 关闭批量操作
 const closeSelect = (close: boolean) => {
   showSelect.value = close;
 };
 
-//删除收藏的视频
+// 删除收藏的视频
 const deleteLoveVideo = (id: string) => {
   const index = loveVideoId.value.get(id) as number;
   loveVideo.value.splice(index, 1);
 };
-//删除收藏的专辑
+// 删除收藏的专辑
 const deleteLoveAlbum = (id: string) => {
   const index = loveAlbumId.value.get(id) as number;
   loveAlbum.value.splice(index, 1);
 };
-//删除收藏的歌手
+// 删除收藏的歌手
 const deleteLoveSinger = (index: number) => {
   loveSinger.value.splice(index, 1);
 };
-//删除收藏的歌单
+// 删除收藏的歌单
 const deleteLovePlaylist = (id: string) => {
   const index = lovePlaylistId.value.get(id) as number;
   lovePlaylist.value.splice(index, 1);
 };
-//删除收藏的电台
+// 删除收藏的电台
 const deleteLoveRadio = (id: string) => {
   const index = loveRadioId.value.get(id) as number;
   loveRadio.value.splice(index, 1);
 };
 
-getRequset(async () => {
+getRequset(async() => {
   const ids = loveSongs.value.map((item) => item.id).join(',');
   getMusicUrls(ids, loveSongs.value);
-  //关闭动画
+  // 关闭动画
   first.value = false;
 }, first);
 </script>

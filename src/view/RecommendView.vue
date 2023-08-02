@@ -5,7 +5,7 @@
       type="card"
       height="230px" />
     <!-- 推荐歌单 -->
-    <PlayList
+    <ArtistPlaylist
       title="你的歌单补给站"
       :playlists="playLists" />
     <!-- 推荐音乐 -->
@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-    <Mv
+    <ArtistMv
       title="最新mv"
       :mvs="mvLists"
       class="mv-list" />
@@ -44,21 +44,20 @@ import { reactive, inject, Ref, nextTick } from 'vue';
 import { storeToRefs } from 'pinia';
 import useFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
-import { getBanner, getRecPlaylist, getDeafultSong, getMv } from '@/api/api';
+import { getBanner, getRecPlaylist, getDeafultSong, getMv } from '@/api';
 import {
   elMessage,
   getMusicUrls,
   getMusicInfos,
   getTheme,
-  getRequset,
-} from '@/utils/util';
+  getRequset
+} from '@/utils';
 import { elMessageType } from '@/model/enum';
 import { Playlist, Song, MV, Banner } from '@/model';
+import { ArtistMv, ArtistPlaylist } from '@components/datalist';
 import Carousel from '@components/carousel/Carousel.vue';
-import PlayList from '@components/datalist/PlayList.vue';
-import Mv from '@components/datalist/Mv.vue';
 
-//配置主题
+// 配置主题
 const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');
 const boxShadow = getTheme().get('shadow');
@@ -71,20 +70,20 @@ const { songList, current, isPlay, playProcess, playTime, songListId } =
 
 const user = useUserStore();
 
-//轮播图片
+// 轮播图片
 const banners = reactive<Banner[]>([]);
-//推荐歌单
+// 推荐歌单
 const playLists = reactive<Playlist[]>([]);
-//推荐歌曲
+// 推荐歌曲
 const songLists = reactive<Song[]>([]);
-//推荐mv
+// 推荐mv
 const mvLists = reactive<MV[]>([]);
 
-//第一次加载的动画
+// 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
 
-//点击图片进行播放播放
-const playSong = async (song: Song) => {
+// 点击图片进行播放播放
+const playSong = async(song: Song) => {
   if (song.available == '0' || song.available == '8') {
     const index = songListId.value.get(song.id);
     if (index == undefined) {
@@ -116,8 +115,8 @@ const playSong = async (song: Song) => {
   }
 };
 
-getRequset(async () => {
-  //获取轮播图片
+getRequset(async() => {
+  // 获取轮播图片
   try {
     const response: any = await getBanner();
     const { banners: banner } = response;
@@ -125,13 +124,13 @@ getRequset(async () => {
       const { imageUrl, targetId } = item;
       banners.push({
         id: targetId,
-        pic: imageUrl,
+        pic: imageUrl
       });
     });
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
-  //获取歌单
+  // 获取歌单
   try {
     const response: any = await getRecPlaylist(10);
     const { playlists } = response;
@@ -148,21 +147,21 @@ getRequset(async () => {
           tag: tags,
           creator: {
             avatarUrl: creator.avatarUrl,
-            nickname: creator.nickname,
-          },
+            nickname: creator.nickname
+          }
         });
       }
     });
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
-  //获取歌曲
+  // 获取歌曲
   try {
     const dResponse: any = await getDeafultSong(40);
     const {
-      data: { list },
+      data: { list }
     } = dResponse;
-    //获取歌曲的基本信息
+    // 获取歌曲的基本信息
     const ids: string[] = [];
     for (let item of list) {
       const { fee } = item.data;
@@ -178,7 +177,7 @@ getRequset(async () => {
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
-  //获取mv
+  // 获取mv
   try {
     const response: any = await getMv(10, '内地', '全部', '最新');
     const { data } = response;
@@ -189,13 +188,13 @@ getRequset(async () => {
         name: name as string,
         image: cover as string,
         playCount: playCount as string,
-        artist: artistName as string,
+        artist: artistName as string
       });
     });
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
-  //关闭动画
+  // 关闭动画
   first.value = false;
 }, first);
 </script>

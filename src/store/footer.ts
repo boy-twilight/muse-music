@@ -1,17 +1,17 @@
 import { defineStore } from 'pinia';
 import { ref, reactive, computed } from 'vue';
-import { getStorage } from '@/utils/util';
+import { getStorage } from '@/utils';
 import { storageType } from '@/model/enum';
 import { Song } from '@/model';
 
 const useFooterStore = defineStore('footer', () => {
-  //是否播放
+  // 是否播放
   const isPlay = ref<boolean>(false);
-  //播放列表
+  // 播放列表
   const songList = reactive<Song[]>(
     getStorage(storageType.LOCAL, 'userPlaylist') || []
   );
-  //播放列表对应的id
+  // 播放列表对应的id
   const songListId = computed(() => {
     const ids = songList.map((item) => item.id);
     const map: Map<string, number> = new Map();
@@ -20,25 +20,25 @@ const useFooterStore = defineStore('footer', () => {
     });
     return map;
   });
-  //播放模式
+  // 播放模式
   const playMode = ref<string>(
     getStorage(storageType.LOCAL, 'playMode') || '2'
   );
-  //歌曲数目
+  // 歌曲数目
   const songNum = computed<number>(() => songList.length);
-  //当前播放的索引
+  // 当前播放的索引
   const current = ref<number>(
     getStorage(storageType.LOCAL, 'currentPlay') || 0
   );
-  //当前播放的进度
+  // 当前播放的进度
   const playProcess = ref<number>(0);
-  //用户是否改变进度
+  // 用户是否改变进度
   const isChanging = ref<boolean>(false);
-  //当前播放的时间
+  // 当前播放的时间
   const playTime = ref<number>(0);
-  //是否展示播放列表
+  // 是否展示播放列表
   const showList = ref<boolean>(false);
-  //是否展示歌曲详情
+  // 是否展示歌曲详情
   const showDetail = ref<boolean>(false);
 
   return {
@@ -52,7 +52,7 @@ const useFooterStore = defineStore('footer', () => {
     showList,
     isChanging,
     showDetail,
-    songListId,
+    songListId
   };
 });
 

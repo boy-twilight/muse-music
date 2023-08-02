@@ -117,17 +117,16 @@ import {
   getTheme,
   elMessage,
   getMusicUrls,
-  playVideo,
-} from '@/utils/util';
+  playVideo
+} from '@/utils';
 import { Song } from '@/model';
 import userFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
 import { elMessageType } from '@/model/enum';
-import MoreDropdown from '@components/button/MoreDropdown.vue';
+import { MoreDropdown } from '@components/button';
 import useConfigStore from '@/store/config';
-import { throttle } from 'lodash-es';
 
-//设置主题
+// 设置主题
 const config = useConfigStore();
 const { bgMode } = storeToRefs(config);
 const fontColor = getTheme().get('fontColor');
@@ -136,31 +135,31 @@ const bg = getTheme().get('background');
 const fontGray = inject('fontGray');
 const themeColor = getTheme().get('themeColor');
 
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
+// 设置隐藏滚动条
+const hideScroll = inject('hideScroll') as () => void;
 const footer = userFooterStore();
 const { songList, current, isPlay, playProcess, playTime, songListId } =
   storeToRefs(footer);
 const user = useUserStore();
 
-//申明接受数据
+// 申明接受数据
 const props = withDefaults(
   defineProps<{
-    //歌曲
+    // 歌曲
     songs: Song[];
-    //歌曲id与Index对应的map，方便后续查找
+    // 歌曲id与Index对应的map，方便后续查找
     songIdMapper: Map<string, number>;
-    //表格高度
+    // 表格高度
     height?: string;
-    //是否展示多选框
+    // 是否展示多选框
     showSelect?: boolean;
-    //该字段表明哪些列需要排序，传入顺序为列的顺序
+    // 该字段表明哪些列需要排序，传入顺序为列的顺序
     sort?: boolean[];
-    //是否取消排序
+    // 是否取消排序
     isCancelSort?: boolean;
     // 是否展示表头
     showHeader?: boolean;
-    //分页的数据大小,0代表未分页
+    // 分页的数据大小,0代表未分页
     pageSize?: number;
   }>(),
   {
@@ -168,62 +167,62 @@ const props = withDefaults(
     sort: undefined,
     isCancelSort: false,
     showHeader: true,
-    pageSize: 0,
+    pageSize: 0
   }
 );
 
 const emits = defineEmits<{
-  //回传选中项目
+  // 回传选中项目
   (e: 'getSelectItems', songs: Song[]): void;
 }>();
 
-//table容器
+// table容器
 const tableContainer = ref<InstanceType<typeof ElTable>>();
 
-//表格多选
-//是否展开选择框
+// 表格多选
+// 是否展开选择框
 const showSelectBox = computed(() => props.showSelect);
-//选择框的长度
+// 选择框的长度
 const selectWidth = computed(() => (props.showSelect ? 55 : 0));
-//将选择项回传
+// 将选择项回传
 const doSelect = (songs: Song[]) => {
   emits('getSelectItems', songs);
 };
-//关闭选中框的适合清空选项
+// 关闭选中框的适合清空选项
 watch(showSelectBox, (newVal) => {
   if (!newVal) {
     tableContainer.value!.clearSelection();
   }
 });
 
-//表格排序
-//排序类型
+// 表格排序
+// 排序类型
 const sortType = computed(() =>
   props.sort ? props.sort : [false, false, false, false]
 );
-//是否退出排序
+// 是否退出排序
 const cancelSort = computed(() => props.isCancelSort);
-//排序规则
+// 排序规则
 const sortBySong = (a: Song, b: Song) => a.name.localeCompare(b.name);
 const sortBySinger = (a: Song, b: Song) => a.singer.localeCompare(b.singer);
 const sortByAlbum = (a: Song, b: Song) => a.album.localeCompare(b.album);
 const sortByTime = (a: Song, b: Song) =>
   +(a.time as string) - +(b.time as string);
-//当退出排序时清空排序内容
+// 当退出排序时清空排序内容
 watch(cancelSort, (newVal) => {
   if (newVal) {
     tableContainer.value!.clearSort();
   }
 });
 
-//鼠标进入移出时隐藏操作区
-//获取domlist
+// 鼠标进入移出时隐藏操作区
+// 获取domlist
 const getNodeList = (): NodeListOf<HTMLDivElement> => {
   return document.querySelectorAll(`.operation${props.showHeader}`);
 };
-//当鼠标进入时
+// 当鼠标进入时
 const enter = (row: Song) => {
-  //根据是否分页来判断当前的操作行的下标
+  // 根据是否分页来判断当前的操作行的下标
   let index = 0;
   if (props.pageSize > 0) {
     const curPage = Math.floor(
@@ -239,7 +238,7 @@ const enter = (row: Song) => {
     curOpera.style.opacity = '1';
   }
 };
-//当鼠标离开时
+// 当鼠标离开时
 const leave = (row: Song) => {
   let index = 0;
   if (props.pageSize > 0) {
@@ -257,13 +256,13 @@ const leave = (row: Song) => {
   }
 };
 
-//播放相关
-//播放单曲
-const play = async (song: Song) => {
+// 播放相关
+// 播放单曲
+const play = async(song: Song) => {
   if (song.available == '0' || song.available == '8') {
     const index = songListId.value.get(song.id);
     if (index == undefined) {
-      //添加播放记录
+      // 添加播放记录
       user.addRecord(song, user.songRecord, user.songRecordId);
       if (current.value == 0) {
         if (isPlay) {
@@ -291,15 +290,15 @@ const play = async (song: Song) => {
     elMessage(elMessageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
   }
 };
-//播放mv
+// 播放mv
 const playMV = (song: Song) => {
   playVideo(song, () => {
     hideScroll();
   });
 };
 
-//定时重新获取musicurl
-//计时器
+// 定时重新获取musicurl
+// 计时器
 let timeid: any = 0;
 const getDataOntime = () => {
   timeid = setInterval(() => {
@@ -315,7 +314,7 @@ const getDataOntime = () => {
   }, 60 * 1000 * 5);
 };
 getDataOntime();
-//离开路由时销毁
+// 离开路由时销毁
 onBeforeRouteLeave(() => {
   clearInterval(timeid);
 });
@@ -425,6 +424,25 @@ onBeforeRouteLeave(() => {
 
   .el-table__empty-block {
     background: @background;
+  }
+
+  .el-checkbox__input.is-indeterminate {
+    .el-checkbox__inner {
+      background-color: @theme-color;
+      border-color: @theme-color;
+    }
+  }
+
+  .el-checkbox__input.is-checked {
+    .el-checkbox__inner {
+      background-color: @theme-color;
+      border-color: @theme-color;
+    }
+  }
+  .el-checkbox__inner {
+    &:hover {
+      border-color: @theme-color !important;
+    }
   }
 }
 /* 表格内背景颜色 */

@@ -1,5 +1,5 @@
 {
-  "name": "musicplayer",
+  "name": "music-website",
   "private": true,
   "version": "1.0.5",
   "author": {
@@ -9,14 +9,14 @@
   "scripts": {
     "dev": "vite --mode development",
     "build": "vue-tsc && vite build --mode production",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix"
   },
   "dependencies": {
     "axios": "^1.3.5",
     "dplayer": "^1.27.1",
     "element-plus": "^2.3.3",
     "hotkeys-js": "^3.10.2",
-    "less": "^4.1.3",
     "nprogress": "^0.2.0",
     "pinia": "^2.0.34",
     "vue": "^3.2.47",
@@ -26,12 +26,18 @@
     "@types/dplayer": "^1.25.2",
     "@types/node": "^20.2.1",
     "@types/nprogress": "^0.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.2.1",
+    "@typescript-eslint/parser": "^6.2.1",
     "@vitejs/plugin-vue": "^4.1.0",
+    "eslint": "^8.46.0",
+    "eslint-plugin-vue": "^9.16.1",
+    "less": "^4.1.3",
     "terser": "^5.17.1",
     "typescript": "^4.9.3",
     "unplugin-auto-import": "^0.15.3",
     "unplugin-vue-components": "^0.24.1",
     "vite": "^4.2.0",
+    "vite-plugin-eslint": "^1.8.1",
     "vue-tsc": "^1.2.0"
   }
 }

@@ -20,11 +20,11 @@
         <p>{{ albumInfo.publishTime }}</p>
         <div class="header-operation">
           <PlayButton :songs="albumSongs" />
-          <DecoratedButton
+          <CommonButton
             :name="albumInfo.isLove ? '取消收藏' : '收藏'"
             :icon="albumInfo.isLove ? '&#xe760;' : '&#xe761;'"
             :icon-style="albumInfo.isLove ? 'color:#ff6a6a;' : ''"
-            @click.native="
+            @click="
               user.addLove(albumInfo, user.loveAlbum, user.loveAlbumId)
             " />
           <MoreButton
@@ -46,7 +46,7 @@
             <SongList
               :songs="albumSongs"
               :song-id-mapper="songIdMapper" />
-            <Albums
+            <ArtistAlbum
               :albums="otherAlbum"
               title="该歌手的其它专辑" />
           </el-tab-pane>
@@ -81,7 +81,7 @@
 import { reactive, inject, Ref, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { Album, Song } from '@/model';
-import { getAlbumDetail, getArtistAlbum } from '@/api/api';
+import { getAlbumDetail, getArtistAlbum } from '@/api';
 import {
   formatTime,
   getMusicInfos,
@@ -89,18 +89,16 @@ import {
   getTheme,
   getRequset,
   elMessage,
-  share,
-} from '@/utils/util';
+  share
+} from '@/utils';
 import { elMessageType } from '@/model/enum';
 import useUserStore from '@/store/user';
-import PlayButton from '@components/button/PlayButton.vue';
-import DecoratedButton from '@components/button/DecoratedButton.vue';
-import MoreButton from '@components/button/MoreButton.vue';
+import { PlayButton, MoreButton, CommonButton } from '@components/button';
+import { OnlineBatch } from '@components/batch';
+import { ArtistAlbum } from '@components/datalist';
 import Tab from '@components/tab/Tab.vue';
 import SongList from '@components/table/SongList.vue';
-import OnlineBatch from '@components/batch/OnlineBatch.vue';
-import Albums from '@components/datalist/Albums.vue';
-//主题设置相关
+// 主题设置相关
 const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');
 const boxShadow = getTheme().get('shadow');
@@ -109,44 +107,44 @@ const fontGray = inject('fontGray');
 const user = useUserStore();
 
 const route = useRoute();
-//获取Id
+// 获取Id
 const id = route.query.id + '';
-//获取歌手其它id
+// 获取歌手其它id
 const artistId = route.query.artistId + '';
 
-//专辑信息
+// 专辑信息
 const albumInfo = reactive<Album>({
   id,
   artistId,
   name: '',
   cover: '',
   artist: '',
-  publishTime: '',
+  publishTime: ''
 });
-//歌手其它专辑
+// 歌手其它专辑
 const otherAlbum = reactive<Album[]>([]);
-//专辑对应的歌曲
+// 专辑对应的歌曲
 const albumSongs = reactive<Song[]>([]);
-//歌曲id与Index对应的map
+// 歌曲id与Index对应的map
 const songIdMapper = computed(
   () => new Map(albumSongs.map((item, index) => [item.id, index]))
 );
-//页面第一次加载的动画
+// 页面第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
 
-//批量操作相关
-//是否加载选择框进入批量操作模式
+// 批量操作相关
+// 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
-//关闭批量操作
+// 关闭批量操作
 const closeSelect = (close: boolean) => {
   showSelect.value = close;
 };
-//打开批量操作
+// 打开批量操作
 const openSelect = (open: boolean) => {
   showSelect.value = open;
 };
 
-//分享歌单
+// 分享歌单
 const shareAlbum = () => {
   share(
     '我有一个精品专辑分享给你：' +
@@ -157,9 +155,9 @@ const shareAlbum = () => {
   );
 };
 
-//请求页面数据
-getRequset(async () => {
-  //获取该艺术家的其它专辑
+// 请求页面数据
+getRequset(async() => {
+  // 获取该艺术家的其它专辑
   try {
     const response: any = await getArtistAlbum(artistId);
     const { hotAlbums } = response;
@@ -172,7 +170,7 @@ getRequset(async () => {
           id: albumId,
           cover: picUrl,
           publishTime: formatTime(publishTime),
-          artistId: artistId + '',
+          artistId: artistId + ''
         });
       } else if (otherAlbum.length > 5) {
         break;
@@ -181,12 +179,12 @@ getRequset(async () => {
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
-  //获取专辑详情
+  // 获取专辑详情
   try {
     const response: any = await getAlbumDetail(id);
     const {
       album: { picUrl, artist, publishTime, name, company, description },
-      songs,
+      songs
     } = response;
     albumInfo.name = name;
     albumInfo.cover = picUrl;
@@ -194,19 +192,19 @@ getRequset(async () => {
     albumInfo.artist = artist.name;
     albumInfo.company = company;
     albumInfo.description = description;
-    //初始化喜欢状态
+    // 初始化喜欢状态
     user.initLoveStatus(albumInfo, user.loveAlbumId);
     const ids: string[] = [];
     songs.forEach((item: any) => {
       getMusicInfos(ids, albumSongs, item);
     });
-    //初始化歌曲喜欢状态
+    // 初始化歌曲喜欢状态
     user.initLoveMusic(albumSongs);
     getMusicUrls(ids.join(','), albumSongs);
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
-  //关闭动画
+  // 关闭动画
   first.value = false;
 }, first);
 </script>

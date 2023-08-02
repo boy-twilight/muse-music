@@ -128,11 +128,11 @@
 <script lang="ts" setup>
 import { ref, computed, nextTick, inject } from 'vue';
 import { Comment } from '@/model';
-import { getTheme } from '@/utils/util';
+import { getTheme } from '@/utils';
 import useConfigStore from '@/store/config';
 import Pagination from '../pagination/Pagination.vue';
 
-//配置主题
+// 配置主题
 const config = useConfigStore();
 const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');
@@ -147,33 +147,33 @@ const props = defineProps<{
   comments: Comment[];
 }>();
 
-//评论id的映射
+// 评论id的映射
 const mapper = computed(
   () => new Map(props.comments.map((item, index) => [item.commentId, index]))
 );
 
-//当前活跃的当评论
+// 当前活跃的当评论
 const activeId = ref<string>('');
 
-//当前页数
+// 当前页数
 const curPage = ref<number>(1);
-//一页多少数据
+// 一页多少数据
 const pageSize = ref<number>(20);
-//当前展示的歌曲列表
+// 当前展示的歌曲列表
 const curList = computed(() =>
   props.comments.slice(
     (curPage.value - 1) * pageSize.value,
     curPage.value * pageSize.value
   )
 );
-//总的数据数
+// 总的数据数
 const total = computed(() => props.comments.length);
-//页数变化
+// 页数变化
 const pageChange = (page: number) => {
   curPage.value = page;
 };
 
-//获取一个随机评论时间
+// 获取一个随机评论时间
 const getRandomTime = (time: string): string => {
   const random = Math.floor(
     Math.random() * Math.pow(10, 3) * 60 * 60 * 24 + Math.pow(10, 3) * 60 * 60
@@ -181,8 +181,8 @@ const getRandomTime = (time: string): string => {
   return formatCommentTime(random + +time);
 };
 
-//打开或关闭评论区
-const openReply = async (commentId: string) => {
+// 打开或关闭评论区
+const openReply = async(commentId: string) => {
   if (activeId.value == commentId) {
     activeId.value = '';
   } else {
@@ -196,18 +196,18 @@ const openReply = async (commentId: string) => {
   }
 };
 
-//点赞
+// 点赞
 const love = (commentId: string) => {
-  //找到当前评论
+  // 找到当前评论
   const curComment = props.comments[mapper.value.get(commentId) as number];
   const { isLove, likeCount } = curComment;
   curComment.likeCount = isLove ? +likeCount - 1 + '' : +likeCount + 1 + '';
   curComment.isLove = !isLove;
 };
 
-//点赞回复
+// 点赞回复
 const loveReply = (commentId: string, index: number) => {
-  //找到这个子评论
+  // 找到这个子评论
   const curReply = (
     props.comments[mapper.value.get(commentId) as number].reply as Comment[]
   )[index];
@@ -216,7 +216,7 @@ const loveReply = (commentId: string, index: number) => {
   curReply.isLove = !isLove;
 };
 
-//格式化时间
+// 格式化时间
 const formatCommentTime = (timeStap: number) => {
   const date: Date = new Date(timeStap);
   const year = date.getFullYear() + '年';

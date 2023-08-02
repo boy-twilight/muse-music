@@ -45,13 +45,13 @@ import { ref, reactive, watch, nextTick, computed, inject } from 'vue';
 import { storeToRefs } from 'pinia';
 import useFooterStore from '@/store/footer';
 import useConfigStore from '@/store/config';
-import { getLyrics } from '@/api/api';
-import { elMessage, formatToTimeStap, getTheme } from '@/utils/util';
+import { getLyrics } from '@/api';
+import { elMessage, formatToTimeStap, getTheme } from '@/utils';
 import { elMessageType } from '@/model/enum';
 import Footer from '@components/layout/Footer.vue';
 import image from '@assets/image/暂无音乐.svg';
 
-//主题配置
+// 主题配置
 const config = useConfigStore();
 const { lyricHeight, lyricContentHeight, firstLyricMargin, imageHeight } =
   storeToRefs(config);
@@ -72,46 +72,46 @@ const {
   isChanging,
   playTime,
   songNum,
-  showDetail,
+  showDetail
 } = storeToRefs(footer);
-//动画持续的时间
+// 动画持续的时间
 const animationTime = ref<string>('0s');
-//控制动画是否继续
+// 控制动画是否继续
 const animationState = computed(() => (isPlay.value ? 'running' : 'paused'));
-//背景图片
+// 背景图片
 const imageUrl = computed(() =>
   songNum.value == 0 ? image : songList.value[current.value].songImage
 );
 
-//每一次滚动的距离
+// 每一次滚动的距离
 const scrollDis = 44;
-//歌词
+// 歌词
 let words = reactive<string[]>(['']);
-//歌词对应的时间戳
+// 歌词对应的时间戳
 let timeStaps = reactive<number[]>([]);
-//计时器
+// 计时器
 let timeid: any = 0;
-//当前播放时间
+// 当前播放时间
 const currentTime = ref<number>(0);
-//当前对应时间戳的index
+// 当前对应时间戳的index
 const currentIndex = ref<number>(0);
-//歌词的容器
+// 歌词的容器
 const content = ref<HTMLDivElement>();
 
-//返回
+// 返回
 const back = () => {
   isPlay.value = false;
   playProcess.value = 0;
   playTime.value = 0;
   showDetail.value = false;
 };
-//开始播放，设置歌词滚动
+// 开始播放，设置歌词滚动
 const startPlay = () => {
   timeid = setInterval(() => {
     if (currentTime.value >= timeStaps[currentIndex.value]) {
       currentIndex.value++;
       content.value!.scrollTop += scrollDis;
-      //计算动画持续时间
+      // 计算动画持续时间
       if (currentIndex.value == 0) {
         animationTime.value = '0s';
       } else {
@@ -124,12 +124,12 @@ const startPlay = () => {
     currentTime.value += 20;
   }, 20);
 };
-//计算进度条改变时滚动距离
+// 计算进度条改变时滚动距离
 const calCurrentScroll = (cur: number) => {
   content.value!.scrollTop = scrollDis * cur;
 };
 
-//检测播放还是暂停
+// 检测播放还是暂停
 watch(isPlay, (newVal) => {
   if (newVal) {
     startPlay();
@@ -138,8 +138,8 @@ watch(isPlay, (newVal) => {
   }
 });
 
-//当进度改变时，对应歌词滚动
-watch(isChanging, async (newVal) => {
+// 当进度改变时，对应歌词滚动
+watch(isChanging, async(newVal) => {
   if (newVal) {
     clearInterval(timeid);
     currentTime.value =
@@ -156,8 +156,8 @@ watch(isChanging, async (newVal) => {
   }
 });
 
-//当歌曲切换时对应切换
-watch(current, async () => {
+// 当歌曲切换时对应切换
+watch(current, async() => {
   words = reactive<string[]>(['']);
   timeStaps = reactive<number[]>([]);
   content.value!.scrollTop = 0;
@@ -167,25 +167,25 @@ watch(current, async () => {
   getLyric();
 });
 
-//获取歌词
-const getLyric = async () => {
+// 获取歌词
+const getLyric = async() => {
   if (songNum.value > 0) {
     try {
       const response: any = await getLyrics(songList.value[current.value].id);
       const {
-        lrc: { lyric },
+        lrc: { lyric }
       } = response;
-      //计算歌曲总时间
+      // 计算歌曲总时间
       const totalTime = Number.parseInt(
         songList.value[current.value].time as string
       );
-      //获取歌词
+      // 获取歌词
       let lyrics = (lyric as string).split('\n').map((item) => item.split(']'));
       lyrics.forEach((item) => {
         if (item.length > 1) {
-          //获取每一句歌词
+          // 获取每一句歌词
           const word = item[1] ? item[1].trim() : item[1];
-          //获取歌词的时间戳
+          // 获取歌词的时间戳
           const time = formatToTimeStap(item[0].slice(1));
           if (time < totalTime && word) {
             timeStaps.push(time);
@@ -200,7 +200,7 @@ const getLyric = async () => {
     elMessage(elMessageType.INFO, '请添加音乐！');
   }
 };
-//请求歌词
+// 请求歌词
 
 if (songNum.value > 0) {
   getLyric();

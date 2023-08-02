@@ -56,7 +56,7 @@
 import { computed, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { Artist } from '@/model';
-import { getTheme } from '@/utils/util';
+import { getTheme } from '@/utils';
 
 // 配置主题
 const boxShadow = getTheme().get('shadow');
@@ -74,33 +74,33 @@ const props = withDefaults(
   {
     showDelete: false,
     transitionName: '',
-    avatarNum: 10,
+    avatarNum: 10
   }
 );
 const emits = defineEmits<{
   (e: 'getDeleteIndex', index: number): void;
 }>();
 
-//有头像的歌手
+// 有头像的歌手
 const singerWithAvatar = computed(() =>
   props.singerList.slice(0, props.avatarNum)
 );
-//无头像的歌手
+// 无头像的歌手
 const singerWithNo = computed(() => props.singerList.slice(props.avatarNum));
 
-//设置隐藏滚动条
-const hideScroll = inject('hideScroll') as Function;
-//路由
+// 设置隐藏滚动条
+const hideScroll = inject('hideScroll') as () => void;
+// 路由
 const router = useRouter();
-//点击跳转歌手详情
+// 点击跳转歌手详情
 const toArtist = (id: string, score: string) => {
   hideScroll();
   router.push({
     name: 'artist',
     query: {
       id,
-      score,
-    },
+      score
+    }
   });
 };
 </script>

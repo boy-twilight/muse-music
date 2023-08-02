@@ -20,14 +20,16 @@
 </template>
 
 <script lang="ts" setup>
+/* eslint-disable */
+// eslint-disable-next-line vue/no-setup-props-destructure
 import { ref } from 'vue';
-import { getTheme } from '@/utils/util';
-//配置主题
+import { getTheme } from '@/utils';
+// 配置主题
 const fontColor = getTheme().get('fontColor');
 const boxShadow = getTheme().get('shadow');
 const themeColor = getTheme().get('themeColor');
 
-//什么接受值
+// 什么接受值
 const props = withDefaults(
   defineProps<{
     title: string;
@@ -46,7 +48,7 @@ const emits = defineEmits<{
 
 const active = ref<number>(props.activeValue);
 
-//改变active时，回传active
+// 改变active时，回传active
 const changeActive = (index: number) => {
   active.value = index;
   emits('getActive', index, props.title);
