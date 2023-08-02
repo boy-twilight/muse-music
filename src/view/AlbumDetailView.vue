@@ -43,7 +43,7 @@
           <el-tab-pane
             label="歌曲"
             name="songs">
-            <SongList
+            <SongTable
               :songs="albumSongs"
               :song-id-mapper="songIdMapper" />
             <ArtistAlbum
@@ -96,8 +96,9 @@ import useUserStore from '@/store/user';
 import { PlayButton, MoreButton, CommonButton } from '@components/button';
 import { OnlineBatch } from '@components/batch';
 import { ArtistAlbum } from '@components/datalist';
-import Tab from '@components/tab/Tab.vue';
-import SongList from '@components/table/SongList.vue';
+import { SongTable } from '@components/table';
+import Tab from '@components/tab';
+
 // 主题设置相关
 const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');

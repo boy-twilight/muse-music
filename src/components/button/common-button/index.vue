@@ -28,7 +28,7 @@ withDefaults(
   }>(),
   {
     iconStyle: '',
-    isIconOne: false,
+    isIconOne: false
   }
 );
 </script>

@@ -23,7 +23,7 @@ const props = withDefaults(
     name?: string;
   }>(),
   {
-    name: '播放全部',
+    name: '播放全部'
   }
 );
 

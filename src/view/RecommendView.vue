@@ -55,7 +55,7 @@ import {
 import { elMessageType } from '@/model/enum';
 import { Playlist, Song, MV, Banner } from '@/model';
 import { ArtistMv, ArtistPlaylist } from '@components/datalist';
-import Carousel from '@components/carousel/Carousel.vue';
+import Carousel from '@components/carousel';
 
 // 配置主题
 const fontColor = getTheme().get('fontColor');

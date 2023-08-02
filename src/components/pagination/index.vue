@@ -20,8 +20,8 @@
 </template>
 
 <script lang="ts" setup>
-import { getTheme } from '@/utils';
 import { ref } from 'vue';
+import { getTheme } from '@/utils';
 
 const themeColor = getTheme().get('themeColor');
 const fontColor = getTheme().get('fontColor');

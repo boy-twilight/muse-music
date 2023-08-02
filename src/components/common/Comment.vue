@@ -130,7 +130,7 @@ import { ref, computed, nextTick, inject } from 'vue';
 import { Comment } from '@/model';
 import { getTheme } from '@/utils';
 import useConfigStore from '@/store/config';
-import Pagination from '../pagination/Pagination.vue';
+import Pagination from '@components/pagination';
 
 // 配置主题
 const config = useConfigStore();

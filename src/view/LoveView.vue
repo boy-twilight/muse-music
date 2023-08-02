@@ -11,7 +11,7 @@
         <el-tab-pane
           :label="`歌曲`"
           name="song">
-          <UserSongTable
+          <UserMusicTable
             page-name="LoveView"
             @open-select="openSelect" />
         </el-tab-pane>
@@ -95,7 +95,7 @@ import { ref, inject, Ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { getMusicUrls, getRequset } from '@/utils';
 import useUserStore from '@/store/user';
-import Tab from '@components/tab/Tab.vue';
+import Tab from '@components/tab';
 import {
   ArtistMv,
   Singer,
@@ -103,7 +103,7 @@ import {
   ArtistAlbum
 } from '@components/datalist';
 import { UserBatch } from '@components/batch';
-import UserSongTable from '@components/table/UserSongTable.vue';
+import { UserMusicTable } from '@components/table';
 import NoSearch from '@/components/common/NoSearch.vue';
 
 // 配置主题

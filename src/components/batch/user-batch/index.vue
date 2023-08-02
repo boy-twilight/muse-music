@@ -19,7 +19,7 @@
         name="取消操作"
         @click="close" />
     </div>
-    <SongList
+    <SongTable
       :songs="songs"
       :song-id-mapper="songIdMapper"
       :showSelect="true"
@@ -37,7 +37,7 @@ import useUserStore from '@/store/user';
 import { elMessage, getTheme } from '@/utils';
 import { elMessageType } from '@/model/enum';
 import { CommonButton } from '@components/button';
-import SongList from '@components/table/SongList.vue';
+import { SongTable } from '@components/table';
 
 // 配置主题
 const themeColor = getTheme().get('themeColor');

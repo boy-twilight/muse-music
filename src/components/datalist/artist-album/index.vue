@@ -47,7 +47,7 @@ import { inject, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { Album } from '@/model';
 import { getTheme } from '@/utils';
-import Pagination from '@components/pagination/Pagination.vue';
+import Pagination from '@components/pagination';
 
 // 主题配置
 const fontColor = getTheme().get('fontColor');

@@ -55,7 +55,7 @@ import { inject, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { MV } from '@/model';
 import { getTheme } from '@/utils';
-import Pagination from '@components/pagination/Pagination.vue';
+import Pagination from '@components/pagination';
 
 // 设置主题
 const fontColor = getTheme().get('fontColor');

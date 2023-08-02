@@ -53,6 +53,7 @@ import { inject, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { Playlist } from '@/model';
 import { getTheme } from '@/utils';
+import Pagination from '@/components/pagination';
 
 // 设置主题
 const boxShadow = getTheme().get('shadow');

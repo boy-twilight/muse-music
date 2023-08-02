@@ -13,7 +13,7 @@
       <SearchButton @getContent="getContent" />
       <SortButton @get-sort-choice="getSortChoice" />
     </div>
-    <SongList
+    <SongTable
       :songs="songs"
       :song-id-mapper="songIdMapper"
       :sort="sortChoice"
@@ -35,15 +35,14 @@ import useUserStore from '@/store/user';
 import { elMessageType } from '@/model/enum';
 import { elMessage } from '@/utils';
 import { Song } from '@/model';
-import SongList from '@components/table/SongList.vue';
+import { SongTable } from '@components/table';
 import {
   SearchButton,
   SortButton,
   PlayButton,
   CommonButton
 } from '@components/button';
-
-import Pagination from '../pagination/Pagination.vue';
+import Pagination from '@components/pagination';
 
 // 获取用户播放数据
 const user = useUserStore();

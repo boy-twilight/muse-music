@@ -11,7 +11,7 @@
         <el-tab-pane
           :label="`下载歌曲`"
           name="song">
-          <UserSongTable
+          <UserMusicTable
             @open-select="openSelect"
             page-name="DownloadView" />
         </el-tab-pane>
@@ -39,10 +39,10 @@ import { ref, inject, Ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { getMusicUrls, getRequset, getTheme } from '@/utils';
 import useUserStore from '@/store/user';
-import Tab from '@components/tab/Tab.vue';
+import Tab from '@components/tab';
 import { ArtistMv } from '@components/datalist';
 import { UserBatch } from '@components/batch';
-import UserSongTable from '@components/table/UserSongTable.vue';
+import { UserMusicTable } from '@components/table';
 // 配置主题
 const fontColor = getTheme().get('fontColor');
 const fontGray = inject('fontGray');

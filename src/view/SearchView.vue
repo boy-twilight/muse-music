@@ -58,7 +58,7 @@
                 name="批量操作"
                 @click="showSelect = !showSelect" />
             </div>
-            <SongList
+            <SongTable
               :songs="curList"
               :page-size="pageSize"
               :song-id-mapper="songIdMapper" />
@@ -254,8 +254,8 @@ import {
 } from '@/utils';
 import { searchMusic, getMusicDetail } from '@/api';
 import useUserStore from '@/store/user';
-import SongList from '@components/table/SongList.vue';
-import Tab from '@components/tab/Tab.vue';
+import { SongTable } from '@components/table';
+import Tab from '@components/tab';
 import { OnlineBatch } from '@components/batch';
 import { PlayButton, CommonButton } from '@components/button';
 import {
@@ -269,7 +269,7 @@ import NoSearch from '@components/common/NoSearch.vue';
 import { useRouter } from 'vue-router';
 import useConfigStore from '@/store/config';
 import useFooterStore from '@/store/footer';
-import Pagination from '@/components/pagination/Pagination.vue';
+import Pagination from '@/components/pagination';
 
 // 配置主题
 const config = useConfigStore();

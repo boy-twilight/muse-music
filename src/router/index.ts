@@ -2,12 +2,12 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 
-import pinia from '../store';
-import useHeaderStore from '../store/header';
+import pinia from '@/store';
+import useHeaderStore from '@/store/header';
 
 import { storeToRefs } from 'pinia';
-import { elMessage } from '../utils';
-import { elMessageType } from '../model/enum';
+import { elMessage } from '@/utils';
+import { elMessageType } from '@/model/enum';
 
 // 进度条全局配置
 NProgress.configure({
@@ -38,7 +38,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/recommend',
         name: 'recommend',
-        component: () => import('../view/RecommendView.vue'),
+        component: () => import('@/view/RecommendView.vue'),
         meta: {
           title: '推荐'
         }
@@ -47,7 +47,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/playlist',
         name: 'playlist',
-        component: () => import('../view/PlayListView.vue'),
+        component: () => import('@/view/PlayListView.vue'),
         meta: {
           title: '精品歌单'
         }
@@ -56,7 +56,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/search',
         name: 'search',
-        component: () => import('../view/SearchView.vue'),
+        component: () => import('@/view/SearchView.vue'),
         meta: {
           title: '搜索'
         }
@@ -65,7 +65,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/video',
         name: 'video',
-        component: () => import('../view/VideoPlayView.vue'),
+        component: () => import('@/view/VideoPlayView.vue'),
         meta: {
           title: '视频播放'
         }
@@ -74,7 +74,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/rvideo',
         name: 'rvideo',
-        component: () => import('../view/VideoView.vue'),
+        component: () => import('@/view/VideoView.vue'),
         meta: {
           title: '视频'
         }
@@ -83,7 +83,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/hall',
         name: 'hall',
-        component: () => import('../view/MusicHall.vue'),
+        component: () => import('@/view/MusicHall.vue'),
         meta: {
           title: '音乐馆'
         }
@@ -92,7 +92,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/artistlist',
         name: 'artistlist',
-        component: () => import('../view/ArtistlistView.vue'),
+        component: () => import('@/view/ArtistlistView.vue'),
         meta: {
           title: '热门歌手'
         }
@@ -101,7 +101,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/artist',
         name: 'artist',
-        component: () => import('../view/ArtistDetailView.vue'),
+        component: () => import('@/view/ArtistDetailView.vue'),
         meta: {
           title: '歌手详情'
         }
@@ -110,7 +110,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/love',
         name: 'love',
-        component: () => import('../view/LoveView.vue'),
+        component: () => import('@/view/LoveView.vue'),
         meta: {
           title: '我喜欢'
         }
@@ -118,7 +118,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/recent',
         name: 'recent',
-        component: () => import('../view/RecentPlayView.vue'),
+        component: () => import('@/view/RecentPlayView.vue'),
         meta: {
           title: '最近播放'
         }
@@ -126,7 +126,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/album',
         name: 'album',
-        component: () => import('../view/AlbumDetailView.vue'),
+        component: () => import('@/view/AlbumDetailView.vue'),
         meta: {
           title: '专辑详情'
         }
@@ -134,7 +134,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/station',
         name: 'station',
-        component: () => import('../view/RadioView.vue'),
+        component: () => import('@/view/RadioView.vue'),
         meta: {
           title: '精彩电台'
         }
@@ -142,7 +142,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/download',
         name: 'download',
-        component: () => import('../view/DownloadView.vue'),
+        component: () => import('@/view/DownloadView.vue'),
         meta: {
           title: '下载记录'
         }

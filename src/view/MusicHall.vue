@@ -83,7 +83,7 @@ import {
   getRecTags,
   getTopTags
 } from '@/api';
-import Tab from '@components/tab/Tab.vue';
+import Tab from '@components/tab';
 import { ArtistPlaylist } from '@components/datalist';
 import Loading from '@/components/common/Loading.vue';
 import useConfigStore from '@/store/config';

@@ -48,7 +48,7 @@
           <el-tab-pane
             label="精选"
             name="hot">
-            <SongList
+            <SongTable
               :songs="curList"
               :page-size="pageSize"
               :song-id-mapper="songIdMapper" />
@@ -134,10 +134,11 @@ import useUserStore from '@/store/user';
 import { PlayButton, MoreButton, CommonButton } from '@/components/button';
 import { ArtistMv, ArtistAlbum } from '@components/datalist';
 import { OnlineBatch } from '@components/batch';
-import Tab from '@components/tab/Tab.vue';
-import SongList from '@components/table/SongList.vue';
+import { SongTable } from '@components/table';
+import Tab from '@components/tab';
 import Loading from '@components/common/Loading.vue';
 import NoSearch from '@/components/common/NoSearch.vue';
+import Pagination from '@/components/pagination';
 
 // 主题设置
 const fontColor = getTheme().get('fontColor');

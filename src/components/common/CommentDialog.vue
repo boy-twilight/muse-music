@@ -16,7 +16,6 @@
 <script lang="ts" setup>
 import { inject, Ref } from 'vue';
 import { Comment } from '@/model';
-import Comments from './Comment.vue';
 import { getTheme } from '@/utils';
 
 // 配置主题

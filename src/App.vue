@@ -80,18 +80,18 @@ import { throttle } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 import { getTheme, getMusicUrls, setStorAge, elMessage } from '@/utils';
 import { Comment } from '@/model';
-import { svg } from '@/model/icon';
+import { svg } from '@assets/icon';
 import { elMessageType, storageType } from './model/enum';
 import useThemeStore from './store/theme';
 import useConfigStore from '@/store/config';
 import useFooterStore from '@/store/footer';
+import useUserStore from '@/store/user';
 import MusicDetail from '@/view/MusicDetail.vue';
 import Menu from '@components/layout/SideMenu.vue';
 import Header from '@components/layout/Header.vue';
 import Footer from '@components/layout/Footer.vue';
-import Drawer from '@components/drawer/Drawer.vue';
+import Drawer from '@components/drawer';
 import CommentDialog from './components/common/CommentDialog.vue';
-import useUserStore from './store/user';
 
 // 快捷键列表
 // space播放,上进入/退出音乐详情，左前一首，右后一首，f进入/退出全屏

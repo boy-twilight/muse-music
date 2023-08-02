@@ -50,7 +50,7 @@ declare module '@vue/runtime-core' {
     MoreDropdown: typeof import('./src/components/button/more-dropdown/index.vue')['default']
     NoSearch: typeof import('./src/components/common/NoSearch.vue')['default']
     OnlineBatch: typeof import('./src/components/batch/online-batch/index.vue')['default']
-    Pagination: typeof import('./src/components/pagination/Pagination.vue')['default']
+    Pagination: typeof import('./src/components/pagination/index.vue')['default']
     PlayAnimation: typeof import('./src/components/common/PlayAnimation.vue')['default']
     PlayButton: typeof import('./src/components/button/play-button/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
@@ -58,11 +58,11 @@ declare module '@vue/runtime-core' {
     SearchButton: typeof import('./src/components/button/search-button/index.vue')['default']
     SideMenu: typeof import('./src/components/layout/SideMenu.vue')['default']
     Singer: typeof import('./src/components/datalist/singer/index.vue')['default']
-    SongList: typeof import('./src/components/table/SongList.vue')['default']
+    SongTable: typeof import('./src/components/table/song-table/index.vue')['default']
     SortButton: typeof import('./src/components/button/sort-button/index.vue')['default']
-    Tab: typeof import('./src/components/tab/Tab.vue')['default']
+    Tab: typeof import('./src/components/tab/index.vue')['default']
     UserBatch: typeof import('./src/components/batch/user-batch/index.vue')['default']
-    UserSongTable: typeof import('./src/components/table/UserSongTable.vue')['default']
+    UserMusicTable: typeof import('./src/components/table/user-music-table/index.vue')['default']
   }
   export interface ComponentCustomProperties {
     vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']

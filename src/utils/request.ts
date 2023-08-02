@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { elMessage, getStorage } from '.';
-import { elMessageType, storageType } from '../model/enum';
+import { elMessageType, storageType } from '@/model/enum';
 
 const request: AxiosInstance = axios.create({
   timeout: 10000,

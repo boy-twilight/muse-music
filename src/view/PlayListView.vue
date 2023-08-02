@@ -54,7 +54,7 @@
         <el-tab-pane
           :label="`歌曲 ${playListSong.length}`"
           name="song">
-          <SongList
+          <SongTable
             :songs="curList"
             :page-size="pageSize"
             :song-id-mapper="songIdMapper" />
@@ -109,9 +109,10 @@ import {
 import { Playlist, Song, Comment } from '@/model';
 import useUserStore from '@/store/user';
 import { OnlineBatch } from '@components/batch';
-import SongList from '@components/table/SongList.vue';
-import Tab from '@components/tab/Tab.vue';
+import { SongTable } from '@components/table';
+import Tab from '@components/tab';
 import { PlayButton, CommonButton, MoreButton } from '@components/button';
+import Pagination from '@/components/pagination';
 import Comments from '@/components/common/Comment.vue';
 import NoSearch from '@/components/common/NoSearch.vue';
 

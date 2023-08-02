@@ -9,7 +9,7 @@
 
 <script lang="ts" setup>
 import { computed, inject } from 'vue';
-import { svg } from '@/model/icon';
+import { svg } from '@assets/icon';
 
 // 配置主题
 const bg = inject('loadingBg');
