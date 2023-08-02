@@ -18,7 +18,7 @@
         <el-tab-pane
           :label="`下载视频`"
           name="video ">
-          <NoSearch
+          <NoResult
             v-show="mvDownload.length == 0"
             text="暂无视频下载记录" />
           <ArtistMv
@@ -39,23 +39,22 @@ import { ref, inject, Ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { getMusicUrls, getRequset, getTheme } from '@/utils';
 import useUserStore from '@/store/user';
-import Tab from '@components/tab';
 import { ArtistMv } from '@components/datalist';
 import { UserBatch } from '@components/batch';
 import { UserMusicTable } from '@components/table';
+import { NoResult } from '@components/result';
+import Tab from '@components/tab';
 // 配置主题
 const fontColor = getTheme().get('fontColor');
 const fontGray = inject('fontGray');
-
 // 获取用户播放数据
 const user = useUserStore();
 const { mvDownload, musicDownload } = storeToRefs(user);
-
 // 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
-
 // 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
+
 // 打开批量操作
 const openSelect = (open: boolean) => {
   showSelect.value = open;
@@ -64,15 +63,13 @@ const openSelect = (open: boolean) => {
 const closeSelect = (close: boolean) => {
   showSelect.value = close;
 };
-
 // 删除播放的视频记录
 const deleteDownLoad = (id: string) => {
   const index = mvDownload.value.findIndex((item) => item.id == id);
   mvDownload.value.splice(index, 1);
 };
-
 // 获取初始数据
-getRequset(async() => {
+getRequset(async () => {
   const ids = musicDownload.value.map((item) => item.id).join(',');
   getMusicUrls(ids, musicDownload.value);
   user.initLoveMusic(musicDownload.value);

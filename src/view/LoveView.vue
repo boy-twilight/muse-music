@@ -18,7 +18,7 @@
         <el-tab-pane
           :label="`视频`"
           name="video">
-          <NoSearch
+          <NoResult
             v-show="loveVideo.length == 0"
             text="暂无收藏视频" />
           <ArtistMv
@@ -32,7 +32,7 @@
         <el-tab-pane
           :label="`歌单`"
           name="playlist">
-          <NoSearch
+          <NoResult
             v-show="lovePlaylist.length == 0"
             text="暂无收藏歌单" />
           <ArtistPlaylist
@@ -46,7 +46,7 @@
         <el-tab-pane
           :label="`电台`"
           name="radio">
-          <NoSearch
+          <NoResult
             v-show="loveRadio.length == 0"
             text="暂无收藏电台" />
           <ArtistPlaylist
@@ -61,7 +61,7 @@
         <el-tab-pane
           :label="`歌手`"
           name="singer">
-          <NoSearch
+          <NoResult
             v-show="loveSinger.length == 0"
             text="暂无收藏歌手" />
           <Singer
@@ -74,7 +74,7 @@
         <el-tab-pane
           :label="`专辑`"
           name="album">
-          <NoSearch
+          <NoResult
             v-show="loveAlbum.length == 0"
             text="暂无收藏专辑" />
           <ArtistAlbum
@@ -95,17 +95,16 @@ import { ref, inject, Ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { getMusicUrls, getRequset } from '@/utils';
 import useUserStore from '@/store/user';
-import Tab from '@components/tab';
 import {
   ArtistMv,
   Singer,
   ArtistPlaylist,
-  ArtistAlbum
+  ArtistAlbum,
 } from '@components/datalist';
 import { UserBatch } from '@components/batch';
 import { UserMusicTable } from '@components/table';
-import NoSearch from '@/components/common/NoSearch.vue';
-
+import { NoResult } from '@components/result';
+import Tab from '@components/tab';
 // 配置主题
 const fontGray = inject('fontGray');
 
@@ -121,12 +120,11 @@ const {
   loveAlbumId,
   loveVideoId,
   lovePlaylistId,
-  loveRadioId
+  loveRadioId,
 } = storeToRefs(user);
 
 // 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
-
 // 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
 
@@ -134,12 +132,10 @@ const showSelect = ref<boolean>(false);
 const openSelect = (open: boolean) => {
   showSelect.value = open;
 };
-
 // 关闭批量操作
 const closeSelect = (close: boolean) => {
   showSelect.value = close;
 };
-
 // 删除收藏的视频
 const deleteLoveVideo = (id: string) => {
   const index = loveVideoId.value.get(id) as number;
@@ -165,7 +161,7 @@ const deleteLoveRadio = (id: string) => {
   loveRadio.value.splice(index, 1);
 };
 
-getRequset(async() => {
+getRequset(async () => {
   const ids = loveSongs.value.map((item) => item.id).join(',');
   getMusicUrls(ids, loveSongs.value);
   // 关闭动画

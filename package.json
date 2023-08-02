@@ -1,9 +1,10 @@
 {
-  "name": "music-website",
+  "name": "music-website-fronted",
   "private": true,
   "version": "1.0.5",
   "author": {
-    "name": "liyinchao"
+    "name": "liyinchao",
+    "email": "2429162154@qq.com"
   },
   "type": "module",
   "scripts": {

@@ -55,7 +55,6 @@ const artistlist = reactive<Artist[]>([]);
 const searchResult = computed(() =>
   artistlist.filter((artist) => artist.name.includes(content.value))
 );
-
 const content = ref<string>('');
 // 缓存已经加载的结果
 const resultCache = reactive<Map<string, Artist[]>>(new Map());
@@ -71,9 +70,8 @@ const typeMapper = new Map([
   ['全部', -1],
   ['男歌手', 1],
   ['女歌手', 2],
-  ['组合', 3]
+  ['组合', 3],
 ]);
-
 // 歌手地区默认活跃的Index
 const areaActive = ref<number>(0);
 // 映射请求参数
@@ -89,23 +87,21 @@ const areaMapper = new Map([
   ['欧美', 96],
   ['日本', 8],
   ['韩国', 16],
-  ['其他', 0]
+  ['其他', 0],
 ]);
-
 // 姓名首字母，用于筛选
 const nameCh = reactive<string[]>(
   '全部,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,#'.split(',')
 );
 // 姓名首字母的活跃
 const nameActive = ref<string>('全部');
-
 // 页面第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
 // 设置隐藏滚动条
 const hideScroll = inject('hideScroll') as () => void;
 
 // 获取到当前活跃的按钮切换并加载对应数据
-const getActive = async(index: number, type: string) => {
+const getActive = async (index: number, type: string) => {
   hideScroll();
   artistlist.splice(0);
   // 切换index
@@ -133,7 +129,7 @@ const getContent = (search: string) => {
   content.value = search;
 };
 // 请求初始数据
-const getData = async() => {
+const getData = async () => {
   // 第一次请求开启动画
   first.value = true;
   try {
@@ -150,7 +146,7 @@ const getData = async() => {
         id,
         name,
         avatar: img1v1Url,
-        score: fansCount
+        score: fansCount,
       });
     });
     // 缓存请求结果

@@ -18,7 +18,7 @@
         <el-tab-pane
           :label="`视频`"
           name="video ">
-          <NoSearch
+          <NoResult
             v-show="videoRecord.length == 0"
             text="暂无视频播放记录" />
           <ArtistMv
@@ -39,12 +39,11 @@ import { ref, inject, Ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { getTheme, getMusicUrls, getRequset } from '@/utils';
 import useUserStore from '@/store/user';
-import Tab from '@components/tab';
 import { ArtistMv } from '@components/datalist';
 import { UserBatch } from '@components/batch';
 import { UserMusicTable } from '@components/table';
-import NoSearch from '@/components/common/NoSearch.vue';
-
+import { NoResult } from '@components/result';
+import Tab from '@components/tab';
 // 配置主题
 const fontColor = getTheme().get('fontColor');
 const fontGray = inject('fontGray');
@@ -74,7 +73,7 @@ const deleteVideoRecord = (id: string) => {
 };
 
 // 获取初始数据
-getRequset(async() => {
+getRequset(async () => {
   const ids = songRecord.value.map((item) => item.id).join(',');
   getMusicUrls(ids, songRecord.value);
   user.initLoveMusic(songRecord.value);

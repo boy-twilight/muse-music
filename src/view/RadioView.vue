@@ -29,13 +29,13 @@
 
 <script lang="ts" setup>
 import { ref, reactive, inject, Ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { elMessage, getRequset, getTheme } from '@/utils';
 import { getRadioBanner, getRadios, getRadioType } from '@/api';
 import { elMessageType } from '@/model/enum';
 import { Banner, Playlist, RadioType } from '@/model';
-import { useRouter } from 'vue-router';
-import { ArtistPlaylist } from '@/components/datalist';
-import Loading from '@/components/common/Loading.vue';
+import { ArtistPlaylist } from '@components/datalist';
+import { Loading } from '@components/result';
 
 // 配置主题
 const boxShadow = getTheme().get('shadow');
@@ -60,7 +60,7 @@ const disabled = ref<boolean>(false);
 // 是否正在加载
 const isLoading = ref<boolean>(false);
 // 获取电台下的分类
-const getRadioData = async() => {
+const getRadioData = async () => {
   const response: any = await getRadios(radioType[curIndex.value].id);
   const { djRadios } = response;
   radios.push([]);
@@ -73,7 +73,7 @@ const getRadioData = async() => {
       playCount,
       creator: { nickname: '', avatarUrl: '' },
       tag: [],
-      description: ''
+      description: '',
     });
   });
   disabled.value = false;
@@ -99,12 +99,12 @@ const go = (id: string) => {
     name: 'playlist',
     query: {
       id: id,
-      type: 'radio'
-    }
+      type: 'radio',
+    },
   });
 };
 
-getRequset(async() => {
+getRequset(async () => {
   // 获取电台banner
   try {
     const response: any = await getRadioBanner();
@@ -113,7 +113,7 @@ getRequset(async() => {
       const { targetId, pic } = item;
       banner.push({
         id: targetId,
-        pic
+        pic,
       });
     });
   } catch (err: any) {
@@ -128,7 +128,7 @@ getRequset(async() => {
       const { id, name } = item;
       radioType.push({
         id,
-        name
+        name,
       });
     });
   } catch (err: any) {

@@ -75,7 +75,7 @@
           <Comments
             :comments="playlistComments"
             v-if="!showNo" />
-          <NoSearch
+          <NoResult
             v-else
             :size="280"
             text="暂无评论数据" />
@@ -96,7 +96,7 @@ import {
   getRequset,
   share,
   getComment,
-  getSourceComments
+  getSourceComments,
 } from '@/utils';
 import { elMessageType } from '@/model/enum';
 import {
@@ -104,17 +104,17 @@ import {
   getPlayListSong,
   getPlaylistComment,
   getRadioDetail,
-  getRadioSong
+  getRadioSong,
 } from '@/api';
 import { Playlist, Song, Comment } from '@/model';
 import useUserStore from '@/store/user';
 import { OnlineBatch } from '@components/batch';
 import { SongTable } from '@components/table';
-import Tab from '@components/tab';
 import { PlayButton, CommonButton, MoreButton } from '@components/button';
-import Pagination from '@/components/pagination';
-import Comments from '@/components/common/Comment.vue';
-import NoSearch from '@/components/common/NoSearch.vue';
+import { NoResult } from '@components/result';
+import Pagination from '@components/pagination';
+import Tab from '@components/tab';
+import Comments from '@components/common/Comment.vue';
 
 // 设置主题
 const fontColor = getTheme().get('fontColor');
@@ -141,8 +141,8 @@ const playList = reactive<Playlist>({
   description: '',
   creator: {
     nickname: '',
-    avatarUrl: ''
-  }
+    avatarUrl: '',
+  },
 });
 // 歌单歌曲
 const playListSong = reactive<Song[]>([]);
@@ -206,13 +206,13 @@ const addLove = () => {
 };
 
 // 获取歌曲详情和音乐
-getRequset(async() => {
+getRequset(async () => {
   if (type == 'playlist') {
     // 获取歌单详情
     try {
       const pResponse: any = await getPlayListDetail(id);
       const {
-        playlist: { name, coverImgUrl, description, tags, creator, playCount }
+        playlist: { name, coverImgUrl, description, tags, creator, playCount },
       } = pResponse;
       playList.name = name;
       playList.image = coverImgUrl;
@@ -262,8 +262,8 @@ getRequset(async() => {
           dj: { avatarUrl, nickname },
           picUrl,
           desc,
-          subCount
-        }
+          subCount,
+        },
       } = response;
       playList.name = name;
       playList.id = id;
@@ -291,8 +291,8 @@ getRequset(async() => {
             fee,
             artists,
             album: { name: albumName, picUrl },
-            duration
-          }
+            duration,
+          },
         } = item;
         ids.push(id);
         playListSong.push({
@@ -302,7 +302,7 @@ getRequset(async() => {
           songImage: picUrl,
           album: albumName,
           available: fee,
-          time: duration
+          time: duration,
         });
       });
       user.initLoveMusic(playListSong);

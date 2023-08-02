@@ -62,7 +62,7 @@
           <el-tab-pane
             label="专辑"
             name="album">
-            <NoSearch
+            <NoResult
               v-show="needNoSearch[0]"
               text="歌手暂无专辑"
               :size="280" />
@@ -75,7 +75,7 @@
           <el-tab-pane
             label="视频"
             name="mv">
-            <NoSearch
+            <NoResult
               v-show="needNoSearch[1]"
               text="歌手暂无视频"
               :size="280" />
@@ -117,7 +117,7 @@ import {
   getArtistDesc,
   getArtistAlbum,
   getArtistSongs,
-  getMusicDetail
+  getMusicDetail,
 } from '@/api';
 import { Artist, Song, MV, ArtistDesc, Album } from '@/model';
 import { elMessageType } from '@/model/enum';
@@ -128,17 +128,16 @@ import {
   formatTime,
   getRequset,
   elMessage,
-  share
+  share,
 } from '@/utils';
 import useUserStore from '@/store/user';
-import { PlayButton, MoreButton, CommonButton } from '@/components/button';
+import { PlayButton, MoreButton, CommonButton } from '@components/button';
 import { ArtistMv, ArtistAlbum } from '@components/datalist';
 import { OnlineBatch } from '@components/batch';
 import { SongTable } from '@components/table';
+import { NoResult, Loading } from '@components/result';
 import Tab from '@components/tab';
-import Loading from '@components/common/Loading.vue';
-import NoSearch from '@/components/common/NoSearch.vue';
-import Pagination from '@/components/pagination';
+import Pagination from '@components/pagination';
 
 // 主题设置
 const fontColor = getTheme().get('fontColor');
@@ -146,9 +145,7 @@ const fontBlack = getTheme().get('fontBlack');
 const boxShadow = getTheme().get('shadow');
 const themeColor = getTheme().get('themeColor');
 const fontGray = inject('fontGray');
-
 const user = useUserStore();
-
 // 路由参数获取
 const route = useRoute();
 const id = route.query.id + '';
@@ -157,17 +154,15 @@ const score = route.query.score + '';
 const isLoading = ref<boolean>(false);
 // 页面第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
-
 // 是否需要占位图片
 const needNoSearch = reactive<boolean[]>([false, false]);
-
 // 歌手基本信息
 const singer = reactive<Artist>({
   name: '',
   score,
   id: id,
   avatar: '',
-  alias: []
+  alias: [],
 });
 // 歌手基本简介
 const introduce = reactive<ArtistDesc[]>([]);
@@ -182,6 +177,8 @@ const songIdMapper = computed(
 const curPage = ref<number>(1);
 // 一页多少数据
 const pageSize = ref<number>(30);
+// 总的数据数
+const total = computed(() => hotSongList.length);
 // 当前展示的歌曲列表
 const curList = computed(() =>
   hotSongList.slice(
@@ -189,21 +186,18 @@ const curList = computed(() =>
     curPage.value * pageSize.value
   )
 );
-// 总的数据数
-const total = computed(() => hotSongList.length);
-// 页数变化
-const pageChange = (page: number) => {
-  curPage.value = page;
-};
-
 // 歌手mv
 const artistMv = reactive<MV[]>([]);
 // 歌手专辑
 const artistAlbum = reactive<Album[]>([]);
-
-// 批量操作相关
 // 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
+
+// 页数变化
+const pageChange = (page: number) => {
+  curPage.value = page;
+};
+// 批量操作相关
 // 关闭批量操作
 const closeSelect = (close: boolean) => {
   showSelect.value = close;
@@ -227,7 +221,7 @@ const getActive = (active: string) => {
   // 点击加载数据
   if (active == 'album' && artistAlbum.length == 0) {
     // 获取歌手专辑
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await getArtistAlbum(id);
         const { hotAlbums } = response;
@@ -238,7 +232,7 @@ const getActive = (active: string) => {
             id: item.id,
             cover: picUrl,
             publishTime: formatTime(publishTime),
-            artistId: id + ''
+            artistId: id + '',
           });
         });
       } catch (err: any) {
@@ -251,7 +245,7 @@ const getActive = (active: string) => {
     }, isLoading);
   } else if (active == 'mv' && artistMv.length == 0) {
     // 获取歌手的Mv
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await getArtistMv(id);
         const { mvs } = response;
@@ -262,7 +256,7 @@ const getActive = (active: string) => {
             name,
             artist: artistName,
             image: imgurl16v9,
-            playCount
+            playCount,
           });
         });
       } catch (err: any) {
@@ -275,14 +269,14 @@ const getActive = (active: string) => {
       }, 500);
     }, isLoading);
   } else if (active == 'detail' && introduce.length == 0) {
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await getArtistDesc(id);
         const { introduction } = response;
         introduction.forEach((item: any) => {
           introduce.push({
             title: item.ti,
-            content: item.txt
+            content: item.txt,
           });
         });
       } catch (err: any) {
@@ -295,7 +289,7 @@ const getActive = (active: string) => {
   }
 };
 // 获取初始数据
-getRequset(async() => {
+getRequset(async () => {
   try {
     const response: any = await getArtistInfo(id);
     const { artist } = response;

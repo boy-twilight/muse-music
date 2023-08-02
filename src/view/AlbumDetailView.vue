@@ -89,7 +89,7 @@ import {
   getTheme,
   getRequset,
   elMessage,
-  share
+  share,
 } from '@/utils';
 import { elMessageType } from '@/model/enum';
 import useUserStore from '@/store/user';
@@ -104,15 +104,12 @@ const fontColor = getTheme().get('fontColor');
 const fontBlack = getTheme().get('fontBlack');
 const boxShadow = getTheme().get('shadow');
 const fontGray = inject('fontGray');
-
 const user = useUserStore();
-
 const route = useRoute();
 // 获取Id
 const id = route.query.id + '';
 // 获取歌手其它id
 const artistId = route.query.artistId + '';
-
 // 专辑信息
 const albumInfo = reactive<Album>({
   id,
@@ -120,7 +117,7 @@ const albumInfo = reactive<Album>({
   name: '',
   cover: '',
   artist: '',
-  publishTime: ''
+  publishTime: '',
 });
 // 歌手其它专辑
 const otherAlbum = reactive<Album[]>([]);
@@ -132,10 +129,10 @@ const songIdMapper = computed(
 );
 // 页面第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
-
 // 批量操作相关
 // 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
+
 // 关闭批量操作
 const closeSelect = (close: boolean) => {
   showSelect.value = close;
@@ -144,7 +141,6 @@ const closeSelect = (close: boolean) => {
 const openSelect = (open: boolean) => {
   showSelect.value = open;
 };
-
 // 分享歌单
 const shareAlbum = () => {
   share(
@@ -155,9 +151,8 @@ const shareAlbum = () => {
       route.fullPath
   );
 };
-
 // 请求页面数据
-getRequset(async() => {
+getRequset(async () => {
   // 获取该艺术家的其它专辑
   try {
     const response: any = await getArtistAlbum(artistId);
@@ -171,7 +166,7 @@ getRequset(async() => {
           id: albumId,
           cover: picUrl,
           publishTime: formatTime(publishTime),
-          artistId: artistId + ''
+          artistId: artistId + '',
         });
       } else if (otherAlbum.length > 5) {
         break;
@@ -185,7 +180,7 @@ getRequset(async() => {
     const response: any = await getAlbumDetail(id);
     const {
       album: { picUrl, artist, publishTime, name, company, description },
-      songs
+      songs,
     } = response;
     albumInfo.name = name;
     albumInfo.cover = picUrl;
