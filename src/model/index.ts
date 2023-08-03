@@ -149,6 +149,7 @@ export interface DropDownItem {
   command: string;
   style: string;
   isIcon1?: boolean;
+  spanClass?: string;
 }
 
 // 评论

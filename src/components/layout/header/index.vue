@@ -171,7 +171,7 @@
               :key="item.command"
               :command="item.command">
               <span
-                class="iconfont_1"
+                :class="item.spanClass"
                 :style="item.style"
                 v-text="
                   item.command == 'fullScreen' ? fullScreenIcon : item.icon
@@ -180,30 +180,6 @@
                 item.command == 'fullScreen' ? fullScreenName : item.name
               }}</el-dropdown-item
             >
-            <el-dropdown-item command="export">
-              <span
-                class="iconfont_2"
-                style="
-                  font-size: 15px;
-                  margin: 0.5px 8.5px 0 2.8px;
-                  display: inline-block;
-                "
-                >&#xe635;</span
-              >
-              导出数据
-            </el-dropdown-item>
-            <el-dropdown-item command="import">
-              <span
-                class="iconfont_2"
-                style="
-                  font-size: 15px;
-                  margin: 0.5px 8.5px 0 2.8px;
-                  display: inline-block;
-                "
-                >&#xe610;</span
-              >
-              导入数据
-            </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -296,30 +272,49 @@ const dropDownItems = reactive<DropDownItem[]>([
     icon: '\ue61b',
     command: 'logout',
     style: 'font-size:14px;margin:0 9px 0 2px;',
+    spanClass: 'iconfont_1',
   },
   {
     name: '',
     icon: '',
     command: 'fullScreen',
     style: 'font-size:18px;margin-right:7px;',
+    spanClass: 'iconfont_1',
   },
   {
     name: '纯色模式',
     icon: '\ue822',
     command: 'color',
     style: 'font-size:18px;margin-right:7px;',
+    spanClass: 'iconfont_1',
   },
   {
     name: '皮肤模式',
     icon: '\ue743',
     command: 'skin',
     style: 'font-size:15px;margin:0 7px 0 4px;',
+    spanClass: 'iconfont_1',
   },
   {
     name: '主题设置',
     icon: '\ueb6f',
     command: 'theme',
     style: 'font-size:18px;margin:0 7px 0 1.8px;',
+    spanClass: 'iconfont_1',
+  },
+  {
+    name: '导入数据',
+    icon: '\ue610',
+    command: 'import',
+    style: 'font-size: 15px;margin: 0.5px 8.5px 0 2.8px;display: inline-block;',
+    spanClass: 'iconfont_2',
+  },
+  {
+    name: '导出数据',
+    icon: '\ue635',
+    command: 'export',
+    style: 'font-size: 15px;margin: 0.5px 8.5px 0 2.8px;display: inline-block;',
+    spanClass: 'iconfont_2',
   },
 ]);
 // 存放二维码照片的容器
@@ -472,29 +467,29 @@ const changeSkin = () => {
 };
 // 导出用户数据文件
 const exportConfig = () => {
-  const userInfo = `loveMusic--${JSON.stringify(
+  const userInfo = `loveMusic-o-(*)-${JSON.stringify(
     loveSongs.value
-  )}\nloveVideo--${JSON.stringify(
+  )}\nloveVideo-o-(*)-${JSON.stringify(
     loveVideo.value
-  )}\nlovePlaylist--${JSON.stringify(
+  )}\nlovePlaylist-o-(*)-${JSON.stringify(
     lovePlaylist.value
-  )}\nloveRadio--${JSON.stringify(
+  )}\nloveRadio-o-(*)-${JSON.stringify(
     loveRadio.value
-  )}\nloveSinger--${JSON.stringify(
+  )}\nloveSinger-o-(*)-${JSON.stringify(
     loveSinger.value
-  )}\nloveAlbum--${JSON.stringify(
+  )}\nloveAlbum-o-(*)-${JSON.stringify(
     loveAlbum.value
-  )}\nmusicDownload--${JSON.stringify(
+  )}\nmusicDownload-o-(*)-${JSON.stringify(
     musicDownload.value
-  )}\nmvDownload--${JSON.stringify(
+  )}\nmvDownload-o-(*)-${JSON.stringify(
     mvDownload.value
-  )}\nsongRecord--${JSON.stringify(
+  )}\nsongRecord-o-(*)-${JSON.stringify(
     songRecord.value
-  )}\nvideoRecord--${JSON.stringify(videoRecord.value)}\n--${JSON.stringify(
-    songList.value
-  )}\nuserPlaylist--${JSON.stringify(songList.value)}\nbgmode--${
+  )}\nvideoRecord-o-(*)-${JSON.stringify(
+    videoRecord.value
+  )}\nuserPlaylist-o-(*)-${JSON.stringify(songList.value)}\nbgmode-p-(*)-${
     bgMode.value
-  }\nskin--${skin.value}`;
+  }\nskin-p-(*)-${skin.value}`;
   const blob = new Blob([userInfo], {
     type: 'text/plain; charset=utf-8',
   });
@@ -516,16 +511,13 @@ const parseConfig = () => {
       const reader = new FileReader();
       reader.readAsText(file, 'utf-8');
       reader.onload = (e: any) => {
-        const res = e.target.result;
+        let res = e.target.result;
         const userMap: Map<string, any> = new Map(
           res.split('\n').map((item: string) => {
-            const key = item.split('--')[0];
-            const value = item.split('--')[1];
-            if (key == 'bgmode' || key == 'skin') {
-              return [key, value];
-            } else {
-              return [key, JSON.parse(value)];
-            }
+            const key = item.split('-(*)-')[0].split('-')[0];
+            const flag = item.split('-(*)-')[0].split('-')[1];
+            const value = item.split('-(*)-')[1];
+            return flag == 'o' ? [key, JSON.parse(value)] : [key, value];
           })
         );
         // 切换皮肤模式
