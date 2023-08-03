@@ -9,7 +9,7 @@ import {
   searchMusic,
   getLyrics,
   getHotComments,
-  getComments,
+  getComments
 } from '@/api';
 import { Song, Comment } from '@/model';
 import useThemeStore from '@/store/theme';
@@ -18,99 +18,99 @@ import router from '@/router';
 // 创建一个elmessage的提示
 export const elMessage = (type: string = 'success', msg: string): void => {
   switch (type) {
-    case elMessageType.SUCCESS:
-      ElNotification.success({
-        title: 'Success',
-        message: msg,
-        duration: 1000,
-      });
-      break;
-    case elMessageType.ERROR:
-      ElNotification.error({
-        title: 'Error',
-        message: msg,
-        duration: 1000,
-      });
-      break;
-    case elMessageType.INFO:
-      ElNotification.info({
-        title: 'Infomation',
-        message: msg,
-        duration: 1000,
-      });
-      break;
-    case elMessageType.WARNING:
-      ElNotification.info({
-        title: 'Warning',
-        message: msg,
-        duration: 1000,
-      });
-      break;
+  case elMessageType.SUCCESS:
+    ElNotification.success({
+      title: 'Success',
+      message: msg,
+      duration: 1000
+    });
+    break;
+  case elMessageType.ERROR:
+    ElNotification.error({
+      title: 'Error',
+      message: msg,
+      duration: 1000
+    });
+    break;
+  case elMessageType.INFO:
+    ElNotification.info({
+      title: 'Infomation',
+      message: msg,
+      duration: 1000
+    });
+    break;
+  case elMessageType.WARNING:
+    ElNotification.info({
+      title: 'Warning',
+      message: msg,
+      duration: 1000
+    });
+    break;
   }
 };
 
 // 设置浏览器本地存储
 export const setStorAge = (type: string, key: string, value: any): void => {
   switch (type) {
-    case storageType.LOCAL:
-      {
-        if (typeof value == 'object') {
-          localStorage.setItem(key, JSON.stringify(value));
-        } else {
-          localStorage.setItem(key, value);
-        }
+  case storageType.LOCAL:
+    {
+      if (typeof value == 'object') {
+        localStorage.setItem(key, JSON.stringify(value));
+      } else {
+        localStorage.setItem(key, value);
       }
+    }
 
-      break;
-    case storageType.SESSION:
-      {
-        if (typeof value == 'object') {
-          sessionStorage.setItem(key, JSON.stringify(value));
-        } else {
-          sessionStorage.setItem(key, value);
-        }
+    break;
+  case storageType.SESSION:
+    {
+      if (typeof value == 'object') {
+        sessionStorage.setItem(key, JSON.stringify(value));
+      } else {
+        sessionStorage.setItem(key, value);
       }
-      break;
+    }
+    break;
   }
 };
 
 // 获取浏览器本地存储
 export const getStorage = (type: string, key: string): any => {
   switch (type) {
-    case storageType.LOCAL: {
-      try {
-        return JSON.parse(localStorage.getItem(key) as string);
-      } catch {
-        return localStorage.getItem(key);
-      }
+  case storageType.LOCAL: {
+    try {
+      return JSON.parse(localStorage.getItem(key) as string);
+    } catch {
+      return localStorage.getItem(key);
     }
-    case storageType.SESSION: {
-      try {
-        return JSON.parse(sessionStorage.getItem(key) as string);
-      } catch {
-        return sessionStorage.getItem(key);
-      }
+  }
+  case storageType.SESSION: {
+    try {
+      return JSON.parse(sessionStorage.getItem(key) as string);
+    } catch {
+      return sessionStorage.getItem(key);
     }
+  }
   }
 };
 
 // 删除浏览器本地存储
 export const removeStorage = (type: string, key: string): void => {
   switch (type) {
-    case storageType.LOCAL:
-      {
-        if (localStorage.getItem(key)) {
-          localStorage.removeItem(key);
-        }
+  case storageType.LOCAL:
+    {
+      if (localStorage.getItem(key)) {
+        localStorage.removeItem(key);
       }
-      break;
-    case storageType.SESSION:
-      {
-        if (sessionStorage.getItem(key)) {
-          sessionStorage.removeItem(key);
-        }
+    }
+    break;
+  case storageType.SESSION:
+    {
+      if (sessionStorage.getItem(key)) {
+        sessionStorage.removeItem(key);
       }
-      break;
+    }
+    break;
   }
 };
 
@@ -156,7 +156,7 @@ export const formatTime = (time: string): string => {
 
 // 获取音乐的url
 // ids是通过，分割的多个id,list是放歌曲的容器,key字段判断要不要做持久化
-export const getMusicUrls = async (
+export const getMusicUrls = async(
   ids: string,
   list: Song[],
   key?: string,
@@ -215,7 +215,7 @@ export const getMusicInfos = (ids: string[], list: Song[], data: any) => {
     album: al.name,
     available: fee,
     time: dt,
-    url: '',
+    url: ''
   });
 };
 
@@ -232,7 +232,7 @@ export const getTheme = (): Map<string, Ref<string>> => {
     shadow,
     active,
     themeColor,
-    fontGray,
+    fontGray
   } = storeToRefs(themes);
   const themeMap: Map<string, Ref<string>> = new Map();
   themeMap.set('fontBlack', fontBlack);
@@ -253,13 +253,13 @@ export const handleSingerName = (name: string): string => {
 };
 
 // 通过url进行下载
-export const download = async (url: string, fileName: string) => {
+export const download = async(url: string, fileName: string) => {
   try {
     const response = await axios({
       method: 'get',
       url,
       // 必须显式指明响应类型是一个Blob对象，这样生成二进制的数据，才能通过window.URL.createObjectURL进行创建成功
-      responseType: 'blob',
+      responseType: 'blob'
     });
     if (!response) {
       return;
@@ -297,7 +297,7 @@ export const getSimiSong = (
   songList: Song[],
   callBack: () => void
 ) => {
-  getRequset(async () => {
+  getRequset(async() => {
     try {
       // 当前音乐的数目
       const num = songList.length;
@@ -314,7 +314,7 @@ export const getSimiSong = (
             singer: artists.map((item: any) => item.name).join('、'),
             songImage: album.blurPicUrl,
             album: album.name,
-            available: fee,
+            available: fee
           };
           // 获取音乐的播放链接
           const musicResponse: any = await getMusicUrl(id);
@@ -358,7 +358,7 @@ export const downloadMusic = (song: Song) => {
 
 // 前往音乐的Mv
 export const playVideo = (song: Song, beforeGo: () => void) => {
-  getRequset(async () => {
+  getRequset(async() => {
     // 获取mv
     try {
       const response: any = await searchMusic(
@@ -367,7 +367,7 @@ export const playVideo = (song: Song, beforeGo: () => void) => {
         song.name + '' + handleSingerName(song.singer)
       );
       const {
-        result: { videos },
+        result: { videos }
       } = response;
       if (videos && videos.length > 0) {
         beforeGo();
@@ -375,8 +375,8 @@ export const playVideo = (song: Song, beforeGo: () => void) => {
         router.push({
           name: 'video',
           query: {
-            id: videos[0].vid,
-          },
+            id: videos[0].vid
+          }
         });
       } else {
         elMessage(elMessageType.INFO, '该歌曲暂无mv.');
@@ -397,11 +397,11 @@ export const share = (content: string, tip?: string) => {
 };
 
 // 下载歌词
-export const downloadLyric = async (song: Song) => {
+export const downloadLyric = async(song: Song) => {
   try {
     const response: any = await getLyrics(song.id);
     const {
-      lrc: { lyric },
+      lrc: { lyric }
     } = response;
     const words: string[] = [song.name];
     const totalTime = +(song.time as string);
@@ -419,7 +419,7 @@ export const downloadLyric = async (song: Song) => {
       }
     });
     const blob: Blob = new Blob([words.join('\r\n')], {
-      type: 'type:text/plain; charset=utf-8',
+      type: 'type:text/plain; charset=utf-8'
     });
     const data = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -465,7 +465,7 @@ export const getComment = (comments: any, target: Comment[]) => {
       commentId,
       time,
       likedCount,
-      ipLocation: { location },
+      ipLocation: { location }
     } = item;
     let { beReplied } = item;
     if (beReplied) {
@@ -474,7 +474,7 @@ export const getComment = (comments: any, target: Comment[]) => {
           user: { avatarUrl, nickname },
           content,
           beRepliedCommentId,
-          ipLocation: { location },
+          ipLocation: { location }
         } = item;
         const comment: Comment = {
           commentId: beRepliedCommentId,
@@ -483,7 +483,7 @@ export const getComment = (comments: any, target: Comment[]) => {
           time: '',
           likeCount: '0',
           avatar: avatarUrl,
-          ip: location,
+          ip: location
         };
         return comment;
       });
@@ -497,14 +497,14 @@ export const getComment = (comments: any, target: Comment[]) => {
         likeCount: likedCount,
         commentId,
         reply: beReplied,
-        ip: location,
+        ip: location
       });
     }
   });
 };
 
 // 获取资源评论
-export const getSourceComments = async (
+export const getSourceComments = async(
   id: string,
   type: string,
   target: Comment[],
@@ -514,7 +514,7 @@ export const getSourceComments = async (
     const result: any = await Promise.all([
       getHotComments(id, type, 100),
       getComments(id, type, 100, '1'),
-      getComments(id, type, 100, '2'),
+      getComments(id, type, 100, '2')
     ]);
     result.forEach((response: any, index: number) => {
       if (index == 0) {
@@ -524,7 +524,7 @@ export const getSourceComments = async (
         }
       } else {
         const {
-          data: { comments },
+          data: { comments }
         } = response;
         if (comments) {
           getComment(comments, target);
@@ -651,11 +651,11 @@ export const colorToHex = (color: string): string => {
   return hexColor;
 };
 
-//下载文件
+// 下载文件
 export const downloadFile = (blob: File | Blob, fileName: string) => {
-  //转化base64用以下载
+  // 转化base64用以下载
   const base64 = URL.createObjectURL(blob);
-  //下载流程
+  // 下载流程
   const link = document.createElement('a');
   link.style.display = 'none';
   link.href = base64;
@@ -664,4 +664,5 @@ export const downloadFile = (blob: File | Blob, fileName: string) => {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(base64);
+  elMessage(elMessageType.SUCCESS, '个人数据导出成功！');
 };

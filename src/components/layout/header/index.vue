@@ -154,7 +154,7 @@
       <el-dropdown
         trigger="click"
         @command="handleClick"
-        :popper-class="`dropdown playmode ${dropDownMode}`">
+        :popper-class="`dropdown ${dropDownMode} setting-drop`">
         <span
           class="iconfont"
           v-prevent
@@ -180,6 +180,30 @@
                 item.command == 'fullScreen' ? fullScreenName : item.name
               }}</el-dropdown-item
             >
+            <el-dropdown-item command="export">
+              <span
+                class="iconfont_2"
+                style="
+                  font-size: 15px;
+                  margin: 0.5px 8.5px 0 2.8px;
+                  display: inline-block;
+                "
+                >&#xe635;</span
+              >
+              导出数据
+            </el-dropdown-item>
+            <el-dropdown-item command="import">
+              <span
+                class="iconfont_2"
+                style="
+                  font-size: 15px;
+                  margin: 0.5px 8.5px 0 2.8px;
+                  display: inline-block;
+                "
+                >&#xe610;</span
+              >
+              导入数据
+            </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -210,7 +234,15 @@ import {
 } from '@/utils';
 import { elMessageType, storageType } from '@/model/enum';
 import { createKey, createQrCode, checkStatus, getHotSearch } from '@/api';
-import { DropDownItem, HotSearch } from '@/model';
+import {
+  DropDownItem,
+  HotSearch,
+  MV,
+  Playlist,
+  Song,
+  Artist,
+  Album,
+} from '@/model';
 import useHeaderStore from '@/store/header';
 import useConfigStore from '@/store/config';
 import useThemeStore from '@/store/theme';
@@ -244,7 +276,7 @@ const { showLogin, cookie, user } = storeToRefs(header);
 const config = useConfigStore();
 const { isFullScreen, bgMode, skin, drawerMode } = storeToRefs(config);
 const footer = useFooterStore();
-const { songList } = storeToRefs(footer);
+const { songList, songListId } = storeToRefs(footer);
 // 用户搜素的内容
 const search = ref<string>('');
 // 热门搜索列表
@@ -257,7 +289,7 @@ const userSearch = reactive<string[]>(
 );
 // 是否展示搜索推荐列表
 const showHistory = ref<boolean>(false);
-//下拉列表
+// 下拉列表
 const dropDownItems = reactive<DropDownItem[]>([
   {
     name: '退出登陆',
@@ -289,20 +321,19 @@ const dropDownItems = reactive<DropDownItem[]>([
     command: 'theme',
     style: 'font-size:18px;margin:0 7px 0 1.8px;',
   },
-  {
-    name: '导出数据',
-    icon: '',
-    command: 'export',
-    style: '',
-  },
 ]);
 // 存放二维码照片的容器
 const qrcode = ref<HTMLImageElement>();
 // 计时器的标志
 let timeid: any = 0;
-
+// 检测全屏，变化文字和对应的icon
+const fullScreenIcon = computed(() =>
+  !isFullScreen.value ? '\ueb99' : '\ueb98'
+);
+const fullScreenName = computed(() =>
+  !isFullScreen.value ? '进入全屏' : '退出全屏'
+);
 const userStore = useUserStore();
-
 const {
   loveSongs,
   loveVideo,
@@ -314,6 +345,16 @@ const {
   mvDownload,
   videoRecord,
   songRecord,
+  loveMusicId,
+  loveAlbumId,
+  lovePlaylistId,
+  loveSingerId,
+  loveRadioId,
+  loveVideoId,
+  musicDownloadId,
+  mvDownloadId,
+  songRecordId,
+  videoRecordId,
 } = storeToRefs(userStore);
 
 // 路由返回上一级
@@ -326,8 +367,6 @@ const forward = () => {
   hideScroll();
   router.forward();
 };
-
-// 获取热门搜索列表内容
 // 缓存列表结果
 const getSearchData = () => {
   if (hotSearch.length == 0) {
@@ -413,13 +452,6 @@ const showLoginBox = () => {
 const close = () => {
   clearInterval(timeid);
 };
-// 检测全屏，变化文字和对应的icon
-const fullScreenIcon = computed(() =>
-  !isFullScreen.value ? '\ueb99' : '\ueb98'
-);
-const fullScreenName = computed(() =>
-  !isFullScreen.value ? '进入全屏' : '退出全屏'
-);
 // 切换皮肤
 const changeSkin = () => {
   const input = document.createElement('input');
@@ -437,6 +469,128 @@ const changeSkin = () => {
       document.body.removeChild(input);
     }
   };
+};
+// 导出用户数据文件
+const exportConfig = () => {
+  const userInfo = `loveMusic--${JSON.stringify(
+    loveSongs.value
+  )}\nloveVideo--${JSON.stringify(
+    loveVideo.value
+  )}\nlovePlaylist--${JSON.stringify(
+    lovePlaylist.value
+  )}\nloveRadio--${JSON.stringify(
+    loveRadio.value
+  )}\nloveSinger--${JSON.stringify(
+    loveSinger.value
+  )}\nloveAlbum--${JSON.stringify(
+    loveAlbum.value
+  )}\nmusicDownload--${JSON.stringify(
+    musicDownload.value
+  )}\nmvDownload--${JSON.stringify(
+    mvDownload.value
+  )}\nsongRecord--${JSON.stringify(
+    songRecord.value
+  )}\nvideoRecord--${JSON.stringify(videoRecord.value)}\n--${JSON.stringify(
+    songList.value
+  )}\nuserPlaylist--${JSON.stringify(songList.value)}\nbgmode--${
+    bgMode.value
+  }\nskin--${skin.value}`;
+  const blob = new Blob([userInfo], {
+    type: 'text/plain; charset=utf-8',
+  });
+  downloadFile(blob, 'config.txt');
+};
+// 读取用户数据文件
+const parseConfig = () => {
+  const upload = document.createElement('input');
+  upload.style.display = 'none';
+  upload.type = 'file';
+  upload.accept = '.txt';
+  upload.onchange = async (event: any) => {
+    const files = event.target.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (!/\.txt$/.test(file.name) && file.name == 'config') {
+        return elMessage(elMessageType.ERROR, '请上传配置文件！');
+      }
+      const reader = new FileReader();
+      reader.readAsText(file, 'utf-8');
+      reader.onload = (e: any) => {
+        const res = e.target.result;
+        const userMap: Map<string, any> = new Map(
+          res.split('\n').map((item: string) => {
+            const key = item.split('--')[0];
+            const value = item.split('--')[1];
+            if (key == 'bgmode' || key == 'skin') {
+              return [key, value];
+            } else {
+              return [key, JSON.parse(value)];
+            }
+          })
+        );
+        // 切换皮肤模式
+        bgMode.value = userMap.get('bgmode');
+        skin.value = userMap.get('skin');
+        if (bgMode.value == 'skin') {
+          theme.changeSkinMode();
+          config.changeSkin();
+        }
+        const loveMusicData = (userMap.get('loveMusic') as Song[]).filter(
+          (song) => loveMusicId.value.get(song.id) == undefined
+        );
+        loveSongs.value.push(...loveMusicData);
+        const loveVideoData = (userMap.get('loveVideo') as MV[]).filter(
+          (video) => loveVideoId.value.get(video.id) == undefined
+        );
+        loveVideo.value.push(...loveVideoData);
+        const lovePlaylistData = (
+          userMap.get('lovePlaylist') as Playlist[]
+        ).filter(
+          (playlist) => lovePlaylistId.value.get(playlist.id) == undefined
+        );
+        lovePlaylist.value.push(...lovePlaylistData);
+        const loveRadioData = (userMap.get('loveRadio') as Playlist[]).filter(
+          (radio) => loveRadioId.value.get(radio.id) == undefined
+        );
+        loveRadio.value.push(...loveRadioData);
+        const loveSingerData = (userMap.get('loveSinger') as Artist[]).filter(
+          (artist) => loveSingerId.value.get(artist.id) == undefined
+        );
+        loveSinger.value.push(...loveSingerData);
+        const loveAlbumData = (userMap.get('loveAlbum') as Album[]).filter(
+          (album) => loveAlbumId.value.get(album.id) == undefined
+        );
+        loveAlbum.value.push(...loveAlbumData);
+        const musicDownloadData = (
+          userMap.get('musicDownload') as Song[]
+        ).filter((song) => musicDownloadId.value.get(song.id) == undefined);
+        musicDownload.value.push(...musicDownloadData);
+        const mvDownloadData = (userMap.get('mvDownload') as MV[]).filter(
+          (mv) => mvDownloadId.value.get(mv.id) == undefined
+        );
+        mvDownload.value.push(...mvDownloadData);
+        const songRecordData = (userMap.get('songRecord') as Song[]).filter(
+          (song) => songRecordId.value.get(song.id) == undefined
+        );
+        songRecord.value.push(...songRecordData);
+        const videoRecordData = (userMap.get('videoRecord') as MV[]).filter(
+          (mv) => videoRecordId.value.get(mv.id) == undefined
+        );
+        videoRecord.value.push(...videoRecordData);
+        const playData = (userMap.get('userPlaylist') as Song[]).filter(
+          (song) => songListId.value.get(song.id) == undefined
+        );
+        songList.value.push(...playData);
+        elMessage(elMessageType.SUCCESS, '个人数据导入成功');
+      };
+      reader.onerror = () => {
+        elMessage(elMessageType.ERROR, '读取配置文件失败！');
+      };
+    }
+  };
+  document.body.appendChild(upload);
+  upload.click();
+  document.body.removeChild(upload);
 };
 // 下拉框选择处理
 const handleClick = async (command: string) => {
@@ -462,33 +616,9 @@ const handleClick = async (command: string) => {
     drawerMode.value = 'theme';
     footer.showList = true;
   } else if (command == 'export') {
-    const userInfo = `loveMusic:${JSON.stringify(
-      loveSongs.value
-    )}\nloveVideo:${JSON.stringify(
-      loveVideo.value
-    )}\nlovePlaylist:${JSON.stringify(
-      lovePlaylist.value
-    )}\nloveRadio:${JSON.stringify(
-      loveRadio.value
-    )}\nloveSinger:${JSON.stringify(
-      loveSinger.value
-    )}\nloveAlbum:${JSON.stringify(
-      loveAlbum.value
-    )}\nmusicDownload:${JSON.stringify(
-      musicDownload.value
-    )}\nmvDownload:${JSON.stringify(
-      mvDownload.value
-    )}\nsongRecord:${JSON.stringify(
-      songRecord.value
-    )}\nvideoRecord:${JSON.stringify(
-      videoRecord.value
-    )}\nuserPlaylist:${JSON.stringify(songList.value)}\nbgmode:${
-      bgMode.value
-    }\nskin: ${skin.value}`;
-    const blob = new Blob([userInfo], {
-      type: 'text/plain; charset=utf-8',
-    });
-    downloadFile(blob, 'user.txt');
+    exportConfig();
+  } else if (command == 'import') {
+    parseConfig();
   }
 };
 // 以下为搜索的内容
@@ -543,7 +673,7 @@ onMounted(() => {
   });
 });
 
-//获取热门推荐数据
+// 获取热门推荐数据
 getSearchData();
 </script>
 
@@ -761,5 +891,13 @@ getSearchData();
   box-shadow: @shadow !important;
   border-radius: 15px !important;
   backdrop-filter: blur(10px) brightness(0.8) saturate(120%) contrast(1.2);
+}
+
+.setting-drop {
+  .el-dropdown-menu {
+    .el-dropdown-menu__item {
+      padding: 10px 35px 10px 25px !important;
+    }
+  }
 }
 </style>

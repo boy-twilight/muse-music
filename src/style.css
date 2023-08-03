@@ -17,6 +17,11 @@
   src: url('./assets/font/iconfont1.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: 'iconfont2';
+  src: url('./assets/font/iconfont2.ttf') format('truetype');
+}
+
 .iconfont {
   font-family: 'iconfont' !important;
   font-size: 16px;
@@ -27,6 +32,13 @@
 
 .iconfont_1 {
   font-family: 'iconfont1' !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.iconfont_2 {
+  font-family: 'iconfont2' !important;
   font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;

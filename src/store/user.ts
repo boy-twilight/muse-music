@@ -248,6 +248,7 @@ const useUserStore = defineStore('user', () => {
     videoRecordId,
     musicDownloadId,
     loveRadioId,
+    mvDownloadId,
     addLove,
     addRecord,
     addMuiscDownload,
