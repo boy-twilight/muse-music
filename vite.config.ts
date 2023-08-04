@@ -11,53 +11,53 @@ import { Plugin as ImportToCDN } from 'vite-plugin-cdn-import';
 export default defineConfig({
   plugins: [
     vue(),
-    // eslintPlugin({
-    //   include: ['src/**/*.ts', 'src/**/*.vue', 'src/**/**/*.vue'],
-    // }),
     AutoImport({
       resolvers: [ElementPlusResolver()],
     }),
     Components({
       resolvers: [ElementPlusResolver()],
     }),
+    // eslintPlugin({
+    //   include: ['src/**/*.ts', 'src/**/*.vue', 'src/**/**/*.vue'],
+    // }),
     visualizer({
       open: true,
     }),
-    ImportToCDN({
-      modules: [
-        {
-          name: 'vue',
-          var: 'vue',
-          path: 'https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.esm-browser.prod.min.js',
-        },
-        {
-          name: 'vue-router',
-          var: 'vue-router',
-          path: 'https://cdn.bootcdn.net/ajax/libs/vue-router/4.1.6/vue-router.esm-browser.min.js',
-        },
-        // {
-        //   name: 'pinia',
-        //   var: 'pinia',
-        //   path: 'https://cdn.bootcdn.net/ajax/libs/pinia/2.0.34/pinia.iife.prod.min.js',
-        // },
-        {
-          name: 'element-plus',
-          var: 'ElementPlus',
-          path: 'https://cdn.bootcdn.net/ajax/libs/element-plus/2.3.3/index.full.min.js',
-          css: 'https://cdn.bootcdn.net/ajax/libs/element-plus/2.3.3/index.min.css',
-        },
-        {
-          name: 'axios',
-          var: 'axios',
-          path: 'https://cdn.bootcdn.net/ajax/libs/axios/1.3.5/axios.min.js',
-        },
-      ],
-    }),
+    // ImportToCDN({
+    //   modules: [
+    //     {
+    //       name: 'vue',
+    //       var: 'vue',
+    //       path: 'https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.esm-browser.prod.min.js',
+    //     },
+    //     {
+    //       name: 'vue-router',
+    //       var: 'vue-router',
+    //       path: 'https://cdn.bootcdn.net/ajax/libs/vue-router/4.1.6/vue-router.esm-browser.min.js',
+    //     },
+    //     // {
+    //     //   name: 'pinia',
+    //     //   var: 'pinia',
+    //     //   path: 'https://cdn.bootcdn.net/ajax/libs/pinia/2.0.34/pinia.iife.prod.min.js',
+    //     // },
+    //     {
+    //       name: 'element-plus',
+    //       var: 'ElementPlus',
+    //       path: 'https://cdn.bootcdn.net/ajax/libs/element-plus/2.3.3/index.full.min.js',
+    //       css: 'https://cdn.bootcdn.net/ajax/libs/element-plus/2.3.3/index.min.css',
+    //     },
+    //     {
+    //       name: 'axios',
+    //       var: 'axios',
+    //       path: 'https://cdn.bootcdn.net/ajax/libs/axios/1.3.5/axios.min.js',
+    //     },
+    //   ],
+    // }),
   ],
   base: './',
   resolve: {
     alias: {
-      '@': join(__dirname, 'src'),
+      '@': join(__dirname, 'src/'),
       '@components': join(__dirname, 'src/components/'),
       '@assets': join(__dirname, 'src/assets/'),
     },

@@ -60,7 +60,7 @@ const disabled = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
 
 // 获取电台下的分类
-const getRadioData = async () => {
+const getRadioData = async() => {
   const response: any = await getRadios(radioType[curIndex.value].id);
   const { djRadios } = response;
   radios.push([]);
@@ -73,7 +73,7 @@ const getRadioData = async () => {
       playCount,
       creator: { nickname: '', avatarUrl: '' },
       tag: [],
-      description: '',
+      description: ''
     });
   });
   disabled.value = false;
@@ -99,16 +99,16 @@ const go = (id: string) => {
     name: 'playlist',
     query: {
       id: id,
-      type: 'radio',
-    },
+      type: 'radio'
+    }
   });
 };
 
-getRequset(async () => {
+getRequset(async() => {
   try {
     const responses: any[] = await Promise.all([
       getRadioBanner(),
-      getRadioType(),
+      getRadioType()
     ]);
     responses.forEach((response, index) => {
       // 获取电台banner
@@ -118,7 +118,7 @@ getRequset(async () => {
           const { targetId, pic } = item;
           banner.push({
             id: targetId,
-            pic,
+            pic
           });
         });
       }
@@ -129,7 +129,7 @@ getRequset(async () => {
           const { id, name } = item;
           radioType.push({
             id,
-            name,
+            name
           });
         });
       }

@@ -196,7 +196,7 @@ import {
   computed,
   onMounted,
   nextTick,
-  Ref,
+  Ref
 } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
@@ -206,7 +206,7 @@ import {
   getStorage,
   compressImage,
   getTheme,
-  downloadFile,
+  downloadFile
 } from '@/utils';
 import { elMessageType, storageType } from '@/model/enum';
 import { createKey, createQrCode, checkStatus, getHotSearch } from '@/api';
@@ -217,7 +217,7 @@ import {
   Playlist,
   Song,
   Artist,
-  Album,
+  Album
 } from '@/model';
 import useHeaderStore from '@/store/header';
 import useConfigStore from '@/store/config';
@@ -272,50 +272,50 @@ const dropDownItems = reactive<DropDownItem[]>([
     icon: '\ue61b',
     command: 'logout',
     style: 'font-size:14px;margin:0 9px 0 2px;',
-    spanClass: 'iconfont_1',
+    spanClass: 'iconfont_1'
   },
   {
     name: '',
     icon: '',
     command: 'fullScreen',
     style: 'font-size:18px;margin-right:7px;',
-    spanClass: 'iconfont_1',
+    spanClass: 'iconfont_1'
   },
   {
     name: '纯色模式',
     icon: '\ue822',
     command: 'color',
     style: 'font-size:18px;margin-right:7px;',
-    spanClass: 'iconfont_1',
+    spanClass: 'iconfont_1'
   },
   {
     name: '皮肤模式',
     icon: '\ue743',
     command: 'skin',
     style: 'font-size:15px;margin:0 7px 0 4px;',
-    spanClass: 'iconfont_1',
+    spanClass: 'iconfont_1'
   },
   {
     name: '主题设置',
     icon: '\ueb6f',
     command: 'theme',
     style: 'font-size:18px;margin:0 7px 0 1.8px;',
-    spanClass: 'iconfont_1',
+    spanClass: 'iconfont_1'
   },
   {
     name: '导入数据',
     icon: '\ue610',
     command: 'import',
     style: 'font-size: 15px;margin: 0.5px 8.5px 0 2.8px;display: inline-block;',
-    spanClass: 'iconfont_2',
+    spanClass: 'iconfont_2'
   },
   {
     name: '导出数据',
     icon: '\ue635',
     command: 'export',
     style: 'font-size: 15px;margin: 0.5px 8.5px 0 2.8px;display: inline-block;',
-    spanClass: 'iconfont_2',
-  },
+    spanClass: 'iconfont_2'
+  }
 ]);
 // 存放二维码照片的容器
 const qrcode = ref<HTMLImageElement>();
@@ -349,7 +349,7 @@ const {
   musicDownloadId,
   mvDownloadId,
   songRecordId,
-  videoRecordId,
+  videoRecordId
 } = storeToRefs(userStore);
 
 // 路由返回上一级
@@ -371,7 +371,7 @@ const getSearchData = () => {
         data.forEach((item: any) => {
           hotSearch.push({
             searchWord: item.searchWord,
-            score: item.score,
+            score: item.score
           });
         });
       }
@@ -383,7 +383,7 @@ const createKeyCode = (): void => {
   createKey()
     .then((response: any) => {
       const {
-        data: { unikey },
+        data: { unikey }
       } = response;
       creatQrImage(unikey);
       CheckLoginStatus(unikey);
@@ -397,7 +397,7 @@ const creatQrImage = (key: string): void => {
   createQrCode(key)
     .then((response: any) => {
       const {
-        data: { qrimg },
+        data: { qrimg }
       } = response;
       qrcode.value!.src = qrimg;
     })
@@ -407,7 +407,7 @@ const creatQrImage = (key: string): void => {
 };
 // 监测登陆状态
 const CheckLoginStatus = (key: string): void => {
-  timeid = setInterval(async () => {
+  timeid = setInterval(async() => {
     const response: any = await checkStatus(key).catch((err: any) => {
       elMessage(elMessageType.ERROR, err.message);
     });
@@ -455,7 +455,7 @@ const changeSkin = () => {
   input.style.display = 'none';
   document.body.appendChild(input);
   input.click();
-  input.onchange = async () => {
+  input.onchange = async() => {
     const files = input.files;
     if (files && files.length > 0) {
       const file = files[0];
@@ -491,7 +491,7 @@ const exportConfig = () => {
     bgMode.value
   }\nskin-p-(*)-${skin.value}`;
   const blob = new Blob([userInfo], {
-    type: 'text/plain; charset=utf-8',
+    type: 'text/plain; charset=utf-8'
   });
   downloadFile(blob, 'config.txt');
 };
@@ -501,7 +501,7 @@ const parseConfig = () => {
   upload.style.display = 'none';
   upload.type = 'file';
   upload.accept = '.txt';
-  upload.onchange = async (event: any) => {
+  upload.onchange = async(event: any) => {
     const files = event.target.files;
     if (files.length > 0) {
       const file = files[0];
@@ -585,7 +585,7 @@ const parseConfig = () => {
   document.body.removeChild(upload);
 };
 // 下拉框选择处理
-const handleClick = async (command: string) => {
+const handleClick = async(command: string) => {
   if (command == 'logout' && cookie.value) {
     header.logout();
   } else if (command == 'fullScreen') {
@@ -622,8 +622,8 @@ const goSearch = () => {
   router.push({
     name: 'search',
     query: {
-      keyWord: search.value,
-    },
+      keyWord: search.value
+    }
   });
 };
 // 点击推荐列表搜索
@@ -636,8 +636,8 @@ const goSearchByRe = (keyWord: string) => {
   router.push({
     name: 'search',
     query: {
-      keyWord,
-    },
+      keyWord
+    }
   });
 };
 // 检测是否展示登陆二维码
