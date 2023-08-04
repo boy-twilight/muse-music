@@ -633,50 +633,54 @@ const getActive = (active: string) => {
 };
 
 getRequset(async () => {
-  // 获取音乐搜索结果
   try {
-    const response: any = await searchMusic(1, 100, keyWord);
-    const {
-      result: { songs },
-    } = response;
-    // 获取搜索歌曲
-    if (songs && songs.length > 0) {
-      // 获取id
-      const ids = songs.map((item: any) => item.id).join(',');
-      // 重新获取图片
-      const dResponse: any = await getMusicDetail(ids);
-      const { songs: muiscs } = dResponse;
-      muiscs.forEach((item: any) => {
-        getMusicInfos([] as string[], musicResult, item);
-      });
-      // 获取搜索歌曲的urls
-      getMusicUrls(ids, musicResult);
-      // 初始化歌曲喜欢状态
-      user.initLoveMusic(musicResult);
-    }
-  } catch (err: any) {
-    elMessage(elMessageType.ERROR, err.message);
-  }
-  // 获取搜索歌手
-  try {
-    const response: any = await searchMusic(100, 100, keyWord);
-    const {
-      result: { artists },
-    } = response;
-    if (artists && artists.length > 0) {
-      artists.forEach((item: any) => {
-        const { id, name, picUrl, accountId, albumSize, mvSize } = item;
-        singerResult.push({
-          id,
-          name,
-          avatar: picUrl,
-          score: accountId,
-          albumSize,
-          mvSize,
-        });
-      });
-    }
-    needNoSearch[5] = singerResult.length == 0;
+    const responses: any[] = await Promise.all([
+      searchMusic(1, 100, keyWord),
+      searchMusic(100, 100, keyWord),
+    ]);
+    responses.forEach(async (response, index) => {
+      // 获取音乐搜索结果
+      if (index == 0) {
+        const {
+          result: { songs },
+        } = response;
+        // 获取搜索歌曲
+        if (songs && songs.length > 0) {
+          // 获取id
+          const ids = songs.map((item: any) => item.id).join(',');
+          // 重新获取图片
+          const dResponse: any = await getMusicDetail(ids);
+          const { songs: muiscs } = dResponse;
+          muiscs.forEach((item: any) => {
+            getMusicInfos([] as string[], musicResult, item);
+          });
+          // 获取搜索歌曲的urls
+          getMusicUrls(ids, musicResult);
+          // 初始化歌曲喜欢状态
+          user.initLoveMusic(musicResult);
+        }
+      }
+      // 获取搜索歌手
+      else if (index == 1) {
+        const {
+          result: { artists },
+        } = response;
+        if (artists && artists.length > 0) {
+          artists.forEach((item: any) => {
+            const { id, name, picUrl, accountId, albumSize, mvSize } = item;
+            singerResult.push({
+              id,
+              name,
+              avatar: picUrl,
+              score: accountId,
+              albumSize,
+              mvSize,
+            });
+          });
+        }
+        needNoSearch[5] = singerResult.length == 0;
+      }
+    });
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }

@@ -60,7 +60,7 @@ const disabled = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
 
 // 获取电台下的分类
-const getRadioData = async() => {
+const getRadioData = async () => {
   const response: any = await getRadios(radioType[curIndex.value].id);
   const { djRadios } = response;
   radios.push([]);
@@ -73,7 +73,7 @@ const getRadioData = async() => {
       playCount,
       creator: { nickname: '', avatarUrl: '' },
       tag: [],
-      description: ''
+      description: '',
     });
   });
   disabled.value = false;
@@ -99,47 +99,45 @@ const go = (id: string) => {
     name: 'playlist',
     query: {
       id: id,
-      type: 'radio'
-    }
+      type: 'radio',
+    },
   });
 };
 
-getRequset(async() => {
-  // 获取电台banner
+getRequset(async () => {
   try {
-    const response: any = await getRadioBanner();
-    const { data } = response;
-    data.forEach((item: any) => {
-      const { targetId, pic } = item;
-      banner.push({
-        id: targetId,
-        pic
-      });
+    const responses: any[] = await Promise.all([
+      getRadioBanner(),
+      getRadioType(),
+    ]);
+    responses.forEach((response, index) => {
+      // 获取电台banner
+      if (index == 0) {
+        const { data } = response;
+        data.forEach((item: any) => {
+          const { targetId, pic } = item;
+          banner.push({
+            id: targetId,
+            pic,
+          });
+        });
+      }
+      // 获取电台分类
+      else if (index == 1) {
+        const { categories } = response;
+        categories.forEach((item: any) => {
+          const { id, name } = item;
+          radioType.push({
+            id,
+            name,
+          });
+        });
+      }
     });
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
-
-  // 获取电台分类
-  try {
-    const response: any = await getRadioType();
-    const { categories } = response;
-    categories.forEach((item: any) => {
-      const { id, name } = item;
-      radioType.push({
-        id,
-        name
-      });
-    });
-  } catch (err: any) {
-    elMessage(elMessageType.ERROR, err.message);
-  }
-
-  try {
-    getRadioData();
-  } catch (err: any) {
-    elMessage(elMessageType.ERROR, err.message);
-  }
+  await getRadioData();
   first.value = false;
 }, first);
 </script>

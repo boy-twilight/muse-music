@@ -406,7 +406,7 @@ getRequset(async () => {
     elMessage(elMessageType.ERROR, err.message);
   }
   // 请求初始数据
-  getTopTagPlaylist();
+  await getTopTagPlaylist();
   first.value = false;
 }, first);
 </script>
