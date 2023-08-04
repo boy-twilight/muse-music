@@ -252,7 +252,7 @@ import {
   transformTime,
   downloadLyric,
   share,
-  shareMuiscInfo
+  shareMuiscInfo,
 } from '@/utils';
 import { searchMusic, getMusicDetail } from '@/api';
 import useUserStore from '@/store/user';
@@ -263,7 +263,7 @@ import {
   ArtistAlbum,
   ArtistMv,
   ArtistPlaylist,
-  Singer
+  Singer,
 } from '@components/datalist';
 import { Loading, NoResult } from '@components/result';
 import Tab from '@components/tab';
@@ -355,13 +355,13 @@ const firstSinger = computed(() =>
   singerResult.length > 0
     ? singerResult[0]
     : ({
-      name: '',
-      avatar: '',
-      id: '',
-      score: '',
-      albumSize: '',
-      mvSize: ''
-    } as Artist)
+        name: '',
+        avatar: '',
+        id: '',
+        score: '',
+        albumSize: '',
+        mvSize: '',
+      } as Artist)
 );
 // 歌词的搜索结果
 const lyricResult = reactive<Song[]>([]);
@@ -381,7 +381,7 @@ const needNoSearch = reactive<boolean[]>([
   false,
   false,
   false,
-  false
+  false,
 ]);
 // 当前展示歌词的长度
 const lyricLen = reactive<number[]>([]);
@@ -393,7 +393,7 @@ const openLyric = (index: number) => {
       : lyricResult[index].lyric!.length;
 };
 // 播放歌词对应的音乐
-const play = async(song: Song) => {
+const play = async (song: Song) => {
   if (song.available == '0' || song.available == '8') {
     const index = songListId.value.get(song.id);
     if (index == undefined) {
@@ -453,11 +453,11 @@ const pageChange = (page: number) => {
 const getActive = (active: string) => {
   activeTab.value = active;
   if (active == 'video' && videoResult.length == 0) {
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await searchMusic(1014, 100, keyWord);
         const {
-          result: { videos }
+          result: { videos },
         } = response;
         if (videos && videos.length > 0) {
           videos.forEach((item: any) => {
@@ -467,7 +467,7 @@ const getActive = (active: string) => {
               name: title,
               image: coverUrl,
               artist: creator[0].userName,
-              playCount: playTime
+              playCount: playTime,
             });
           });
         }
@@ -475,18 +475,16 @@ const getActive = (active: string) => {
         elMessage(elMessageType.ERROR, err.message);
       }
       // 关闭动画
-      setTimeout(() => {
-        isLoading.value = false;
-      }, 500);
+      isLoading.value = false;
       // 判断是否需要占位图片
       needNoSearch[0] = videoResult.length == 0;
     }, isLoading);
   } else if (active == 'mv' && mvResult.length == 0) {
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await searchMusic(1004, 100, keyWord);
         const {
-          result: { mvs }
+          result: { mvs },
         } = response;
         if (mvs && mvs.length != 0) {
           mvs.forEach((item: any) => {
@@ -496,7 +494,7 @@ const getActive = (active: string) => {
               name,
               image: cover,
               artist: artistName,
-              playCount
+              playCount,
             });
           });
         }
@@ -504,18 +502,16 @@ const getActive = (active: string) => {
         elMessage(elMessageType.ERROR, err.message);
       }
       // 关闭动画
-      setTimeout(() => {
-        isLoading.value = false;
-      }, 500);
+      isLoading.value = false;
       // 判断是否需要占位图片
       needNoSearch[1] = mvResult.length == 0;
     }, isLoading);
   } else if (active == 'album' && albumResult.length == 0) {
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await searchMusic(10, 60, keyWord);
         const {
-          result: { albums }
+          result: { albums },
         } = response;
         if (albums && albums.length > 0) {
           albums.forEach((item: any) => {
@@ -525,7 +521,7 @@ const getActive = (active: string) => {
               name,
               cover: picUrl,
               publishTime: formatTime(publishTime),
-              artistId: artist.id
+              artistId: artist.id,
             });
           });
         }
@@ -533,18 +529,16 @@ const getActive = (active: string) => {
         elMessage(elMessageType.ERROR, err.message);
       }
       // 关闭动画
-      setTimeout(() => {
-        isLoading.value = false;
-      }, 500);
+      isLoading.value = false;
       // 判断是否需要占位图片
       needNoSearch[2] = albumResult.length == 0;
     }, isLoading);
   } else if (active == 'radio' && radioResult.length == 0) {
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await searchMusic(1009, 100, keyWord);
         const {
-          result: { djRadios }
+          result: { djRadios },
         } = response;
         if (djRadios && djRadios.length > 0) {
           djRadios.forEach((item: any) => {
@@ -556,7 +550,7 @@ const getActive = (active: string) => {
               playCount,
               creator: { nickname: '', avatarUrl: '' },
               tag: [],
-              description: ''
+              description: '',
             });
           });
         }
@@ -564,18 +558,16 @@ const getActive = (active: string) => {
         elMessage(elMessageType.ERROR, err.message);
       }
       // 关闭动画
-      setTimeout(() => {
-        isLoading.value = false;
-      }, 500);
+      isLoading.value = false;
       // 判断是否需要占位图片
       needNoSearch[3] = radioResult.length == 0;
     }, isLoading);
   } else if (active == 'playList' && playlistResult.length == 0) {
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await searchMusic(1000, 100, keyWord);
         const {
-          result: { playlists }
+          result: { playlists },
         } = response;
         if (playlists && playlists.length > 0) {
           playlists.forEach((item: any) => {
@@ -587,7 +579,7 @@ const getActive = (active: string) => {
               playCount,
               description: '',
               tag: [],
-              creator: { nickname: '', avatarUrl: '' }
+              creator: { nickname: '', avatarUrl: '' },
             });
           });
         }
@@ -595,19 +587,17 @@ const getActive = (active: string) => {
         elMessage(elMessageType.ERROR, err.message);
       }
       // 关闭动画
-      setTimeout(() => {
-        isLoading.value = false;
-      }, 500);
+      isLoading.value = false;
       // 判断是否需要占位图片
       needNoSearch[4] = playlistResult.length == 0;
     }, isLoading);
   } else if (active == 'lyric' && lyricResult.length == 0) {
     // 获取歌词的搜索结果并进行处理
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await searchMusic(1006, 100, keyWord);
         const {
-          result: { songs }
+          result: { songs },
         } = response;
         if (songs && songs.length > 0) {
           // 获取id
@@ -622,7 +612,7 @@ const getActive = (active: string) => {
           // 获取歌词
           songs.forEach((item: any, index: number) => {
             const {
-              lyrics: { txt }
+              lyrics: { txt },
             } = item;
             lyricResult[index].lyric = txt.split('\n');
           });
@@ -635,21 +625,19 @@ const getActive = (active: string) => {
         elMessage(elMessageType.ERROR, err.message);
       }
       // 关闭动画
-      setTimeout(() => {
-        isLoading.value = false;
-      }, 500);
+      isLoading.value = false;
       // 判断是否需要占位图片
       needNoSearch[6] = lyricResult.length == 0;
     }, isLoading);
   }
 };
 
-getRequset(async() => {
+getRequset(async () => {
   // 获取音乐搜索结果
   try {
     const response: any = await searchMusic(1, 100, keyWord);
     const {
-      result: { songs }
+      result: { songs },
     } = response;
     // 获取搜索歌曲
     if (songs && songs.length > 0) {
@@ -673,7 +661,7 @@ getRequset(async() => {
   try {
     const response: any = await searchMusic(100, 100, keyWord);
     const {
-      result: { artists }
+      result: { artists },
     } = response;
     if (artists && artists.length > 0) {
       artists.forEach((item: any) => {
@@ -684,7 +672,7 @@ getRequset(async() => {
           avatar: picUrl,
           score: accountId,
           albumSize,
-          mvSize
+          mvSize,
         });
       });
     }
@@ -692,7 +680,6 @@ getRequset(async() => {
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
-
   // 关闭动画
   first.value = false;
 }, first);

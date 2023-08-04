@@ -50,7 +50,7 @@ import {
   getMusicUrls,
   getMusicInfos,
   getTheme,
-  getRequset
+  getRequset,
 } from '@/utils';
 import { elMessageType } from '@/model/enum';
 import { Playlist, Song, MV, Banner } from '@/model';
@@ -83,7 +83,7 @@ const mvLists = reactive<MV[]>([]);
 const first = inject('firstLoading') as Ref<boolean>;
 
 // 点击图片进行播放播放
-const playSong = async(song: Song) => {
+const playSong = async (song: Song) => {
   if (song.available == '0' || song.available == '8') {
     const index = songListId.value.get(song.id);
     if (index == undefined) {
@@ -115,81 +115,88 @@ const playSong = async(song: Song) => {
   }
 };
 
-getRequset(async() => {
-  // 获取轮播图片
+getRequset(async () => {
   try {
-    const response: any = await getBanner();
-    const { banners: banner } = response;
-    banner.forEach((item: any) => {
-      const { imageUrl, targetId } = item;
-      banners.push({
-        id: targetId,
-        pic: imageUrl
-      });
-    });
-  } catch (err: any) {
-    elMessage(elMessageType.ERROR, err.message);
-  }
-  // 获取歌单
-  try {
-    const response: any = await getRecPlaylist(10);
-    const { playlists } = response;
-    playlists.forEach((item: any) => {
-      if (playLists.length < 10) {
-        const { name, id, coverImgUrl, playCount, description, tags, creator } =
-          item;
-        playLists.push({
-          name,
-          id,
-          playCount,
-          description,
-          image: coverImgUrl,
-          tag: tags,
-          creator: {
-            avatarUrl: creator.avatarUrl,
-            nickname: creator.nickname
+    const responses: any[] = await Promise.all([
+      getBanner(),
+      getRecPlaylist(10),
+      getDeafultSong(40),
+      getMv(10, '内地', '全部', '最新'),
+    ]);
+    responses.forEach((response, index) => {
+      //获取banner
+      if (index == 0) {
+        const { banners: banner } = response;
+        banner.forEach((item: any) => {
+          const { imageUrl, targetId } = item;
+          banners.push({
+            id: targetId,
+            pic: imageUrl,
+          });
+        });
+      }
+      //获取推荐歌单
+      else if (index == 1) {
+        const { playlists } = response;
+        playlists.forEach((item: any) => {
+          if (playLists.length < 10) {
+            const {
+              name,
+              id,
+              coverImgUrl,
+              playCount,
+              description,
+              tags,
+              creator,
+            } = item;
+            playLists.push({
+              name,
+              id,
+              playCount,
+              description,
+              image: coverImgUrl,
+              tag: tags,
+              creator: {
+                avatarUrl: creator.avatarUrl,
+                nickname: creator.nickname,
+              },
+            });
           }
         });
       }
-    });
-  } catch (err: any) {
-    elMessage(elMessageType.ERROR, err.message);
-  }
-  // 获取歌曲
-  try {
-    const dResponse: any = await getDeafultSong(40);
-    const {
-      data: { list }
-    } = dResponse;
-    // 获取歌曲的基本信息
-    const ids: string[] = [];
-    for (let item of list) {
-      const { fee } = item.data;
-      if (songLists.length < 10) {
-        if (fee == '0' || fee == '8') {
-          getMusicInfos(ids, songLists, item.data);
+      //获取推荐歌曲
+      else if (index == 2) {
+        const {
+          data: { list },
+        } = response;
+        // 获取歌曲的基本信息
+        const ids: string[] = [];
+        for (let item of list) {
+          const { fee } = item.data;
+          if (songLists.length < 10) {
+            if (fee == '0' || fee == '8') {
+              getMusicInfos(ids, songLists, item.data);
+            }
+          } else {
+            break;
+          }
         }
-      } else {
-        break;
+        getMusicUrls(ids.join(','), songLists);
       }
-    }
-    getMusicUrls(ids.join(','), songLists);
-  } catch (err: any) {
-    elMessage(elMessageType.ERROR, err.message);
-  }
-  // 获取mv
-  try {
-    const response: any = await getMv(10, '内地', '全部', '最新');
-    const { data } = response;
-    data.forEach((item: any) => {
-      const { id, name, cover, playCount, artistName } = item;
-      mvLists.push({
-        id: id as string,
-        name: name as string,
-        image: cover as string,
-        playCount: playCount as string,
-        artist: artistName as string
-      });
+      //获取推荐视频
+      else {
+        const { data } = response;
+        data.forEach((item: any) => {
+          const { id, name, cover, playCount, artistName } = item;
+          mvLists.push({
+            id: id as string,
+            name: name as string,
+            image: cover as string,
+            playCount: playCount as string,
+            artist: artistName as string,
+          });
+        });
+      }
     });
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);

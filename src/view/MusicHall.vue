@@ -82,7 +82,7 @@ import {
   getTopPlaylist,
   getRecPlaylist,
   getRecTags,
-  getTopTags
+  getTopTags,
 } from '@/api';
 import { ArtistPlaylist } from '@components/datalist';
 import { Loading } from '@components/result';
@@ -146,7 +146,7 @@ const topCurIndex = ref<number>(0);
 // 是否禁用滚动
 const topDisabled = ref<boolean>(false);
 // 获取精品歌单分类学的数据
-const getTopTagPlaylist = async() => {
+const getTopTagPlaylist = async () => {
   try {
     // 请求数据
     const response: any = await getTopPlaylist(100, topTags[topCurIndex.value]);
@@ -160,10 +160,10 @@ const getTopTagPlaylist = async() => {
         playCount,
         creator: {
           nickname: '',
-          avatarUrl: ''
+          avatarUrl: '',
         },
         description: '',
-        tag: []
+        tag: [],
       });
     });
   } catch (err: any) {
@@ -230,7 +230,7 @@ const recCurIndex = ref<number>(0);
 // 是否禁用滚动
 const recDisabled = ref<boolean>(false);
 // 获取网友推荐歌单
-const getRecTagPlaylist = async() => {
+const getRecTagPlaylist = async () => {
   try {
     // 请求数据
     const response: any = await getRecPlaylist(100, recTags[recCurIndex.value]);
@@ -244,10 +244,10 @@ const getRecTagPlaylist = async() => {
         playCount,
         creator: {
           nickname: '',
-          avatarUrl: ''
+          avatarUrl: '',
         },
         description: '',
-        tag: []
+        tag: [],
       });
     });
   } catch (err: any) {
@@ -317,11 +317,11 @@ const loadStyleData = () => {
   }
 };
 // 获取曲风分类下的歌单数据
-const getStyleTagPlaylist = async() => {
+const getStyleTagPlaylist = async () => {
   try {
     const response = await getStylePlayList(styleTags[styleCurIndex.value].id);
     const {
-      data: { playlist }
+      data: { playlist },
     } = response;
     playlist.forEach((item: any) => {
       const { id, name, cover, playCount } = item;
@@ -334,8 +334,8 @@ const getStyleTagPlaylist = async() => {
         tag: [],
         creator: {
           nickname: '',
-          avatarUrl: ''
-        }
+          avatarUrl: '',
+        },
       });
     });
   } catch (err: any) {
@@ -362,51 +362,52 @@ const getActive = (active: string) => {
 };
 
 // 请求初始数据
-getRequset(async() => {
-  // 精品歌单分类
+getRequset(async () => {
   try {
-    const response: any = await getTopTags();
-    const { tags } = response;
-    // 初始化数据
-    topTags.push(...tags.map((item: any) => item.name));
-    topTags.forEach(() => {
-      topPlaylist.push([]);
-      curTopPlaylist.push([]);
-    });
-  } catch (err: any) {
-    elMessage(elMessageType.ERROR, err.message);
-  }
-
-  // 网友推荐分类
-  try {
-    const response: any = await getRecTags();
-    const { sub } = response;
-    recTags.push(...sub.map((item: any) => item.name));
-    recTags.forEach(() => {
-      recPlaylist.push([]);
-      curRecPlaylist.push([]);
-    });
-  } catch (err: any) {
-    elMessage(elMessageType.ERROR, err.message);
-  }
-
-  // 曲风分类
-  try {
-    const response: any = await getStyleList();
-    const { data } = response;
-    data.forEach((item: any) => {
-      const { tagId, tagName } = item;
-      styleTags.push({
-        id: tagId,
-        name: tagName
-      });
-      stylePlaylist.push([]);
+    const responses: any[] = await Promise.all([
+      getTopTags(),
+      getRecTags(),
+      getStyleList(),
+    ]);
+    responses.forEach((response, index) => {
+      // 精品歌单分类
+      if (index == 0) {
+        const { tags } = response;
+        // 初始化数据
+        topTags.push(...tags.map((item: any) => item.name));
+        topTags.forEach(() => {
+          topPlaylist.push([]);
+          curTopPlaylist.push([]);
+        });
+      }
+      // 网友推荐分类
+      else if (index == 1) {
+        const { sub } = response;
+        recTags.push(...sub.map((item: any) => item.name));
+        recTags.forEach(() => {
+          recPlaylist.push([]);
+          curRecPlaylist.push([]);
+        });
+      }
+      // 曲风分类
+      else if (index == 2) {
+        const { data } = response;
+        data.forEach((item: any) => {
+          const { tagId, tagName } = item;
+          styleTags.push({
+            id: tagId,
+            name: tagName,
+          });
+          stylePlaylist.push([]);
+        });
+      }
     });
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
   // 请求初始数据
   getTopTagPlaylist();
+  first.value = false;
 }, first);
 </script>
 

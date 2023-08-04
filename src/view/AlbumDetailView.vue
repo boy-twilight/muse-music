@@ -89,7 +89,7 @@ import {
   getTheme,
   getRequset,
   elMessage,
-  share
+  share,
 } from '@/utils';
 import { elMessageType } from '@/model/enum';
 import useUserStore from '@/store/user';
@@ -117,7 +117,7 @@ const albumInfo = reactive<Album>({
   name: '',
   cover: '',
   artist: '',
-  publishTime: ''
+  publishTime: '',
 });
 // 歌手其它专辑
 const otherAlbum = reactive<Album[]>([]);
@@ -152,54 +152,59 @@ const shareAlbum = () => {
   );
 };
 // 请求页面数据
-getRequset(async() => {
-  // 获取该艺术家的其它专辑
+getRequset(async () => {
   try {
-    const response: any = await getArtistAlbum(artistId);
-    const { hotAlbums } = response;
-    for (let item of hotAlbums) {
-      const { id: albumId } = item;
-      if (albumId != id && otherAlbum.length <= 5) {
-        const { picUrl, name, publishTime } = item;
-        otherAlbum.push({
-          name,
-          id: albumId,
-          cover: picUrl,
-          publishTime: formatTime(publishTime),
-          artistId: artistId + ''
-        });
-      } else if (otherAlbum.length > 5) {
-        break;
+    const responses: any[] = await Promise.all([
+      getArtistAlbum(artistId),
+      getAlbumDetail(id),
+    ]);
+    responses.forEach((response, index) => {
+      // 获取该艺术家的其它专辑
+      if (index == 0) {
+        const { hotAlbums } = response;
+        for (let item of hotAlbums) {
+          const { id: albumId } = item;
+          if (albumId != id && otherAlbum.length <= 5) {
+            const { picUrl, name, publishTime } = item;
+            otherAlbum.push({
+              name,
+              id: albumId,
+              cover: picUrl,
+              publishTime: formatTime(publishTime),
+              artistId: artistId + '',
+            });
+          } else if (otherAlbum.length > 5) {
+            break;
+          }
+        }
       }
-    }
-  } catch (err: any) {
-    elMessage(elMessageType.ERROR, err.message);
-  }
-  // 获取专辑详情
-  try {
-    const response: any = await getAlbumDetail(id);
-    const {
-      album: { picUrl, artist, publishTime, name, company, description },
-      songs
-    } = response;
-    albumInfo.name = name;
-    albumInfo.cover = picUrl;
-    albumInfo.publishTime = formatTime(publishTime);
-    albumInfo.artist = artist.name;
-    albumInfo.company = company;
-    albumInfo.description = description;
-    // 初始化喜欢状态
-    user.initLoveStatus(albumInfo, user.loveAlbumId);
-    const ids: string[] = [];
-    songs.forEach((item: any) => {
-      getMusicInfos(ids, albumSongs, item);
+      // 获取专辑详情
+      else if (index == 1) {
+        const {
+          album: { picUrl, artist, publishTime, name, company, description },
+          songs,
+        } = response;
+        albumInfo.name = name;
+        albumInfo.cover = picUrl;
+        albumInfo.publishTime = formatTime(publishTime);
+        albumInfo.artist = artist.name;
+        albumInfo.company = company;
+        albumInfo.description = description;
+        // 初始化喜欢状态
+        user.initLoveStatus(albumInfo, user.loveAlbumId);
+        const ids: string[] = [];
+        songs.forEach((item: any) => {
+          getMusicInfos(ids, albumSongs, item);
+        });
+        // 初始化歌曲喜欢状态
+        user.initLoveMusic(albumSongs);
+        getMusicUrls(ids.join(','), albumSongs);
+      }
     });
-    // 初始化歌曲喜欢状态
-    user.initLoveMusic(albumSongs);
-    getMusicUrls(ids.join(','), albumSongs);
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
+
   // 关闭动画
   first.value = false;
 }, first);

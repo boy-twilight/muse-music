@@ -117,7 +117,7 @@ import {
   getArtistDesc,
   getArtistAlbum,
   getArtistSongs,
-  getMusicDetail
+  getMusicDetail,
 } from '@/api';
 import { Artist, Song, MV, ArtistDesc, Album } from '@/model';
 import { elMessageType } from '@/model/enum';
@@ -128,7 +128,7 @@ import {
   formatTime,
   getRequset,
   elMessage,
-  share
+  share,
 } from '@/utils';
 import useUserStore from '@/store/user';
 import { PlayButton, MoreButton, CommonButton } from '@components/button';
@@ -162,7 +162,7 @@ const singer = reactive<Artist>({
   score,
   id: id,
   avatar: '',
-  alias: []
+  alias: [],
 });
 // 歌手基本简介
 const introduce = reactive<ArtistDesc[]>([]);
@@ -221,7 +221,7 @@ const getActive = (active: string) => {
   // 点击加载数据
   if (active == 'album' && artistAlbum.length == 0) {
     // 获取歌手专辑
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await getArtistAlbum(id);
         const { hotAlbums } = response;
@@ -232,20 +232,18 @@ const getActive = (active: string) => {
             id: item.id,
             cover: picUrl,
             publishTime: formatTime(publishTime),
-            artistId: id + ''
+            artistId: id + '',
           });
         });
       } catch (err: any) {
         elMessage(elMessageType.ERROR, err.message);
       }
-      setTimeout(() => {
-        needNoSearch[0] = artistAlbum.length == 0;
-        isLoading.value = false;
-      }, 500);
+      needNoSearch[0] = artistAlbum.length == 0;
+      isLoading.value = false;
     }, isLoading);
   } else if (active == 'mv' && artistMv.length == 0) {
     // 获取歌手的Mv
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await getArtistMv(id);
         const { mvs } = response;
@@ -256,74 +254,73 @@ const getActive = (active: string) => {
             name,
             artist: artistName,
             image: imgurl16v9,
-            playCount
+            playCount,
           });
         });
       } catch (err: any) {
         elMessage(elMessageType.ERROR, err.message);
       }
-
-      setTimeout(() => {
-        needNoSearch[1] = artistMv.length == 0;
-        isLoading.value = false;
-      }, 500);
+      needNoSearch[1] = artistMv.length == 0;
+      isLoading.value = false;
     }, isLoading);
   } else if (active == 'detail' && introduce.length == 0) {
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await getArtistDesc(id);
         const { introduction } = response;
         introduction.forEach((item: any) => {
           introduce.push({
             title: item.ti,
-            content: item.txt
+            content: item.txt,
           });
         });
       } catch (err: any) {
         elMessage(elMessageType.ERROR, err.message);
       }
-      setTimeout(() => {
-        isLoading.value = false;
-      }, 500);
+      isLoading.value = false;
     }, isLoading);
   }
 };
 // 获取初始数据
-getRequset(async() => {
+getRequset(async () => {
   try {
-    const response: any = await getArtistInfo(id);
-    const { artist } = response;
-    const { name, alias, picUrl, briefDesc } = artist;
-    singer.name = name;
-    singer.alias = alias;
-    singer.avatar = picUrl;
-    singer.briefDesc = briefDesc;
-    // 初始化Singer的喜欢状态
-    user.initLoveStatus(singer, user.loveSingerId);
-  } catch (err: any) {
-    elMessage(elMessageType.ERROR, err.message);
-  }
-
-  // 获取歌手全部歌曲
-  try {
-    const response: any = await getArtistSongs(id, 1000);
-    const { songs } = response;
-    const ids = songs.map((item: any) => item.id).join(',');
-    // 重新获取图片
-    const dResponse: any = await getMusicDetail(ids);
-    const { songs: muiscs } = dResponse;
-    muiscs.forEach((item: any) => {
-      getMusicInfos([] as string[], hotSongList, item);
+    const responses: any[] = await Promise.all([
+      getArtistInfo(id),
+      getArtistSongs(id, 1000),
+    ]);
+    responses.forEach(async (response, index) => {
+      //获取歌手的具体信息
+      if (index == 0) {
+        const { artist } = response;
+        const { name, alias, picUrl, briefDesc } = artist;
+        singer.name = name;
+        singer.alias = alias;
+        singer.avatar = picUrl;
+        singer.briefDesc = briefDesc;
+        // 初始化Singer的喜欢状态
+        user.initLoveStatus(singer, user.loveSingerId);
+      }
+      // 获取歌手全部歌曲
+      else if (index == 1) {
+        const { songs } = response;
+        const ids = songs.map((item: any) => item.id).join(',');
+        // 重新获取图片
+        const dResponse: any = await getMusicDetail(ids);
+        const { songs: muiscs } = dResponse;
+        muiscs.forEach((item: any) => {
+          getMusicInfos([] as string[], hotSongList, item);
+        });
+        // 初始化歌曲喜欢状态
+        user.initLoveMusic(hotSongList);
+        // 批量获取音乐链接
+        getMusicUrls(ids, hotSongList);
+        // 关闭动画
+        first.value = false;
+      }
     });
-    // 初始化歌曲喜欢状态
-    user.initLoveMusic(hotSongList);
-    // 批量获取音乐链接
-    getMusicUrls(ids, hotSongList);
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
-  // 关闭动画
-  first.value = false;
 }, first);
 </script>
 

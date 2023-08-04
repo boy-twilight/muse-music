@@ -9,8 +9,9 @@
 
 1. 此版本更新了电台页
 2. 更新了搜索歌词和电台
-3. 预览:
-4. ![预览](https://chart-twilight.gitee.io/image/%E7%94%B5%E5%8F%B0%E9%A1%B5.png)
+3. 更新了用户导入导出数据，以后再清除浏览器缓存之前，导出备份数据，下一次导入即可恢复数据
+4. 预览:
+5. ![预览](https://chart-twilight.gitee.io/image/%E7%94%B5%E5%8F%B0%E9%A1%B5.png)
 
 ---
 
