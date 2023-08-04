@@ -4,8 +4,9 @@ import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import { join } from 'path';
-import eslintPlugin from 'vite-plugin-eslint';
 import { visualizer } from 'rollup-plugin-visualizer';
+import autoprefixer from 'autoprefixer';
+import eslintPlugin from 'vite-plugin-eslint';
 import { Plugin as ImportToCDN } from 'vite-plugin-cdn-import';
 
 export default defineConfig({
@@ -17,57 +18,57 @@ export default defineConfig({
     Components({
       resolvers: [ElementPlusResolver()],
     }),
-    // eslintPlugin({
-    //   include: ['src/**/*.ts', 'src/**/*.vue', 'src/**/**/*.vue'],
-    // }),
     visualizer({
       open: true,
     }),
-    ImportToCDN({
-      modules: [
-        {
-          name: 'vue',
-          var: 'Vue',
-          path: 'https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.prod.js',
-        },
-        {
-          name: 'vue-router',
-          var: 'VueRouter',
-          path: 'https://unpkg.com/vue-router@4.1.6/dist/vue-router.global.prod.js',
-        },
-        {
-          name: 'element-plus',
-          var: 'ElementPlus',
-          path: `https://unpkg.com/element-plus@2.3.3/dist/index.full.js`,
-          css: 'https://unpkg.com/element-plus/dist/index.css',
-        },
-        {
-          name: 'vue-demi',
-          var: 'VueDemi',
-          path: 'https://cdn.bootcdn.net/ajax/libs/vue-demi/0.13.1/index.iife.js',
-        },
-        {
-          name: 'pinia',
-          var: 'Pinia',
-          path: 'https://cdn.bootcdn.net/ajax/libs/pinia/2.0.34/pinia.iife.prod.min.js',
-        },
-        {
-          name: '@smallwei/avue',
-          var: 'AVUE',
-          path: 'https://cdn.jsdelivr.net/npm/@smallwei/avue@3.0.17',
-        },
-        {
-          name: 'vue-i18n',
-          var: 'VueI18n',
-          path: 'https://cdn.bootcdn.net/ajax/libs/vue-i18n/9.1.10/vue-i18n.global.prod.min.js',
-        },
-        {
-          name: 'axios',
-          var: 'axios',
-          path: 'https://unpkg.com/axios/dist/axios.min.js',
-        },
-      ],
-    }),
+    // eslintPlugin({
+    //   include: ['src/**/*.ts', 'src/**/*.vue', 'src/**/**/*.vue'],
+    // }),
+    // ImportToCDN({
+    //   modules: [
+    //     {
+    //       name: 'vue',
+    //       var: 'Vue',
+    //       path: 'https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.prod.js',
+    //     },
+    //     {
+    //       name: 'vue-router',
+    //       var: 'VueRouter',
+    //       path: 'https://unpkg.com/vue-router@4.1.6/dist/vue-router.global.prod.js',
+    //     },
+    //     {
+    //       name: 'vue-demi',
+    //       var: 'VueDemi',
+    //       path: 'https://cdn.bootcdn.net/ajax/libs/vue-demi/0.13.1/index.iife.js',
+    //     },
+    //     {
+    //       name: 'pinia',
+    //       var: 'Pinia',
+    //       path: 'https://cdn.bootcdn.net/ajax/libs/pinia/2.0.34/pinia.iife.prod.min.js',
+    //     },
+    //     {
+    //       name: '@smallwei/avue',
+    //       var: 'AVUE',
+    //       path: 'https://cdn.jsdelivr.net/npm/@smallwei/avue@3.0.17',
+    //     },
+    //     {
+    //       name: 'vue-i18n',
+    //       var: 'VueI18n',
+    //       path: 'https://cdn.bootcdn.net/ajax/libs/vue-i18n/9.1.10/vue-i18n.global.prod.min.js',
+    //     },
+    //     {
+    //       name: 'element-plus',
+    //       var: 'ElementPlus',
+    //       path: `https://unpkg.com/element-plus@2.3.3/dist/index.full.js`,
+    //       css: 'https://unpkg.com/element-plus/dist/index.css',
+    //     },
+    //     {
+    //       name: 'axios',
+    //       var: 'axios',
+    //       path: 'https://unpkg.com/axios/dist/axios.min.js',
+    //     },
+    //   ],
+    // }),
   ],
   base: './',
   resolve: {
@@ -80,7 +81,6 @@ export default defineConfig({
   server: {
     port: 3030,
   },
-
   build: {
     chunkSizeWarningLimit: 1000,
     sourcemap: false,
@@ -113,6 +113,25 @@ export default defineConfig({
           return `js/${fileName}/[name].[hash].js`;
         },
       },
+    },
+  },
+  css: {
+    devSourcemap: false,
+    postcss: {
+      plugins: [
+        autoprefixer({
+          // 自动添加前缀
+          overrideBrowserslist: [
+            'Android 4.1',
+            'iOS 7.1',
+            'Chrome > 31',
+            'ff > 31',
+            'ie >= 8',
+            'last 2 versions',
+          ],
+          grid: true,
+        }),
+      ],
     },
   },
 });
