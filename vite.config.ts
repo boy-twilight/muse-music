@@ -23,36 +23,51 @@ export default defineConfig({
     visualizer({
       open: true,
     }),
-    // ImportToCDN({
-    //   modules: [
-    //     {
-    //       name: 'vue',
-    //       var: 'vue',
-    //       path: 'https://cdn.bootcdn.net/ajax/libs/vue/3.2.47/vue.esm-browser.prod.min.js',
-    //     },
-    //     {
-    //       name: 'vue-router',
-    //       var: 'vue-router',
-    //       path: 'https://cdn.bootcdn.net/ajax/libs/vue-router/4.1.6/vue-router.esm-browser.min.js',
-    //     },
-    //     // {
-    //     //   name: 'pinia',
-    //     //   var: 'pinia',
-    //     //   path: 'https://cdn.bootcdn.net/ajax/libs/pinia/2.0.34/pinia.iife.prod.min.js',
-    //     // },
-    //     {
-    //       name: 'element-plus',
-    //       var: 'ElementPlus',
-    //       path: 'https://cdn.bootcdn.net/ajax/libs/element-plus/2.3.3/index.full.min.js',
-    //       css: 'https://cdn.bootcdn.net/ajax/libs/element-plus/2.3.3/index.min.css',
-    //     },
-    //     {
-    //       name: 'axios',
-    //       var: 'axios',
-    //       path: 'https://cdn.bootcdn.net/ajax/libs/axios/1.3.5/axios.min.js',
-    //     },
-    //   ],
-    // }),
+    ImportToCDN({
+      modules: [
+        {
+          name: 'vue',
+          var: 'Vue',
+          path: 'https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.prod.js',
+        },
+        {
+          name: 'vue-router',
+          var: 'VueRouter',
+          path: 'https://unpkg.com/vue-router@4.1.6/dist/vue-router.global.prod.js',
+        },
+        {
+          name: 'element-plus',
+          var: 'ElementPlus',
+          path: `https://unpkg.com/element-plus@2.3.3/dist/index.full.js`,
+          css: 'https://unpkg.com/element-plus/dist/index.css',
+        },
+        {
+          name: 'vue-demi',
+          var: 'VueDemi',
+          path: 'https://cdn.bootcdn.net/ajax/libs/vue-demi/0.13.1/index.iife.js',
+        },
+        {
+          name: 'pinia',
+          var: 'Pinia',
+          path: 'https://cdn.bootcdn.net/ajax/libs/pinia/2.0.34/pinia.iife.prod.min.js',
+        },
+        {
+          name: '@smallwei/avue',
+          var: 'AVUE',
+          path: 'https://cdn.jsdelivr.net/npm/@smallwei/avue@3.0.17',
+        },
+        {
+          name: 'vue-i18n',
+          var: 'VueI18n',
+          path: 'https://cdn.bootcdn.net/ajax/libs/vue-i18n/9.1.10/vue-i18n.global.prod.min.js',
+        },
+        {
+          name: 'axios',
+          var: 'axios',
+          path: 'https://unpkg.com/axios/dist/axios.min.js',
+        },
+      ],
+    }),
   ],
   base: './',
   resolve: {
@@ -71,6 +86,7 @@ export default defineConfig({
     sourcemap: false,
     minify: 'terser',
     assetsDir: 'static',
+    assetsInlineLimit: 1024 * 5,
     terserOptions: {
       compress: {
         drop_console: true,
