@@ -150,8 +150,8 @@ export const getArtists = (
 ) =>
   initial
     ? request.get(
-      `/artist/list?type=${type}&area=${area}&initial=${initial}&limit=${limit}`
-    )
+        `/artist/list?type=${type}&area=${area}&initial=${initial}&limit=${limit}`
+      )
     : request.get(`/artist/list?type=${type}&area=${area}&limit=${limit}`);
 
 // 获取网友推荐歌单的分类
@@ -171,6 +171,7 @@ export const getRecPlaylist = (limit: number, tag?: string) =>
   tag
     ? request.get(`/top/playlist?limit=${limit}&cat=${tag}`)
     : request.get(`/top/playlist?limit=${limit}`);
+
 // 获取歌单评论
 export const getPlaylistComment = (id: string, limit: number) =>
   request.get(`comment/playlist?id=${id}&limit=${limit}`);
@@ -216,3 +217,7 @@ export const getRadioType = () => request.get('/dj/catelist');
 // 获取分类下的电台
 export const getRadios = (type: string) =>
   request.get(`/dj/recommend/type?type=${type}`);
+
+// 获取搜索建议
+export const getSuggest = (keyword: string) =>
+  request.get(`/search/suggest?keywords=${keyword}`);

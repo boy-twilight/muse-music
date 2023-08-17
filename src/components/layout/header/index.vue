@@ -48,7 +48,9 @@
             'search-tip': true,
             'popover-skin': config.bgMode == 'skin',
           }">
-          <div class="search-tip-content">
+          <div
+            class="search-tip-content"
+            v-show="!isSearching">
             <div class="content-left">
               <h4 class="title">热门搜索</h4>
               <el-divider class="divider-h" />
@@ -93,6 +95,48 @@
               </ul>
             </div>
           </div>
+          <div
+            class="search-suggest"
+            v-show="isSearching">
+            <span class="title">在线音乐</span>
+            <el-divider />
+            <div
+              v-for="[key, value] of suggestMap"
+              :key="key"
+              v-show="value.length > 0"
+              class="suggest-item">
+              <div
+                class="suggest-item-left"
+                :class="{
+                  'suggest-with-image': key != '单曲',
+                }">
+                <span
+                  :class="{
+                    'is-song': key == '单曲',
+                  }">
+                  {{ key }}</span
+                >
+              </div>
+              <div class="suggest-item-right">
+                <div
+                  v-for="(item, index) in value"
+                  :key="index"
+                  class="item"
+                  @click="goSuggest(item)">
+                  <el-image
+                    v-if="key != '单曲'"
+                    :src="item.pic"
+                    fix="cover"
+                    :class="{
+                      'is-singer': item.type == 'artist',
+                    }" />
+                  <span>
+                    {{ item.name }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
           <template #reference>
             <div>
               <input
@@ -100,6 +144,7 @@
                 @keyup.enter="goSearch"
                 @focusin="showHistory = true"
                 @focusout="showHistory = false"
+                @input="getSearchSuggest"
                 type="text"
                 class="search"
                 placeholder="请输入你想要搜索的歌曲，歌手" />
@@ -196,7 +241,7 @@ import {
   computed,
   onMounted,
   nextTick,
-  Ref
+  Ref,
 } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
@@ -206,10 +251,17 @@ import {
   getStorage,
   compressImage,
   getTheme,
-  downloadFile
+  downloadFile,
+  throttle,
 } from '@/utils';
 import { elMessageType, storageType } from '@/model/enum';
-import { createKey, createQrCode, checkStatus, getHotSearch } from '@/api';
+import {
+  createKey,
+  createQrCode,
+  checkStatus,
+  getHotSearch,
+  getSuggest,
+} from '@/api';
 import {
   DropDownItem,
   HotSearch,
@@ -217,7 +269,8 @@ import {
   Playlist,
   Song,
   Artist,
-  Album
+  Album,
+  SearchSuggest,
 } from '@/model';
 import useHeaderStore from '@/store/header';
 import useConfigStore from '@/store/config';
@@ -255,6 +308,13 @@ const footer = useFooterStore();
 const { songList, songListId } = storeToRefs(footer);
 // 用户搜素的内容
 const search = ref<string>('');
+//判断用户是否正在搜索
+const isSearching = computed(() => {
+  const isEmpty = Array.from(suggestMap.values()).every(
+    (item) => item.length > 0
+  );
+  return search.value.length > 0 && isEmpty;
+});
 // 热门搜索列表
 const hotSearch = reactive<HotSearch[]>(
   getStorage(storageType.SESSION, 'hotSearch') || []
@@ -263,6 +323,16 @@ const hotSearch = reactive<HotSearch[]>(
 const userSearch = reactive<string[]>(
   getStorage(storageType.LOCAL, 'userSearch') || []
 );
+//搜索建议
+const suggestMap = reactive<Map<string, SearchSuggest[]>>(
+  new Map([
+    ['单曲', []],
+    ['歌手', []],
+    ['专辑', []],
+    ['歌单', []],
+  ])
+);
+
 // 是否展示搜索推荐列表
 const showHistory = ref<boolean>(false);
 // 下拉列表
@@ -272,50 +342,50 @@ const dropDownItems = reactive<DropDownItem[]>([
     icon: '\ue61b',
     command: 'logout',
     style: 'font-size:14px;margin:0 9px 0 2px;',
-    spanClass: 'iconfont_1'
+    spanClass: 'iconfont_1',
   },
   {
     name: '',
     icon: '',
     command: 'fullScreen',
     style: 'font-size:18px;margin-right:7px;',
-    spanClass: 'iconfont_1'
+    spanClass: 'iconfont_1',
   },
   {
     name: '纯色模式',
     icon: '\ue822',
     command: 'color',
     style: 'font-size:18px;margin-right:7px;',
-    spanClass: 'iconfont_1'
+    spanClass: 'iconfont_1',
   },
   {
     name: '皮肤模式',
     icon: '\ue743',
     command: 'skin',
     style: 'font-size:15px;margin:0 7px 0 4px;',
-    spanClass: 'iconfont_1'
+    spanClass: 'iconfont_1',
   },
   {
     name: '主题设置',
     icon: '\ueb6f',
     command: 'theme',
     style: 'font-size:18px;margin:0 7px 0 1.8px;',
-    spanClass: 'iconfont_1'
+    spanClass: 'iconfont_1',
   },
   {
     name: '导入数据',
     icon: '\ue610',
     command: 'import',
     style: 'font-size: 15px;margin: 0.5px 8.5px 0 2.8px;display: inline-block;',
-    spanClass: 'iconfont_2'
+    spanClass: 'iconfont_2',
   },
   {
     name: '导出数据',
     icon: '\ue635',
     command: 'export',
     style: 'font-size: 15px;margin: 0.5px 8.5px 0 2.8px;display: inline-block;',
-    spanClass: 'iconfont_2'
-  }
+    spanClass: 'iconfont_2',
+  },
 ]);
 // 存放二维码照片的容器
 const qrcode = ref<HTMLImageElement>();
@@ -349,8 +419,143 @@ const {
   musicDownloadId,
   mvDownloadId,
   songRecordId,
-  videoRecordId
+  videoRecordId,
 } = storeToRefs(userStore);
+
+//获取搜索建议
+const getSearchSuggest = throttle(async () => {
+  if (!search.value) return;
+  try {
+    const response: any = await getSuggest(search.value);
+    const {
+      result: { albums, artists, songs, playlists },
+    } = response;
+    if (albums) {
+      const target = suggestMap.get('专辑') as SearchSuggest[];
+      if (target.length > albums.length) target.splice(albums.length);
+      (albums as any[]).forEach((item, index) => {
+        const { id, name, artist } = item;
+        if (index < target.length) {
+          target[index] = {
+            type: 'album',
+            id,
+            pic: artist.picUrl,
+            name: name + '-' + artist.name,
+            artistId: artist.id,
+          };
+        } else {
+          target?.push({
+            type: 'album',
+            id,
+            pic: artist.picUrl,
+            name: name + '-' + artist.name,
+            artistId: artist.id,
+          });
+        }
+      });
+    }
+    if (artists) {
+      const target = suggestMap.get('歌手') as SearchSuggest[];
+      if (target.length > artists.length) target.splice(artists.length);
+      (artists as any[]).forEach((item, index) => {
+        const { id, name, picUrl } = item;
+        if (index < target.length) {
+          target[index] = {
+            type: 'artist',
+            id,
+            name,
+            pic: picUrl,
+          };
+        } else {
+          target?.push({
+            type: 'artist',
+            id,
+            name,
+            pic: picUrl,
+          });
+        }
+      });
+    }
+    if (songs) {
+      const target = suggestMap.get('单曲') as SearchSuggest[];
+      if (target.length > songs.length) target.splice(songs.length);
+      (songs as any[]).forEach((item, index) => {
+        const { id, name, artists } = item;
+        if (index < target.length) {
+          target[index] = {
+            type: 'song',
+            id,
+            name: name + '-' + artists[0].name,
+            pic: artists[0].img1v1Url,
+          };
+        } else {
+          target.push({
+            type: 'song',
+            id,
+            name: name + '-' + artists[0].name,
+            pic: artists[0].img1v1Url,
+          });
+        }
+      });
+    }
+    if (playlists) {
+      const target = suggestMap.get('歌单') as SearchSuggest[];
+      if (target.length > playlists.length) target.splice(playlists.length);
+      (playlists as any[]).forEach((item, index) => {
+        const { id, name, coverImgUrl } = item;
+        if (index < target.length) {
+          target[index] = {
+            type: 'playlist',
+            id,
+            name,
+            pic: coverImgUrl,
+          };
+        } else {
+          target.push({
+            type: 'playlist',
+            id,
+            name,
+            pic: coverImgUrl,
+          });
+        }
+      });
+    }
+  } catch (err: any) {
+    elMessage(elMessageType.ERROR, err.message);
+  }
+}, 300);
+
+const goSuggest = (item: SearchSuggest) => {
+  if (item.type != 'song') {
+    hideScroll();
+    if (item.type == 'artist') {
+      router.push({
+        name: item.type,
+        query: {
+          type: 'playlist',
+          id: item.id,
+        },
+      });
+    } else if (item.type == 'album') {
+      router.push({
+        name: item.type,
+        query: {
+          id: item.id,
+          artistId: item.artistId,
+        },
+      });
+    } else {
+      router.push({
+        name: item.type,
+        query: {
+          id: item.id,
+          score: Math.floor(+item.id / 100),
+        },
+      });
+    }
+  } else {
+  }
+};
 
 // 路由返回上一级
 const back = () => {
@@ -371,7 +576,7 @@ const getSearchData = () => {
         data.forEach((item: any) => {
           hotSearch.push({
             searchWord: item.searchWord,
-            score: item.score
+            score: item.score,
           });
         });
       }
@@ -383,7 +588,7 @@ const createKeyCode = (): void => {
   createKey()
     .then((response: any) => {
       const {
-        data: { unikey }
+        data: { unikey },
       } = response;
       creatQrImage(unikey);
       CheckLoginStatus(unikey);
@@ -397,7 +602,7 @@ const creatQrImage = (key: string): void => {
   createQrCode(key)
     .then((response: any) => {
       const {
-        data: { qrimg }
+        data: { qrimg },
       } = response;
       qrcode.value!.src = qrimg;
     })
@@ -407,7 +612,7 @@ const creatQrImage = (key: string): void => {
 };
 // 监测登陆状态
 const CheckLoginStatus = (key: string): void => {
-  timeid = setInterval(async() => {
+  timeid = setInterval(async () => {
     const response: any = await checkStatus(key).catch((err: any) => {
       elMessage(elMessageType.ERROR, err.message);
     });
@@ -455,7 +660,7 @@ const changeSkin = () => {
   input.style.display = 'none';
   document.body.appendChild(input);
   input.click();
-  input.onchange = async() => {
+  input.onchange = async () => {
     const files = input.files;
     if (files && files.length > 0) {
       const file = files[0];
@@ -491,7 +696,7 @@ const exportConfig = () => {
     bgMode.value
   }\nskin-p-(*)-${skin.value}`;
   const blob = new Blob([userInfo], {
-    type: 'text/plain; charset=utf-8'
+    type: 'text/plain; charset=utf-8',
   });
   downloadFile(blob, 'config.txt');
 };
@@ -501,7 +706,7 @@ const parseConfig = () => {
   upload.style.display = 'none';
   upload.type = 'file';
   upload.accept = '.txt';
-  upload.onchange = async(event: any) => {
+  upload.onchange = async (event: any) => {
     const files = event.target.files;
     if (files.length > 0) {
       const file = files[0];
@@ -585,7 +790,7 @@ const parseConfig = () => {
   document.body.removeChild(upload);
 };
 // 下拉框选择处理
-const handleClick = async(command: string) => {
+const handleClick = async (command: string) => {
   if (command == 'logout' && cookie.value) {
     header.logout();
   } else if (command == 'fullScreen') {
@@ -622,8 +827,8 @@ const goSearch = () => {
   router.push({
     name: 'search',
     query: {
-      keyWord: search.value
-    }
+      keyWord: search.value,
+    },
   });
 };
 // 点击推荐列表搜索
@@ -636,8 +841,8 @@ const goSearchByRe = (keyWord: string) => {
   router.push({
     name: 'search',
     query: {
-      keyWord
-    }
+      keyWord,
+    },
   });
 };
 // 检测是否展示登陆二维码
@@ -647,6 +852,7 @@ watch(showLogin, (newVal) => {
     createKeyCode();
   }
 });
+
 // 检测屏幕变化改变样式
 onMounted(() => {
   // 屏幕变化时改变值
@@ -725,7 +931,7 @@ getSearchData();
         align-items: center;
         margin-left: 5px;
         &:hover {
-          background-color: rgba(225, 225, 225, 0.6);
+          background-color: rgba(225, 225, 225, 0.2);
         }
         .score {
           font-size: 13px;
@@ -739,6 +945,65 @@ getSearchData();
       overflow: auto;
       &::-webkit-scrollbar {
         display: none;
+      }
+    }
+  }
+}
+
+.search-suggest {
+  max-height: 500px;
+  overflow: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  display: flex;
+  flex-direction: column;
+  padding: 15px 10px;
+  .title {
+    color: @font-color;
+    font-size: 14px;
+  }
+  .el-divider {
+    margin: 10px 0;
+  }
+  .is-singer {
+    border-radius: 50% !important;
+  }
+
+  .suggest-item {
+    display: flex;
+    margin: 2px 10px;
+    cursor: pointer;
+
+    span {
+      color: @font-color;
+      font-size: 13px;
+    }
+    .suggest-item-left {
+      .is-song {
+        padding-top: 10px !important;
+      }
+      span {
+        padding-top: 15px;
+        display: inline-block;
+      }
+    }
+    .suggest-item-right {
+      width: 390px;
+      .item {
+        display: flex;
+        align-items: center;
+        border-radius: 5px;
+        padding: 7px 0 7px 15px;
+        &:hover {
+          background-color: rgba(225, 225, 225, 0.2);
+        }
+        .el-image {
+          margin-right: 8px;
+          height: 35px;
+          width: 35px;
+          border-radius: 5px;
+        }
       }
     }
   }
@@ -878,18 +1143,5 @@ getSearchData();
 <style lang="less">
 @background: v-bind(bg);
 @shadow: v-bind(boxShadow);
-.dialog-login {
-  background-color: @background !important;
-  box-shadow: @shadow !important;
-  border-radius: 15px !important;
-  backdrop-filter: blur(10px) brightness(0.8) saturate(120%) contrast(1.2);
-}
-
-.setting-drop {
-  .el-dropdown-menu {
-    .el-dropdown-menu__item {
-      padding: 10px 35px 10px 25px !important;
-    }
-  }
-}
+@import './index.less';
 </style>

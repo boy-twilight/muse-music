@@ -13,9 +13,7 @@ request.interceptors.request.use(
   (config) => {
     // 如果存在token，请求头携带token
     const token = getStorage(storageType.SESSION, 'token');
-    if (token) {
-      config.headers.Authorization = `${token}`;
-    }
+    if (token) config.headers.Authorization = `${token}`;
     return config;
   },
   (error) => {
@@ -26,10 +24,14 @@ request.interceptors.request.use(
 // 添加响应拦截器
 request.interceptors.response.use(
   (response) => {
-    return response.data;
+    if (response.status != 200 && response.status != 201) {
+      return Promise.reject(response);
+    } else {
+      return response.data;
+    }
   },
   (error) => {
-    elMessage(elMessageType.ERROR, error.message);
+    return Promise.reject(error);
   }
 );
 

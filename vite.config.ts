@@ -3,11 +3,10 @@ import vue from '@vitejs/plugin-vue';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
-import { join } from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import autoprefixer from 'autoprefixer';
 import eslintPlugin from 'vite-plugin-eslint';
-import { Plugin as ImportToCDN } from 'vite-plugin-cdn-import';
+import { join } from 'path';
 
 export default defineConfig({
   plugins: [
@@ -21,10 +20,9 @@ export default defineConfig({
     visualizer({
       open: true,
     }),
-    eslintPlugin({
-      // include: ['src/**/*.ts', 'src/**/*.vue', 'src/**/**/*.vue'],
-      include: [],
-    }),
+    // eslintPlugin({
+    //   // include: ['src/**/*.ts', 'src/**/*.vue', 'src/**/**/*.vue'],
+    // }),
   ],
   base: './',
   resolve: {
@@ -36,6 +34,8 @@ export default defineConfig({
   },
   server: {
     port: 3030,
+    open: true,
+    strictPort: true,
   },
   build: {
     chunkSizeWarningLimit: 1000,

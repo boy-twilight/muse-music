@@ -117,7 +117,7 @@ import {
   getTheme,
   elMessage,
   getMusicUrls,
-  playVideo
+  playVideo,
 } from '@/utils';
 import { Song } from '@/model';
 import userFooterStore from '@/store/footer';
@@ -167,7 +167,7 @@ const props = withDefaults(
     sort: undefined,
     isCancelSort: false,
     showHeader: true,
-    pageSize: 0
+    pageSize: 0,
   }
 );
 
@@ -258,7 +258,7 @@ const leave = (row: Song) => {
 
 // 播放相关
 // 播放单曲
-const play = async(song: Song) => {
+const play = async (song: Song) => {
   if (song.available == '0' || song.available == '8') {
     const index = songListId.value.get(song.id);
     if (index == undefined) {
@@ -326,136 +326,5 @@ onBeforeRouteLeave(() => {
 @background: v-bind(bg);
 @font-color-gray: v-bind(fontGray);
 @theme-color: v-bind(themeColor);
-
-.is-love {
-  color: #ff6a6a !important;
-}
-
-.songs-table {
-  background-color: @background;
-  th,
-  tr,
-  td,
-  .el-table__expanded-cell {
-    background-color: @background;
-  }
-  .iconfont {
-    font-size: 16px;
-    margin-right: 6px;
-    cursor: pointer;
-    transition: 0.4s;
-    color: @font-color-gray;
-    &:hover {
-      color: @theme-color;
-    }
-  }
-  .playmv {
-    font-size: 17.5px;
-    margin: 0 0 0 5px;
-  }
-
-  .vip {
-    color: @theme-color;
-    font-size: 15px;
-    margin: 0 0 0 5px;
-  }
-
-  tbody tr:hover > td {
-    transition: 0.4s;
-    background: @table-hover !important;
-  }
-
-  .el-table__row > td {
-    transition: background 0s !important;
-    border: none;
-    font-size: 13px;
-    color: @font-color;
-    padding: 12px 0 12px 1px;
-    &:first-child {
-      border-top-left-radius: 5px;
-      border-bottom-left-radius: 5px;
-    }
-    &:last-child {
-      border-top-right-radius: 5px;
-      border-bottom-right-radius: 5px;
-    }
-    .cell > div {
-      display: flex;
-      align-items: center;
-      position: relative;
-
-      .operation-area {
-        color: @font-color-gray;
-        position: absolute;
-        right: 30px;
-        height: 23px;
-        opacity: 0;
-
-        span {
-          margin: 3.5px 5px 0;
-        }
-      }
-    }
-  }
-  &::before {
-    //去掉最下面的那一条线
-    height: 0px;
-  }
-  &:deep(.is-leaf) {
-    border: none !important;
-  }
-  th.el-table__cell.is-leaf {
-    border: none !important;
-    font-size: 12px;
-    font-weight: 500;
-    background-color: @background !important;
-  }
-
-  .el-table__inner-wrapper::before {
-    height: 0 !important;
-  }
-
-  .descending .sort-caret.descending {
-    border-top-color: @theme-color;
-  }
-  .ascending .sort-caret.ascending {
-    border-bottom-color: @theme-color;
-  }
-
-  .el-table__empty-block {
-    background: @background;
-  }
-
-  .el-checkbox__input.is-indeterminate {
-    .el-checkbox__inner {
-      background-color: @theme-color;
-      border-color: @theme-color;
-    }
-  }
-
-  .el-checkbox__input.is-checked {
-    .el-checkbox__inner {
-      background-color: @theme-color;
-      border-color: @theme-color;
-    }
-  }
-  .el-checkbox__inner {
-    &:hover {
-      border-color: @theme-color !important;
-    }
-  }
-}
-/* 表格内背景颜色 */
-.skin-table {
-  background-color: transparent;
-  th,
-  tr,
-  td,
-  .el-table__expanded-cell {
-    background-color: transparent;
-  }
-  .el-table__header th {
-    color: @font-color-gray;
-  }
-}
+@import './index.less';
 </style>

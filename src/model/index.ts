@@ -182,3 +182,12 @@ export interface RadioType {
   id: string;
   name: string;
 }
+
+export interface SearchSuggest {
+  type: string;
+  id: string;
+  name: string;
+  pic: string;
+  artistId?: string;
+  score?: string;
+}
