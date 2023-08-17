@@ -89,7 +89,7 @@ import {
   getTheme,
   getRequset,
   elMessage,
-  share
+  share,
 } from '@/utils';
 import { elMessageType } from '@/model/enum';
 import useUserStore from '@/store/user';
@@ -117,7 +117,7 @@ const albumInfo = reactive<Album>({
   name: '',
   cover: '',
   artist: '',
-  publishTime: ''
+  publishTime: '',
 });
 // 歌手其它专辑
 const otherAlbum = reactive<Album[]>([]);
@@ -147,16 +147,16 @@ const shareAlbum = () => {
     '我有一个精品专辑分享给你：' +
       albumInfo.name +
       '，地址：' +
-      import.meta.env.VITE_APP_URL +
+      import.meta.env.VITE_APP_SHARE_URL +
       route.fullPath
   );
 };
 // 请求页面数据
-getRequset(async() => {
+getRequset(async () => {
   try {
     const responses: any[] = await Promise.all([
       getArtistAlbum(artistId),
-      getAlbumDetail(id)
+      getAlbumDetail(id),
     ]);
     responses.forEach((response, index) => {
       // 获取该艺术家的其它专辑
@@ -171,7 +171,7 @@ getRequset(async() => {
               id: albumId,
               cover: picUrl,
               publishTime: formatTime(publishTime),
-              artistId: artistId + ''
+              artistId: artistId + '',
             });
           } else if (otherAlbum.length > 5) {
             break;
@@ -182,7 +182,7 @@ getRequset(async() => {
       else if (index == 1) {
         const {
           album: { picUrl, artist, publishTime, name, company, description },
-          songs
+          songs,
         } = response;
         albumInfo.name = name;
         albumInfo.cover = picUrl;

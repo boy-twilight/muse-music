@@ -189,5 +189,4 @@ export interface SearchSuggest {
   name: string;
   pic: string;
   artistId?: string;
-  score?: string;
 }

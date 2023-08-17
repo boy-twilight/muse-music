@@ -332,7 +332,6 @@ const suggestMap = reactive<Map<string, SearchSuggest[]>>(
     ['歌单', []],
   ])
 );
-
 // 是否展示搜索推荐列表
 const showHistory = ref<boolean>(false);
 // 下拉列表
@@ -421,6 +420,308 @@ const {
   songRecordId,
   videoRecordId,
 } = storeToRefs(userStore);
+
+// 路由返回上一级
+const back = () => {
+  hideScroll();
+  router.back();
+};
+
+// 路由来到下一级
+const forward = () => {
+  hideScroll();
+  router.forward();
+};
+
+// 缓存列表结果
+const getSearchData = () => {
+  if (hotSearch.length == 0) {
+    getHotSearch().then((response: any) => {
+      if (response) {
+        const { data } = response;
+        data.forEach((item: any) => {
+          hotSearch.push({
+            searchWord: item.searchWord,
+            score: item.score,
+          });
+        });
+      }
+    });
+  }
+};
+
+// 创建产生二维码
+const createKeyCode = (): void => {
+  createKey()
+    .then((response: any) => {
+      const {
+        data: { unikey },
+      } = response;
+      creatQrImage(unikey);
+      CheckLoginStatus(unikey);
+    })
+    .catch((err: any) => {
+      elMessage(elMessageType.ERROR, err.message);
+    });
+};
+
+// 产生二维码的base64并挂载到容器上
+const creatQrImage = (key: string): void => {
+  createQrCode(key)
+    .then((response: any) => {
+      const {
+        data: { qrimg },
+      } = response;
+      qrcode.value!.src = qrimg;
+    })
+    .catch((err: any) => {
+      elMessage(elMessageType.ERROR, err.message);
+    });
+};
+
+// 监测登陆状态
+const CheckLoginStatus = (key: string): void => {
+  timeid = setInterval(async () => {
+    const response: any = await checkStatus(key).catch((err: any) => {
+      elMessage(elMessageType.ERROR, err.message);
+    });
+    const { code, message } = response;
+    // 根据code状态判断登陆状态
+    if (code == '800') {
+      // 提醒用户二维码已过期
+      elMessage(elMessageType.INFO, message);
+      // 清除timeid
+      clearInterval(timeid);
+      // 重新刷新二维码
+      createKeyCode();
+    } else if (code == '803') {
+      // 关闭登陆盒子
+      showLogin.value = false;
+      // 本地存储cookie
+      cookie.value = response.cookie;
+
+      // 获取用户信息
+      header.getInfo();
+      // 提醒用户登陆成功
+      elMessage(elMessageType.SUCCESS, message);
+      // 清除计时器
+      clearInterval(timeid);
+    }
+  }, 6000);
+};
+
+// 打开登陆盒子
+const showLoginBox = () => {
+  if (!cookie.value) {
+    showLogin.value = true;
+  } else {
+    elMessage(elMessageType.SUCCESS, '已成功登陆，切勿重复点击！');
+  }
+};
+
+// 关闭登陆盒子的回调
+const close = () => {
+  clearInterval(timeid);
+};
+
+// 切换皮肤
+const changeSkin = () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.style.display = 'none';
+  document.body.appendChild(input);
+  input.click();
+  input.onchange = async () => {
+    const files = input.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      const skinUrl = await compressImage(file, 3840, 2160, 0.6);
+      skin.value = skinUrl;
+      document.body.removeChild(input);
+    }
+  };
+};
+
+// 导出用户数据文件
+const exportConfig = () => {
+  const userInfo = `loveMusic-o-(*)-${JSON.stringify(
+    loveSongs.value
+  )}\nloveVideo-o-(*)-${JSON.stringify(
+    loveVideo.value
+  )}\nlovePlaylist-o-(*)-${JSON.stringify(
+    lovePlaylist.value
+  )}\nloveRadio-o-(*)-${JSON.stringify(
+    loveRadio.value
+  )}\nloveSinger-o-(*)-${JSON.stringify(
+    loveSinger.value
+  )}\nloveAlbum-o-(*)-${JSON.stringify(
+    loveAlbum.value
+  )}\nmusicDownload-o-(*)-${JSON.stringify(
+    musicDownload.value
+  )}\nmvDownload-o-(*)-${JSON.stringify(
+    mvDownload.value
+  )}\nsongRecord-o-(*)-${JSON.stringify(
+    songRecord.value
+  )}\nvideoRecord-o-(*)-${JSON.stringify(
+    videoRecord.value
+  )}\nuserPlaylist-o-(*)-${JSON.stringify(songList.value)}\nbgmode-p-(*)-${
+    bgMode.value
+  }\nskin-p-(*)-${skin.value}`;
+  const blob = new Blob([userInfo], {
+    type: 'text/plain; charset=utf-8',
+  });
+  downloadFile(blob, 'config.txt');
+};
+
+// 读取用户数据文件
+const parseConfig = () => {
+  const upload = document.createElement('input');
+  upload.style.display = 'none';
+  upload.type = 'file';
+  upload.accept = '.txt';
+  upload.onchange = async (event: any) => {
+    const files = event.target.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (!/\.txt$/.test(file.name) && file.name == 'config') {
+        return elMessage(elMessageType.ERROR, '请上传配置文件！');
+      }
+      const reader = new FileReader();
+      reader.readAsText(file, 'utf-8');
+      reader.onload = (e: any) => {
+        let res = e.target.result;
+        const userMap: Map<string, any> = new Map(
+          res.split('\n').map((item: string) => {
+            const key = item.split('-(*)-')[0].split('-')[0];
+            const flag = item.split('-(*)-')[0].split('-')[1];
+            const value = item.split('-(*)-')[1];
+            return flag == 'o' ? [key, JSON.parse(value)] : [key, value];
+          })
+        );
+        // 切换皮肤模式
+        bgMode.value = userMap.get('bgmode');
+        skin.value = userMap.get('skin');
+        if (bgMode.value == 'skin') {
+          theme.changeSkinMode();
+          config.changeSkin();
+        }
+        const loveMusicData = (userMap.get('loveMusic') as Song[]).filter(
+          (song) => loveMusicId.value.get(song.id) == undefined
+        );
+        loveSongs.value.push(...loveMusicData);
+        const loveVideoData = (userMap.get('loveVideo') as MV[]).filter(
+          (video) => loveVideoId.value.get(video.id) == undefined
+        );
+        loveVideo.value.push(...loveVideoData);
+        const lovePlaylistData = (
+          userMap.get('lovePlaylist') as Playlist[]
+        ).filter(
+          (playlist) => lovePlaylistId.value.get(playlist.id) == undefined
+        );
+        lovePlaylist.value.push(...lovePlaylistData);
+        const loveRadioData = (userMap.get('loveRadio') as Playlist[]).filter(
+          (radio) => loveRadioId.value.get(radio.id) == undefined
+        );
+        loveRadio.value.push(...loveRadioData);
+        const loveSingerData = (userMap.get('loveSinger') as Artist[]).filter(
+          (artist) => loveSingerId.value.get(artist.id) == undefined
+        );
+        loveSinger.value.push(...loveSingerData);
+        const loveAlbumData = (userMap.get('loveAlbum') as Album[]).filter(
+          (album) => loveAlbumId.value.get(album.id) == undefined
+        );
+        loveAlbum.value.push(...loveAlbumData);
+        const musicDownloadData = (
+          userMap.get('musicDownload') as Song[]
+        ).filter((song) => musicDownloadId.value.get(song.id) == undefined);
+        musicDownload.value.push(...musicDownloadData);
+        const mvDownloadData = (userMap.get('mvDownload') as MV[]).filter(
+          (mv) => mvDownloadId.value.get(mv.id) == undefined
+        );
+        mvDownload.value.push(...mvDownloadData);
+        const songRecordData = (userMap.get('songRecord') as Song[]).filter(
+          (song) => songRecordId.value.get(song.id) == undefined
+        );
+        songRecord.value.push(...songRecordData);
+        const videoRecordData = (userMap.get('videoRecord') as MV[]).filter(
+          (mv) => videoRecordId.value.get(mv.id) == undefined
+        );
+        videoRecord.value.push(...videoRecordData);
+        const playData = (userMap.get('userPlaylist') as Song[]).filter(
+          (song) => songListId.value.get(song.id) == undefined
+        );
+        songList.value.push(...playData);
+        elMessage(elMessageType.SUCCESS, '个人数据导入成功');
+      };
+      reader.onerror = () => {
+        elMessage(elMessageType.ERROR, '读取配置文件失败！');
+      };
+    }
+  };
+  document.body.appendChild(upload);
+  upload.click();
+  document.body.removeChild(upload);
+};
+
+// 下拉框选择处理
+const handleClick = async (command: string) => {
+  if (command == 'logout' && cookie.value) {
+    header.logout();
+  } else if (command == 'fullScreen') {
+    if (isFullScreen.value) {
+      document.exitFullscreen();
+    } else {
+      document.documentElement.requestFullscreen();
+    }
+  } else if (command == 'color') {
+    theme.changeLight();
+    config.changeColor();
+  } else if (command == 'skin') {
+    if (!skin.value) {
+      changeSkin();
+    }
+    await nextTick();
+    config.changeSkin();
+    theme.changeSkinMode();
+  } else if (command == 'theme') {
+    drawerMode.value = 'theme';
+    footer.showList = true;
+  } else if (command == 'export') {
+    exportConfig();
+  } else if (command == 'import') {
+    parseConfig();
+  }
+};
+
+// 以下为搜索的内容
+const goSearch = () => {
+  if (!userSearch.includes(search.value)) {
+    userSearch.push(search.value);
+  }
+  hideScroll();
+  router.push({
+    name: 'search',
+    query: {
+      keyWord: search.value,
+    },
+  });
+};
+
+// 点击推荐列表搜索
+const goSearchByRe = (keyWord: string) => {
+  if (!userSearch.includes(keyWord)) {
+    userSearch.push(keyWord);
+  }
+  search.value = keyWord;
+  hideScroll();
+  router.push({
+    name: 'search',
+    query: {
+      keyWord,
+    },
+  });
+};
 
 //获取搜索建议
 const getSearchSuggest = throttle(async () => {
@@ -523,8 +824,9 @@ const getSearchSuggest = throttle(async () => {
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
-}, 300);
+}, 500);
 
+//前往搜索建议
 const goSuggest = (item: SearchSuggest) => {
   if (item.type != 'song') {
     hideScroll();
@@ -557,294 +859,6 @@ const goSuggest = (item: SearchSuggest) => {
   }
 };
 
-// 路由返回上一级
-const back = () => {
-  hideScroll();
-  router.back();
-};
-// 路由来到下一级
-const forward = () => {
-  hideScroll();
-  router.forward();
-};
-// 缓存列表结果
-const getSearchData = () => {
-  if (hotSearch.length == 0) {
-    getHotSearch().then((response: any) => {
-      if (response) {
-        const { data } = response;
-        data.forEach((item: any) => {
-          hotSearch.push({
-            searchWord: item.searchWord,
-            score: item.score,
-          });
-        });
-      }
-    });
-  }
-};
-// 创建产生二维码
-const createKeyCode = (): void => {
-  createKey()
-    .then((response: any) => {
-      const {
-        data: { unikey },
-      } = response;
-      creatQrImage(unikey);
-      CheckLoginStatus(unikey);
-    })
-    .catch((err: any) => {
-      elMessage(elMessageType.ERROR, err.message);
-    });
-};
-// 产生二维码的base64并挂载到容器上
-const creatQrImage = (key: string): void => {
-  createQrCode(key)
-    .then((response: any) => {
-      const {
-        data: { qrimg },
-      } = response;
-      qrcode.value!.src = qrimg;
-    })
-    .catch((err: any) => {
-      elMessage(elMessageType.ERROR, err.message);
-    });
-};
-// 监测登陆状态
-const CheckLoginStatus = (key: string): void => {
-  timeid = setInterval(async () => {
-    const response: any = await checkStatus(key).catch((err: any) => {
-      elMessage(elMessageType.ERROR, err.message);
-    });
-    const { code, message } = response;
-    // 根据code状态判断登陆状态
-    if (code == '800') {
-      // 提醒用户二维码已过期
-      elMessage(elMessageType.INFO, message);
-      // 清除timeid
-      clearInterval(timeid);
-      // 重新刷新二维码
-      createKeyCode();
-    } else if (code == '803') {
-      // 关闭登陆盒子
-      showLogin.value = false;
-      // 本地存储cookie
-      cookie.value = response.cookie;
-
-      // 获取用户信息
-      header.getInfo();
-      // 提醒用户登陆成功
-      elMessage(elMessageType.SUCCESS, message);
-      // 清除计时器
-      clearInterval(timeid);
-    }
-  }, 6000);
-};
-// 打开登陆盒子
-const showLoginBox = () => {
-  if (!cookie.value) {
-    showLogin.value = true;
-  } else {
-    elMessage(elMessageType.SUCCESS, '已成功登陆，切勿重复点击！');
-  }
-};
-// 关闭登陆盒子的回调
-const close = () => {
-  clearInterval(timeid);
-};
-// 切换皮肤
-const changeSkin = () => {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.style.display = 'none';
-  document.body.appendChild(input);
-  input.click();
-  input.onchange = async () => {
-    const files = input.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      const skinUrl = await compressImage(file, 3840, 2160, 0.6);
-      skin.value = skinUrl;
-      document.body.removeChild(input);
-    }
-  };
-};
-// 导出用户数据文件
-const exportConfig = () => {
-  const userInfo = `loveMusic-o-(*)-${JSON.stringify(
-    loveSongs.value
-  )}\nloveVideo-o-(*)-${JSON.stringify(
-    loveVideo.value
-  )}\nlovePlaylist-o-(*)-${JSON.stringify(
-    lovePlaylist.value
-  )}\nloveRadio-o-(*)-${JSON.stringify(
-    loveRadio.value
-  )}\nloveSinger-o-(*)-${JSON.stringify(
-    loveSinger.value
-  )}\nloveAlbum-o-(*)-${JSON.stringify(
-    loveAlbum.value
-  )}\nmusicDownload-o-(*)-${JSON.stringify(
-    musicDownload.value
-  )}\nmvDownload-o-(*)-${JSON.stringify(
-    mvDownload.value
-  )}\nsongRecord-o-(*)-${JSON.stringify(
-    songRecord.value
-  )}\nvideoRecord-o-(*)-${JSON.stringify(
-    videoRecord.value
-  )}\nuserPlaylist-o-(*)-${JSON.stringify(songList.value)}\nbgmode-p-(*)-${
-    bgMode.value
-  }\nskin-p-(*)-${skin.value}`;
-  const blob = new Blob([userInfo], {
-    type: 'text/plain; charset=utf-8',
-  });
-  downloadFile(blob, 'config.txt');
-};
-// 读取用户数据文件
-const parseConfig = () => {
-  const upload = document.createElement('input');
-  upload.style.display = 'none';
-  upload.type = 'file';
-  upload.accept = '.txt';
-  upload.onchange = async (event: any) => {
-    const files = event.target.files;
-    if (files.length > 0) {
-      const file = files[0];
-      if (!/\.txt$/.test(file.name) && file.name == 'config') {
-        return elMessage(elMessageType.ERROR, '请上传配置文件！');
-      }
-      const reader = new FileReader();
-      reader.readAsText(file, 'utf-8');
-      reader.onload = (e: any) => {
-        let res = e.target.result;
-        const userMap: Map<string, any> = new Map(
-          res.split('\n').map((item: string) => {
-            const key = item.split('-(*)-')[0].split('-')[0];
-            const flag = item.split('-(*)-')[0].split('-')[1];
-            const value = item.split('-(*)-')[1];
-            return flag == 'o' ? [key, JSON.parse(value)] : [key, value];
-          })
-        );
-        // 切换皮肤模式
-        bgMode.value = userMap.get('bgmode');
-        skin.value = userMap.get('skin');
-        if (bgMode.value == 'skin') {
-          theme.changeSkinMode();
-          config.changeSkin();
-        }
-        const loveMusicData = (userMap.get('loveMusic') as Song[]).filter(
-          (song) => loveMusicId.value.get(song.id) == undefined
-        );
-        loveSongs.value.push(...loveMusicData);
-        const loveVideoData = (userMap.get('loveVideo') as MV[]).filter(
-          (video) => loveVideoId.value.get(video.id) == undefined
-        );
-        loveVideo.value.push(...loveVideoData);
-        const lovePlaylistData = (
-          userMap.get('lovePlaylist') as Playlist[]
-        ).filter(
-          (playlist) => lovePlaylistId.value.get(playlist.id) == undefined
-        );
-        lovePlaylist.value.push(...lovePlaylistData);
-        const loveRadioData = (userMap.get('loveRadio') as Playlist[]).filter(
-          (radio) => loveRadioId.value.get(radio.id) == undefined
-        );
-        loveRadio.value.push(...loveRadioData);
-        const loveSingerData = (userMap.get('loveSinger') as Artist[]).filter(
-          (artist) => loveSingerId.value.get(artist.id) == undefined
-        );
-        loveSinger.value.push(...loveSingerData);
-        const loveAlbumData = (userMap.get('loveAlbum') as Album[]).filter(
-          (album) => loveAlbumId.value.get(album.id) == undefined
-        );
-        loveAlbum.value.push(...loveAlbumData);
-        const musicDownloadData = (
-          userMap.get('musicDownload') as Song[]
-        ).filter((song) => musicDownloadId.value.get(song.id) == undefined);
-        musicDownload.value.push(...musicDownloadData);
-        const mvDownloadData = (userMap.get('mvDownload') as MV[]).filter(
-          (mv) => mvDownloadId.value.get(mv.id) == undefined
-        );
-        mvDownload.value.push(...mvDownloadData);
-        const songRecordData = (userMap.get('songRecord') as Song[]).filter(
-          (song) => songRecordId.value.get(song.id) == undefined
-        );
-        songRecord.value.push(...songRecordData);
-        const videoRecordData = (userMap.get('videoRecord') as MV[]).filter(
-          (mv) => videoRecordId.value.get(mv.id) == undefined
-        );
-        videoRecord.value.push(...videoRecordData);
-        const playData = (userMap.get('userPlaylist') as Song[]).filter(
-          (song) => songListId.value.get(song.id) == undefined
-        );
-        songList.value.push(...playData);
-        elMessage(elMessageType.SUCCESS, '个人数据导入成功');
-      };
-      reader.onerror = () => {
-        elMessage(elMessageType.ERROR, '读取配置文件失败！');
-      };
-    }
-  };
-  document.body.appendChild(upload);
-  upload.click();
-  document.body.removeChild(upload);
-};
-// 下拉框选择处理
-const handleClick = async (command: string) => {
-  if (command == 'logout' && cookie.value) {
-    header.logout();
-  } else if (command == 'fullScreen') {
-    if (isFullScreen.value) {
-      document.exitFullscreen();
-    } else {
-      document.documentElement.requestFullscreen();
-    }
-  } else if (command == 'color') {
-    theme.changeLight();
-    config.changeColor();
-  } else if (command == 'skin') {
-    if (!skin.value) {
-      changeSkin();
-    }
-    await nextTick();
-    config.changeSkin();
-    theme.changeSkinMode();
-  } else if (command == 'theme') {
-    drawerMode.value = 'theme';
-    footer.showList = true;
-  } else if (command == 'export') {
-    exportConfig();
-  } else if (command == 'import') {
-    parseConfig();
-  }
-};
-// 以下为搜索的内容
-const goSearch = () => {
-  if (!userSearch.includes(search.value)) {
-    userSearch.push(search.value);
-  }
-  hideScroll();
-  router.push({
-    name: 'search',
-    query: {
-      keyWord: search.value,
-    },
-  });
-};
-// 点击推荐列表搜索
-const goSearchByRe = (keyWord: string) => {
-  if (!userSearch.includes(keyWord)) {
-    userSearch.push(keyWord);
-  }
-  search.value = keyWord;
-  hideScroll();
-  router.push({
-    name: 'search',
-    query: {
-      keyWord,
-    },
-  });
-};
 // 检测是否展示登陆二维码
 watch(showLogin, (newVal) => {
   if (newVal) {
@@ -1026,6 +1040,7 @@ getSearchData();
     }
   }
 }
+
 .header-container {
   display: flex;
   align-items: center;
