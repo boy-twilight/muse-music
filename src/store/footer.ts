@@ -13,12 +13,7 @@ const useFooterStore = defineStore('footer', () => {
   );
   // 播放列表对应的id
   const songListId = computed(() => {
-    const ids = songList.map((item) => item.id);
-    const map: Map<string, number> = new Map();
-    ids.forEach((item, index) => {
-      map.set(item, index);
-    });
-    return map;
+    return new Map(songList.map((item, index) => [item.id, index]));
   });
   // 播放模式
   const playMode = ref<string>(
@@ -52,7 +47,7 @@ const useFooterStore = defineStore('footer', () => {
     showList,
     isChanging,
     showDetail,
-    songListId
+    songListId,
   };
 });
 

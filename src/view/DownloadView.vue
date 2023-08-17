@@ -69,9 +69,8 @@ const deleteDownLoad = (id: string) => {
   mvDownload.value.splice(index, 1);
 };
 // 获取初始数据
-getRequset(async() => {
-  const ids = musicDownload.value.map((item) => item.id).join(',');
-  getMusicUrls(ids, musicDownload.value);
+getRequset(async () => {
+  getMusicUrls(musicDownload.value);
   user.initLoveMusic(musicDownload.value);
   // 关闭动画
   first.value = false;

@@ -236,14 +236,13 @@ getRequset(async () => {
         // 获取歌单下的音乐
         else if (index == 1) {
           const { songs } = response;
-          const ids: string[] = [];
           songs.forEach((item: any) => {
             // 获取音乐的基本信息
-            getMusicInfos(ids, playListSong, item);
+            getMusicInfos(playListSong, item);
           });
           user.initLoveMusic(playListSong);
           // 获取音乐的url
-          getMusicUrls(ids.join(','), playListSong);
+          getMusicUrls(playListSong);
         }
         // 获取歌单评论
         else if (index == 2) {
@@ -287,7 +286,6 @@ getRequset(async () => {
         // 获取电台歌曲
         else if (index == 1) {
           const { programs } = response;
-          const ids: string[] = [];
           programs.forEach((item: any) => {
             const {
               mainSong: {
@@ -299,7 +297,6 @@ getRequset(async () => {
                 duration,
               },
             } = item;
-            ids.push(id);
             playListSong.push({
               id,
               name,
@@ -311,7 +308,7 @@ getRequset(async () => {
             });
           });
           user.initLoveMusic(playListSong);
-          getMusicUrls(ids.join(','), playListSong);
+          getMusicUrls(playListSong);
         }
       });
     } catch (err: any) {

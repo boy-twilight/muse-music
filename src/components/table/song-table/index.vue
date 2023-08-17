@@ -108,7 +108,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, ref, watch, nextTick } from 'vue';
+import { computed, inject, ref, watch, nextTick, onActivated } from 'vue';
 import { storeToRefs } from 'pinia';
 import { onBeforeRouteLeave } from 'vue-router';
 import { ElTable } from 'element-plus';
@@ -298,25 +298,28 @@ const playMV = (song: Song) => {
 };
 
 // 定时重新获取musicurl
-// 计时器
+// 计时器id
 let timeid: any = 0;
-const getDataOntime = () => {
-  timeid = setInterval(() => {
+//路由是否离开的标志
+let isLeave = false;
+const getUrlOntime = () => {
+  if (isLeave) {
+    isLeave = false;
+    return clearTimeout(timeid);
+  }
+  timeid = setTimeout(() => {
     if (props.songs.length > 0) {
-      const ids = props.songs.map((song) => song.id);
       const exclude = props.songs.findIndex(
         (song) => song.id == songList.value[current.value].id
       );
-      if (ids.length > 0) {
-        getMusicUrls(ids.join(','), props.songs, '', exclude);
-      }
+      getMusicUrls(props.songs, exclude);
     }
+    getUrlOntime();
   }, 60 * 1000 * 5);
 };
-getDataOntime();
 // 离开路由时销毁
 onBeforeRouteLeave(() => {
-  clearInterval(timeid);
+  isLeave = true;
 });
 </script>
 

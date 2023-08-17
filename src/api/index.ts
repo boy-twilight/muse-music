@@ -219,5 +219,5 @@ export const getRadios = (type: string) =>
   request.get(`/dj/recommend/type?type=${type}`);
 
 // 获取搜索建议
-export const getSuggest = (keyword: string) =>
-  request.get(`/search/suggest?keywords=${keyword}`);
+export const getSuggest = (keyword: string, signal?: AbortSignal) =>
+  request.get(`/search/suggest?keywords=${keyword}`, { signal });

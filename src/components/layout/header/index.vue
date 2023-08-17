@@ -146,8 +146,8 @@
                 @focusout="showHistory = false"
                 @input="getSearchSuggest"
                 type="text"
-                class="search"
-                placeholder="请输入你想要搜索的歌曲，歌手" />
+                placeholder="请输入你想要搜索的歌曲，歌手"
+                class="search" />
               <span
                 @click="goSearch"
                 v-prevent
@@ -731,26 +731,24 @@ const getSearchSuggest = throttle(async () => {
     const {
       result: { albums, artists, songs, playlists },
     } = response;
-    if (albums) {
-      const target = suggestMap.get('专辑') as SearchSuggest[];
-      if (target.length > albums.length) target.splice(albums.length);
-      (albums as any[]).forEach((item, index) => {
-        const { id, name, artist } = item;
+    if (songs) {
+      const target = suggestMap.get('单曲') as SearchSuggest[];
+      if (target.length > songs.length) target.splice(songs.length);
+      (songs as any[]).forEach((item, index) => {
+        const { id, name, artists } = item;
         if (index < target.length) {
           target[index] = {
-            type: 'album',
+            type: 'song',
             id,
-            pic: artist.picUrl,
-            name: name + '-' + artist.name,
-            artistId: artist.id,
+            name: name + '-' + artists[0].name,
+            pic: artists[0].img1v1Url,
           };
         } else {
-          target?.push({
-            type: 'album',
+          target.push({
+            type: 'song',
             id,
-            pic: artist.picUrl,
-            name: name + '-' + artist.name,
-            artistId: artist.id,
+            name: name + '-' + artists[0].name,
+            pic: artists[0].img1v1Url,
           });
         }
       });
@@ -777,24 +775,26 @@ const getSearchSuggest = throttle(async () => {
         }
       });
     }
-    if (songs) {
-      const target = suggestMap.get('单曲') as SearchSuggest[];
-      if (target.length > songs.length) target.splice(songs.length);
-      (songs as any[]).forEach((item, index) => {
-        const { id, name, artists } = item;
+    if (albums) {
+      const target = suggestMap.get('专辑') as SearchSuggest[];
+      if (target.length > albums.length) target.splice(albums.length);
+      (albums as any[]).forEach((item, index) => {
+        const { id, name, artist } = item;
         if (index < target.length) {
           target[index] = {
-            type: 'song',
+            type: 'album',
             id,
-            name: name + '-' + artists[0].name,
-            pic: artists[0].img1v1Url,
+            pic: artist.picUrl,
+            name: name + '-' + artist.name,
+            artistId: artist.id,
           };
         } else {
-          target.push({
-            type: 'song',
+          target?.push({
+            type: 'album',
             id,
-            name: name + '-' + artists[0].name,
-            pic: artists[0].img1v1Url,
+            pic: artist.picUrl,
+            name: name + '-' + artist.name,
+            artistId: artist.id,
           });
         }
       });
@@ -824,7 +824,7 @@ const getSearchSuggest = throttle(async () => {
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
-}, 500);
+}, 300);
 
 //前往搜索建议
 const goSuggest = (item: SearchSuggest) => {

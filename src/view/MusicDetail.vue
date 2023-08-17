@@ -72,7 +72,7 @@ const {
   isChanging,
   playTime,
   songNum,
-  showDetail
+  showDetail,
 } = storeToRefs(footer);
 // 动画持续的时间
 const animationTime = ref<string>('0s');
@@ -105,9 +105,10 @@ const back = () => {
   playTime.value = 0;
   showDetail.value = false;
 };
+
 // 开始播放，设置歌词滚动
 const startPlay = () => {
-  timeid = setInterval(() => {
+  timeid = setTimeout(() => {
     if (currentTime.value >= timeStaps[currentIndex.value]) {
       currentIndex.value++;
       content.value!.scrollTop += scrollDis;
@@ -122,6 +123,7 @@ const startPlay = () => {
       }
     }
     currentTime.value += 20;
+    startPlay();
   }, 20);
 };
 // 计算进度条改变时滚动距离
@@ -139,9 +141,9 @@ watch(isPlay, (newVal) => {
 });
 
 // 当进度改变时，对应歌词滚动
-watch(isChanging, async(newVal) => {
+watch(isChanging, async (newVal) => {
   if (newVal) {
-    clearInterval(timeid);
+    isPlay.value = false;
     currentTime.value =
       (playProcess.value *
         Number.parseInt(songList.value[current.value].time as string)) /
@@ -151,13 +153,13 @@ watch(isChanging, async(newVal) => {
     );
     calCurrentScroll(currentIndex.value);
     await nextTick();
-    startPlay();
+    isPlay.value = true;
     isChanging.value = false;
   }
 });
 
 // 当歌曲切换时对应切换
-watch(current, async() => {
+watch(current, async () => {
   words = reactive<string[]>(['']);
   timeStaps = reactive<number[]>([]);
   content.value!.scrollTop = 0;
@@ -168,12 +170,12 @@ watch(current, async() => {
 });
 
 // 获取歌词
-const getLyric = async() => {
+const getLyric = async () => {
   if (songNum.value > 0) {
     try {
       const response: any = await getLyrics(songList.value[current.value].id);
       const {
-        lrc: { lyric }
+        lrc: { lyric },
       } = response;
       // 计算歌曲总时间
       const totalTime = Number.parseInt(

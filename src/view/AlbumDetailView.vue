@@ -192,13 +192,12 @@ getRequset(async () => {
         albumInfo.description = description;
         // 初始化喜欢状态
         user.initLoveStatus(albumInfo, user.loveAlbumId);
-        const ids: string[] = [];
         songs.forEach((item: any) => {
-          getMusicInfos(ids, albumSongs, item);
+          getMusicInfos(albumSongs, item);
         });
         // 初始化歌曲喜欢状态
         user.initLoveMusic(albumSongs);
-        getMusicUrls(ids.join(','), albumSongs);
+        getMusicUrls(albumSongs);
       }
     });
   } catch (err: any) {

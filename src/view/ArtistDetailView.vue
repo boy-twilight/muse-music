@@ -308,12 +308,12 @@ getRequset(async () => {
         const dResponse: any = await getMusicDetail(ids);
         const { songs: muiscs } = dResponse;
         muiscs.forEach((item: any) => {
-          getMusicInfos([] as string[], hotSongList, item);
+          getMusicInfos(hotSongList, item);
         });
         // 初始化歌曲喜欢状态
         user.initLoveMusic(hotSongList);
         // 批量获取音乐链接
-        getMusicUrls(ids, hotSongList);
+        getMusicUrls(hotSongList);
         // 关闭动画
         first.value = false;
       }

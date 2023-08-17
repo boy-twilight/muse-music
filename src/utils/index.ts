@@ -155,20 +155,14 @@ export const formatTime = (time: string): string => {
 };
 
 // 获取音乐的url
-// ids是通过，分割的多个id,list是放歌曲的容器,key字段判断要不要做持久化
-export const getMusicUrls = async (
-  ids: string,
-  list: Song[],
-  key?: string,
-  exclude?: number
-) => {
+export const getMusicUrls = async (songs: Song[], exclude?: number) => {
   try {
     // id映射
     const mapper: Map<string, number> = new Map(
-      list.map((item, index) => [item.id, index])
+      songs.map((item, index) => [item.id, index])
     );
     // 当数据量过大时分批请求
-    const idArr = list.map((item) => item.id);
+    const idArr = songs.map((item) => item.id);
     const requestArr: any[] = [];
     for (let i = 0; i < Math.ceil(idArr.length / 100); i++) {
       requestArr.push(
@@ -183,31 +177,26 @@ export const getMusicUrls = async (
         if (item.url) {
           if (exclude != undefined) {
             if (index != exclude) {
-              list[index].url = item.url;
+              songs[index].url = item.url;
             }
           } else {
-            list[index].url = item.url;
+            songs[index].url = item.url;
           }
         } else {
-          list[index].available = '10';
-          list[index].url = '';
+          songs[index].available = '10';
+          songs[index].url = '';
         }
       });
     });
-    // 判断key要不要做持久化
-    if (key) {
-      setStorAge(storageType.SESSION, key, list);
-    }
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
 };
 
 // 从返回数据中获取音乐信息,并放入容器
-export const getMusicInfos = (ids: string[], list: Song[], data: any) => {
-  const { id, name, ar, al, fee, dt } = data;
-  ids.push(id);
-  list.push({
+export const getMusicInfos = (songs: Song[], song: any) => {
+  const { id, name, ar, al, fee, dt } = song;
+  songs.push({
     id: id,
     name: name,
     singer: ar.map((item: any) => item.name).join('、'),
@@ -667,12 +656,12 @@ export const downloadFile = (blob: File | Blob, fileName: string) => {
   elMessage(elMessageType.SUCCESS, '个人数据导出成功！');
 };
 
-export const throttle = (fn: () => void, delay: number) => {
+export const throttle = (fn: (...args: any[]) => void, delay: number) => {
   let last = 0;
-  return function () {
+  return function (...args: any[]) {
     const cur = getTimeStamp();
     if (cur - last > delay) {
-      fn();
+      fn.apply(null, args);
       last = cur;
     }
   };
