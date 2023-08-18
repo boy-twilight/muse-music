@@ -17,7 +17,7 @@
           :key="song.id"
           class="song-recommend">
           <div
-            @click="playSong(song)"
+            @click="play(song)"
             class="mask">
             <span class="iconfont">&#xea82;</span>
           </div>
@@ -50,7 +50,7 @@ import {
   getMusicUrls,
   getMusicInfos,
   getTheme,
-  getRequset,
+  getRequset
 } from '@/utils';
 import { elMessageType } from '@/model/enum';
 import { Playlist, Song, MV, Banner } from '@/model';
@@ -82,8 +82,8 @@ const mvLists = reactive<MV[]>([]);
 // 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
 
-// 点击图片进行播放播放
-const playSong = async (song: Song) => {
+// 点击图片进行播放
+const play = async(song: Song) => {
   if (song.available == '0' || song.available == '8') {
     const index = songListId.value.get(song.id);
     if (index == undefined) {
@@ -115,13 +115,13 @@ const playSong = async (song: Song) => {
   }
 };
 
-getRequset(async () => {
+getRequset(async() => {
   try {
     const responses: any[] = await Promise.all([
       getBanner(),
       getRecPlaylist(10),
       getDeafultSong(40),
-      getMv(10, '内地', '全部', '最新'),
+      getMv(10, '内地', '全部', '最新')
     ]);
     responses.forEach((response, index) => {
       // 获取banner
@@ -131,7 +131,7 @@ getRequset(async () => {
           const { imageUrl, targetId } = item;
           banners.push({
             id: targetId,
-            pic: imageUrl,
+            pic: imageUrl
           });
         });
       }
@@ -147,7 +147,7 @@ getRequset(async () => {
               playCount,
               description,
               tags,
-              creator,
+              creator
             } = item;
             playLists.push({
               name,
@@ -158,8 +158,8 @@ getRequset(async () => {
               tag: tags,
               creator: {
                 avatarUrl: creator.avatarUrl,
-                nickname: creator.nickname,
-              },
+                nickname: creator.nickname
+              }
             });
           }
         });
@@ -167,7 +167,7 @@ getRequset(async () => {
       // 获取推荐歌曲
       else if (index == 2) {
         const {
-          data: { list },
+          data: { list }
         } = response;
         // 获取歌曲的基本信息
         for (let item of list) {
@@ -192,7 +192,7 @@ getRequset(async () => {
             name: name as string,
             image: cover as string,
             playCount: playCount as string,
-            artist: artistName as string,
+            artist: artistName as string
           });
         });
       }

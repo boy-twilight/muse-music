@@ -39,6 +39,9 @@ import { ref, reactive, computed, Ref } from 'vue';
 import { getTheme } from '@/utils';
 import useConfigStore from '@/store/config';
 
+const emits = defineEmits<{
+  (e: 'getSortChoice', sortType: boolean[], isCancelSort: boolean): void;
+}>();
 // 配置主题
 const config = useConfigStore();
 const fontColor = getTheme().get('fontColor') as Ref<string>;
@@ -57,7 +60,6 @@ const dropDownMode = computed(() => {
     return 'dropdown-skin';
   }
 });
-
 // 排序的名字
 const sortName = reactive<string[]>([
   '歌曲排序',
@@ -69,10 +71,12 @@ const sortName = reactive<string[]>([
 const sortType = reactive<boolean[]>([false, false, false, false]);
 // 当前选择的项
 const currentChoose = ref<number>(-1);
+// 排序
 const sortAfter = computed(() =>
   sortType.map((item, index) => (index == currentChoose.value ? true : false))
 );
 
+// 选中排序类型
 const chooseSortType = (command: string) => {
   if (command == '歌曲排序') {
     currentChoose.value = sortAfter.value[0] ? -1 : 0;
@@ -97,10 +101,6 @@ const getDeafultSort = () => {
     emits('getSortChoice', sortAfter.value, false);
   }
 };
-
-const emits = defineEmits<{
-  (e: 'getSortChoice', sortType: boolean[], isCancelSort: boolean): void;
-}>();
 </script>
 
 <style lang="less" scoped>

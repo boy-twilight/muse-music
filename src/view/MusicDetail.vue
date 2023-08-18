@@ -72,7 +72,7 @@ const {
   isChanging,
   playTime,
   songNum,
-  showDetail,
+  showDetail
 } = storeToRefs(footer);
 // 动画持续的时间
 const animationTime = ref<string>('0s');
@@ -141,7 +141,7 @@ watch(isPlay, (newVal) => {
 });
 
 // 当进度改变时，对应歌词滚动
-watch(isChanging, async (newVal) => {
+watch(isChanging, async(newVal) => {
   if (newVal) {
     isPlay.value = false;
     currentTime.value =
@@ -159,7 +159,7 @@ watch(isChanging, async (newVal) => {
 });
 
 // 当歌曲切换时对应切换
-watch(current, async () => {
+watch(current, async() => {
   words = reactive<string[]>(['']);
   timeStaps = reactive<number[]>([]);
   content.value!.scrollTop = 0;
@@ -170,12 +170,12 @@ watch(current, async () => {
 });
 
 // 获取歌词
-const getLyric = async () => {
+const getLyric = async() => {
   if (songNum.value > 0) {
     try {
       const response: any = await getLyrics(songList.value[current.value].id);
       const {
-        lrc: { lyric },
+        lrc: { lyric }
       } = response;
       // 计算歌曲总时间
       const totalTime = Number.parseInt(

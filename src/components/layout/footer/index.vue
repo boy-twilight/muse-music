@@ -77,7 +77,7 @@
           <el-dropdown
             :popper-class="`dropdown ${dropDownMode}`"
             trigger="click"
-            @command="handleMore">
+            @command="handleClick">
             <span
               v-prevent
               class="iconfont"
@@ -90,7 +90,7 @@
                   background: bg,
                 }">
                 <el-dropdown-item
-                  v-for="dropItem in moreDropItems"
+                  v-for="dropItem in dropItems"
                   :key="dropItem.command"
                   :command="dropItem.command">
                   <span
@@ -306,15 +306,12 @@ const dropDownMode = computed(() => {
     return 'dropdown-skin';
   }
 });
-
 // 设置隐藏滚动条
 const hideScroll = inject('hideScroll') as () => void;
-
 // 评论
 const soucreComments = inject('soucreComments') as Comment[];
 // 是否展开评论区
 const showComments = inject('showComments') as Ref<boolean>;
-
 // 喜欢图标的图标及样式的改变
 const loveIcon = computed<string>(() =>
   songList.value[current.value].isLove ? '\ue760' : '\ue761'
@@ -324,7 +321,6 @@ const lovetyle = computed<string>(() =>
     ? 'margin: 0 7px 0 2px;color:#ff6a6a;'
     : 'margin: 0 7px 0 2px;'
 );
-
 // 播放相关的设置
 const footer = useFooterStore();
 const {
@@ -341,9 +337,8 @@ const {
 } = storeToRefs(footer);
 // 用户记录相关的设置
 const user = useUserStore();
-
 // 更多的下拉选择
-const moreDropItems: DropDownItem[] = [
+const dropItems: DropDownItem[] = [
   {
     name: '播放相似单曲',
     icon: '\ue602',
@@ -385,6 +380,37 @@ const moreDropItems: DropDownItem[] = [
     command: 'deleteMuisc',
   },
 ];
+// 播放模式的下拉框
+const modeDropItems: DropDownItem[] = [
+  {
+    name: '单曲循环',
+    icon: '\ue604',
+    command: '0',
+    style: 'font-size: 16px; margin-right: 7px;',
+  },
+
+  {
+    name: '随机循环',
+    icon: '\ue603',
+    command: '1',
+    style: 'font-size: 15px; margin-right: 7px;',
+  },
+  {
+    name: '顺序播放',
+    icon: '\ue871',
+    command: '2',
+    style: 'font-size: 15px; margin-right: 7px;',
+  },
+];
+// 播放容器
+const player = ref<HTMLAudioElement>();
+// 当前音量
+const volume = ref<number>(80);
+// 判断当前是否静音
+const isMuted = ref<boolean>(false);
+// 计时器
+let timeId: any = 0;
+
 // 进入歌曲详情页
 const toSongDetail = () => {
   isPlay.value = false;
@@ -416,7 +442,7 @@ const playMv = () => {
 };
 
 // 点击更多的操作
-const handleMore = async (command: string) => {
+const handleClick = async (command: string) => {
   if (songNum.value > 0) {
     if (command == 'playSimi') {
       getSimiSong(
@@ -470,38 +496,6 @@ const handleMore = async (command: string) => {
   }
 };
 
-// 播放模式的下拉框
-const modeDropItems: DropDownItem[] = [
-  {
-    name: '单曲循环',
-    icon: '\ue604',
-    command: '0',
-    style: 'font-size: 16px; margin-right: 7px;',
-  },
-
-  {
-    name: '随机循环',
-    icon: '\ue603',
-    command: '1',
-    style: 'font-size: 15px; margin-right: 7px;',
-  },
-  {
-    name: '顺序播放',
-    icon: '\ue871',
-    command: '2',
-    style: 'font-size: 15px; margin-right: 7px;',
-  },
-];
-
-// 播放容器
-const player = ref<HTMLAudioElement>();
-// 当前音量
-const volume = ref<number>(80);
-// 判断当前是否静音
-const isMuted = ref<boolean>(false);
-// 计时器
-let timeId: any = 0;
-
 // 打开播放列表
 const openDrawer = () => {
   showList.value = true;
@@ -519,6 +513,7 @@ const setVolume = () => {
   player.value!.volume = volume.value / 100;
   isMuted.value = volume.value == 0 || player.value!.muted;
 };
+
 // 改变进度;
 const changeProcess = throttle(
   () => {

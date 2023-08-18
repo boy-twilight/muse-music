@@ -1,7 +1,7 @@
 {
   "name": "muse-music-website",
   "private": true,
-  "version": "1.0.5",
+  "version": "1.0.6",
   "author": {
     "name": "liyinchao",
     "email": "2429162154@qq.com"
@@ -9,7 +9,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --mode development --host",
-    "build": "vue-tsc && vite build --mode production",
+    "build": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix && vue-tsc && vite build --mode production",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix"
   },

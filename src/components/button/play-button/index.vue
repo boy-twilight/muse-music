@@ -13,10 +13,6 @@ import { Song } from '@/model';
 import { elMessage, getTheme } from '@/utils';
 import { elMessageType } from '@/model/enum';
 
-// 配置主题
-const boxShadow = getTheme().get('shadow');
-const themeColor = getTheme().get('themeColor');
-
 const props = withDefaults(
   defineProps<{
     songs: Song[];
@@ -26,7 +22,10 @@ const props = withDefaults(
     name: '播放全部'
   }
 );
-
+// 配置主题
+const boxShadow = getTheme().get('shadow');
+const themeColor = getTheme().get('themeColor');
+// 全局数据
 const footer = userFooterStore();
 const { songList, current, songNum, songListId } = storeToRefs(footer);
 

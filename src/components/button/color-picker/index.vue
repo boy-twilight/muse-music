@@ -28,10 +28,12 @@ const props = defineProps<{
 const emits = defineEmits<{
   (e: 'update:color', param: string): void;
 }>();
+
 // 默认绑定即选取的颜色
 const selectColor = ref<string>(props.color);
 // 选色器容器
 const picker = ref<HTMLButtonElement>();
+
 // 回传选中的颜色
 const getColor = () => {
   emits('update:color', selectColor.value);

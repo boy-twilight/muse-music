@@ -47,7 +47,7 @@ const useFooterStore = defineStore('footer', () => {
     showList,
     isChanging,
     showDetail,
-    songListId,
+    songListId
   };
 });
 

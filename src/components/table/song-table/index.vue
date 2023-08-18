@@ -108,7 +108,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, ref, watch, nextTick, onActivated } from 'vue';
+import { computed, inject, ref, watch, nextTick } from 'vue';
 import { storeToRefs } from 'pinia';
 import { onBeforeRouteLeave } from 'vue-router';
 import { ElTable } from 'element-plus';
@@ -117,7 +117,7 @@ import {
   getTheme,
   elMessage,
   getMusicUrls,
-  playVideo,
+  playVideo
 } from '@/utils';
 import { Song } from '@/model';
 import userFooterStore from '@/store/footer';
@@ -167,7 +167,7 @@ const props = withDefaults(
     sort: undefined,
     isCancelSort: false,
     showHeader: true,
-    pageSize: 0,
+    pageSize: 0
   }
 );
 
@@ -258,7 +258,7 @@ const leave = (row: Song) => {
 
 // 播放相关
 // 播放单曲
-const play = async (song: Song) => {
+const play = async(song: Song) => {
   if (song.available == '0' || song.available == '8') {
     const index = songListId.value.get(song.id);
     if (index == undefined) {
@@ -290,6 +290,7 @@ const play = async (song: Song) => {
     elMessage(elMessageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
   }
 };
+
 // 播放mv
 const playMV = (song: Song) => {
   playVideo(song, () => {
@@ -300,7 +301,7 @@ const playMV = (song: Song) => {
 // 定时重新获取musicurl
 // 计时器id
 let timeid: any = 0;
-//路由是否离开的标志
+// 路由是否离开的标志
 let isLeave = false;
 const getUrlOntime = () => {
   if (isLeave) {
@@ -317,6 +318,7 @@ const getUrlOntime = () => {
     getUrlOntime();
   }, 60 * 1000 * 5);
 };
+getUrlOntime();
 // 离开路由时销毁
 onBeforeRouteLeave(() => {
   isLeave = true;

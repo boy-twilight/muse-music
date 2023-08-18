@@ -32,6 +32,14 @@ import { getTheme } from '@/utils';
 import { DropDownItem } from '@/model';
 import useConfigStore from '@/store/config';
 
+const props = defineProps<{
+  shareTo: () => void;
+}>();
+
+const emits = defineEmits<{
+  (e: 'openSelect', showSelect: boolean): void;
+}>();
+
 // 配置主题
 const config = useConfigStore();
 const bg = getTheme().get('background');
@@ -45,14 +53,6 @@ const dropDownMode = computed(() => {
     return 'dropdown-skin';
   }
 });
-
-const props = defineProps<{
-  shareTo: () => void;
-}>();
-
-const emits = defineEmits<{
-  (e: 'openSelect', showSelect: boolean): void;
-}>();
 
 const more = reactive<DropDownItem[]>([
   {

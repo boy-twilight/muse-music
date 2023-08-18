@@ -39,17 +39,6 @@ import { elMessageType } from '@/model/enum';
 import { CommonButton } from '@components/button';
 import { SongTable } from '@components/table';
 
-// 配置主题
-const themeColor = getTheme().get('themeColor');
-
-const footer = useFooterStore();
-const { isPlay, songList, songListId, playProcess, playTime, current } =
-  storeToRefs(footer);
-const user = useUserStore();
-const { songRecord, musicDownload, loveSongs } = storeToRefs(user);
-// 设置隐藏滚动条
-const hideScroll = inject('hideScroll') as () => void;
-
 const props = defineProps<{
   // 在哪个页面
   pageName: string;
@@ -58,6 +47,16 @@ const props = defineProps<{
 const emits = defineEmits<{
   (e: 'closeSelect', showSelect: boolean): void;
 }>();
+
+// 配置主题
+const themeColor = getTheme().get('themeColor');
+const footer = useFooterStore();
+const { isPlay, songList, songListId, playProcess, playTime, current } =
+  storeToRefs(footer);
+const user = useUserStore();
+const { songRecord, musicDownload, loveSongs } = storeToRefs(user);
+// 设置隐藏滚动条
+const hideScroll = inject('hideScroll') as () => void;
 
 // 歌曲
 const songs = computed(() => {
@@ -130,6 +129,7 @@ const deleteSelect = () => {
   }
 };
 
+// 处理关闭
 const close = () => {
   hideScroll();
   emits('closeSelect', false);

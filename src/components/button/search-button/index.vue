@@ -33,6 +33,10 @@ import { throttle } from 'lodash-es';
 import { getTheme } from '@/utils';
 import useConfigStore from '@/store/config';
 
+// 搜索结果回传
+const emits = defineEmits<{
+  (e: 'getContent', param: string): void;
+}>();
 // 配置主题
 const config = useConfigStore();
 const fontColor = getTheme().get('fontColor');
@@ -43,22 +47,16 @@ const searchColor = computed(() =>
     ? getTheme().get('searchBg')?.value
     : 'rgba(210,210,210,0.2)'
 );
-
 // 设置隐藏滚动条
 const hideScroll = inject('hideScroll') as () => void;
-
-// 搜索结果回传
-const emits = defineEmits<{
-  (e: 'getContent', param: string): void;
-}>();
-
 // 搜索容器
 const search = ref<HTMLDivElement>();
 // 隐藏文字
 const hideText = ref<boolean>(false);
-
 // 搜索内容
 const content = ref<string>('');
+
+// 搜索音乐
 const searchMusic = () => {
   throttle(
     () => {

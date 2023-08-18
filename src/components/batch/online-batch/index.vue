@@ -41,15 +41,6 @@ import { elMessageType } from '@/model/enum';
 import { CommonButton } from '@components/button';
 import { SongTable } from '@components/table';
 
-// 配置主题
-const themeColor = getTheme().get('themeColor');
-
-const footer = useFooterStore();
-const { isPlay, songList, songListId, playProcess, playTime, current } =
-  storeToRefs(footer);
-const user = useUserStore();
-const { loveMusicId, loveSongs } = storeToRefs(user);
-
 defineProps<{
   // 歌曲
   songs: Song[];
@@ -57,8 +48,21 @@ defineProps<{
   songIdMapper: Map<string, number>;
 }>();
 
+const emits = defineEmits<{
+  (e: 'closeSelect', showSelect: boolean): void;
+}>();
+
+// 配置主题
+const themeColor = getTheme().get('themeColor');
+const footer = useFooterStore();
+const { isPlay, songList, songListId, playProcess, playTime, current } =
+  storeToRefs(footer);
+const user = useUserStore();
+const { loveMusicId, loveSongs } = storeToRefs(user);
+
 // 选择的歌曲
 const selectSongs = reactive<Song[]>([]);
+
 // 获取选择的歌曲
 const getSelectItems = (songs: Song[]) => {
   if (selectSongs.length != 0) {
@@ -66,10 +70,6 @@ const getSelectItems = (songs: Song[]) => {
   }
   selectSongs.push(...songs);
 };
-
-const emits = defineEmits<{
-  (e: 'closeSelect', showSelect: boolean): void;
-}>();
 
 // 播放选择的歌曲
 const playSelect = async() => {
@@ -91,12 +91,14 @@ const playSelect = async() => {
     elMessage(elMessageType.INFO, '请添加歌曲！');
   }
 };
+
 // 批量下载歌曲
 const downloadSelect = () => {
   selectSongs.forEach((item) => {
     user.addMuiscDownload(item);
   });
 };
+
 // 喜欢选中的歌曲
 const loveSelect = () => {
   selectSongs.forEach((item) => {

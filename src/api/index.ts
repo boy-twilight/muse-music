@@ -150,8 +150,8 @@ export const getArtists = (
 ) =>
   initial
     ? request.get(
-        `/artist/list?type=${type}&area=${area}&initial=${initial}&limit=${limit}`
-      )
+      `/artist/list?type=${type}&area=${area}&initial=${initial}&limit=${limit}`
+    )
     : request.get(`/artist/list?type=${type}&area=${area}&limit=${limit}`);
 
 // 获取网友推荐歌单的分类

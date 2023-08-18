@@ -37,7 +37,7 @@
       <div class="search-area">
         <!-- 搜索提示框 -->
         <el-popover
-          :visible="showHistory"
+          :visible="showSuggest"
           :width="460"
           placement="bottom-start"
           :popper-style="{
@@ -142,8 +142,8 @@
               <input
                 v-model="search"
                 @keyup.enter="goSearch"
-                @focusin="showHistory = true"
-                @focusout="showHistory = false"
+                @focusin="showSuggest = true"
+                @focusout="showSuggest = false"
                 @input="getSearchSuggest"
                 type="text"
                 placeholder="请输入你想要搜索的歌曲，歌手"
@@ -164,13 +164,13 @@
       <div class="login">
         <el-avatar
           :size="30"
-          :src="user.avatar"
+          :src="userInfo.avatar"
           fit="cover" />
         <span
           v-prevent
           @click="showLoginBox"
           style="font-size: 12px"
-          >{{ user.userName }}</span
+          >{{ userInfo.userName }}</span
         >
         <span
           @mousedown.prevent="theme.changeDark"
@@ -218,12 +218,8 @@
               <span
                 :class="item.spanClass"
                 :style="item.style"
-                v-text="
-                  item.command == 'fullScreen' ? fullScreenIcon : item.icon
-                "></span>
-              {{
-                item.command == 'fullScreen' ? fullScreenName : item.name
-              }}</el-dropdown-item
+                v-text="item.icon"></span>
+              {{ item.name }}</el-dropdown-item
             >
           </el-dropdown-menu>
         </template>
@@ -241,7 +237,7 @@ import {
   computed,
   onMounted,
   nextTick,
-  Ref,
+  Ref
 } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
@@ -253,6 +249,7 @@ import {
   getTheme,
   downloadFile,
   throttle,
+  getMusicUrls
 } from '@/utils';
 import { elMessageType, storageType } from '@/model/enum';
 import {
@@ -261,6 +258,7 @@ import {
   checkStatus,
   getHotSearch,
   getSuggest,
+  getMusicDetail
 } from '@/api';
 import {
   DropDownItem,
@@ -270,7 +268,7 @@ import {
   Song,
   Artist,
   Album,
-  SearchSuggest,
+  SearchSuggest
 } from '@/model';
 import useHeaderStore from '@/store/header';
 import useConfigStore from '@/store/config';
@@ -279,7 +277,6 @@ import logo from '@assets/image/网易云.svg';
 import history from '@assets/image/暂无搜索结果.svg';
 import useFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
-
 // 配置主题
 const theme = useThemeStore();
 const fontColor = getTheme().get('fontColor') as Ref<string>;
@@ -301,103 +298,13 @@ const hideScroll = inject('hideScroll') as () => void;
 // 路由器
 const router = useRouter();
 const header = useHeaderStore();
-const { showLogin, cookie, user } = storeToRefs(header);
+const { showLogin, cookie, user: userInfo } = storeToRefs(header);
 const config = useConfigStore();
 const { isFullScreen, bgMode, skin, drawerMode } = storeToRefs(config);
 const footer = useFooterStore();
-const { songList, songListId } = storeToRefs(footer);
-// 用户搜素的内容
-const search = ref<string>('');
-//判断用户是否正在搜索
-const isSearching = computed(() => {
-  const isEmpty = Array.from(suggestMap.values()).every(
-    (item) => item.length > 0
-  );
-  return search.value.length > 0 && isEmpty;
-});
-// 热门搜索列表
-const hotSearch = reactive<HotSearch[]>(
-  getStorage(storageType.SESSION, 'hotSearch') || []
-);
-// 用户的搜索列表
-const userSearch = reactive<string[]>(
-  getStorage(storageType.LOCAL, 'userSearch') || []
-);
-//搜索建议
-const suggestMap = reactive<Map<string, SearchSuggest[]>>(
-  new Map([
-    ['单曲', []],
-    ['歌手', []],
-    ['专辑', []],
-    ['歌单', []],
-  ])
-);
-// 是否展示搜索推荐列表
-const showHistory = ref<boolean>(false);
-// 下拉列表
-const dropDownItems = reactive<DropDownItem[]>([
-  {
-    name: '退出登陆',
-    icon: '\ue61b',
-    command: 'logout',
-    style: 'font-size:14px;margin:0 9px 0 2px;',
-    spanClass: 'iconfont_1',
-  },
-  {
-    name: '',
-    icon: '',
-    command: 'fullScreen',
-    style: 'font-size:18px;margin-right:7px;',
-    spanClass: 'iconfont_1',
-  },
-  {
-    name: '纯色模式',
-    icon: '\ue822',
-    command: 'color',
-    style: 'font-size:18px;margin-right:7px;',
-    spanClass: 'iconfont_1',
-  },
-  {
-    name: '皮肤模式',
-    icon: '\ue743',
-    command: 'skin',
-    style: 'font-size:15px;margin:0 7px 0 4px;',
-    spanClass: 'iconfont_1',
-  },
-  {
-    name: '主题设置',
-    icon: '\ueb6f',
-    command: 'theme',
-    style: 'font-size:18px;margin:0 7px 0 1.8px;',
-    spanClass: 'iconfont_1',
-  },
-  {
-    name: '导入数据',
-    icon: '\ue610',
-    command: 'import',
-    style: 'font-size: 15px;margin: 0.5px 8.5px 0 2.8px;display: inline-block;',
-    spanClass: 'iconfont_2',
-  },
-  {
-    name: '导出数据',
-    icon: '\ue635',
-    command: 'export',
-    style: 'font-size: 15px;margin: 0.5px 8.5px 0 2.8px;display: inline-block;',
-    spanClass: 'iconfont_2',
-  },
-]);
-// 存放二维码照片的容器
-const qrcode = ref<HTMLImageElement>();
-// 计时器的标志
-let timeid: any = 0;
-// 检测全屏，变化文字和对应的icon
-const fullScreenIcon = computed(() =>
-  !isFullScreen.value ? '\ueb99' : '\ueb98'
-);
-const fullScreenName = computed(() =>
-  !isFullScreen.value ? '进入全屏' : '退出全屏'
-);
-const userStore = useUserStore();
+const { songList, songListId, isPlay, current, playProcess, playTime } =
+  storeToRefs(footer);
+const user = useUserStore();
 const {
   loveSongs,
   loveVideo,
@@ -418,8 +325,86 @@ const {
   musicDownloadId,
   mvDownloadId,
   songRecordId,
-  videoRecordId,
-} = storeToRefs(userStore);
+  videoRecordId
+} = storeToRefs(user);
+
+// 用户搜素的内容
+const search = ref<string>('');
+// 判断用户是否正在搜索
+const isSearching = computed(() => {
+  const isEmpty = Array.from(suggestMap.values()).every(
+    (item) => item.length > 0
+  );
+  return search.value.length > 0 && isEmpty;
+});
+// 热门搜索列表
+const hotSearch = reactive<HotSearch[]>(
+  getStorage(storageType.SESSION, 'hotSearch') || []
+);
+// 用户的搜索列表
+const userSearch = reactive<string[]>(
+  getStorage(storageType.LOCAL, 'userSearch') || []
+);
+// 搜索建议
+const suggestMap = reactive<Map<string, SearchSuggest[]>>(
+  new Map([
+    ['单曲', []],
+    ['歌手', []],
+    ['专辑', []],
+    ['歌单', []]
+  ])
+);
+// 是否展示搜索推荐列表
+const showSuggest = ref<boolean>(false);
+// 下拉列表
+const dropDownItems = reactive<DropDownItem[]>([
+  {
+    name: '退出登陆',
+    icon: '\ue61b',
+    command: 'logout',
+    style: 'font-size:14px;margin:0 9px 0 2px;',
+    spanClass: 'iconfont_1'
+  },
+  {
+    name: '纯色模式',
+    icon: '\ue822',
+    command: 'color',
+    style: 'font-size:18px;margin-right:7px;',
+    spanClass: 'iconfont_1'
+  },
+  {
+    name: '皮肤模式',
+    icon: '\ue743',
+    command: 'skin',
+    style: 'font-size:15px;margin:0 7px 0 4px;',
+    spanClass: 'iconfont_1'
+  },
+  {
+    name: '主题设置',
+    icon: '\ueb6f',
+    command: 'theme',
+    style: 'font-size:18px;margin:0 7px 0 1.8px;',
+    spanClass: 'iconfont_1'
+  },
+  {
+    name: '导入数据',
+    icon: '\ue610',
+    command: 'import',
+    style: 'font-size: 15px;margin: 0.5px 8.5px 0 2.8px;display: inline-block;',
+    spanClass: 'iconfont_2'
+  },
+  {
+    name: '导出数据',
+    icon: '\ue635',
+    command: 'export',
+    style: 'font-size: 15px;margin: 0.5px 8.5px 0 2.8px;display: inline-block;',
+    spanClass: 'iconfont_2'
+  }
+]);
+// 存放二维码照片的容器
+const qrcode = ref<HTMLImageElement>();
+// 计时器的标志
+let timeid: any = 0;
 
 // 路由返回上一级
 const back = () => {
@@ -433,29 +418,13 @@ const forward = () => {
   router.forward();
 };
 
-// 缓存列表结果
-const getSearchData = () => {
-  if (hotSearch.length == 0) {
-    getHotSearch().then((response: any) => {
-      if (response) {
-        const { data } = response;
-        data.forEach((item: any) => {
-          hotSearch.push({
-            searchWord: item.searchWord,
-            score: item.score,
-          });
-        });
-      }
-    });
-  }
-};
-
+// 登陆相关的处理函数
 // 创建产生二维码
 const createKeyCode = (): void => {
   createKey()
     .then((response: any) => {
       const {
-        data: { unikey },
+        data: { unikey }
       } = response;
       creatQrImage(unikey);
       CheckLoginStatus(unikey);
@@ -470,7 +439,7 @@ const creatQrImage = (key: string): void => {
   createQrCode(key)
     .then((response: any) => {
       const {
-        data: { qrimg },
+        data: { qrimg }
       } = response;
       qrcode.value!.src = qrimg;
     })
@@ -481,7 +450,7 @@ const creatQrImage = (key: string): void => {
 
 // 监测登陆状态
 const CheckLoginStatus = (key: string): void => {
-  timeid = setInterval(async () => {
+  timeid = setInterval(async() => {
     const response: any = await checkStatus(key).catch((err: any) => {
       elMessage(elMessageType.ERROR, err.message);
     });
@@ -499,7 +468,6 @@ const CheckLoginStatus = (key: string): void => {
       showLogin.value = false;
       // 本地存储cookie
       cookie.value = response.cookie;
-
       // 获取用户信息
       header.getInfo();
       // 提醒用户登陆成功
@@ -524,6 +492,7 @@ const close = () => {
   clearInterval(timeid);
 };
 
+// 下拉框相应的点击处理
 // 切换皮肤
 const changeSkin = () => {
   const input = document.createElement('input');
@@ -532,7 +501,7 @@ const changeSkin = () => {
   input.style.display = 'none';
   document.body.appendChild(input);
   input.click();
-  input.onchange = async () => {
+  input.onchange = async() => {
     const files = input.files;
     if (files && files.length > 0) {
       const file = files[0];
@@ -569,7 +538,7 @@ const exportConfig = () => {
     bgMode.value
   }\nskin-p-(*)-${skin.value}`;
   const blob = new Blob([userInfo], {
-    type: 'text/plain; charset=utf-8',
+    type: 'text/plain; charset=utf-8'
   });
   downloadFile(blob, 'config.txt');
 };
@@ -580,7 +549,7 @@ const parseConfig = () => {
   upload.style.display = 'none';
   upload.type = 'file';
   upload.accept = '.txt';
-  upload.onchange = async (event: any) => {
+  upload.onchange = async(event: any) => {
     const files = event.target.files;
     if (files.length > 0) {
       const file = files[0];
@@ -665,7 +634,7 @@ const parseConfig = () => {
 };
 
 // 下拉框选择处理
-const handleClick = async (command: string) => {
+const handleClick = async(command: string) => {
   if (command == 'logout' && cookie.value) {
     header.logout();
   } else if (command == 'fullScreen') {
@@ -694,7 +663,26 @@ const handleClick = async (command: string) => {
   }
 };
 
-// 以下为搜索的内容
+// 搜索相关的事件
+// 得到推荐的搜索列表
+const getSearchData = async() => {
+  if (hotSearch.length == 0) {
+    try {
+      const response: any = await getHotSearch();
+      const { data } = response;
+      data.forEach((item: any) => {
+        hotSearch.push({
+          searchWord: item.searchWord,
+          score: item.score
+        });
+      });
+    } catch (err: any) {
+      elMessage(elMessageType.ERROR, err.message);
+    }
+  }
+};
+
+// 前往搜索的页面
 const goSearch = () => {
   if (!userSearch.includes(search.value)) {
     userSearch.push(search.value);
@@ -703,8 +691,8 @@ const goSearch = () => {
   router.push({
     name: 'search',
     query: {
-      keyWord: search.value,
-    },
+      keyWord: search.value
+    }
   });
 };
 
@@ -718,18 +706,18 @@ const goSearchByRe = (keyWord: string) => {
   router.push({
     name: 'search',
     query: {
-      keyWord,
-    },
+      keyWord
+    }
   });
 };
 
-//获取搜索建议
-const getSearchSuggest = throttle(async () => {
+// 获取搜索建议
+const getSearchSuggest = throttle(async() => {
   if (!search.value) return;
   try {
     const response: any = await getSuggest(search.value);
     const {
-      result: { albums, artists, songs, playlists },
+      result: { albums, artists, songs, playlists }
     } = response;
     if (songs) {
       const target = suggestMap.get('单曲') as SearchSuggest[];
@@ -741,14 +729,14 @@ const getSearchSuggest = throttle(async () => {
             type: 'song',
             id,
             name: name + '-' + artists[0].name,
-            pic: artists[0].img1v1Url,
+            pic: artists[0].img1v1Url
           };
         } else {
           target.push({
             type: 'song',
             id,
             name: name + '-' + artists[0].name,
-            pic: artists[0].img1v1Url,
+            pic: artists[0].img1v1Url
           });
         }
       });
@@ -763,14 +751,14 @@ const getSearchSuggest = throttle(async () => {
             type: 'artist',
             id,
             name,
-            pic: picUrl,
+            pic: picUrl
           };
         } else {
           target?.push({
             type: 'artist',
             id,
             name,
-            pic: picUrl,
+            pic: picUrl
           });
         }
       });
@@ -786,7 +774,7 @@ const getSearchSuggest = throttle(async () => {
             id,
             pic: artist.picUrl,
             name: name + '-' + artist.name,
-            artistId: artist.id,
+            artistId: artist.id
           };
         } else {
           target?.push({
@@ -794,7 +782,7 @@ const getSearchSuggest = throttle(async () => {
             id,
             pic: artist.picUrl,
             name: name + '-' + artist.name,
-            artistId: artist.id,
+            artistId: artist.id
           });
         }
       });
@@ -809,14 +797,14 @@ const getSearchSuggest = throttle(async () => {
             type: 'playlist',
             id,
             name,
-            pic: coverImgUrl,
+            pic: coverImgUrl
           };
         } else {
           target.push({
             type: 'playlist',
             id,
             name,
-            pic: coverImgUrl,
+            pic: coverImgUrl
           });
         }
       });
@@ -826,8 +814,41 @@ const getSearchSuggest = throttle(async () => {
   }
 }, 300);
 
-//前往搜索建议
-const goSuggest = (item: SearchSuggest) => {
+// 播放搜索推荐的音乐
+const play = async(song: Song) => {
+  if (song.available == '0' || song.available == '8') {
+    const index = songListId.value.get(song.id);
+    if (index == undefined) {
+      user.addRecord(song, songRecord.value, loveMusicId.value);
+      if (current.value == 0) {
+        if (isPlay) {
+          isPlay.value = false;
+        }
+        playProcess.value = 0;
+        playTime.value = 0;
+        songList.value.unshift(song);
+        await nextTick();
+        isPlay.value = true;
+      } else {
+        songList.value.unshift(song);
+        current.value = 0;
+      }
+    } else {
+      if (current.value != index) {
+        current.value = index;
+      } else {
+        isPlay.value = true;
+      }
+    }
+  } else if (song.available == '1') {
+    elMessage(elMessageType.INFO, '此歌曲为vip专属');
+  } else if (song.available == '10') {
+    elMessage(elMessageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
+  }
+};
+
+// 前往搜索建议
+const goSuggest = async(item: SearchSuggest) => {
   if (item.type != 'song') {
     hideScroll();
     if (item.type == 'artist') {
@@ -835,27 +856,48 @@ const goSuggest = (item: SearchSuggest) => {
         name: item.type,
         query: {
           type: 'playlist',
-          id: item.id,
-        },
+          id: item.id
+        }
       });
     } else if (item.type == 'album') {
       router.push({
         name: item.type,
         query: {
           id: item.id,
-          artistId: item.artistId,
-        },
+          artistId: item.artistId
+        }
       });
     } else {
       router.push({
         name: item.type,
         query: {
           id: item.id,
-          score: Math.floor(+item.id / 100),
-        },
+          score: Math.floor(+item.id / 100)
+        }
       });
     }
   } else {
+    try {
+      const response: any = await getMusicDetail(item.id);
+      const { songs } = response;
+      const temp: Song[] = (songs as any[]).map((item) => {
+        const { id, name, ar, al, fee, dt } = item;
+        return {
+          id: id,
+          name: name,
+          singer: ar[0].name,
+          songImage: al.picUrl,
+          album: al.name,
+          available: fee,
+          time: dt,
+          url: ''
+        };
+      });
+      await getMusicUrls(temp);
+      play(temp[0]);
+    } catch (err: any) {
+      elMessage(elMessageType.ERROR, err.message);
+    }
   }
 };
 
@@ -869,24 +911,17 @@ watch(showLogin, (newVal) => {
 
 // 检测屏幕变化改变样式
 onMounted(() => {
+  // 获取热门推荐数据
+  getSearchData();
   // 屏幕变化时改变值
   document.addEventListener('fullscreenchange', () => {
     isFullScreen.value = !isFullScreen.value;
   });
-
   // 缓存结果
   window.addEventListener('beforeunload', () => {
     setStorAge(storageType.LOCAL, 'userSearch', userSearch);
-    setStorAge(storageType.SESSION, 'hotSearch', hotSearch);
-    if (cookie.value) {
-      setStorAge(storageType.SESSION, 'cookie', cookie.value);
-    }
-    setStorAge(storageType.SESSION, 'userInfo', user.value);
   });
 });
-
-// 获取热门推荐数据
-getSearchData();
 </script>
 
 <style lang="less" scoped>

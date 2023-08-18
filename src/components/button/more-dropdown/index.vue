@@ -3,7 +3,7 @@
     v-if="showDrop"
     :popper-class="`dropdown songlist-more ${dropDownMode}`"
     trigger="click"
-    @command="handleMore">
+    @command="handleClick">
     <span
       class="iconfont"
       ref="more"
@@ -54,29 +54,6 @@ import useFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
 import useConfigStore from '@/store/config';
 
-// 主题设置
-const config = useConfigStore();
-const bg = getTheme().get('background');
-const fontColor = getTheme().get('fontColor') as Ref<string>;
-// 下列框处于哪种模式
-const dropDownMode = computed(() => {
-  if (config.bgMode == 'color') {
-    return fontColor.value == '#ffffff' ? 'dropdown-dark' : 'dropdown-light';
-  } else {
-    return 'dropdown-skin';
-  }
-});
-
-// 评论
-const soucreComments = inject('soucreComments') as Comment[];
-// 是否展开评论区
-const showComments = inject('showComments') as Ref<boolean>;
-
-const more = ref<HTMLSpanElement>();
-
-// 是否显示下拉框
-const showDrop = ref<boolean>(false);
-
 // 声明接受值
 const props = defineProps<{
   // 传入歌曲
@@ -85,6 +62,26 @@ const props = defineProps<{
   play: (song: Song) => void;
 }>();
 
+// 主题设置
+const bg = getTheme().get('background');
+const fontColor = getTheme().get('fontColor') as Ref<string>;
+// 全局数据
+const config = useConfigStore();
+const footer = useFooterStore();
+const { songList, current, songListId } = storeToRefs(footer);
+const user = useUserStore();
+// 下列框处于哪种模式
+const dropDownMode = computed(() => {
+  if (config.bgMode == 'color') {
+    return fontColor.value == '#ffffff' ? 'dropdown-dark' : 'dropdown-light';
+  } else {
+    return 'dropdown-skin';
+  }
+});
+// 更多图标的容器
+const more = ref<HTMLSpanElement>();
+// 是否显示下拉框
+const showDrop = ref<boolean>(false);
 // 用户再点击喜欢过后我喜欢的图标发送变化
 const loveIcon = computed<string>(() =>
   props.song.isLove ? '&#xe760;' : '&#xe761'
@@ -94,7 +91,6 @@ const lovetyle = computed<string>(() =>
     ? 'margin: 0 7px 0 4px;color:#ff6a6a;'
     : 'margin: 0 7px 0 4px;'
 );
-
 // 下拉选项
 const dropItems: DropDownItem[] = [
   {
@@ -150,6 +146,10 @@ const dropItems: DropDownItem[] = [
     command: 'downloadMusic'
   }
 ];
+// 评论
+const soucreComments = inject('soucreComments') as Comment[];
+// 是否展开评论区
+const showComments = inject('showComments') as Ref<boolean>;
 
 // 点击显示下拉框
 const showDropMenu = async() => {
@@ -157,11 +157,6 @@ const showDropMenu = async() => {
   await nextTick();
   more.value?.click();
 };
-
-const footer = useFooterStore();
-const { songList, current, songListId } = storeToRefs(footer);
-
-const user = useUserStore();
 
 // 下首播放
 const playNext = (song: Song) => {
@@ -192,7 +187,7 @@ const playNext = (song: Song) => {
 };
 
 // 点击更多操作
-const handleMore = (command: string) => {
+const handleClick = (command: string) => {
   const song = props.song;
   if (command == 'love') {
     user.addLove(song, user.loveSongs, user.loveMusicId);
@@ -223,7 +218,6 @@ const handleMore = (command: string) => {
     });
   }
 };
-// 监控背景颜色，修改下拉框Hover颜色
 </script>
 
 <style lang="less">
