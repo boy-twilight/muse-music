@@ -37,16 +37,17 @@
 <script lang="ts" setup>
 import { ref, inject, Ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { getMusicUrls, getRequset, getTheme } from '@/utils';
+import { getMusicUrls, getRequset } from '@/utils';
 import useUserStore from '@/store/user';
 import { ArtistMv } from '@components/datalist';
 import { UserBatch } from '@components/batch';
 import { UserMusicTable } from '@components/table';
 import { NoResult } from '@components/result';
 import Tab from '@components/tab';
+import useTheme from '@/hooks/useTheme';
 // 配置主题
-const fontColor = getTheme().get('fontColor');
-const fontGray = inject('fontGray');
+const { fontColor, fontGray } = useTheme();
+
 // 获取用户播放数据
 const user = useUserStore();
 const { mvDownload, musicDownload } = storeToRefs(user);
@@ -59,6 +60,7 @@ const showSelect = ref<boolean>(false);
 const openSelect = (open: boolean) => {
   showSelect.value = open;
 };
+
 // 关闭批量操作
 const closeSelect = (close: boolean) => {
   showSelect.value = close;
@@ -69,7 +71,7 @@ const deleteDownLoad = (id: string) => {
   mvDownload.value.splice(index, 1);
 };
 // 获取初始数据
-getRequset(async() => {
+getRequset(async () => {
   getMusicUrls(musicDownload.value);
   user.initLoveMusic(musicDownload.value);
   // 关闭动画

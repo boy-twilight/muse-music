@@ -46,15 +46,17 @@
 import { inject, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { Album } from '@/model';
-import { getTheme } from '@/utils';
 import Pagination from '@components/pagination';
+import useTheme from '@/hooks/useTheme';
 
 // 主题配置
-const fontColor = getTheme().get('fontColor');
-const fontBlack = getTheme().get('fontBlack');
-const boxShadow = getTheme().get('shadow');
-const themeColor = getTheme().get('themeColor');
-const fontGray = inject('fontGray');
+const {
+  fontColor,
+  fontBlack,
+  shadow: boxShadow,
+  themeColor,
+  fontGray,
+} = useTheme();
 
 const router = useRouter();
 
@@ -79,7 +81,7 @@ const props = withDefaults(
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false
+    showPagination: false,
   }
 );
 
@@ -112,8 +114,8 @@ const toAlbumDetail = (id: string, artistId: string) => {
     name: 'album',
     query: {
       id,
-      artistId
-    }
+      artistId,
+    },
   });
 };
 </script>

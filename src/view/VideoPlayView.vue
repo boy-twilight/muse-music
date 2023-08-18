@@ -95,7 +95,7 @@ import {
   ref,
   computed,
   nextTick,
-  onBeforeUnmount
+  onBeforeUnmount,
 } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { MV, Comment } from '@/model';
@@ -108,30 +108,26 @@ import {
   getVideoUrl,
   getSimiVideo,
   getVideoComment,
-  getMvComment
+  getMvComment,
 } from '@/api';
-import {
-  elMessage,
-  getTheme,
-  getRequset,
-  formatTime,
-  share,
-  getComment
-} from '@/utils';
+import { elMessage, getRequset, formatTime, share, getComment } from '@/utils';
 import DPlayer from 'dplayer';
 import useUserStore from '@/store/user';
 import useConfigStore from '@/store/config';
 import { CommonButton } from '@components/button';
 import { ArtistMv } from '@components/datalist';
 import { SourceComment } from '@components/common';
+import useTheme from '@/hooks/useTheme';
 
 // 设置主题
 const config = useConfigStore();
-const fontColor = getTheme().get('fontColor');
-const fontBlack = getTheme().get('fontBlack');
-const boxShadow = getTheme().get('shadow');
-const themeColor = getTheme().get('themeColor');
-const fontGray = inject('fontGray');
+const {
+  fontColor,
+  fontBlack,
+  shadow: boxShadow,
+  themeColor,
+  fontGray,
+} = useTheme();
 
 // 全屏模式改变播放器高度
 const videoHeight = computed(() => (config.isFullScreen ? '695px' : '555px'));
@@ -154,7 +150,7 @@ const mv = reactive<MV>({
   url: '',
   time: '',
   publishTime: '',
-  available: ''
+  available: '',
 });
 // 相似的mv推荐
 const mvSimi = reactive<MV[]>([]);
@@ -181,8 +177,9 @@ const shareVideo = () => {
       ',快来和我一起观看把！'
   );
 };
+
 // 初始化播放器
-const init = async() => {
+const init = async () => {
   await nextTick();
   dplayer.value = new DPlayer({
     container: document.querySelector('.players'),
@@ -190,7 +187,7 @@ const init = async() => {
       url: mv.url as string,
       thumbnails: mv.image,
       type: 'video/mp4',
-      pic: mv.image
+      pic: mv.image,
     },
     autoplay: false,
     loop: false,
@@ -207,21 +204,21 @@ const init = async() => {
         text: '下载',
         click: () => {
           user.addVideoDownload(mv);
-        }
+        },
       },
       {
         text: '收藏',
         click: () => {
           user.addLove(mv, user.loveVideo, user.loveVideoId);
-        }
+        },
       },
       {
         text: '分享',
         click: () => {
           shareVideo();
-        }
-      }
-    ]
+        },
+      },
+    ],
   });
   // 视频结束时推荐其他视频
   const video = document.querySelector('.dplayer-video') as HTMLVideoElement;
@@ -229,6 +226,7 @@ const init = async() => {
     showRecommned.value = true;
   };
 };
+
 // 播放推荐
 const playRe = (index: number, id: string) => {
   if (index == 0) {
@@ -239,13 +237,13 @@ const playRe = (index: number, id: string) => {
     router.push({
       name: 'video',
       query: {
-        id
-      }
+        id,
+      },
     });
   }
 };
 
-getRequset(async() => {
+getRequset(async () => {
   // 判断地址是否包含字母，有则用视频接口请求地址
   const rule = /.*[A-Z]+.*/;
   if (!rule.test(id)) {
@@ -254,13 +252,13 @@ getRequset(async() => {
         getMvDetail(id),
         getMvUrl(id),
         getSimiMv(id),
-        getMvComment(id, 1000)
+        getMvComment(id, 1000),
       ]);
       responses.forEach((response, index) => {
         // 获取mv详情
         if (index == 0) {
           const {
-            data: { name, artistName, cover, playCount, duration, publishTime }
+            data: { name, artistName, cover, playCount, duration, publishTime },
           } = response;
           mv.name = name;
           mv.playCount = playCount;
@@ -272,7 +270,7 @@ getRequset(async() => {
         // 获取mv播放地址
         else if (index == 1) {
           const {
-            data: { url, fee }
+            data: { url, fee },
           } = response;
           if (url) {
             mv.url = url;
@@ -292,7 +290,7 @@ getRequset(async() => {
                 image: cover,
                 name,
                 artist: artistName,
-                playCount
+                playCount,
               });
             });
           }
@@ -313,13 +311,13 @@ getRequset(async() => {
         getVideoDetail(id),
         getVideoUrl(id),
         getSimiVideo(id),
-        getVideoComment(id, 1000)
+        getVideoComment(id, 1000),
       ]);
       responses.forEach((response, index) => {
         // 获取视频详情
         if (index == 0) {
           const {
-            data: { title, coverUrl, publishTime, playTime, creator }
+            data: { title, coverUrl, publishTime, playTime, creator },
           } = response;
           mv.name = title;
           mv.image = coverUrl;
@@ -346,7 +344,7 @@ getRequset(async() => {
               name: title,
               image: coverUrl,
               playCount: playTime,
-              artist: creator[0].userName
+              artist: creator[0].userName,
             });
           });
         }

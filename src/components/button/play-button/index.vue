@@ -1,53 +1,28 @@
 <template>
   <el-button
-    @click="playAll"
+    @click="playAllMusic(songs)"
     :color="themeColor"
     ><span class="iconfont">&#xea6e;</span>{{ name }}</el-button
   >
 </template>
 
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia';
-import userFooterStore from '@/store/footer';
 import { Song } from '@/model';
-import { elMessage, getTheme } from '@/utils';
-import { elMessageType } from '@/model/enum';
-
-const props = withDefaults(
+import usePlayMusic from '@/hooks/usePlayMuisc';
+import useTheme from '@/hooks/useTheme';
+withDefaults(
   defineProps<{
     songs: Song[];
     name?: string;
   }>(),
   {
-    name: '播放全部'
+    name: '播放全部',
   }
 );
 // 配置主题
-const boxShadow = getTheme().get('shadow');
-const themeColor = getTheme().get('themeColor');
-// 全局数据
-const footer = userFooterStore();
-const { songList, current, songNum, songListId } = storeToRefs(footer);
+const { shadow: boxShadow, themeColor } = useTheme();
 
-// 播放全部
-const playAll = () => {
-  if (props.songs.length > 0) {
-    const temp: number = songNum.value;
-    props.songs.forEach((item) => {
-      const notInList = songListId.value.get(item.id);
-      if (
-        notInList == undefined &&
-        (item.available == '0' || item.available == '8')
-      ) {
-        songList.value.push(item);
-      }
-    });
-    current.value = temp;
-    elMessage(elMessageType.SUCCESS, '已经添加到播放列表');
-  } else {
-    elMessage(elMessageType.INFO, '请添加歌曲');
-  }
-};
+const { playAllMusic } = usePlayMusic();
 </script>
 
 <style lang="less" scoped>

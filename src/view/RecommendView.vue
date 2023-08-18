@@ -17,7 +17,7 @@
           :key="song.id"
           class="song-recommend">
           <div
-            @click="play(song)"
+            @click="playMusic(song)"
             class="mask">
             <span class="iconfont">&#xea82;</span>
           </div>
@@ -40,36 +40,26 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, inject, Ref, nextTick } from 'vue';
-import { storeToRefs } from 'pinia';
-import useFooterStore from '@/store/footer';
-import useUserStore from '@/store/user';
+import { reactive, inject, Ref } from 'vue';
 import { getBanner, getRecPlaylist, getDeafultSong, getMv } from '@/api';
-import {
-  elMessage,
-  getMusicUrls,
-  getMusicInfos,
-  getTheme,
-  getRequset
-} from '@/utils';
+import { elMessage, getMusicUrls, getMusicInfos, getRequset } from '@/utils';
 import { elMessageType } from '@/model/enum';
 import { Playlist, Song, MV, Banner } from '@/model';
 import { ArtistMv, ArtistPlaylist } from '@components/datalist';
+import usePlayMusic from '@/hooks/usePlayMuisc';
 import Carousel from '@components/carousel';
+import useTheme from '@/hooks/useTheme';
 
-// 配置主题
-const fontColor = getTheme().get('fontColor');
-const fontBlack = getTheme().get('fontBlack');
-const boxShadow = getTheme().get('shadow');
-const themeColor = getTheme().get('themeColor');
-const fontGray = inject('fontGray');
+//获取主题
+const {
+  fontColor,
+  fontBlack,
+  shadow: boxShadow,
+  themeColor,
+  fontGray,
+} = useTheme();
 
-const footer = useFooterStore();
-const { songList, current, isPlay, playProcess, playTime, songListId } =
-  storeToRefs(footer);
-
-const user = useUserStore();
-
+const { playMusic } = usePlayMusic();
 // 轮播图片
 const banners = reactive<Banner[]>([]);
 // 推荐歌单
@@ -82,46 +72,13 @@ const mvLists = reactive<MV[]>([]);
 // 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
 
-// 点击图片进行播放
-const play = async(song: Song) => {
-  if (song.available == '0' || song.available == '8') {
-    const index = songListId.value.get(song.id);
-    if (index == undefined) {
-      user.addRecord(song, user.songRecord, user.loveMusicId);
-      if (current.value == 0) {
-        if (isPlay) {
-          isPlay.value = false;
-        }
-        playProcess.value = 0;
-        playTime.value = 0;
-        songList.value.unshift(song);
-        await nextTick();
-        isPlay.value = true;
-      } else {
-        songList.value.unshift(song);
-        current.value = 0;
-      }
-    } else {
-      if (current.value != index) {
-        current.value = index;
-      } else {
-        isPlay.value = true;
-      }
-    }
-  } else if (song.available == '1') {
-    elMessage(elMessageType.INFO, '此歌曲为vip专属');
-  } else if (song.available == '10') {
-    elMessage(elMessageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
-  }
-};
-
-getRequset(async() => {
+getRequset(async () => {
   try {
     const responses: any[] = await Promise.all([
       getBanner(),
       getRecPlaylist(10),
       getDeafultSong(40),
-      getMv(10, '内地', '全部', '最新')
+      getMv(10, '内地', '全部', '最新'),
     ]);
     responses.forEach((response, index) => {
       // 获取banner
@@ -131,7 +88,7 @@ getRequset(async() => {
           const { imageUrl, targetId } = item;
           banners.push({
             id: targetId,
-            pic: imageUrl
+            pic: imageUrl,
           });
         });
       }
@@ -147,7 +104,7 @@ getRequset(async() => {
               playCount,
               description,
               tags,
-              creator
+              creator,
             } = item;
             playLists.push({
               name,
@@ -158,8 +115,8 @@ getRequset(async() => {
               tag: tags,
               creator: {
                 avatarUrl: creator.avatarUrl,
-                nickname: creator.nickname
-              }
+                nickname: creator.nickname,
+              },
             });
           }
         });
@@ -167,7 +124,7 @@ getRequset(async() => {
       // 获取推荐歌曲
       else if (index == 2) {
         const {
-          data: { list }
+          data: { list },
         } = response;
         // 获取歌曲的基本信息
         for (let item of list) {
@@ -192,7 +149,7 @@ getRequset(async() => {
             name: name as string,
             image: cover as string,
             playCount: playCount as string,
-            artist: artistName as string
+            artist: artistName as string,
           });
         });
       }

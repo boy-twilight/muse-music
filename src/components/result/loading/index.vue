@@ -8,18 +8,18 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject } from 'vue';
+import { computed } from 'vue';
 import { svg } from '@assets/icon';
+import useTheme from '@/hooks/useTheme';
 
-// 配置主题
-const bg = inject('loadingBg');
+const { loadingBg: bg } = useTheme();
 
 const props = withDefaults(
   defineProps<{
     isLoading: boolean;
   }>(),
   {
-    isLoading: false
+    isLoading: false,
   }
 );
 

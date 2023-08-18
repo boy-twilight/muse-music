@@ -74,9 +74,7 @@
             >
 
             <!-- 更多 -->
-            <MoreDropdown
-              :song="song"
-              :play="play" />
+            <MoreDropdown :song="song" />
           </div>
         </li>
       </ul>
@@ -111,30 +109,32 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, inject, Ref, watch, reactive, ref } from 'vue';
+import { nextTick, Ref, watch, reactive, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { Song } from '@/model';
 import useFooterStore from '@/store/footer';
-import {
-  transformTime,
-  getTheme,
-  playVideo,
-  handleSingerName,
-  elMessage
-} from '@/utils';
+import { transformTime, playVideo, handleSingerName, elMessage } from '@/utils';
 import useConfigStore from '@/store/config';
-import useThemeStore from '@/store/theme';
 import { CommonButton, MoreDropdown } from '@components/button';
 import { elMessageType } from '@/model/enum';
+import useTheme from '@/hooks/useTheme';
+import useThemeStore from '@/store/theme';
 
 // 配置主题
 const config = useConfigStore();
 const { skinUrl, bgMode, drawerMode } = storeToRefs(config);
-const fontColort = getTheme().get('fontColor');
-const fontGrayt = inject('fontGray');
-const boxShadowt = getTheme().get('shadow');
-const themeColort = getTheme().get('themeColor');
-const bgt = getTheme().get('background') as Ref<string>;
+
+const {
+  fontColor,
+  fontGray,
+  background,
+  menuColor,
+  themeColor,
+  active,
+  shadow: boxShadow,
+} = useTheme();
+
+const theme = useThemeStore();
 
 const footer = useFooterStore();
 const {
@@ -145,7 +145,7 @@ const {
   songNum,
   playProcess,
   playTime,
-  showDetail
+  showDetail,
 } = storeToRefs(footer);
 
 // 在播放列表点击播放
@@ -156,21 +156,9 @@ const listPlay = (index: number) => {
     isPlay.value = true;
   }
 };
-// 播放
-const play = async(song: Song) => {
-  const index = songList.value.findIndex((item) => item.id == song.id);
-  if (index != current.value) {
-    current.value = index;
-  } else {
-    isPlay.value = false;
-    playProcess.value = 0;
-    playTime.value = 0;
-    await nextTick();
-    isPlay.value = true;
-  }
-};
+
 // 在播放列表删除歌曲
-const listDelete = async(index: number) => {
+const listDelete = async (index: number) => {
   if (current.value == index) {
     if (isPlay.value) {
       isPlay.value = false;
@@ -198,8 +186,9 @@ const listDelete = async(index: number) => {
     isPlay.value = true;
   }
 };
+
 // 列表删除全部歌曲
-const deleteAll = async() => {
+const deleteAll = async () => {
   if (isPlay.value) {
     isPlay.value = false;
   }
@@ -207,6 +196,7 @@ const deleteAll = async() => {
   playProcess.value = 0;
   songList.value.splice(0);
 };
+
 // 播放mv
 const playMV = (song: Song) => {
   playVideo(song, () => {
@@ -218,23 +208,21 @@ const playMV = (song: Song) => {
     }
   });
 };
+
 // 动态切换皮肤
 watch(
   bgMode,
-  async() => {
+  async () => {
     await nextTick();
     const drawer = document.querySelector('.playlist-drawer') as HTMLDivElement;
-    drawer.style.background = `${bgt.value} url(${skinUrl.value}) no-repeat center/cover`;
+    drawer.style.background = `${background.value} url(${skinUrl.value}) no-repeat center/cover`;
   },
   {
-    immediate: true
+    immediate: true,
   }
 );
 
 // 设置主题相关
-const theme = useThemeStore();
-const { fontColor, fontGray, background, menuColor, themeColor, active } =
-  storeToRefs(theme);
 // 标题数组
 const titleArr = reactive<string[]>([
   '请选择主题色调：',
@@ -242,7 +230,7 @@ const titleArr = reactive<string[]>([
   '请选择字体副色调：',
   '请选择背景色调：',
   '请选择菜单色调：',
-  '请选择菜单激活时的色调：'
+  '请选择菜单激活时的色调：',
 ]);
 // 值数组
 let valueArr = reactive<Ref<string>[]>([
@@ -251,7 +239,7 @@ let valueArr = reactive<Ref<string>[]>([
   ref<string>(fontGray.value),
   ref<string>(background.value),
   ref<string>(menuColor.value),
-  ref<string>(active.value)
+  ref<string>(active.value),
 ]);
 // 设置主题
 const changeTheme = () => {
@@ -268,18 +256,18 @@ const cancel = () => {
     ref<string>(fontGray.value),
     ref<string>(background.value),
     ref<string>(menuColor.value),
-    ref<string>(active.value)
+    ref<string>(active.value),
   ]);
   elMessage(elMessageType.SUCCESS, '主题取消保存成功！');
 };
 </script>
 
 <style lang="less">
-@font-color: v-bind(fontColort);
-@shadow: v-bind(boxShadowt);
-@background: v-bind(bgt);
-@font-color-gray: v-bind(fontGrayt);
-@theme-color: v-bind(themeColort);
+@font-color: v-bind(fontColor);
+@shadow: v-bind(boxShadow);
+@background: v-bind(background);
+@font-color-gray: v-bind(fontGray);
+@theme-color: v-bind(themeColor);
 .drawer-container {
   .playlist-drawer {
     height: 100%;

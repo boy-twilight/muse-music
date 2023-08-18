@@ -39,36 +39,23 @@
 
 <script lang="ts" setup>
 import { Ref, computed, ref, nextTick, inject } from 'vue';
-import { storeToRefs } from 'pinia';
-import {
-  getTheme,
-  getSimiSong,
-  elMessage,
-  shareMuiscInfo,
-  getSourceComments,
-  downloadLyric
-} from '@/utils';
+import { shareMuiscInfo, getSourceComments, downloadLyric } from '@/utils';
 import { Song, DropDownItem, Comment } from '@/model';
-import { elMessageType } from '@/model/enum';
-import useFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
 import useConfigStore from '@/store/config';
+import usePlayMusic from '@/hooks/usePlayMuisc';
+import useTheme from '@/hooks/useTheme';
 
 // 声明接受值
 const props = defineProps<{
   // 传入歌曲
   song: Song;
-  // 播放函数
-  play: (song: Song) => void;
 }>();
-
 // 主题设置
-const bg = getTheme().get('background');
-const fontColor = getTheme().get('fontColor') as Ref<string>;
+const { background: bg, fontColor } = useTheme();
 // 全局数据
 const config = useConfigStore();
-const footer = useFooterStore();
-const { songList, current, songListId } = storeToRefs(footer);
+
 const user = useUserStore();
 // 下列框处于哪种模式
 const dropDownMode = computed(() => {
@@ -97,95 +84,69 @@ const dropItems: DropDownItem[] = [
     name: '播放',
     icon: '&#xea6e;',
     style: 'margin: 0 9px 0 2px; font-size: 15px;',
-    command: 'playMusic'
+    command: 'playMusic',
   },
   {
     name: '下一首播放',
     icon: '&#xe63c;',
     style: 'margin: 0 7px 0 0px; font-size: 20px',
-    command: 'playNext'
+    command: 'playNext',
   },
   {
     name: '播放相似单曲',
     icon: '&#xe602;',
     style: 'margin: 0 8px 0 3px;',
     command: 'playSimi',
-    isIcon1: true
+    isIcon1: true,
   },
   {
     name: '复制歌曲信息',
     icon: '&#xe63b;',
     style: 'margin: 1px 7px 0 4px;',
-    command: 'copyMusic'
+    command: 'copyMusic',
   },
 
   {
     name: '我喜欢',
     icon: '&#xe761;',
     style: 'margin: 0 7px 0 4px;',
-    command: 'love'
+    command: 'love',
   },
   {
     name: '查看评论',
     icon: '&#xe60b;',
     style: 'margin: 1px 7px 0 4px;',
-    command: 'comment'
+    command: 'comment',
   },
 
   {
     name: '下载歌词',
     icon: '&#xe602;',
     style: 'margin: 0 7px 0 4px;',
-    command: 'downLyric'
+    command: 'downLyric',
   },
 
   {
     name: '下载歌曲',
     icon: '&#xf0304;',
     style: 'margin: 0 8px 0 3px; font-size: 16px;',
-    command: 'downloadMusic'
-  }
+    command: 'downloadMusic',
+  },
 ];
 // 评论
 const soucreComments = inject('soucreComments') as Comment[];
 // 是否展开评论区
 const showComments = inject('showComments') as Ref<boolean>;
 
+const { playMusic } = usePlayMusic();
 // 点击显示下拉框
-const showDropMenu = async() => {
+const showDropMenu = async () => {
   showDrop.value = true;
   await nextTick();
   more.value?.click();
 };
 
-// 下首播放
-const playNext = (song: Song) => {
-  if (song.available == '0' || song.available == '8') {
-    const index = songListId.value.get(song.id);
-    if (index != current.value + 1 && index != current.value) {
-      if (index != undefined) {
-        const next = songList.value[current.value + 1];
-        songList.value[index] = next;
-        songList.value[current.value + 1] = song;
-      } else {
-        songList.value.splice(current.value + 1, 0, song);
-      }
-      user.addRecord(
-        songList.value[current.value + 1],
-        user.songRecord,
-        user.songRecordId
-      );
-      elMessage(elMessageType.SUCCESS, '已添加到下一首播放');
-    } else if (index == current.value) {
-      elMessage(elMessageType.INFO, '歌曲正在播放，请勿重复操作');
-    }
-  } else if (song.available == '1') {
-    elMessage(elMessageType.INFO, '此歌曲为vip专属');
-  } else if (song.available == '10') {
-    elMessage(elMessageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
-  }
-};
-
+const { playMusicNext, playSimiMusic } = usePlayMusic();
 // 点击更多操作
 const handleClick = (command: string) => {
   const song = props.song;
@@ -194,17 +155,11 @@ const handleClick = (command: string) => {
   } else if (command == 'downloadMusic') {
     user.addMuiscDownload(song);
   } else if (command == 'playSimi') {
-    getSimiSong(song.id, current.value, songList.value, () => {
-      user.addRecord(
-        songList.value[current.value + 1],
-        user.songRecord,
-        user.songRecordId
-      );
-    });
+    playSimiMusic(song.id);
   } else if (command == 'playMusic') {
-    props.play(song);
+    playMusic(song);
   } else if (command == 'playNext') {
-    playNext(song);
+    playMusicNext(song);
   } else if (command == 'downLyric') {
     downloadLyric(song);
   } else if (command == 'copyMusic') {

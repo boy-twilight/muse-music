@@ -37,16 +37,16 @@
 <script lang="ts" setup>
 import { ref, inject, Ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { getTheme, getMusicUrls, getRequset } from '@/utils';
+import { getMusicUrls, getRequset } from '@/utils';
 import useUserStore from '@/store/user';
 import { ArtistMv } from '@components/datalist';
 import { UserBatch } from '@components/batch';
 import { UserMusicTable } from '@components/table';
 import { NoResult } from '@components/result';
 import Tab from '@components/tab';
+import useTheme from '@/hooks/useTheme';
 // 配置主题
-const fontColor = getTheme().get('fontColor');
-const fontGray = inject('fontGray');
+const { fontColor, fontGray } = useTheme();
 
 // 获取用户播放数据
 const user = useUserStore();
@@ -73,7 +73,7 @@ const deleteVideoRecord = (id: string) => {
 };
 
 // 获取初始数据
-getRequset(async() => {
+getRequset(async () => {
   getMusicUrls(songRecord.value);
   user.initLoveMusic(songRecord.value);
   // 关闭动画

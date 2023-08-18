@@ -9,12 +9,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getTheme } from '@/utils';
-
-// 配主题
-const boxShadow = getTheme().get('shadow');
-const themeColor = getTheme().get('themeColor');
-
+import useTheme from '@/hooks/useTheme';
 withDefaults(
   defineProps<{
     // button名字
@@ -28,9 +23,10 @@ withDefaults(
   }>(),
   {
     iconStyle: '',
-    isIconOne: false
+    isIconOne: false,
   }
 );
+const { shadow: boxShadow, themeColor } = useTheme();
 </script>
 
 <style lang="less" scoped>

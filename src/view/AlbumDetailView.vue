@@ -86,10 +86,9 @@ import {
   formatTime,
   getMusicInfos,
   getMusicUrls,
-  getTheme,
   getRequset,
   elMessage,
-  share
+  share,
 } from '@/utils';
 import { elMessageType } from '@/model/enum';
 import useUserStore from '@/store/user';
@@ -98,12 +97,11 @@ import { OnlineBatch } from '@components/batch';
 import { ArtistAlbum } from '@components/datalist';
 import { SongTable } from '@components/table';
 import Tab from '@components/tab';
+import useTheme from '@/hooks/useTheme';
 
-// 主题设置相关
-const fontColor = getTheme().get('fontColor');
-const fontBlack = getTheme().get('fontBlack');
-const boxShadow = getTheme().get('shadow');
-const fontGray = inject('fontGray');
+// 获取主题
+const { fontColor, fontBlack, shadow: boxShadow, fontGray } = useTheme();
+
 const user = useUserStore();
 const route = useRoute();
 // 获取Id
@@ -117,7 +115,7 @@ const albumInfo = reactive<Album>({
   name: '',
   cover: '',
   artist: '',
-  publishTime: ''
+  publishTime: '',
 });
 // 歌手其它专辑
 const otherAlbum = reactive<Album[]>([]);
@@ -129,18 +127,19 @@ const songIdMapper = computed(
 );
 // 页面第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
-// 批量操作相关
 // 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
+
+// 打开批量操作
+const openSelect = (open: boolean) => {
+  showSelect.value = open;
+};
 
 // 关闭批量操作
 const closeSelect = (close: boolean) => {
   showSelect.value = close;
 };
-// 打开批量操作
-const openSelect = (open: boolean) => {
-  showSelect.value = open;
-};
+
 // 分享歌单
 const shareAlbum = () => {
   share(
@@ -151,12 +150,13 @@ const shareAlbum = () => {
       route.fullPath
   );
 };
+
 // 请求页面数据
-getRequset(async() => {
+getRequset(async () => {
   try {
     const responses: any[] = await Promise.all([
       getArtistAlbum(artistId),
-      getAlbumDetail(id)
+      getAlbumDetail(id),
     ]);
     responses.forEach((response, index) => {
       // 获取该艺术家的其它专辑
@@ -171,7 +171,7 @@ getRequset(async() => {
               id: albumId,
               cover: picUrl,
               publishTime: formatTime(publishTime),
-              artistId: artistId + ''
+              artistId: artistId + '',
             });
           } else if (otherAlbum.length > 5) {
             break;
@@ -182,7 +182,7 @@ getRequset(async() => {
       else if (index == 1) {
         const {
           album: { picUrl, artist, publishTime, name, company, description },
-          songs
+          songs,
         } = response;
         albumInfo.name = name;
         albumInfo.cover = picUrl;
@@ -203,7 +203,6 @@ getRequset(async() => {
   } catch (err: any) {
     elMessage(elMessageType.ERROR, err.message);
   }
-
   // 关闭动画
   first.value = false;
 }, first);

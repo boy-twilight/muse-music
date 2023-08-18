@@ -1,9 +1,8 @@
 <template>
   <el-table
-    @cell-dblclick="play"
+    @cell-dblclick="playMusic"
     @cell-mouse-enter="enter"
     @cell-mouse-leave="leave"
-    @selection-change="doSelect"
     :data="songs"
     :max-height="height"
     :show-header="showHeader"
@@ -49,7 +48,7 @@
           <div :class="`operation-area operation${showHeader}`">
             <!-- 播放音乐 -->
             <span
-              @click="play(scope.row)"
+              @click="playMusic(scope.row)"
               v-show="
                 !isPlay ||
                 current != songList.findIndex((item) => item.id == scope.row.id)
@@ -79,7 +78,7 @@
             <!-- 更多 -->
             <MoreDropdown
               :song="scope.row"
-              :play="play" />
+              :play="playMusic" />
           </div>
         </div>
       </template>
@@ -108,38 +107,34 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, ref, watch, nextTick } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { onBeforeRouteLeave } from 'vue-router';
 import { ElTable } from 'element-plus';
-import {
-  transformTime,
-  getTheme,
-  elMessage,
-  getMusicUrls,
-  playVideo
-} from '@/utils';
+import { transformTime, getMusicUrls, playVideo } from '@/utils';
 import { Song } from '@/model';
 import userFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
-import { elMessageType } from '@/model/enum';
 import { MoreDropdown } from '@components/button';
 import useConfigStore from '@/store/config';
+import usePlayMusic from '@/hooks/usePlayMuisc';
+import useTheme from '@/hooks/useTheme';
 
 // 设置主题
 const config = useConfigStore();
 const { bgMode } = storeToRefs(config);
-const fontColor = getTheme().get('fontColor');
-const hover = getTheme().get('tableHover');
-const bg = getTheme().get('background');
-const fontGray = inject('fontGray');
-const themeColor = getTheme().get('themeColor');
+const {
+  fontColor,
+  background: bg,
+  fontGray,
+  themeColor,
+  tableHover: hover,
+} = useTheme();
 
 // 设置隐藏滚动条
 const hideScroll = inject('hideScroll') as () => void;
 const footer = userFooterStore();
-const { songList, current, isPlay, playProcess, playTime, songListId } =
-  storeToRefs(footer);
+const { songList, current, isPlay } = storeToRefs(footer);
 const user = useUserStore();
 
 // 申明接受数据
@@ -167,14 +162,9 @@ const props = withDefaults(
     sort: undefined,
     isCancelSort: false,
     showHeader: true,
-    pageSize: 0
+    pageSize: 0,
   }
 );
-
-const emits = defineEmits<{
-  // 回传选中项目
-  (e: 'getSelectItems', songs: Song[]): void;
-}>();
 
 // table容器
 const tableContainer = ref<InstanceType<typeof ElTable>>();
@@ -184,15 +174,15 @@ const tableContainer = ref<InstanceType<typeof ElTable>>();
 const showSelectBox = computed(() => props.showSelect);
 // 选择框的长度
 const selectWidth = computed(() => (props.showSelect ? 55 : 0));
-// 将选择项回传
-const doSelect = (songs: Song[]) => {
-  emits('getSelectItems', songs);
+//获取选中
+const getSelectItems = (): Song[] => tableContainer.value?.getSelectionRows();
+//清除选中
+const clearSelect = () => {
+  tableContainer.value!.clearSelection();
 };
 // 关闭选中框的适合清空选项
 watch(showSelectBox, (newVal) => {
-  if (!newVal) {
-    tableContainer.value!.clearSelection();
-  }
+  if (!newVal) clearSelect();
 });
 
 // 表格排序
@@ -220,6 +210,7 @@ watch(cancelSort, (newVal) => {
 const getNodeList = (): NodeListOf<HTMLDivElement> => {
   return document.querySelectorAll(`.operation${props.showHeader}`);
 };
+
 // 当鼠标进入时
 const enter = (row: Song) => {
   // 根据是否分页来判断当前的操作行的下标
@@ -238,6 +229,7 @@ const enter = (row: Song) => {
     curOpera.style.opacity = '1';
   }
 };
+
 // 当鼠标离开时
 const leave = (row: Song) => {
   let index = 0;
@@ -256,41 +248,8 @@ const leave = (row: Song) => {
   }
 };
 
-// 播放相关
 // 播放单曲
-const play = async(song: Song) => {
-  if (song.available == '0' || song.available == '8') {
-    const index = songListId.value.get(song.id);
-    if (index == undefined) {
-      // 添加播放记录
-      user.addRecord(song, user.songRecord, user.songRecordId);
-      if (current.value == 0) {
-        if (isPlay) {
-          isPlay.value = false;
-        }
-        playProcess.value = 0;
-        playTime.value = 0;
-        songList.value.unshift(song);
-        await nextTick();
-        isPlay.value = true;
-      } else {
-        songList.value.unshift(song);
-        current.value = 0;
-      }
-    } else {
-      if (current.value != index) {
-        current.value = index;
-      } else {
-        isPlay.value = true;
-      }
-    }
-  } else if (song.available == '1') {
-    elMessage(elMessageType.INFO, '此歌曲为vip专属');
-  } else if (song.available == '10') {
-    elMessage(elMessageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
-  }
-};
-
+const { playMusic } = usePlayMusic();
 // 播放mv
 const playMV = (song: Song) => {
   playVideo(song, () => {
@@ -322,6 +281,11 @@ getUrlOntime();
 // 离开路由时销毁
 onBeforeRouteLeave(() => {
   isLeave = true;
+});
+
+defineExpose({
+  clearSelect,
+  getSelectItems,
 });
 </script>
 

@@ -54,15 +54,11 @@
 import { inject, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { MV } from '@/model';
-import { getTheme } from '@/utils';
 import Pagination from '@components/pagination';
+import useTheme from '@/hooks/useTheme';
 
 // 设置主题
-const fontColor = getTheme().get('fontColor');
-const boxShadow = getTheme().get('shadow');
-const themeColor = getTheme().get('themeColor');
-const fontGray = inject('fontGray');
-
+const { fontColor, shadow: boxShadow, themeColor, fontGray } = useTheme();
 const router = useRouter();
 // 设置隐藏滚动条
 const hideScroll = inject('hideScroll') as () => void;
@@ -79,7 +75,7 @@ const props = withDefaults(
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false
+    showPagination: false,
   }
 );
 
@@ -110,8 +106,8 @@ const toMv = (id: string) => {
   router.push({
     name: 'video',
     query: {
-      id
-    }
+      id,
+    },
   });
 };
 </script>

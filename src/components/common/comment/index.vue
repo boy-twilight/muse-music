@@ -126,19 +126,21 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, nextTick, inject } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import { Comment } from '@/model';
-import { getTheme } from '@/utils';
 import useConfigStore from '@/store/config';
 import Pagination from '@components/pagination';
+import useTheme from '@/hooks/useTheme';
 
 // 配置主题
 const config = useConfigStore();
-const fontColor = getTheme().get('fontColor');
-const fontBlack = getTheme().get('fontBlack');
-const fontGray = inject('fontGray');
-const boxShadow = getTheme().get('shadow');
-const themeColor = getTheme().get('themeColor');
+const {
+  fontBlack,
+  fontColor,
+  shadow: boxShadow,
+  themeColor,
+  fontGray,
+} = useTheme();
 const replyBg = computed(() =>
   config.bgMode == 'skin' ? 'rgba(220,220,220,0.2)' : 'rgb(240,240,240)'
 );
@@ -182,7 +184,7 @@ const getRandomTime = (time: string): string => {
 };
 
 // 打开或关闭评论区
-const openReply = async(commentId: string) => {
+const openReply = async (commentId: string) => {
   if (activeId.value == commentId) {
     activeId.value = '';
   } else {

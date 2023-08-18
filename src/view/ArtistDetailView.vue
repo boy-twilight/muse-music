@@ -117,18 +117,17 @@ import {
   getArtistDesc,
   getArtistAlbum,
   getArtistSongs,
-  getMusicDetail
+  getMusicDetail,
 } from '@/api';
 import { Artist, Song, MV, ArtistDesc, Album } from '@/model';
 import { elMessageType } from '@/model/enum';
 import {
   getMusicUrls,
   getMusicInfos,
-  getTheme,
   formatTime,
   getRequset,
   elMessage,
-  share
+  share,
 } from '@/utils';
 import useUserStore from '@/store/user';
 import { PlayButton, MoreButton, CommonButton } from '@components/button';
@@ -138,13 +137,17 @@ import { SongTable } from '@components/table';
 import { NoResult, Loading } from '@components/result';
 import Tab from '@components/tab';
 import Pagination from '@components/pagination';
+import useTheme from '@/hooks/useTheme';
 
-// 主题设置
-const fontColor = getTheme().get('fontColor');
-const fontBlack = getTheme().get('fontBlack');
-const boxShadow = getTheme().get('shadow');
-const themeColor = getTheme().get('themeColor');
-const fontGray = inject('fontGray');
+// 获取主题
+const {
+  fontColor,
+  fontBlack,
+  shadow: boxShadow,
+  themeColor,
+  fontGray,
+} = useTheme();
+
 const user = useUserStore();
 // 路由参数获取
 const route = useRoute();
@@ -162,7 +165,7 @@ const singer = reactive<Artist>({
   score,
   id: id,
   avatar: '',
-  alias: []
+  alias: [],
 });
 // 歌手基本简介
 const introduce = reactive<ArtistDesc[]>([]);
@@ -206,6 +209,7 @@ const closeSelect = (close: boolean) => {
 const openSelect = (open: boolean) => {
   showSelect.value = open;
 };
+
 // 分享歌手
 const shareSinger = () => {
   share(
@@ -216,12 +220,13 @@ const shareSinger = () => {
       route.fullPath
   );
 };
+
 // 获取当前活跃的选项，并根据选项加载数据
 const getActive = (active: string) => {
   // 点击加载数据
   if (active == 'album' && artistAlbum.length == 0) {
     // 获取歌手专辑
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await getArtistAlbum(id);
         const { hotAlbums } = response;
@@ -232,7 +237,7 @@ const getActive = (active: string) => {
             id: item.id,
             cover: picUrl,
             publishTime: formatTime(publishTime),
-            artistId: id + ''
+            artistId: id + '',
           });
         });
       } catch (err: any) {
@@ -243,7 +248,7 @@ const getActive = (active: string) => {
     }, isLoading);
   } else if (active == 'mv' && artistMv.length == 0) {
     // 获取歌手的Mv
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await getArtistMv(id);
         const { mvs } = response;
@@ -254,7 +259,7 @@ const getActive = (active: string) => {
             name,
             artist: artistName,
             image: imgurl16v9,
-            playCount
+            playCount,
           });
         });
       } catch (err: any) {
@@ -264,14 +269,14 @@ const getActive = (active: string) => {
       isLoading.value = false;
     }, isLoading);
   } else if (active == 'detail' && introduce.length == 0) {
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await getArtistDesc(id);
         const { introduction } = response;
         introduction.forEach((item: any) => {
           introduce.push({
             title: item.ti,
-            content: item.txt
+            content: item.txt,
           });
         });
       } catch (err: any) {
@@ -281,14 +286,15 @@ const getActive = (active: string) => {
     }, isLoading);
   }
 };
+
 // 获取初始数据
-getRequset(async() => {
+getRequset(async () => {
   try {
     const responses: any[] = await Promise.all([
       getArtistInfo(id),
-      getArtistSongs(id, 1000)
+      getArtistSongs(id, 1000),
     ]);
-    responses.forEach(async(response, index) => {
+    responses.forEach(async (response, index) => {
       // 获取歌手的具体信息
       if (index == 0) {
         const { artist } = response;

@@ -24,40 +24,36 @@
       :song-id-mapper="songIdMapper"
       :showSelect="true"
       :show-header="false"
-      @get-select-items="getSelectItems" />
+      ref="table" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, computed, nextTick, inject } from 'vue';
+import { computed, inject, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { Song } from '@/model';
-import useFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
-import { elMessage, getTheme } from '@/utils';
+import { elMessage } from '@/utils';
 import { elMessageType } from '@/model/enum';
 import { CommonButton } from '@components/button';
 import { SongTable } from '@components/table';
+import usePlayMusic from '@/hooks/usePlayMuisc';
+import useTheme from '@/hooks/useTheme';
 
 const props = defineProps<{
   // 在哪个页面
   pageName: string;
 }>();
-
 const emits = defineEmits<{
   (e: 'closeSelect', showSelect: boolean): void;
 }>();
-
 // 配置主题
-const themeColor = getTheme().get('themeColor');
-const footer = useFooterStore();
-const { isPlay, songList, songListId, playProcess, playTime, current } =
-  storeToRefs(footer);
+const { themeColor } = useTheme();
 const user = useUserStore();
 const { songRecord, musicDownload, loveSongs } = storeToRefs(user);
 // 设置隐藏滚动条
 const hideScroll = inject('hideScroll') as () => void;
-
+//表格容器
+const table = ref<InstanceType<typeof SongTable>>();
 // 歌曲
 const songs = computed(() => {
   if (props.pageName == 'LoveView') {
@@ -72,51 +68,29 @@ const songs = computed(() => {
 const songIdMapper = computed(
   () => new Map(songs.value.map((item, index) => [item.id, index]))
 );
-
 // 选择的歌曲
-const selectSongs = reactive<Song[]>([]);
-
-// 获取选择的歌曲
-const getSelectItems = (songs: Song[]) => {
-  if (selectSongs.length != 0) {
-    selectSongs.splice(0);
-  }
-  selectSongs.push(...songs);
-};
+const selectSongs = computed(() => table.value?.getSelectItems() || []);
+const { playSelectMusic } = usePlayMusic();
 
 // 播放选中的歌曲
-const playSelect = async() => {
-  if (selectSongs.length > 0) {
-    isPlay.value = false;
-    playProcess.value = 0;
-    playTime.value = 0;
-    await nextTick();
-    selectSongs.forEach((item) => {
-      const index = songListId.value.get(item.id);
-      if (index == undefined) {
-        songList.value.unshift(item);
-      }
-    });
-    current.value = songListId.value.get(selectSongs[0].id) as number;
-    isPlay.value = true;
-    elMessage(elMessageType.SUCCESS, '已添加到播放列表！');
-  } else {
-    elMessage(elMessageType.INFO, '请添加歌曲！');
-  }
+const playSelect = () => {
+  playSelectMusic(selectSongs.value);
+  table.value?.clearSelect();
 };
 
 // 批量下载歌曲
 const downloadSelect = () => {
-  selectSongs.forEach((item) => {
+  selectSongs.value.forEach((item) => {
     user.addMuiscDownload(item);
   });
+  table.value?.clearSelect();
 };
 
 // 删除选择的歌曲
 const deleteSelect = () => {
-  if (selectSongs.length > 0) {
+  if (selectSongs.value.length > 0) {
     // 得到要删除的Id
-    const ids = selectSongs.map((item) => item.id);
+    const ids = selectSongs.value.map((item) => item.id);
     // 找出不删除的歌曲
     const temp = songs.value.filter((item) => !ids.includes(item.id));
     // 清空播放列表

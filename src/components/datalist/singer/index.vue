@@ -56,13 +56,16 @@
 import { computed, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { Artist } from '@/model';
-import { getTheme } from '@/utils';
+import useTheme from '@/hooks/useTheme';
 
 // 配置主题
-const boxShadow = getTheme().get('shadow');
-const fontColor = getTheme().get('fontColor');
-const themeColor = getTheme().get('themeColor');
-const fontGray = inject('fontGray');
+const {
+  fontColor,
+
+  shadow: boxShadow,
+  themeColor,
+  fontGray,
+} = useTheme();
 
 const props = withDefaults(
   defineProps<{
@@ -74,7 +77,7 @@ const props = withDefaults(
   {
     showDelete: false,
     transitionName: '',
-    avatarNum: 10
+    avatarNum: 10,
   }
 );
 const emits = defineEmits<{
@@ -99,8 +102,8 @@ const toArtist = (id: string, score: string) => {
     name: 'artist',
     query: {
       id,
-      score
-    }
+      score,
+    },
   });
 };
 </script>

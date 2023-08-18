@@ -16,14 +16,11 @@
 <script lang="ts" setup>
 import { inject, Ref } from 'vue';
 import { Comment } from '@/model';
-import { getTheme } from '@/utils';
 import { SourceComment } from '@/components/common';
+import useTheme from '@/hooks/useTheme';
 
 // 配置主题
-const bg = getTheme().get('background');
-const fontColor = getTheme().get('fontColor');
-const boxShadow = getTheme().get('shadow');
-const themeColor = getTheme().get('themeColor');
+const { background: bg, fontColor, shadow: boxShadow, themeColor } = useTheme();
 
 defineProps<{
   comments: Comment[];

@@ -276,9 +276,7 @@ import {
   transformTime,
   elMessage,
   transformTotalTime,
-  getTheme,
   handleSingerName,
-  getSimiSong,
   playVideo,
   shareMuiscInfo,
   getSourceComments,
@@ -287,17 +285,22 @@ import {
 import { elMessageType } from '@/model/enum';
 import { DropDownItem, Song, Comment } from '@/model';
 import image from '@assets/image/暂无音乐.svg';
+import usePlayMusic from '@/hooks/usePlayMuisc';
+import useTheme from '@/hooks/useTheme';
 
 // 设置主题
 const config = useConfigStore();
-const fontColor = getTheme().get('fontColor') as Ref<string>;
-const boxShadow = getTheme().get('shadow');
-const themeColor = getTheme().get('themeColor');
-const bg = getTheme().get('background') as Ref<string>;
-const fontGray = inject('fontGray');
+const {
+  fontColor,
+  shadow: boxShadow,
+  themeColor,
+  background: bg,
+  fontGray,
+} = useTheme();
 const processColor = computed(() =>
   config.bgMode == 'color' ? 'rgb(217,217,217)' : 'rgba(217,217,217,0.3)'
 );
+
 // 下列框处于哪种模式
 const dropDownMode = computed(() => {
   if (config.bgMode == 'color') {
@@ -411,6 +414,7 @@ const isMuted = ref<boolean>(false);
 // 计时器
 let timeId: any = 0;
 
+const { playSimiMusic } = usePlayMusic();
 // 进入歌曲详情页
 const toSongDetail = () => {
   isPlay.value = false;
@@ -445,18 +449,7 @@ const playMv = () => {
 const handleClick = async (command: string) => {
   if (songNum.value > 0) {
     if (command == 'playSimi') {
-      getSimiSong(
-        songList.value[current.value].id,
-        current.value,
-        songList.value,
-        () => {
-          user.addRecord(
-            songList.value[current.value + 1],
-            user.songRecord,
-            user.songRecordId
-          );
-        }
-      );
+      playSimiMusic(songList.value[current.value].id);
     } else if (command == 'deleteMuisc') {
       isPlay.value = false;
       playTime.value = 0;
