@@ -274,7 +274,7 @@ import useUserStore from '@/store/user';
 import useConfigStore from '@/store/config';
 import {
   transformTime,
-  elMessage,
+  message,
   transformTotalTime,
   handleSingerName,
   playVideo,
@@ -282,7 +282,7 @@ import {
   getSourceComments,
   downloadLyric,
 } from '@/utils';
-import { elMessageType } from '@/model/enum';
+import { messageType } from '@/model/enum';
 import { DropDownItem, Song, Comment } from '@/model';
 import image from '@assets/image/暂无音乐.svg';
 import usePlayMusic from '@/hooks/usePlayMuisc';
@@ -296,19 +296,9 @@ const {
   themeColor,
   background: bg,
   fontGray,
+  processColor,
+  dropDownMode,
 } = useTheme();
-const processColor = computed(() =>
-  config.bgMode == 'color' ? 'rgb(217,217,217)' : 'rgba(217,217,217,0.3)'
-);
-
-// 下列框处于哪种模式
-const dropDownMode = computed(() => {
-  if (config.bgMode == 'color') {
-    return fontColor.value == '#ffffff' ? 'dropdown-dark' : 'dropdown-light';
-  } else {
-    return 'dropdown-skin';
-  }
-});
 // 设置隐藏滚动条
 const hideScroll = inject('hideScroll') as () => void;
 // 评论
@@ -414,7 +404,9 @@ const isMuted = ref<boolean>(false);
 // 计时器
 let timeId: any = 0;
 
+//播放相似音乐
 const { playSimiMusic } = usePlayMusic();
+
 // 进入歌曲详情页
 const toSongDetail = () => {
   isPlay.value = false;
@@ -485,7 +477,7 @@ const handleClick = async (command: string) => {
       );
     }
   } else {
-    elMessage(elMessageType.INFO, '暂无音乐，请添加音乐');
+    message(messageType.INFO, '暂无音乐，请添加音乐');
   }
 };
 
@@ -517,7 +509,7 @@ const changeProcess = throttle(
         100;
       isChanging.value = true;
     } else {
-      elMessage(elMessageType.INFO, '请添加音乐！');
+      message(messageType.INFO, '请添加音乐！');
     }
   },
   100,
@@ -538,16 +530,17 @@ const next = () => {
   if (songNum.value > 0) {
     current.value = ++current.value >= songNum.value ? 0 : current.value;
   } else {
-    elMessage(elMessageType.INFO, '暂无音乐，请您添加音乐');
+    message(messageType.INFO, '暂无音乐，请您添加音乐');
   }
 };
+
 // 上一首
 const pre = () => {
   // 切换歌曲
   if (songNum.value > 0) {
     current.value = --current.value < 0 ? songNum.value - 1 : current.value;
   } else {
-    elMessage(elMessageType.INFO, '暂无音乐，请您添加音乐');
+    message(messageType.INFO, '暂无音乐，请您添加音乐');
   }
 };
 
@@ -581,7 +574,7 @@ watch(isPlay, async (newVal) => {
           100;
       }, 1000);
     } else {
-      elMessage(elMessageType.INFO, '暂无音乐，请您添加音乐');
+      message(messageType.INFO, '暂无音乐，请您添加音乐');
       isPlay.value = false;
     }
   } else {

@@ -19,7 +19,7 @@ const props = withDefaults(
     isLoading: boolean;
   }>(),
   {
-    isLoading: false,
+    isLoading: false
   }
 );
 

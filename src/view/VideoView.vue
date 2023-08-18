@@ -42,8 +42,8 @@
 
 <script lang="ts" setup>
 import { inject, nextTick, reactive, ref, Ref, computed } from 'vue';
-import { elMessage, getRequset } from '@/utils';
-import { elMessageType } from '@/model/enum';
+import { message, getRequset } from '@/utils';
+import { messageType } from '@/model/enum';
 import { MV } from '@/model';
 import { getMv } from '@/api';
 import { ArtistMv } from '@components/datalist';
@@ -57,7 +57,7 @@ const {
   shadow: boxShadow,
   fontBlack,
   themeColor,
-  fontGray,
+  fontGray
 } = useTheme();
 
 // mv地区分类
@@ -67,7 +67,7 @@ const area = reactive<string[]>([
   '日本',
   '欧美',
   '港台',
-  '内地',
+  '内地'
 ]);
 // mv来源类型
 const type = reactive<string[]>(['全部', '官方版', '现场版', '网易出品']);
@@ -119,7 +119,7 @@ const getContent = (search: string) => {
 };
 
 // 根据当前活跃值动态请求数据
-const getActive = async (index: number, type: string) => {
+const getActive = async(index: number, type: string) => {
   // 缓存limit的数量
   limitMap.set(
     areaActive.value + '' + typeActive.value + '' + orderActive.value,
@@ -174,7 +174,7 @@ const loadData = () => {
         showMore.value = true;
       } else {
         currentList.push(...mvs.slice(currentList.length));
-        elMessage(elMessageType.SUCCESS, '已经到达底部！');
+        message(messageType.SUCCESS, '已经到达底部！');
       }
     }
   }
@@ -184,7 +184,7 @@ const loadData = () => {
 const loadMore = () => {
   // 关闭再加更多按钮
   showMore.value = false;
-  getRequset(async () => {
+  getRequset(async() => {
     // 加载更多数据
     try {
       const response: any = await getMv(
@@ -201,7 +201,7 @@ const loadMore = () => {
           name: name as string,
           image: cover as string,
           playCount: playCount as string,
-          artist: artistName as string,
+          artist: artistName as string
         });
       });
       videoMap.set(
@@ -210,7 +210,7 @@ const loadMore = () => {
       );
       currentList.push(...mvs.slice(currentList.length, dataNum.value));
     } catch (err: any) {
-      elMessage(elMessageType.ERROR, err.message);
+      message(messageType.ERROR, err.message);
     }
     // 关闭动画
     isLoading.value = false;
@@ -221,7 +221,7 @@ const loadMore = () => {
 
 // 请求数据
 const getData = () => {
-  getRequset(async () => {
+  getRequset(async() => {
     // 获取视频信息
     try {
       const response: any = await getMv(
@@ -238,7 +238,7 @@ const getData = () => {
           name: name as string,
           image: cover as string,
           playCount: playCount as string,
-          artist: artistName as string,
+          artist: artistName as string
         });
       });
       // 缓存结果
@@ -248,7 +248,7 @@ const getData = () => {
       );
       currentList.push(...mvs.slice(0, dataNum.value));
     } catch (err: any) {
-      elMessage(elMessageType.ERROR, err.message);
+      message(messageType.ERROR, err.message);
     }
     // 关闭动画
     first.value = false;

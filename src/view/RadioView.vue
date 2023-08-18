@@ -30,9 +30,9 @@
 <script lang="ts" setup>
 import { ref, reactive, inject, Ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { elMessage, getRequset } from '@/utils';
+import { message, getRequset } from '@/utils';
 import { getRadioBanner, getRadios, getRadioType } from '@/api';
-import { elMessageType } from '@/model/enum';
+import { messageType } from '@/model/enum';
 import { Banner, Playlist, RadioType } from '@/model';
 import { ArtistPlaylist } from '@components/datalist';
 import { Loading } from '@components/result';
@@ -60,7 +60,7 @@ const disabled = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
 
 // 获取电台下的分类
-const getRadioData = async () => {
+const getRadioData = async() => {
   const response: any = await getRadios(radioType[curIndex.value].id);
   const { djRadios } = response;
   radios.push([]);
@@ -73,7 +73,7 @@ const getRadioData = async () => {
       playCount,
       creator: { nickname: '', avatarUrl: '' },
       tag: [],
-      description: '',
+      description: ''
     });
   });
   disabled.value = false;
@@ -89,7 +89,7 @@ const loadData = () => {
     }, 1000);
   } else {
     isLoading.value = false;
-    elMessage(elMessageType.SUCCESS, '已经到达底部！');
+    message(messageType.SUCCESS, '已经到达底部！');
   }
 };
 // 前往banner对应的电台
@@ -99,16 +99,16 @@ const go = (id: string) => {
     name: 'playlist',
     query: {
       id: id,
-      type: 'radio',
-    },
+      type: 'radio'
+    }
   });
 };
 
-getRequset(async () => {
+getRequset(async() => {
   try {
     const responses: any[] = await Promise.all([
       getRadioBanner(),
-      getRadioType(),
+      getRadioType()
     ]);
     responses.forEach((response, index) => {
       // 获取电台banner
@@ -118,7 +118,7 @@ getRequset(async () => {
           const { targetId, pic } = item;
           banner.push({
             id: targetId,
-            pic,
+            pic
           });
         });
       }
@@ -129,13 +129,13 @@ getRequset(async () => {
           const { id, name } = item;
           radioType.push({
             id,
-            name,
+            name
           });
         });
       }
     });
   } catch (err: any) {
-    elMessage(elMessageType.ERROR, err.message);
+    message(messageType.ERROR, err.message);
   }
   await getRadioData();
   first.value = false;

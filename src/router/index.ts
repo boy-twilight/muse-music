@@ -6,8 +6,8 @@ import pinia from '@/store';
 import useHeaderStore from '@/store/header';
 
 import { storeToRefs } from 'pinia';
-import { elMessage } from '@/utils';
-import { elMessageType } from '@/model/enum';
+import { message } from '@/utils';
+import { messageType } from '@/model/enum';
 
 // 进度条全局配置
 NProgress.configure({
@@ -170,7 +170,7 @@ router.beforeEach((to, from, next) => {
     NProgress.start();
     next();
   } else if (!cookie.value && authList.includes(to.path)) {
-    elMessage(elMessageType.INFO, '尚未登陆，请登录！');
+    message(messageType.INFO, '尚未登陆，请登录！');
     showLogin.value = true;
   } else {
     NProgress.start();

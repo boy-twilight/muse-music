@@ -8,9 +8,10 @@
 </template>
 
 <script lang="ts" setup>
+import { computed } from 'vue';
 import useTheme from '@/hooks/useTheme';
 import noSearch from '@assets/image/暂无搜索结果.svg';
-import { computed } from 'vue';
+
 const { fontGray } = useTheme();
 
 const props = withDefaults(
@@ -20,7 +21,7 @@ const props = withDefaults(
   }>(),
   {
     size: 420,
-    text: '暂无用户数据',
+    text: '暂无用户数据'
   }
 );
 

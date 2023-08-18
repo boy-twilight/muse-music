@@ -3,8 +3,8 @@ import useUserStore from '@/store/user';
 import { storeToRefs } from 'pinia';
 import { Song } from '@/model';
 import { nextTick } from 'vue';
-import { elMessage } from '@/utils';
-import { elMessageType } from '@/model/enum';
+import { message } from '@/utils';
+import { messageType } from '@/model/enum';
 import { getMusicUrl, getSimiMusic } from '@/api';
 export default function usePlay() {
   const user = useUserStore();
@@ -16,10 +16,10 @@ export default function usePlay() {
     playProcess,
     playTime,
     songListId,
-    songNum,
+    songNum
   } = storeToRefs(footer);
   // 播放单曲
-  const playMusic = async (song: Song) => {
+  const playMusic = async(song: Song) => {
     if (song.available == '0' || song.available == '8') {
       const index = songListId.value.get(song.id);
       if (index == undefined) {
@@ -45,9 +45,9 @@ export default function usePlay() {
         }
       }
     } else if (song.available == '1') {
-      elMessage(elMessageType.INFO, '此歌曲为vip专属');
+      message(messageType.INFO, '此歌曲为vip专属');
     } else if (song.available == '10') {
-      elMessage(elMessageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
+      message(messageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
     }
   };
 
@@ -65,9 +65,9 @@ export default function usePlay() {
         }
       });
       current.value = temp;
-      elMessage(elMessageType.SUCCESS, '已经添加到播放列表');
+      message(messageType.SUCCESS, '已经添加到播放列表');
     } else {
-      elMessage(elMessageType.INFO, '请添加歌曲');
+      message(messageType.INFO, '请添加歌曲');
     }
   };
 
@@ -88,19 +88,19 @@ export default function usePlay() {
           user.songRecord,
           user.songRecordId
         );
-        elMessage(elMessageType.SUCCESS, '已添加到下一首播放');
+        message(messageType.SUCCESS, '已添加到下一首播放');
       } else if (index == current.value) {
-        elMessage(elMessageType.INFO, '歌曲正在播放，请勿重复操作');
+        message(messageType.INFO, '歌曲正在播放，请勿重复操作');
       }
     } else if (song.available == '1') {
-      elMessage(elMessageType.INFO, '此歌曲为vip专属');
+      message(messageType.INFO, '此歌曲为vip专属');
     } else if (song.available == '10') {
-      elMessage(elMessageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
+      message(messageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
     }
   };
 
   // 播放选中的歌曲
-  const playSelectMusic = async (selectSongs: Song[]) => {
+  const playSelectMusic = async(selectSongs: Song[]) => {
     if (selectSongs.length > 0) {
       isPlay.value = false;
       playProcess.value = 0;
@@ -114,14 +114,14 @@ export default function usePlay() {
       });
       current.value = 0;
       isPlay.value = true;
-      elMessage(elMessageType.SUCCESS, '已添加到播放列表！');
+      message(messageType.SUCCESS, '已添加到播放列表！');
     } else {
-      elMessage(elMessageType.INFO, '请添加歌曲！');
+      message(messageType.INFO, '请添加歌曲！');
     }
   };
 
   // 播放相似音乐
-  const playSimiMusic = async (id: string) => {
+  const playSimiMusic = async(id: string) => {
     try {
       // 当前音乐的数目
       const num = songList.value.length;
@@ -138,7 +138,7 @@ export default function usePlay() {
             singer: artists.map((item: any) => item.name).join('、'),
             songImage: album.blurPicUrl,
             album: album.name,
-            available: fee,
+            available: fee
           };
           // 获取音乐的播放链接
           const musicResponse: any = await getMusicUrl(id);
@@ -153,8 +153,8 @@ export default function usePlay() {
               user.songRecord,
               user.songRecordId
             );
-            elMessage(
-              elMessageType.SUCCESS,
+            message(
+              messageType.SUCCESS,
               '已找到相似歌曲' + muisc.name + '，将于下一首播放。'
             );
             break;
@@ -162,10 +162,10 @@ export default function usePlay() {
         }
       }
       if (songNum.value == num) {
-        elMessage(elMessageType.INFO, '暂无相似歌曲');
+        message(messageType.INFO, '暂无相似歌曲');
       }
     } catch (err: any) {
-      elMessage(elMessageType.ERROR, err.message);
+      message(messageType.ERROR, err.message);
     }
   };
   return {
@@ -173,6 +173,6 @@ export default function usePlay() {
     playAllMusic,
     playMusicNext,
     playSimiMusic,
-    playSelectMusic,
+    playSelectMusic
   };
 }

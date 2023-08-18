@@ -10,6 +10,7 @@
 
 <script lang="ts" setup>
 import useTheme from '@/hooks/useTheme';
+
 withDefaults(
   defineProps<{
     // button名字
@@ -23,7 +24,7 @@ withDefaults(
   }>(),
   {
     iconStyle: '',
-    isIconOne: false,
+    isIconOne: false
   }
 );
 const { shadow: boxShadow, themeColor } = useTheme();

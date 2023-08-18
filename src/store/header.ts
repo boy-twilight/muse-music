@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, reactive } from 'vue';
-import { getStorage, elMessage, removeStorage } from '@/utils';
-import { storageType, elMessageType } from '@/model/enum';
+import { message, ss } from '@/utils';
+import { messageType } from '@/model/enum';
 import { User } from '@/model';
 import { getUserInfo, getUserID, loginOut } from '@/api';
 import avatar from '@assets/image/暂无头像.svg';
@@ -11,10 +11,10 @@ const useHeaderStore = defineStore('header', () => {
   // 登陆框的展开状态
   const showLogin = ref<boolean>(false);
   // cookie用来判断用户是否登陆
-  const cookie = ref<string>(getStorage(storageType.SESSION, 'cookie') || '');
+  const cookie = ref<string>(ss.get('cookie') || '');
   // 用户基本信息
   const user = reactive<User>(
-    getStorage(storageType.SESSION, 'userInfo') || {
+    ss.get('userInfo') || {
       uid: '',
       userName: '点击登陆',
       avatar: avatar
@@ -24,7 +24,7 @@ const useHeaderStore = defineStore('header', () => {
   // 获取用户信息
   async function getInfo() {
     const response: any = await getUserID().catch((err: any) => {
-      elMessage(elMessageType.ERROR, err.message);
+      message(messageType.ERROR, err.message);
     });
     const {
       account: { id }
@@ -42,12 +42,12 @@ const useHeaderStore = defineStore('header', () => {
   // 退出登录
   async function logout() {
     const response: any = await loginOut().catch((err: any) => {
-      elMessage(elMessageType.ERROR, err.message);
+      message(messageType.ERROR, err.message);
     });
     if (response.code == '200') {
-      elMessage(elMessageType.SUCCESS, '成功退出登陆');
-      removeStorage(storageType.SESSION, 'cookie');
-      removeStorage(storageType.SESSION, 'userInfo');
+      message(messageType.SUCCESS, '成功退出登陆');
+      ss.remove('cookie');
+      ss.remove('userInfo');
       user.avatar = avatar;
       user.userName = '点击登陆';
       user.uid = '';

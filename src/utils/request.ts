@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
-import { elMessage, getStorage } from '.';
-import { elMessageType, storageType } from '@/model/enum';
+import { message, ss } from '.';
+import { messageType } from '@/model/enum';
 
 const request: AxiosInstance = axios.create({
   timeout: 10000,
@@ -12,12 +12,12 @@ const request: AxiosInstance = axios.create({
 request.interceptors.request.use(
   (config) => {
     // 如果存在token，请求头携带token
-    const token = getStorage(storageType.SESSION, 'token');
+    const token = ss.get('token');
     if (token) config.headers.Authorization = `${token}`;
     return config;
   },
   (error) => {
-    elMessage(elMessageType.ERROR, error.message);
+    message(messageType.ERROR, error.message);
   }
 );
 

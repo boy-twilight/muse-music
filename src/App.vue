@@ -65,23 +65,15 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {
-  provide,
-  ref,
-  Ref,
-  reactive,
-  computed,
-  ComputedRef,
-  onMounted,
-} from 'vue';
+import { provide, ref, Ref, reactive, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import hotkeys, { HotkeysEvent } from 'hotkeys-js';
 import { throttle } from 'lodash-es';
 import { storeToRefs } from 'pinia';
-import { getMusicUrls, setStorAge, elMessage } from '@/utils';
+import { getMusicUrls, ls, message } from '@/utils';
 import { Comment } from '@/model';
 import { svg } from '@assets/icon';
-import { elMessageType, storageType } from '@/model/enum';
+import { messageType } from '@/model/enum';
 import useThemeStore from '@/store/theme';
 import useConfigStore from '@/store/config';
 import useFooterStore from '@/store/footer';
@@ -102,59 +94,59 @@ const rule = /^\/video/;
 hotkeys(keys.join(','), (event: KeyboardEvent, handler: HotkeysEvent) => {
   event.preventDefault();
   switch (handler.key) {
-    case 'space':
-      {
-        // 在视频播放页面不设置快捷键,避免冲突
-        if (!rule.test(curPath.value)) {
-          isPlay.value = !isPlay.value;
-        }
+  case 'space':
+    {
+      // 在视频播放页面不设置快捷键,避免冲突
+      if (!rule.test(curPath.value)) {
+        isPlay.value = !isPlay.value;
       }
-      break;
-    case 'up':
-      {
-        if (!rule.test(curPath.value)) {
-          isPlay.value = false;
-          playProcess.value = 0;
-          playTime.value = 0;
-          showDetail.value = !showDetail.value;
-        }
+    }
+    break;
+  case 'up':
+    {
+      if (!rule.test(curPath.value)) {
+        isPlay.value = false;
+        playProcess.value = 0;
+        playTime.value = 0;
+        showDetail.value = !showDetail.value;
       }
-      break;
-    case 'left':
-      {
-        // 在视频播放页面不设置快捷键,避免冲突
-        if (!rule.test(curPath.value)) {
-          if (songNum.value > 0) {
-            current.value =
+    }
+    break;
+  case 'left':
+    {
+      // 在视频播放页面不设置快捷键,避免冲突
+      if (!rule.test(curPath.value)) {
+        if (songNum.value > 0) {
+          current.value =
               --current.value < 0 ? songNum.value - 1 : current.value;
-          } else {
-            elMessage(elMessageType.INFO, '暂无音乐，请您添加音乐');
-          }
-        }
-      }
-      break;
-    case 'right':
-      {
-        // 在视频播放页面不设置快捷键,避免冲突
-        if (!rule.test(curPath.value)) {
-          if (songNum.value > 0) {
-            current.value =
-              ++current.value >= songNum.value ? 0 : current.value;
-          } else {
-            elMessage(elMessageType.INFO, '暂无音乐，请您添加音乐');
-          }
-        }
-      }
-      break;
-    case 'f':
-      {
-        if (isFullScreen.value) {
-          document.exitFullscreen();
         } else {
-          document.documentElement.requestFullscreen();
+          message(messageType.INFO, '暂无音乐，请您添加音乐');
         }
       }
-      break;
+    }
+    break;
+  case 'right':
+    {
+      // 在视频播放页面不设置快捷键,避免冲突
+      if (!rule.test(curPath.value)) {
+        if (songNum.value > 0) {
+          current.value =
+              ++current.value >= songNum.value ? 0 : current.value;
+        } else {
+          message(messageType.INFO, '暂无音乐，请您添加音乐');
+        }
+      }
+    }
+    break;
+  case 'f':
+    {
+      if (isFullScreen.value) {
+        document.exitFullscreen();
+      } else {
+        document.documentElement.requestFullscreen();
+      }
+    }
+    break;
   }
 });
 
@@ -169,7 +161,7 @@ const {
   skinUrl,
   skin,
   bgMode,
-  isFullScreen,
+  isFullScreen
 } = storeToRefs(config);
 
 // 配置主题
@@ -200,7 +192,7 @@ const mapper = new Map([
   ['/hall', '/hall'],
   ['/station', '/station'],
   ['/rvideo', 'rvideo'],
-  ['/artistlist', '/artistlist'],
+  ['/artistlist', '/artistlist']
 ]);
 // 自动隐藏进度条
 const autoHide = throttle(
@@ -230,7 +222,7 @@ const {
   playTime,
   showDetail,
   songNum,
-  playMode,
+  playMode
 } = storeToRefs(footer);
 const soucreComments = reactive<Comment[]>([]);
 // 是否展示歌曲评论区
@@ -239,7 +231,7 @@ provide<Comment[]>('soucreComments', soucreComments);
 provide<Ref<boolean>>('showComments', showComments);
 
 // 关闭网页之前，缓存相关记录
-const theme = useThemeStore();
+const themeStore = useThemeStore();
 const {
   fontColor,
   background,
@@ -250,8 +242,8 @@ const {
   searchBg,
   active,
   themeColor,
-  fontGray,
-} = storeToRefs(theme);
+  fontGray
+} = storeToRefs(themeStore);
 const user = useUserStore();
 const {
   loveSongs,
@@ -263,12 +255,12 @@ const {
   mvDownload,
   songRecord,
   videoRecord,
-  loveRadio,
+  loveRadio
 } = storeToRefs(user);
 onMounted(() => {
   window.addEventListener('beforeunload', () => {
     // 主题
-    setStorAge(storageType.LOCAL, 'theme', {
+    ls.set('theme', {
       fontBlack: fontBlack.value,
       fontColor: fontColor.value,
       backgound: background.value,
@@ -278,29 +270,29 @@ onMounted(() => {
       searchBg: searchBg.value,
       active: active.value,
       themeColor: themeColor.value,
-      fontGray: fontGray.value,
+      fontGray: fontGray.value
     });
     // 背景模式
-    setStorAge(storageType.LOCAL, 'skin', skin.value);
-    setStorAge(storageType.LOCAL, 'bgMode', bgMode.value);
+    ls.set('skin', skin.value);
+    ls.set('bgMode', bgMode.value);
     // 全屏模式
-    setStorAge(storageType.LOCAL, 'isFullScreen', isFullScreen.value);
+    ls.set('isFullScreen', isFullScreen.value);
     // 用户数据
     // 记录当前播放的歌曲
-    setStorAge(storageType.LOCAL, 'currentPlay', current.value);
+    ls.set('currentPlay', current.value);
     // 记录当前播放的模式
-    setStorAge(storageType.LOCAL, 'playMode', playMode.value);
-    setStorAge(storageType.LOCAL, 'userPlaylist', songList.value);
-    setStorAge(storageType.LOCAL, 'loveSongs', loveSongs.value);
-    setStorAge(storageType.LOCAL, 'loveAlbum', loveAlbum.value);
-    setStorAge(storageType.LOCAL, 'loveSinger', loveSinger.value);
-    setStorAge(storageType.LOCAL, 'lovePlaylist', lovePlaylist.value);
-    setStorAge(storageType.LOCAL, 'loveVideo', loveVideo.value);
-    setStorAge(storageType.LOCAL, 'musicDownload', musicDownload.value);
-    setStorAge(storageType.LOCAL, 'mvDownload', mvDownload.value);
-    setStorAge(storageType.LOCAL, 'songRecord', songRecord.value);
-    setStorAge(storageType.LOCAL, 'videoRecord', videoRecord.value);
-    setStorAge(storageType.LOCAL, 'loveRadio', loveRadio.value);
+    ls.set('playMode', playMode.value);
+    ls.set('userPlaylist', songList.value);
+    ls.set('loveSongs', loveSongs.value);
+    ls.set('loveAlbum', loveAlbum.value);
+    ls.set('loveSinger', loveSinger.value);
+    ls.set('lovePlaylist', lovePlaylist.value);
+    ls.set('loveVideo', loveVideo.value);
+    ls.set('musicDownload', musicDownload.value);
+    ls.set('mvDownload', mvDownload.value);
+    ls.set('songRecord', songRecord.value);
+    ls.set('videoRecord', videoRecord.value);
+    ls.set('loveRadio', loveRadio.value);
   });
 });
 

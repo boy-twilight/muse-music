@@ -113,12 +113,12 @@ import { nextTick, Ref, watch, reactive, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { Song } from '@/model';
 import useFooterStore from '@/store/footer';
-import { transformTime, playVideo, handleSingerName, elMessage } from '@/utils';
+import { transformTime, playVideo, handleSingerName, message } from '@/utils';
 import useConfigStore from '@/store/config';
 import { CommonButton, MoreDropdown } from '@components/button';
-import { elMessageType } from '@/model/enum';
-import useTheme from '@/hooks/useTheme';
+import { messageType } from '@/model/enum';
 import useThemeStore from '@/store/theme';
+import useTheme from '@/hooks/useTheme';
 
 // 配置主题
 const config = useConfigStore();
@@ -131,11 +131,10 @@ const {
   menuColor,
   themeColor,
   active,
-  shadow: boxShadow,
+  shadow: boxShadow
 } = useTheme();
 
-const theme = useThemeStore();
-
+const themeStore = useThemeStore();
 const footer = useFooterStore();
 const {
   isPlay,
@@ -145,8 +144,27 @@ const {
   songNum,
   playProcess,
   playTime,
-  showDetail,
+  showDetail
 } = storeToRefs(footer);
+// 设置主题相关
+// 标题数组
+const titleArr = reactive<string[]>([
+  '请选择主题色调：',
+  '请选择字体主题色调：',
+  '请选择字体副色调：',
+  '请选择背景色调：',
+  '请选择菜单色调：',
+  '请选择菜单激活时的色调：'
+]);
+// 值数组
+let valueArr = reactive<Ref<string>[]>([
+  ref<string>(themeColor.value),
+  ref<string>(fontColor.value),
+  ref<string>(fontGray.value),
+  ref<string>(background.value),
+  ref<string>(menuColor.value),
+  ref<string>(active.value)
+]);
 
 // 在播放列表点击播放
 const listPlay = (index: number) => {
@@ -158,7 +176,7 @@ const listPlay = (index: number) => {
 };
 
 // 在播放列表删除歌曲
-const listDelete = async (index: number) => {
+const listDelete = async(index: number) => {
   if (current.value == index) {
     if (isPlay.value) {
       isPlay.value = false;
@@ -188,7 +206,7 @@ const listDelete = async (index: number) => {
 };
 
 // 列表删除全部歌曲
-const deleteAll = async () => {
+const deleteAll = async() => {
   if (isPlay.value) {
     isPlay.value = false;
   }
@@ -212,41 +230,23 @@ const playMV = (song: Song) => {
 // 动态切换皮肤
 watch(
   bgMode,
-  async () => {
+  async() => {
     await nextTick();
     const drawer = document.querySelector('.playlist-drawer') as HTMLDivElement;
     drawer.style.background = `${background.value} url(${skinUrl.value}) no-repeat center/cover`;
   },
   {
-    immediate: true,
+    immediate: true
   }
 );
 
-// 设置主题相关
-// 标题数组
-const titleArr = reactive<string[]>([
-  '请选择主题色调：',
-  '请选择字体主题色调：',
-  '请选择字体副色调：',
-  '请选择背景色调：',
-  '请选择菜单色调：',
-  '请选择菜单激活时的色调：',
-]);
-// 值数组
-let valueArr = reactive<Ref<string>[]>([
-  ref<string>(themeColor.value),
-  ref<string>(fontColor.value),
-  ref<string>(fontGray.value),
-  ref<string>(background.value),
-  ref<string>(menuColor.value),
-  ref<string>(active.value),
-]);
 // 设置主题
 const changeTheme = () => {
-  theme.setTheme(valueArr.map((item) => item.value));
+  themeStore.setTheme(valueArr.map((item) => item.value));
   showList.value = false;
-  elMessage(elMessageType.SUCCESS, '主题保存成功！');
+  message(messageType.SUCCESS, '主题保存成功！');
 };
+
 // 取消设置
 const cancel = () => {
   showList.value = false;
@@ -256,9 +256,9 @@ const cancel = () => {
     ref<string>(fontGray.value),
     ref<string>(background.value),
     ref<string>(menuColor.value),
-    ref<string>(active.value),
+    ref<string>(active.value)
   ]);
-  elMessage(elMessageType.SUCCESS, '主题取消保存成功！');
+  message(messageType.SUCCESS, '主题取消保存成功！');
 };
 </script>
 

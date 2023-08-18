@@ -120,23 +120,6 @@ import useConfigStore from '@/store/config';
 import usePlayMusic from '@/hooks/usePlayMuisc';
 import useTheme from '@/hooks/useTheme';
 
-// 设置主题
-const config = useConfigStore();
-const { bgMode } = storeToRefs(config);
-const {
-  fontColor,
-  background: bg,
-  fontGray,
-  themeColor,
-  tableHover: hover,
-} = useTheme();
-
-// 设置隐藏滚动条
-const hideScroll = inject('hideScroll') as () => void;
-const footer = userFooterStore();
-const { songList, current, isPlay } = storeToRefs(footer);
-const user = useUserStore();
-
 // 申明接受数据
 const props = withDefaults(
   defineProps<{
@@ -162,21 +145,35 @@ const props = withDefaults(
     sort: undefined,
     isCancelSort: false,
     showHeader: true,
-    pageSize: 0,
+    pageSize: 0
   }
 );
+// 设置主题
+const config = useConfigStore();
+const { bgMode } = storeToRefs(config);
+const {
+  fontColor,
+  background: bg,
+  fontGray,
+  themeColor,
+  tableHover: hover
+} = useTheme();
 
+// 设置隐藏滚动条
+const hideScroll = inject('hideScroll') as () => void;
+const footer = userFooterStore();
+const { songList, current, isPlay } = storeToRefs(footer);
+const user = useUserStore();
 // table容器
 const tableContainer = ref<InstanceType<typeof ElTable>>();
-
 // 表格多选
 // 是否展开选择框
 const showSelectBox = computed(() => props.showSelect);
 // 选择框的长度
 const selectWidth = computed(() => (props.showSelect ? 55 : 0));
-//获取选中
+// 获取选中
 const getSelectItems = (): Song[] => tableContainer.value?.getSelectionRows();
-//清除选中
+// 清除选中
 const clearSelect = () => {
   tableContainer.value!.clearSelection();
 };
@@ -184,7 +181,6 @@ const clearSelect = () => {
 watch(showSelectBox, (newVal) => {
   if (!newVal) clearSelect();
 });
-
 // 表格排序
 // 排序类型
 const sortType = computed(() =>
@@ -250,6 +246,7 @@ const leave = (row: Song) => {
 
 // 播放单曲
 const { playMusic } = usePlayMusic();
+
 // 播放mv
 const playMV = (song: Song) => {
   playVideo(song, () => {
@@ -285,7 +282,7 @@ onBeforeRouteLeave(() => {
 
 defineExpose({
   clearSelect,
-  getSelectItems,
+  getSelectItems
 });
 </script>
 

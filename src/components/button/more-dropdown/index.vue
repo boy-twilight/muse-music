@@ -42,7 +42,6 @@ import { Ref, computed, ref, nextTick, inject } from 'vue';
 import { shareMuiscInfo, getSourceComments, downloadLyric } from '@/utils';
 import { Song, DropDownItem, Comment } from '@/model';
 import useUserStore from '@/store/user';
-import useConfigStore from '@/store/config';
 import usePlayMusic from '@/hooks/usePlayMuisc';
 import useTheme from '@/hooks/useTheme';
 
@@ -52,19 +51,9 @@ const props = defineProps<{
   song: Song;
 }>();
 // 主题设置
-const { background: bg, fontColor } = useTheme();
-// 全局数据
-const config = useConfigStore();
-
+const { background: bg, fontColor, dropDownMode } = useTheme();
+// 用户数据
 const user = useUserStore();
-// 下列框处于哪种模式
-const dropDownMode = computed(() => {
-  if (config.bgMode == 'color') {
-    return fontColor.value == '#ffffff' ? 'dropdown-dark' : 'dropdown-light';
-  } else {
-    return 'dropdown-skin';
-  }
-});
 // 更多图标的容器
 const more = ref<HTMLSpanElement>();
 // 是否显示下拉框
@@ -84,69 +73,68 @@ const dropItems: DropDownItem[] = [
     name: '播放',
     icon: '&#xea6e;',
     style: 'margin: 0 9px 0 2px; font-size: 15px;',
-    command: 'playMusic',
+    command: 'playMusic'
   },
   {
     name: '下一首播放',
     icon: '&#xe63c;',
     style: 'margin: 0 7px 0 0px; font-size: 20px',
-    command: 'playNext',
+    command: 'playNext'
   },
   {
     name: '播放相似单曲',
     icon: '&#xe602;',
     style: 'margin: 0 8px 0 3px;',
     command: 'playSimi',
-    isIcon1: true,
+    isIcon1: true
   },
   {
     name: '复制歌曲信息',
     icon: '&#xe63b;',
     style: 'margin: 1px 7px 0 4px;',
-    command: 'copyMusic',
+    command: 'copyMusic'
   },
 
   {
     name: '我喜欢',
     icon: '&#xe761;',
     style: 'margin: 0 7px 0 4px;',
-    command: 'love',
+    command: 'love'
   },
   {
     name: '查看评论',
     icon: '&#xe60b;',
     style: 'margin: 1px 7px 0 4px;',
-    command: 'comment',
+    command: 'comment'
   },
 
   {
     name: '下载歌词',
     icon: '&#xe602;',
     style: 'margin: 0 7px 0 4px;',
-    command: 'downLyric',
+    command: 'downLyric'
   },
 
   {
     name: '下载歌曲',
     icon: '&#xf0304;',
     style: 'margin: 0 8px 0 3px; font-size: 16px;',
-    command: 'downloadMusic',
-  },
+    command: 'downloadMusic'
+  }
 ];
 // 评论
 const soucreComments = inject('soucreComments') as Comment[];
 // 是否展开评论区
 const showComments = inject('showComments') as Ref<boolean>;
 
-const { playMusic } = usePlayMusic();
+// 播放音乐，相似音乐，下一首播放
+const { playMusic, playMusicNext, playSimiMusic } = usePlayMusic();
 // 点击显示下拉框
-const showDropMenu = async () => {
+const showDropMenu = async() => {
   showDrop.value = true;
   await nextTick();
   more.value?.click();
 };
-
-const { playMusicNext, playSimiMusic } = usePlayMusic();
 // 点击更多操作
 const handleClick = (command: string) => {
   const song = props.song;
@@ -165,9 +153,7 @@ const handleClick = (command: string) => {
   } else if (command == 'copyMusic') {
     shareMuiscInfo(song);
   } else if (command == 'comment') {
-    if (soucreComments.length > 0) {
-      soucreComments.splice(0);
-    }
+    if (soucreComments.length > 0) soucreComments.splice(0);
     getSourceComments(song.id, '0', soucreComments, () => {
       showComments.value = true;
     });

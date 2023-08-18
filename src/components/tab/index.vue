@@ -20,6 +20,7 @@ const { fontColor, themeColor } = useTheme();
 const props = defineProps<{
   active: string;
 }>();
+
 const activeDeafault = ref<string>(props.active);
 
 // 传递按当前获取的菜单项

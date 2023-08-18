@@ -128,22 +128,17 @@
 <script lang="ts" setup>
 import { ref, computed, nextTick } from 'vue';
 import { Comment } from '@/model';
-import useConfigStore from '@/store/config';
 import Pagination from '@components/pagination';
 import useTheme from '@/hooks/useTheme';
 
-// 配置主题
-const config = useConfigStore();
 const {
   fontBlack,
   fontColor,
   shadow: boxShadow,
   themeColor,
   fontGray,
+  replyBg
 } = useTheme();
-const replyBg = computed(() =>
-  config.bgMode == 'skin' ? 'rgba(220,220,220,0.2)' : 'rgb(240,240,240)'
-);
 
 const props = defineProps<{
   comments: Comment[];
@@ -153,10 +148,8 @@ const props = defineProps<{
 const mapper = computed(
   () => new Map(props.comments.map((item, index) => [item.commentId, index]))
 );
-
 // 当前活跃的当评论
 const activeId = ref<string>('');
-
 // 当前页数
 const curPage = ref<number>(1);
 // 一页多少数据
@@ -170,6 +163,7 @@ const curList = computed(() =>
 );
 // 总的数据数
 const total = computed(() => props.comments.length);
+
 // 页数变化
 const pageChange = (page: number) => {
   curPage.value = page;
@@ -184,7 +178,7 @@ const getRandomTime = (time: string): string => {
 };
 
 // 打开或关闭评论区
-const openReply = async (commentId: string) => {
+const openReply = async(commentId: string) => {
   if (activeId.value == commentId) {
     activeId.value = '';
   } else {

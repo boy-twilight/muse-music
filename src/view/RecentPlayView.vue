@@ -45,6 +45,7 @@ import { UserMusicTable } from '@components/table';
 import { NoResult } from '@components/result';
 import Tab from '@components/tab';
 import useTheme from '@/hooks/useTheme';
+
 // 配置主题
 const { fontColor, fontGray } = useTheme();
 
@@ -73,7 +74,7 @@ const deleteVideoRecord = (id: string) => {
 };
 
 // 获取初始数据
-getRequset(async () => {
+getRequset(async() => {
   getMusicUrls(songRecord.value);
   user.initLoveMusic(songRecord.value);
   // 关闭动画

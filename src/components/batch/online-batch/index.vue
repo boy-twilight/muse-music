@@ -35,9 +35,9 @@ import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { Song } from '@/model';
 import useUserStore from '@/store/user';
+import usePlayMusic from '@/hooks/usePlayMuisc';
 import { CommonButton } from '@components/button';
 import { SongTable } from '@components/table';
-import usePlayMusic from '@/hooks/usePlayMuisc';
 import useTheme from '@/hooks/useTheme';
 
 defineProps<{
@@ -49,18 +49,20 @@ defineProps<{
 const emits = defineEmits<{
   (e: 'closeSelect', showSelect: boolean): void;
 }>();
-const user = useUserStore();
-const { loveMusicId, loveSongs } = storeToRefs(user);
 // 配置主题
 const { themeColor } = useTheme();
+// 用户数据
+const user = useUserStore();
+const { loveMusicId, loveSongs } = storeToRefs(user);
 // 选择的歌曲
 const selectSongs = computed(() => table.value?.getSelectItems() || []);
-//表格容器
+// 表格容器
 const table = ref<InstanceType<typeof SongTable>>();
 
+// 播放选中音乐
 const { playSelectMusic } = usePlayMusic();
 
-//播放选中的歌曲
+// 播放选中的歌曲
 const playSelect = () => {
   playSelectMusic(selectSongs.value);
   table.value?.clearSelect();

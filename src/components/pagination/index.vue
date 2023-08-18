@@ -20,8 +20,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
 import useTheme from '@/hooks/useTheme';
+import { ref } from 'vue';
 
 withDefaults(
   defineProps<{
@@ -31,7 +31,7 @@ withDefaults(
     pageSize: number;
   }>(),
   {
-    text: '首歌曲',
+    text: '首歌曲'
   }
 );
 
@@ -50,7 +50,7 @@ const checkValid = () => {
 };
 
 // 当页数发生改变时
-const changePage = async (page: number) => {
+const changePage = async(page: number) => {
   if (page) {
     emits('pageChange', page);
   }

@@ -57,12 +57,6 @@ import { MV } from '@/model';
 import Pagination from '@components/pagination';
 import useTheme from '@/hooks/useTheme';
 
-// 设置主题
-const { fontColor, shadow: boxShadow, themeColor, fontGray } = useTheme();
-const router = useRouter();
-// 设置隐藏滚动条
-const hideScroll = inject('hideScroll') as () => void;
-
 const props = withDefaults(
   defineProps<{
     mvs: MV[];
@@ -75,13 +69,19 @@ const props = withDefaults(
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false,
+    showPagination: false
   }
 );
 
 const emits = defineEmits<{
   (e: 'getDeleteId', id: string): void;
 }>();
+
+// 设置主题
+const { fontColor, shadow: boxShadow, themeColor, fontGray } = useTheme();
+const router = useRouter();
+// 设置隐藏滚动条
+const hideScroll = inject('hideScroll') as () => void;
 // 当前页数
 const curPage = ref<number>(1);
 // 一页多少数据
@@ -106,8 +106,8 @@ const toMv = (id: string) => {
   router.push({
     name: 'video',
     query: {
-      id,
-    },
+      id
+    }
   });
 };
 </script>

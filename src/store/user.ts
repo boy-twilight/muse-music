@@ -1,8 +1,8 @@
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive } from 'vue';
 import { Album, Artist, MV, Playlist, Song } from '@/model';
-import { download, downloadMusic, elMessage, getStorage } from '@/utils';
-import { elMessageType, storageType } from '@/model/enum';
+import { download, downloadMusic, message, ls } from '@/utils';
+import { messageType } from '@/model/enum';
 import useFooterStore from './footer';
 
 const useUserStore = defineStore('user', () => {
@@ -16,47 +16,25 @@ const useUserStore = defineStore('user', () => {
   const { songList, songListId } = storeToRefs(footer);
 
   // 收藏的歌曲,实现
-  const loveSongs = reactive<Song[]>(
-    getStorage(storageType.LOCAL, 'loveSongs') || []
-  );
+  const loveSongs = reactive<Song[]>(ls.get('loveSongs') || []);
   // 收藏的视频,实现
-  const loveVideo = reactive<MV[]>(
-    getStorage(storageType.LOCAL, 'loveVideo') || []
-  );
+  const loveVideo = reactive<MV[]>(ls.get('loveVideo') || []);
   // 收藏的歌单,实现
-  const lovePlaylist = reactive<Playlist[]>(
-    getStorage(storageType.LOCAL, 'lovePlaylist') || []
-  );
+  const lovePlaylist = reactive<Playlist[]>(ls.get('lovePlaylist') || []);
   // 收藏的歌手
-  const loveSinger = reactive<Artist[]>(
-    getStorage(storageType.LOCAL, 'loveSinger') || []
-  );
+  const loveSinger = reactive<Artist[]>(ls.get('loveSinger') || []);
   // 收藏的专辑
-  const loveAlbum = reactive<Album[]>(
-    getStorage(storageType.LOCAL, 'loveAlbum') || []
-  );
+  const loveAlbum = reactive<Album[]>(ls.get('loveAlbum') || []);
   // 收藏的电台
-  const loveRadio = reactive<Playlist[]>(
-    getStorage(storageType.LOCAL, 'loveRadio') || []
-  );
-
+  const loveRadio = reactive<Playlist[]>(ls.get('loveRadio') || []);
   // 歌曲播放记录，实现
-  const songRecord = reactive<Song[]>(
-    getStorage(storageType.LOCAL, 'songRecord') || []
-  );
+  const songRecord = reactive<Song[]>(ls.get('songRecord') || []);
   // 视频的播放记录，实现
-  const videoRecord = reactive<MV[]>(
-    getStorage(storageType.LOCAL, 'videoRecord') || []
-  );
+  const videoRecord = reactive<MV[]>(ls.get('videoRecord') || []);
   // 下载的音乐，实现
-  const musicDownload = reactive<Song[]>(
-    getStorage(storageType.LOCAL, 'musicDownload') || []
-  );
+  const musicDownload = reactive<Song[]>(ls.get('musicDownload') || []);
   // 下载的视频,实现
-  const mvDownload = reactive<MV[]>(
-    getStorage(storageType.LOCAL, 'mvDownload') || []
-  );
-
+  const mvDownload = reactive<MV[]>(ls.get('mvDownload') || []);
   // 喜欢音乐的id对应的map
   const loveMusicId = computed(() => {
     const map: Map<string, number> = new Map();
@@ -105,7 +83,6 @@ const useUserStore = defineStore('user', () => {
     });
     return map;
   });
-
   // 歌曲播放记录id对应的map
   const songRecordId = computed(() => {
     const map: Map<string, number> = new Map();
@@ -114,7 +91,6 @@ const useUserStore = defineStore('user', () => {
     });
     return map;
   });
-
   // 视频播放记录
   const videoRecordId = computed(() => {
     const map: Map<string, number> = new Map();
@@ -152,7 +128,7 @@ const useUserStore = defineStore('user', () => {
     const downloadIndex = musicDownloadId.value.get(source.id);
     if (source.isLove) {
       sourceList.push(source);
-      elMessage(elMessageType.SUCCESS, '收藏成功！');
+      message(messageType.SUCCESS, '收藏成功！');
       // 添加对应页面的喜欢
       if (playIndex != undefined)
         songList.value[playIndex as number].isLove = true;
@@ -162,7 +138,7 @@ const useUserStore = defineStore('user', () => {
         musicDownload[recordIndex as number].isLove = true;
     } else {
       sourceList.splice(idMap.get(source.id) as number, 1);
-      elMessage(elMessageType.SUCCESS, '取消收藏成功！');
+      message(messageType.SUCCESS, '取消收藏成功！');
       // 移除对应页面的喜欢
       if (playIndex != undefined)
         songList.value[playIndex as number].isLove = false;
@@ -193,9 +169,10 @@ const useUserStore = defineStore('user', () => {
       musicDownload.push(song);
     }
   }
+
   // 下载视频并添加记录
   function addVideoDownload(mv: MV) {
-    elMessage(elMessageType.SUCCESS, 'MV开始下载，请稍后。');
+    message(messageType.SUCCESS, 'MV开始下载，请稍后。');
     const fileName = mv.name + '-' + mv.artist + '.mp4';
     const url = mv.url as string;
     download(url, fileName);

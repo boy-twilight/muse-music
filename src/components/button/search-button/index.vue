@@ -28,9 +28,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, ref } from 'vue';
+import { inject, ref } from 'vue';
 import { throttle } from 'lodash-es';
-import useConfigStore from '@/store/config';
 import useTheme from '@/hooks/useTheme';
 
 // 搜索结果回传
@@ -38,13 +37,7 @@ const emits = defineEmits<{
   (e: 'getContent', param: string): void;
 }>();
 // 配置主题
-const config = useConfigStore();
-const { fontColor, themeColor, searchBg, fontGray } = useTheme();
-
-const searchColor = computed(() =>
-  config.bgMode == 'color' ? searchBg.value : 'rgba(210,210,210,0.2)'
-);
-
+const { fontColor, themeColor, fontGray, searchColor } = useTheme();
 // 设置隐藏滚动条
 const hideScroll = inject('hideScroll') as () => void;
 // 搜索容器
@@ -64,7 +57,7 @@ const searchMusic = () => {
     800,
     {
       leading: true,
-      trailing: false,
+      trailing: false
     }
   )();
 };

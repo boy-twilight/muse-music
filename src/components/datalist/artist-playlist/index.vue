@@ -55,12 +55,6 @@ import { Playlist } from '@/model';
 import Pagination from '@components/pagination';
 import useTheme from '@/hooks/useTheme';
 
-// 设置主题
-const { fontColor, shadow: boxShadow, themeColor, fontGray } = useTheme();
-const router = useRouter();
-// 设置隐藏滚动条
-const hideScroll = inject('hideScroll') as () => void;
-
 const props = withDefaults(
   defineProps<{
     playlists: Playlist[];
@@ -75,7 +69,7 @@ const props = withDefaults(
     showDelete: false,
     transitionName: '',
     showPagination: false,
-    type: 'playlist',
+    type: 'playlist'
   }
 );
 
@@ -83,6 +77,11 @@ const emits = defineEmits<{
   (e: 'getDeleteId', id: string): void;
 }>();
 
+// 设置主题
+const { fontColor, shadow: boxShadow, themeColor, fontGray } = useTheme();
+// 设置隐藏滚动条
+const hideScroll = inject('hideScroll') as () => void;
+const router = useRouter();
 // 当前页数
 const curPage = ref<number>(1);
 // 一页多少数据
@@ -96,19 +95,20 @@ const curShow = computed(() =>
     curPage.value * pageSize.value
   )
 );
+
 // 页数变化
-const pageChange = async (page: number) => {
+const pageChange = async(page: number) => {
   curPage.value = page;
 };
-
+// 前往歌单页面
 const toPlayList = (list: Playlist) => {
   hideScroll();
   router.push({
     name: 'playlist',
     query: {
       id: list.id,
-      type: props.type,
-    },
+      type: props.type
+    }
   });
 };
 </script>

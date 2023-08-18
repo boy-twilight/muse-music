@@ -49,21 +49,6 @@ import { Album } from '@/model';
 import Pagination from '@components/pagination';
 import useTheme from '@/hooks/useTheme';
 
-// 主题配置
-const {
-  fontColor,
-  fontBlack,
-  shadow: boxShadow,
-  themeColor,
-  fontGray,
-} = useTheme();
-
-const router = useRouter();
-
-// 设置隐藏滚动条
-const hideScroll = inject('hideScroll') as () => void;
-// 声明组件接受值
-
 const props = withDefaults(
   defineProps<{
     // 专辑数组
@@ -81,7 +66,7 @@ const props = withDefaults(
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false,
+    showPagination: false
   }
 );
 
@@ -89,6 +74,17 @@ const emits = defineEmits<{
   (e: 'getDeleteId', id: string): void;
 }>();
 
+// 主题配置
+const {
+  fontColor,
+  fontBlack,
+  shadow: boxShadow,
+  themeColor,
+  fontGray
+} = useTheme();
+const router = useRouter();
+// 设置隐藏滚动条
+const hideScroll = inject('hideScroll') as () => void;
 // 当前页数
 const curPage = ref<number>(1);
 // 一页多少数据
@@ -102,6 +98,7 @@ const curShow = computed(() =>
     curPage.value * pageSize.value
   )
 );
+
 // 页数变化
 const pageChange = (page: number) => {
   curPage.value = page;
@@ -114,8 +111,8 @@ const toAlbumDetail = (id: string, artistId: string) => {
     name: 'album',
     query: {
       id,
-      artistId,
-    },
+      artistId
+    }
   });
 };
 </script>

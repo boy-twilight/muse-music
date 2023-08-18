@@ -16,12 +16,12 @@ withDefaults(
     name?: string;
   }>(),
   {
-    name: '播放全部',
+    name: '播放全部'
   }
 );
 // 配置主题
 const { shadow: boxShadow, themeColor } = useTheme();
-
+// 播放音乐
 const { playAllMusic } = usePlayMusic();
 </script>
 

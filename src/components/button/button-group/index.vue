@@ -22,8 +22,8 @@
 <script lang="ts" setup>
 /* eslint-disable */
 // eslint-disable-next-line vue/no-setup-props-destructure
-import useTheme from '@/hooks/useTheme';
 import { ref } from 'vue';
+import useTheme from '@/hooks/useTheme';
 const props = withDefaults(
   defineProps<{
     title: string;

@@ -18,6 +18,7 @@
     "dplayer": "^1.27.1",
     "element-plus": "^2.3.3",
     "hotkeys-js": "^3.10.2",
+    "lyc-storage": "^1.0.4",
     "nprogress": "^0.2.0",
     "pinia": "^2.0.34",
     "vue": "^3.2.47",

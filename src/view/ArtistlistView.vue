@@ -37,8 +37,8 @@
 import { ref, reactive, Ref, inject, computed, nextTick } from 'vue';
 import { Artist } from '@/model';
 import { getArtists } from '@/api';
-import { elMessage } from '@/utils';
-import { elMessageType } from '@/model/enum';
+import { message } from '@/utils';
+import { messageType } from '@/model/enum';
 import { Singer } from '@components/datalist';
 import { ButtonGroup, SearchButton } from '@components/button';
 import useTheme from '@/hooks/useTheme';
@@ -49,9 +49,8 @@ const {
   fontBlack,
   shadow: boxShadow,
   themeColor,
-  fontGray,
+  fontGray
 } = useTheme();
-
 // 歌手榜单
 const artistlist = reactive<Artist[]>([]);
 // 搜索
@@ -73,7 +72,7 @@ const typeMapper = new Map([
   ['全部', -1],
   ['男歌手', 1],
   ['女歌手', 2],
-  ['组合', 3],
+  ['组合', 3]
 ]);
 // 歌手地区默认活跃的Index
 const areaActive = ref<number>(0);
@@ -90,7 +89,7 @@ const areaMapper = new Map([
   ['欧美', 96],
   ['日本', 8],
   ['韩国', 16],
-  ['其他', 0],
+  ['其他', 0]
 ]);
 // 姓名首字母，用于筛选
 const nameCh = reactive<string[]>(
@@ -104,7 +103,7 @@ const first = inject('firstLoading') as Ref<boolean>;
 const hideScroll = inject('hideScroll') as () => void;
 
 // 获取到当前活跃的按钮切换并加载对应数据
-const getActive = async (index: number, type: string) => {
+const getActive = async(index: number, type: string) => {
   hideScroll();
   artistlist.splice(0);
   // 切换index
@@ -132,7 +131,7 @@ const getContent = (search: string) => {
   content.value = search;
 };
 // 请求初始数据
-const getData = async () => {
+const getData = async() => {
   // 第一次请求开启动画
   first.value = true;
   try {
@@ -149,7 +148,7 @@ const getData = async () => {
         id,
         name,
         avatar: img1v1Url,
-        score: fansCount,
+        score: fansCount
       });
     });
     // 缓存请求结果
@@ -158,7 +157,7 @@ const getData = async () => {
       [...artistlist]
     );
   } catch (err: any) {
-    elMessage(elMessageType.ERROR, err.message);
+    message(messageType.ERROR, err.message);
   }
   first.value = false;
 };

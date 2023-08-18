@@ -32,11 +32,11 @@
 import { computed, inject, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import useUserStore from '@/store/user';
-import { elMessage } from '@/utils';
-import { elMessageType } from '@/model/enum';
+import usePlayMusic from '@/hooks/usePlayMuisc';
+import { message } from '@/utils';
+import { messageType } from '@/model/enum';
 import { CommonButton } from '@components/button';
 import { SongTable } from '@components/table';
-import usePlayMusic from '@/hooks/usePlayMuisc';
 import useTheme from '@/hooks/useTheme';
 
 const props = defineProps<{
@@ -52,7 +52,7 @@ const user = useUserStore();
 const { songRecord, musicDownload, loveSongs } = storeToRefs(user);
 // 设置隐藏滚动条
 const hideScroll = inject('hideScroll') as () => void;
-//表格容器
+// 表格容器
 const table = ref<InstanceType<typeof SongTable>>();
 // 歌曲
 const songs = computed(() => {
@@ -97,9 +97,9 @@ const deleteSelect = () => {
     songs.value.splice(0);
     // 添加
     songs.value.push(...temp);
-    elMessage(elMessageType.SUCCESS, '已清除选中的歌曲！');
+    message(messageType.SUCCESS, '已清除选中的歌曲！');
   } else {
-    elMessage(elMessageType.INFO, '请添加歌曲！');
+    message(messageType.INFO, '请添加歌曲！');
   }
 };
 

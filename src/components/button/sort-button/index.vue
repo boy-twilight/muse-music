@@ -35,35 +35,27 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, computed, Ref } from 'vue';
-import useConfigStore from '@/store/config';
+import { ref, reactive, computed } from 'vue';
 import useTheme from '@/hooks/useTheme';
 
 const emits = defineEmits<{
   (e: 'getSortChoice', sortType: boolean[], isCancelSort: boolean): void;
 }>();
 // 配置主题
-const config = useConfigStore();
-const { fontColor, background: bg, themeColor, searchBg } = useTheme();
+const {
+  fontColor,
+  background: bg,
+  themeColor,
+  searchColor,
+  dropDownMode
+} = useTheme();
 
-const searchColor = computed(() =>
-  config.bgMode == 'color' ? searchBg.value : 'rgba(210,210,210,0.2)'
-);
-
-// 下列框处于哪种模式
-const dropDownMode = computed(() => {
-  if (config.bgMode == 'color') {
-    return fontColor.value == '#ffffff' ? 'dropdown-dark' : 'dropdown-light';
-  } else {
-    return 'dropdown-skin';
-  }
-});
 // 排序的名字
 const sortName = reactive<string[]>([
   '歌曲排序',
   '歌手排序',
   '专辑排序',
-  '时长排序',
+  '时长排序'
 ]);
 // 排序的类型
 const sortType = reactive<boolean[]>([false, false, false, false]);

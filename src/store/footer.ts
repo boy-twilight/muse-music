@@ -1,30 +1,23 @@
 import { defineStore } from 'pinia';
 import { ref, reactive, computed } from 'vue';
-import { getStorage } from '@/utils';
-import { storageType } from '@/model/enum';
 import { Song } from '@/model';
+import { ls } from '@/utils';
 
 const useFooterStore = defineStore('footer', () => {
   // 是否播放
   const isPlay = ref<boolean>(false);
   // 播放列表
-  const songList = reactive<Song[]>(
-    getStorage(storageType.LOCAL, 'userPlaylist') || []
-  );
+  const songList = reactive<Song[]>(ls.get('userPlaylist') || []);
   // 播放列表对应的id
   const songListId = computed(() => {
     return new Map(songList.map((item, index) => [item.id, index]));
   });
   // 播放模式
-  const playMode = ref<string>(
-    getStorage(storageType.LOCAL, 'playMode') || '2'
-  );
+  const playMode = ref<string>(ls.get('playMode') || '2');
   // 歌曲数目
   const songNum = computed<number>(() => songList.length);
   // 当前播放的索引
-  const current = ref<number>(
-    getStorage(storageType.LOCAL, 'currentPlay') || 0
-  );
+  const current = ref<number>(ls.get('currentPlay') || 0);
   // 当前播放的进度
   const playProcess = ref<number>(0);
   // 用户是否改变进度

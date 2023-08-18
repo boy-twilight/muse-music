@@ -1,7 +1,6 @@
-import { storageType } from '@/model/enum';
-import { getStorage } from '@/utils';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
+import { ls } from '@/utils';
 
 const useConfigStore = defineStore('config', () => {
   // 防止抖动
@@ -35,11 +34,9 @@ const useConfigStore = defineStore('config', () => {
   );
   // 配置背景模式
   // 背景模式，纯色模式或者皮肤模式
-  const bgMode = ref<string>(
-    getStorage(storageType.LOCAL, 'bgMode') || 'color'
-  );
+  const bgMode = ref<string>(ls.get('bgMode') || 'color');
   // 皮肤
-  const skin = ref<string>(getStorage(storageType.LOCAL, 'skin') || '');
+  const skin = ref<string>(ls.get('skin') || '');
   // 皮肤地址
   const skinUrl = computed(() => (bgMode.value == 'color' ? '' : skin.value));
   // 抽屉模式

@@ -19,13 +19,12 @@ import { Comment } from '@/model';
 import { SourceComment } from '@/components/common';
 import useTheme from '@/hooks/useTheme';
 
-// 配置主题
-const { background: bg, fontColor, shadow: boxShadow, themeColor } = useTheme();
-
 defineProps<{
   comments: Comment[];
 }>();
 
+// 配置主题
+const { background: bg, fontColor, shadow: boxShadow, themeColor } = useTheme();
 const showComments = inject('showComments') as Ref<boolean>;
 </script>
 

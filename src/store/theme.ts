@@ -1,66 +1,61 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { getStorage } from '@/utils';
-import { storageType } from '@/model/enum';
+import { ls } from '@/utils';
+import {
+  light_font_color,
+  light_active_color,
+  light_background,
+  light_box_shadow,
+  light_font_black,
+  light_menu_color,
+  light_search_bg,
+  light_table_hover,
+  light_font_gray,
+  dark_font_gray,
+  dark_background,
+  dark_font_black,
+  dark_font_color,
+  dark_menu_color,
+  dark_search_bg,
+  dark_table_hover,
+  drak_box_shadow,
+  drak_active_color,
+  skin_box_shadow,
+  skin_background,
+  skin_menu_color,
+  skin_search_bg,
+  skin_active_color,
+  skin_font_gray,
+  skin_table_hover,
+  skin_font_black,
+  skin_font_color,
+  theme_color
+} from '@/constants/theme';
 const useThemeStore = defineStore('theme', () => {
-  const light_font_color = '#101010';
-  const light_font_black = '#334155';
-  const light_menu_color = '#f0f0f0';
-  const light_background = '#ffffff';
-  const light_table_hover = '#F7F7F7';
-  const light_search_bg = '#E0E0E0';
-  const light_box_shadow =
-    'rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px';
-  const light_active_color = '#1ed2a9';
-  const dark_background = '#101010';
-  const dark_menu_color = '#1B1B1B';
-  const dark_font_color = '#ffffff';
-  const dark_font_black = '#ffffff';
-  const dark_table_hover = '#434343';
-  const dark_search_bg = '#1b1b1b';
-  const drak_box_shadow =
-    'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px';
-  const drak_active_color = 'rgba(0,0,0,0.5)';
   // 字体主色调颜色
-  const fontColor = ref<string>(
-    getStorage(storageType.LOCAL, 'theme')?.fontColor || light_font_color
-  );
-  // 字体副色调
-  const fontGray = ref<string>(
-    getStorage(storageType.LOCAL, 'theme')?.fontGray || '#7b7b7b'
-  );
+  const fontColor = ref<string>(ls.get('theme')?.fontColor || light_font_color);
   // 字体黑色
-  const fontBlack = ref<string>(
-    getStorage(storageType.LOCAL, 'theme')?.fontBlack || light_font_black
-  );
+  const fontBlack = ref<string>(ls.get('theme')?.fontBlack || light_font_black);
+  // 字体副色调
+  const fontGray = ref<string>(ls.get('theme')?.fontGray || light_font_gray);
   // 菜单背景颜色
-  const menuColor = ref<string>(
-    getStorage(storageType.LOCAL, 'theme')?.menuColor || light_menu_color
-  );
+  const menuColor = ref<string>(ls.get('theme')?.menuColor || light_menu_color);
   // 主背景颜色
   const background = ref<string>(
-    getStorage(storageType.LOCAL, 'theme')?.backgound || light_background
+    ls.get('theme')?.backgound || light_background
   );
   // 播放列表激活时背景色
   const tableHover = ref<string>(
-    getStorage(storageType.LOCAL, 'theme')?.tableHover || light_table_hover
+    ls.get('theme')?.tableHover || light_table_hover
   );
   // 盒子阴影
-  const shadow = ref<string>(
-    getStorage(storageType.LOCAL, 'theme')?.shadow || light_box_shadow
-  );
+  const shadow = ref<string>(ls.get('theme')?.shadow || light_box_shadow);
   // 搜索框的背景色
-  const searchBg = ref<string>(
-    getStorage(storageType.LOCAL, 'theme')?.searchBg || light_search_bg
-  );
+  const searchBg = ref<string>(ls.get('theme')?.searchBg || light_search_bg);
   // 菜单在活跃时的背景色
-  const active = ref<string>(
-    getStorage(storageType.LOCAL, 'theme')?.active || light_active_color
-  );
+  const active = ref<string>(ls.get('theme')?.active || light_active_color);
   // 主题色
-  const themeColor = ref<string>(
-    getStorage(storageType.LOCAL, 'theme')?.themeColor || '#1ed2a9'
-  );
+  const themeColor = ref<string>(ls.get('theme')?.themeColor || theme_color);
 
   // 白昼模式
   function changeLight(): void {
@@ -72,8 +67,9 @@ const useThemeStore = defineStore('theme', () => {
     shadow.value = light_box_shadow;
     searchBg.value = light_search_bg;
     active.value = light_active_color;
-    fontGray.value = '#7b7b7b';
+    fontGray.value = light_font_gray;
   }
+
   // 黑夜模式
   function changeDark(): void {
     fontColor.value = dark_font_color;
@@ -84,21 +80,22 @@ const useThemeStore = defineStore('theme', () => {
     shadow.value = drak_box_shadow;
     searchBg.value = dark_search_bg;
     active.value = drak_active_color;
-    fontGray.value = '#7b7b7b';
+    fontGray.value = dark_font_gray;
   }
+
   // 切换皮肤模式
   function changeSkinMode(): void {
-    fontColor.value = dark_font_color;
-    fontBlack.value = dark_font_black;
-    shadow.value =
-      'rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px';
-    background.value = 'transparent';
-    menuColor.value = 'transparent';
-    searchBg.value = 'transparent';
-    active.value = 'rgba(210,210,210,0.5)';
-    tableHover.value = 'rgba(210,210,210,0.3)';
-    fontGray.value = 'rgb(215,215,215)';
+    fontColor.value = skin_font_color;
+    fontBlack.value = skin_font_black;
+    shadow.value = skin_box_shadow;
+    background.value = skin_background;
+    menuColor.value = skin_menu_color;
+    searchBg.value = skin_search_bg;
+    active.value = skin_active_color;
+    tableHover.value = skin_table_hover;
+    fontGray.value = skin_font_gray;
   }
+
   // 设置主题
   function setTheme(themes: string[]): void {
     themeColor.value = themes[0];

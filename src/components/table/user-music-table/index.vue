@@ -32,8 +32,8 @@
 import { computed, ref, reactive } from 'vue';
 import { storeToRefs } from 'pinia';
 import useUserStore from '@/store/user';
-import { elMessageType } from '@/model/enum';
-import { elMessage } from '@/utils';
+import { messageType } from '@/model/enum';
+import { message } from '@/utils';
 import { Song } from '@/model';
 import { SongTable } from '@components/table';
 import {
@@ -136,7 +136,7 @@ const clearAll = () => {
   } else {
     musicDownload.value.splice(0);
   }
-  elMessage(elMessageType.SUCCESS, '已清空全部下载记录！');
+  message(messageType.SUCCESS, '已清空全部下载记录！');
 };
 </script>
 

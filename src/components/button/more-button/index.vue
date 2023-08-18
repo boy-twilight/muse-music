@@ -27,9 +27,8 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, Ref, computed } from 'vue';
+import { reactive } from 'vue';
 import { DropDownItem } from '@/model';
-import useConfigStore from '@/store/config';
 import useTheme from '@/hooks/useTheme';
 
 const props = defineProps<{
@@ -40,32 +39,27 @@ const emits = defineEmits<{
   (e: 'openSelect', showSelect: boolean): void;
 }>();
 
-// 配置主题
-const config = useConfigStore();
-const { background: bg, fontColor, shadow: boxShadow } = useTheme();
-
-// 下列框处于哪种模式
-const dropDownMode = computed(() => {
-  if (config.bgMode == 'color') {
-    return fontColor.value == '#ffffff' ? 'dropdown-dark' : 'dropdown-light';
-  } else {
-    return 'dropdown-skin';
-  }
-});
+// 获取主题
+const {
+  background: bg,
+  fontColor,
+  shadow: boxShadow,
+  dropDownMode
+} = useTheme();
 
 const more = reactive<DropDownItem[]>([
   {
     name: '批量操作',
     icon: '\ue617',
     command: '批量操作',
-    style: 'font-size:17px;margin:0 5px 0 0;',
+    style: 'font-size:17px;margin:0 5px 0 0;'
   },
   {
     name: '分享',
     icon: '\ue680',
     command: '分享',
-    style: 'font-size:14px;margin:0.5px 7px 0 2px;',
-  },
+    style: 'font-size:14px;margin:0.5px 7px 0 2px;'
+  }
 ]);
 
 const operateMore = (command: string) => {
