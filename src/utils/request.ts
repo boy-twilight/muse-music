@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { message, ss } from '.';
-import { messageType } from '@/model/enum';
+import { messageType } from '@/constants/common';
 
 const request: AxiosInstance = axios.create({
   timeout: 10000,

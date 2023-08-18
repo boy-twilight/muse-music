@@ -1,8 +1,8 @@
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive } from 'vue';
-import { Album, Artist, MV, Playlist, Song } from '@/model';
+import { Album, Artist, MV, Playlist, Song } from '@/type';
 import { download, downloadMusic, message, ls } from '@/utils';
-import { messageType } from '@/model/enum';
+import { messageType } from '@/constants/common';
 import useFooterStore from './footer';
 
 const useUserStore = defineStore('user', () => {

@@ -1,6 +1,6 @@
 import { Ref, nextTick } from 'vue';
 import axios from 'axios';
-import { messageType } from '@/model/enum';
+import { messageType } from '@/constants/common';
 import {
   getMusicUrl,
   searchMusic,
@@ -8,10 +8,9 @@ import {
   getHotComments,
   getComments
 } from '@/api';
-import { Song, Comment } from '@/model';
+import { Song, Comment } from '@/type';
 import router from '@/router';
 import { initStorage } from 'lyc-storage';
-
 import { ElMessage } from 'element-plus';
 // localStorage
 export const ls = initStorage();

@@ -7,7 +7,7 @@ import useHeaderStore from '@/store/header';
 
 import { storeToRefs } from 'pinia';
 import { message } from '@/utils';
-import { messageType } from '@/model/enum';
+import { messageType } from '@/constants/common';
 
 // 进度条全局配置
 NProgress.configure({

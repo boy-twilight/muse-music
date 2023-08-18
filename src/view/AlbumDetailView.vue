@@ -80,7 +80,7 @@
 <script lang="ts" setup>
 import { reactive, inject, Ref, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { Album, Song } from '@/model';
+import { Album, Song } from '@/type';
 import { getAlbumDetail, getArtistAlbum } from '@/api';
 import {
   formatTime,
@@ -90,7 +90,7 @@ import {
   message,
   share
 } from '@/utils';
-import { messageType } from '@/model/enum';
+import { messageType } from '@/constants/common';
 import useUserStore from '@/store/user';
 import { PlayButton, MoreButton, CommonButton } from '@components/button';
 import { OnlineBatch } from '@components/batch';

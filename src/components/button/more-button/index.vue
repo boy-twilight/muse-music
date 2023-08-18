@@ -28,7 +28,7 @@
 
 <script lang="ts" setup>
 import { reactive } from 'vue';
-import { DropDownItem } from '@/model';
+import { DropDownItem } from '@/type';
 import useTheme from '@/hooks/useTheme';
 
 const props = defineProps<{
@@ -40,26 +40,21 @@ const emits = defineEmits<{
 }>();
 
 // 获取主题
-const {
-  background: bg,
-  fontColor,
-  shadow: boxShadow,
-  dropDownMode
-} = useTheme();
+const { background: bg, fontColor, boxShadow, dropDownMode } = useTheme();
 
 const more = reactive<DropDownItem[]>([
   {
     name: '批量操作',
     icon: '\ue617',
     command: '批量操作',
-    style: 'font-size:17px;margin:0 5px 0 0;'
+    style: 'font-size:17px;margin:0 5px 0 0;',
   },
   {
     name: '分享',
     icon: '\ue680',
     command: '分享',
-    style: 'font-size:14px;margin:0.5px 7px 0 2px;'
-  }
+    style: 'font-size:14px;margin:0.5px 7px 0 2px;',
+  },
 ]);
 
 const operateMore = (command: string) => {

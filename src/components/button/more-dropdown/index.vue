@@ -40,7 +40,7 @@
 <script lang="ts" setup>
 import { Ref, computed, ref, nextTick, inject } from 'vue';
 import { shareMuiscInfo, getSourceComments, downloadLyric } from '@/utils';
-import { Song, DropDownItem, Comment } from '@/model';
+import { Song, DropDownItem, Comment } from '@/type';
 import useUserStore from '@/store/user';
 import usePlayMusic from '@/hooks/usePlayMuisc';
 import useTheme from '@/hooks/useTheme';

@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { ref, reactive } from 'vue';
 import { message, ss } from '@/utils';
-import { messageType } from '@/model/enum';
-import { User } from '@/model';
+import { messageType } from '@/constants/common';
+import { User } from '@/type';
 import { getUserInfo, getUserID, loginOut } from '@/api';
 import avatar from '@assets/image/暂无头像.svg';
 import router from '@/router';

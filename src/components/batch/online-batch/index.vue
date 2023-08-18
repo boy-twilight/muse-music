@@ -33,7 +33,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { Song } from '@/model';
+import { Song } from '@/type';
 import useUserStore from '@/store/user';
 import usePlayMusic from '@/hooks/usePlayMuisc';
 import { CommonButton } from '@components/button';

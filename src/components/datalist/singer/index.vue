@@ -55,7 +55,7 @@
 <script lang="ts" setup>
 import { computed, inject } from 'vue';
 import { useRouter } from 'vue-router';
-import { Artist } from '@/model';
+import { Artist } from '@/type';
 import useTheme from '@/hooks/useTheme';
 const props = withDefaults(
   defineProps<{

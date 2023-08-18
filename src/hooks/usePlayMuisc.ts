@@ -1,10 +1,10 @@
 import useFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
 import { storeToRefs } from 'pinia';
-import { Song } from '@/model';
+import { Song } from '@/type';
 import { nextTick } from 'vue';
 import { message } from '@/utils';
-import { messageType } from '@/model/enum';
+import { messageType } from '@/constants/common';
 import { getMusicUrl, getSimiMusic } from '@/api';
 export default function usePlay() {
   const user = useUserStore();

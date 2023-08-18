@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, reactive, computed } from 'vue';
-import { Song } from '@/model';
+import { Song } from '@/type';
 import { ls } from '@/utils';
 
 const useFooterStore = defineStore('footer', () => {

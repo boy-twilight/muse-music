@@ -112,7 +112,7 @@ import { storeToRefs } from 'pinia';
 import { onBeforeRouteLeave } from 'vue-router';
 import { ElTable } from 'element-plus';
 import { transformTime, getMusicUrls, playVideo } from '@/utils';
-import { Song } from '@/model';
+import { Song } from '@/type';
 import userFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
 import { MoreDropdown } from '@components/button';

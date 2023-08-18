@@ -97,7 +97,7 @@ import {
   getComment,
   getSourceComments
 } from '@/utils';
-import { messageType } from '@/model/enum';
+import { messageType } from '@/constants/common';
 import {
   getPlayListDetail,
   getPlayListSong,

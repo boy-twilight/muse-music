@@ -43,21 +43,15 @@
 import { reactive, inject, Ref } from 'vue';
 import { getBanner, getRecPlaylist, getDeafultSong, getMv } from '@/api';
 import { message, getMusicUrls, getMusicInfos, getRequset } from '@/utils';
-import { messageType } from '@/model/enum';
-import { Playlist, Song, MV, Banner } from '@/model';
+import { messageType } from '@/constants/common';
+import { Playlist, Song, MV, Banner } from '@/type';
 import { ArtistMv, ArtistPlaylist } from '@components/datalist';
 import usePlayMusic from '@/hooks/usePlayMuisc';
 import Carousel from '@components/carousel';
 import useTheme from '@/hooks/useTheme';
 
 // 获取主题
-const {
-  fontColor,
-  fontBlack,
-  shadow: boxShadow,
-  themeColor,
-  fontGray
-} = useTheme();
+const { fontColor, fontBlack, boxShadow, themeColor, fontGray } = useTheme();
 
 const { playMusic } = usePlayMusic();
 // 轮播图片
@@ -72,13 +66,13 @@ const mvLists = reactive<MV[]>([]);
 // 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
 
-getRequset(async() => {
+getRequset(async () => {
   try {
     const responses: any[] = await Promise.all([
       getBanner(),
       getRecPlaylist(10),
       getDeafultSong(40),
-      getMv(10, '内地', '全部', '最新')
+      getMv(10, '内地', '全部', '最新'),
     ]);
     responses.forEach((response, index) => {
       // 获取banner
@@ -88,7 +82,7 @@ getRequset(async() => {
           const { imageUrl, targetId } = item;
           banners.push({
             id: targetId,
-            pic: imageUrl
+            pic: imageUrl,
           });
         });
       }
@@ -104,7 +98,7 @@ getRequset(async() => {
               playCount,
               description,
               tags,
-              creator
+              creator,
             } = item;
             playLists.push({
               name,
@@ -115,8 +109,8 @@ getRequset(async() => {
               tag: tags,
               creator: {
                 avatarUrl: creator.avatarUrl,
-                nickname: creator.nickname
-              }
+                nickname: creator.nickname,
+              },
             });
           }
         });
@@ -124,7 +118,7 @@ getRequset(async() => {
       // 获取推荐歌曲
       else if (index == 2) {
         const {
-          data: { list }
+          data: { list },
         } = response;
         // 获取歌曲的基本信息
         for (let item of list) {
@@ -149,7 +143,7 @@ getRequset(async() => {
             name: name as string,
             image: cover as string,
             playCount: playCount as string,
-            artist: artistName as string
+            artist: artistName as string,
           });
         });
       }

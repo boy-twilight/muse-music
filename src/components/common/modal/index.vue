@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import { inject, Ref } from 'vue';
-import { Comment } from '@/model';
+import { Comment } from '@/type';
 import { SourceComment } from '@/components/common';
 import useTheme from '@/hooks/useTheme';
 
@@ -24,7 +24,7 @@ defineProps<{
 }>();
 
 // 配置主题
-const { background: bg, fontColor, shadow: boxShadow, themeColor } = useTheme();
+const { background: bg, fontColor, boxShadow, themeColor } = useTheme();
 const showComments = inject('showComments') as Ref<boolean>;
 </script>
 

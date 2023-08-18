@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Song } from '@/model';
+import { Song } from '@/type';
 import usePlayMusic from '@/hooks/usePlayMuisc';
 import useTheme from '@/hooks/useTheme';
 withDefaults(
@@ -16,11 +16,11 @@ withDefaults(
     name?: string;
   }>(),
   {
-    name: '播放全部'
+    name: '播放全部',
   }
 );
 // 配置主题
-const { shadow: boxShadow, themeColor } = useTheme();
+const { boxShadow, themeColor } = useTheme();
 // 播放音乐
 const { playAllMusic } = usePlayMusic();
 </script>

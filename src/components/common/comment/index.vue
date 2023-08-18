@@ -127,18 +127,12 @@
 
 <script lang="ts" setup>
 import { ref, computed, nextTick } from 'vue';
-import { Comment } from '@/model';
+import { Comment } from '@/type';
 import Pagination from '@components/pagination';
 import useTheme from '@/hooks/useTheme';
 
-const {
-  fontBlack,
-  fontColor,
-  shadow: boxShadow,
-  themeColor,
-  fontGray,
-  replyBg
-} = useTheme();
+const { fontBlack, fontColor, boxShadow, themeColor, fontGray, replyBg } =
+  useTheme();
 
 const props = defineProps<{
   comments: Comment[];
@@ -178,7 +172,7 @@ const getRandomTime = (time: string): string => {
 };
 
 // 打开或关闭评论区
-const openReply = async(commentId: string) => {
+const openReply = async (commentId: string) => {
   if (activeId.value == commentId) {
     activeId.value = '';
   } else {

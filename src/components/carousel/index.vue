@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Banner } from '@/model';
+import { Banner } from '@/type';
 
 defineProps<{
   // 图片数组

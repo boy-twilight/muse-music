@@ -45,7 +45,7 @@
 <script lang="ts" setup>
 import { inject, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { Album } from '@/model';
+import { Album } from '@/type';
 import Pagination from '@components/pagination';
 import useTheme from '@/hooks/useTheme';
 
@@ -66,7 +66,7 @@ const props = withDefaults(
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false
+    showPagination: false,
   }
 );
 
@@ -75,13 +75,7 @@ const emits = defineEmits<{
 }>();
 
 // 主题配置
-const {
-  fontColor,
-  fontBlack,
-  shadow: boxShadow,
-  themeColor,
-  fontGray
-} = useTheme();
+const { fontColor, fontBlack, boxShadow, themeColor, fontGray } = useTheme();
 const router = useRouter();
 // 设置隐藏滚动条
 const hideScroll = inject('hideScroll') as () => void;
@@ -111,8 +105,8 @@ const toAlbumDetail = (id: string, artistId: string) => {
     name: 'album',
     query: {
       id,
-      artistId
-    }
+      artistId,
+    },
   });
 };
 </script>

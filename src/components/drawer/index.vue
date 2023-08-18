@@ -111,12 +111,12 @@
 <script lang="ts" setup>
 import { nextTick, Ref, watch, reactive, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { Song } from '@/model';
+import { Song } from '@/type';
 import useFooterStore from '@/store/footer';
 import { transformTime, playVideo, handleSingerName, message } from '@/utils';
 import useConfigStore from '@/store/config';
 import { CommonButton, MoreDropdown } from '@components/button';
-import { messageType } from '@/model/enum';
+import { messageType } from '@/constants/common';
 import useThemeStore from '@/store/theme';
 import useTheme from '@/hooks/useTheme';
 
@@ -130,8 +130,8 @@ const {
   background,
   menuColor,
   themeColor,
-  active,
-  shadow: boxShadow
+  menuActive,
+  boxShadow,
 } = useTheme();
 
 const themeStore = useThemeStore();
@@ -144,7 +144,7 @@ const {
   songNum,
   playProcess,
   playTime,
-  showDetail
+  showDetail,
 } = storeToRefs(footer);
 // 设置主题相关
 // 标题数组
@@ -154,7 +154,7 @@ const titleArr = reactive<string[]>([
   '请选择字体副色调：',
   '请选择背景色调：',
   '请选择菜单色调：',
-  '请选择菜单激活时的色调：'
+  '请选择菜单激活时的色调：',
 ]);
 // 值数组
 let valueArr = reactive<Ref<string>[]>([
@@ -163,7 +163,7 @@ let valueArr = reactive<Ref<string>[]>([
   ref<string>(fontGray.value),
   ref<string>(background.value),
   ref<string>(menuColor.value),
-  ref<string>(active.value)
+  ref<string>(menuActive.value),
 ]);
 
 // 在播放列表点击播放
@@ -176,7 +176,7 @@ const listPlay = (index: number) => {
 };
 
 // 在播放列表删除歌曲
-const listDelete = async(index: number) => {
+const listDelete = async (index: number) => {
   if (current.value == index) {
     if (isPlay.value) {
       isPlay.value = false;
@@ -206,7 +206,7 @@ const listDelete = async(index: number) => {
 };
 
 // 列表删除全部歌曲
-const deleteAll = async() => {
+const deleteAll = async () => {
   if (isPlay.value) {
     isPlay.value = false;
   }
@@ -230,13 +230,13 @@ const playMV = (song: Song) => {
 // 动态切换皮肤
 watch(
   bgMode,
-  async() => {
+  async () => {
     await nextTick();
     const drawer = document.querySelector('.playlist-drawer') as HTMLDivElement;
     drawer.style.background = `${background.value} url(${skinUrl.value}) no-repeat center/cover`;
   },
   {
-    immediate: true
+    immediate: true,
   }
 );
 
@@ -256,7 +256,7 @@ const cancel = () => {
     ref<string>(fontGray.value),
     ref<string>(background.value),
     ref<string>(menuColor.value),
-    ref<string>(active.value)
+    ref<string>(menuActive.value),
   ]);
   message(messageType.SUCCESS, '主题取消保存成功！');
 };

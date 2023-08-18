@@ -24,10 +24,10 @@ withDefaults(
   }>(),
   {
     iconStyle: '',
-    isIconOne: false
+    isIconOne: false,
   }
 );
-const { shadow: boxShadow, themeColor } = useTheme();
+const { boxShadow, themeColor } = useTheme();
 </script>
 
 <style lang="less" scoped>

@@ -47,7 +47,7 @@ import useFooterStore from '@/store/footer';
 import useConfigStore from '@/store/config';
 import { getLyrics } from '@/api';
 import { message, formatToTimeStap } from '@/utils';
-import { messageType } from '@/model/enum';
+import { messageType } from '@/constants/common';
 import image from '@assets/image/暂无音乐.svg';
 import { Footer } from '@components/layout';
 import useTheme from '@/hooks/useTheme';

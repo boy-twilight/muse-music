@@ -32,9 +32,9 @@
 import { computed, ref, reactive } from 'vue';
 import { storeToRefs } from 'pinia';
 import useUserStore from '@/store/user';
-import { messageType } from '@/model/enum';
+import { messageType } from '@/constants/common';
 import { message } from '@/utils';
-import { Song } from '@/model';
+import { Song } from '@/type';
 import { SongTable } from '@components/table';
 import {
   SearchButton,

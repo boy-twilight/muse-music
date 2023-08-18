@@ -12,10 +12,10 @@ export default function useTheme() {
     background,
     menuColor,
     tableHover,
-    shadow,
-    active,
+    boxShadow,
+    menuActive,
     themeColor,
-    fontGray
+    fontGray,
   } = storeToRefs(theme);
   const config = useConfigStore();
   const { bgMode } = storeToRefs(config);
@@ -75,8 +75,8 @@ export default function useTheme() {
     background,
     menuColor,
     tableHover,
-    shadow,
-    active,
+    boxShadow,
+    menuActive,
     themeColor,
     fontGray,
     loadingBg,
@@ -85,7 +85,7 @@ export default function useTheme() {
     searchColor,
     replyBg,
     processColor,
-    dropDownMode
+    dropDownMode,
   };
 
   return themes;

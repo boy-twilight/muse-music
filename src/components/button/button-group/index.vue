@@ -41,7 +41,7 @@ const emits = defineEmits<{
 }>();
 
 // 配置主题
-const { fontColor, shadow: boxShadow, themeColor } = useTheme();
+const { fontColor, boxShadow, themeColor } = useTheme();
 const active = ref<number>(props.activeValue);
 
 // 改变active时，回传active

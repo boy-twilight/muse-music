@@ -282,8 +282,8 @@ import {
   getSourceComments,
   downloadLyric,
 } from '@/utils';
-import { messageType } from '@/model/enum';
-import { DropDownItem, Song, Comment } from '@/model';
+import { messageType } from '@/constants/common';
+import { DropDownItem, Song, Comment } from '@/type';
 import image from '@assets/image/暂无音乐.svg';
 import usePlayMusic from '@/hooks/usePlayMuisc';
 import useTheme from '@/hooks/useTheme';
@@ -292,7 +292,7 @@ import useTheme from '@/hooks/useTheme';
 const config = useConfigStore();
 const {
   fontColor,
-  shadow: boxShadow,
+  boxShadow,
   themeColor,
   background: bg,
   fontGray,

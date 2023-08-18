@@ -43,13 +43,13 @@
 
 <script lang="ts" setup>
 import { ref, inject } from 'vue';
-import { Menu } from '@/model';
+import { Menu } from '@/type';
 import { ss } from '@/utils';
 import logo from '@assets/image/logo.svg';
 import { PlayAnimation } from '@components/common';
 import useTheme from '@/hooks/useTheme';
 // 设置主题
-const { fontColor, menuColor, active: activeColor, fontGray } = useTheme();
+const { fontColor, menuColor, menuActive, fontGray } = useTheme();
 // 设置隐藏滚动条
 const hideScroll = inject('hideScroll') as () => void;
 // 在线音乐
@@ -124,7 +124,7 @@ const changeActive = (index: string) => {
 @font-color: v-bind(fontColor);
 @menu-background: v-bind(menuColor);
 @font-color-gray: v-bind(fontGray);
-@active-menu-background: v-bind(activeColor);
+@active-menu-background: v-bind(menuActive);
 @font-color-white: #ffffff;
 @actvie-menu-color: #ffffff;
 

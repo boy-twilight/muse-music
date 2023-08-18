@@ -34,7 +34,7 @@ import { storeToRefs } from 'pinia';
 import useUserStore from '@/store/user';
 import usePlayMusic from '@/hooks/usePlayMuisc';
 import { message } from '@/utils';
-import { messageType } from '@/model/enum';
+import { messageType } from '@/constants/common';
 import { CommonButton } from '@components/button';
 import { SongTable } from '@components/table';
 import useTheme from '@/hooks/useTheme';

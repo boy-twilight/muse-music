@@ -9,7 +9,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --mode development --host",
-    "build": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix && vue-tsc && vite build --mode production",
+    "build": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix && vue-tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix"
   },

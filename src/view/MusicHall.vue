@@ -72,9 +72,9 @@
 <script lang="ts" setup>
 import { ref, reactive, inject, Ref, computed } from 'vue';
 import { throttle } from 'lodash-es';
-import { MusicStyle, Playlist } from '@/model';
+import { MusicStyle, Playlist } from '@/type';
 import { message, getRequset } from '@/utils';
-import { messageType } from '@/model/enum';
+import { messageType } from '@/constants/common';
 import useConfigStore from '@/store/config';
 import {
   getStyleList,
