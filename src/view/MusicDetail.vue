@@ -57,7 +57,7 @@ const config = useConfigStore();
 const { lyricHeight, lyricContentHeight, firstLyricMargin, imageHeight } =
   storeToRefs(config);
 
-const { shadow: boxShadow, themeColor, fontGray } = useTheme();
+const { boxShadow, themeColor, fontGray } = useTheme();
 const lHeight = lyricHeight;
 const lcHeight = lyricContentHeight;
 const lMargin = firstLyricMargin;

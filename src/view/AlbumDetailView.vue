@@ -100,7 +100,7 @@ import Tab from '@components/tab';
 import useTheme from '@/hooks/useTheme';
 
 // 获取主题
-const { fontColor, fontBlack, shadow: boxShadow, fontGray } = useTheme();
+const { fontColor, fontBlack, boxShadow, fontGray } = useTheme();
 const user = useUserStore();
 const route = useRoute();
 // 获取Id

@@ -151,13 +151,7 @@ const props = withDefaults(
 // 设置主题
 const config = useConfigStore();
 const { bgMode } = storeToRefs(config);
-const {
-  fontColor,
-  background: bg,
-  fontGray,
-  themeColor,
-  tableHover: hover
-} = useTheme();
+const { fontColor, background, fontGray, themeColor, tableHover } = useTheme();
 
 // 设置隐藏滚动条
 const hideScroll = inject('hideScroll') as () => void;
@@ -288,8 +282,8 @@ defineExpose({
 
 <style lang="less">
 @font-color: v-bind(fontColor);
-@table-hover: v-bind(hover);
-@background: v-bind(bg);
+@table-hover: v-bind(tableHover);
+@background: v-bind(background);
 @font-color-gray: v-bind(fontGray);
 @theme-color: v-bind(themeColor);
 @import './index.less';

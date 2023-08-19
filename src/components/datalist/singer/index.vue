@@ -76,7 +76,7 @@ const emits = defineEmits<{
 }>();
 
 // 配置主题
-const { fontColor, shadow: boxShadow, themeColor, fontGray } = useTheme();
+const { fontColor, boxShadow, themeColor, fontGray } = useTheme();
 // 有头像的歌手
 const singerWithAvatar = computed(() =>
   props.singerList.slice(0, props.avatarNum)

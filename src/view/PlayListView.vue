@@ -105,7 +105,7 @@ import {
   getRadioDetail,
   getRadioSong
 } from '@/api';
-import { Playlist, Song, Comment } from '@/model';
+import { Playlist, Song, Comment } from '@/type';
 import useUserStore from '@/store/user';
 import { OnlineBatch } from '@components/batch';
 import { SongTable } from '@components/table';
@@ -117,7 +117,7 @@ import { SourceComment } from '@components/common';
 import useTheme from '@/hooks/useTheme';
 
 // 设置主题
-const { fontColor, fontBlack, shadow: boxShadow, fontGray } = useTheme();
+const { fontColor, fontBlack, boxShadow, fontGray } = useTheme();
 
 // 是否展示占位图片
 const showNo = ref<boolean>(false);

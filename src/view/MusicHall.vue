@@ -89,7 +89,7 @@ import { Loading } from '@components/result';
 import Tab from '@components/tab';
 import useTheme from '@/hooks/useTheme';
 // 配置主题
-const { fontColor, shadow: boxShadow, fontGray } = useTheme();
+const { fontColor, boxShadow, fontGray } = useTheme();
 
 // 根据是否全屏改变容器高
 const config = useConfigStore();

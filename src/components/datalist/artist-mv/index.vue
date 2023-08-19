@@ -78,7 +78,7 @@ const emits = defineEmits<{
 }>();
 
 // 设置主题
-const { fontColor, shadow: boxShadow, themeColor, fontGray } = useTheme();
+const { fontColor, boxShadow, themeColor, fontGray } = useTheme();
 const router = useRouter();
 // 设置隐藏滚动条
 const hideScroll = inject('hideScroll') as () => void;

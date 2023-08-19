@@ -15,7 +15,7 @@
         <el-dropdown-menu
           :style="{
             color: fontColor,
-            background: bg,
+            background,
           }">
           <el-dropdown-item
             v-for="(item, index) in sortName"
@@ -42,13 +42,8 @@ const emits = defineEmits<{
   (e: 'getSortChoice', sortType: boolean[], isCancelSort: boolean): void;
 }>();
 // 配置主题
-const {
-  fontColor,
-  background: bg,
-  themeColor,
-  searchColor,
-  dropDownMode
-} = useTheme();
+const { fontColor, background, themeColor, searchColor, dropDownMode } =
+  useTheme();
 
 // 排序的名字
 const sortName = reactive<string[]>([

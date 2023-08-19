@@ -12,6 +12,5 @@ const app = createApp(App);
 app.directive('prevent', vPrevent);
 app.use(pinia);
 app.use(router);
-
 app.use(ElementPlus);
 app.mount('#app');

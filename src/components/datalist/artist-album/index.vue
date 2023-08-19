@@ -66,7 +66,7 @@ const props = withDefaults(
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false,
+    showPagination: false
   }
 );
 
@@ -105,8 +105,8 @@ const toAlbumDetail = (id: string, artistId: string) => {
     name: 'album',
     query: {
       id,
-      artistId,
-    },
+      artistId
+    }
   });
 };
 </script>

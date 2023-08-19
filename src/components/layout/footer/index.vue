@@ -87,7 +87,7 @@
               <el-dropdown-menu
                 :style="{
                   color: fontColor,
-                  background: bg,
+                  background,
                 }">
                 <el-dropdown-item
                   v-for="dropItem in dropItems"
@@ -147,7 +147,7 @@
           <el-dropdown-menu
             :style="{
               color: fontColor,
-              background: bg,
+              background,
             }">
             <el-dropdown-item
               v-for="dropItem in modeDropItems"
@@ -193,7 +193,7 @@
         :width="60"
         :popper-style="{
           color: fontColor,
-          background: bg,
+          background,
         }"
         :popper-class="{
           'popover-skin': config.bgMode == 'skin',
@@ -294,7 +294,7 @@ const {
   fontColor,
   boxShadow,
   themeColor,
-  background: bg,
+  background,
   fontGray,
   processColor,
   dropDownMode,
@@ -616,7 +616,7 @@ onMounted(() => {
 <style lang="less" scoped>
 @font-color: v-bind(fontColor);
 @shadow: v-bind(boxShadow);
-@background: v-bind(bg);
+@background: v-bind(background);
 @process-bg: v-bind(processColor);
 @font-color-gray: v-bind(fontGray);
 @theme-color: v-bind(themeColor);
@@ -848,7 +848,7 @@ onMounted(() => {
 @font-color: v-bind(fontColor);
 @shadow: v-bind(boxShadow);
 @font-color-gray: v-bind(fontGray);
-@background: v-bind(bg);
+@background: v-bind(background);
 @theme-color: v-bind(themeColor);
 @import './index.less';
 </style>

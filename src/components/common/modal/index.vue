@@ -24,7 +24,7 @@ defineProps<{
 }>();
 
 // 配置主题
-const { background: bg, fontColor, boxShadow, themeColor } = useTheme();
+const { background, fontColor, boxShadow, themeColor } = useTheme();
 const showComments = inject('showComments') as Ref<boolean>;
 </script>
 
@@ -56,8 +56,7 @@ const showComments = inject('showComments') as Ref<boolean>;
 <style lang="less">
 @color: v-bind(fontColor);
 @shadow: v-bind(boxShadow);
-
-@background: v-bind(bg);
+@background: v-bind(background);
 @theme-color: v-bind(themeColor);
 .comment-dialog {
   box-shadow: @shadow !important;

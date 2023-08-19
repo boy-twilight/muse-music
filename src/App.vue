@@ -94,59 +94,59 @@ const rule = /^\/video/;
 hotkeys(keys.join(','), (event: KeyboardEvent, handler: HotkeysEvent) => {
   event.preventDefault();
   switch (handler.key) {
-    case 'space':
-      {
-        // 在视频播放页面不设置快捷键,避免冲突
-        if (!rule.test(curPath.value)) {
-          isPlay.value = !isPlay.value;
-        }
+  case 'space':
+    {
+      // 在视频播放页面不设置快捷键,避免冲突
+      if (!rule.test(curPath.value)) {
+        isPlay.value = !isPlay.value;
       }
-      break;
-    case 'up':
-      {
-        if (!rule.test(curPath.value)) {
-          isPlay.value = false;
-          playProcess.value = 0;
-          playTime.value = 0;
-          showDetail.value = !showDetail.value;
-        }
+    }
+    break;
+  case 'up':
+    {
+      if (!rule.test(curPath.value)) {
+        isPlay.value = false;
+        playProcess.value = 0;
+        playTime.value = 0;
+        showDetail.value = !showDetail.value;
       }
-      break;
-    case 'left':
-      {
-        // 在视频播放页面不设置快捷键,避免冲突
-        if (!rule.test(curPath.value)) {
-          if (songNum.value > 0) {
-            current.value =
+    }
+    break;
+  case 'left':
+    {
+      // 在视频播放页面不设置快捷键,避免冲突
+      if (!rule.test(curPath.value)) {
+        if (songNum.value > 0) {
+          current.value =
               --current.value < 0 ? songNum.value - 1 : current.value;
-          } else {
-            message(messageType.INFO, '暂无音乐，请您添加音乐');
-          }
-        }
-      }
-      break;
-    case 'right':
-      {
-        // 在视频播放页面不设置快捷键,避免冲突
-        if (!rule.test(curPath.value)) {
-          if (songNum.value > 0) {
-            current.value =
-              ++current.value >= songNum.value ? 0 : current.value;
-          } else {
-            message(messageType.INFO, '暂无音乐，请您添加音乐');
-          }
-        }
-      }
-      break;
-    case 'f':
-      {
-        if (isFullScreen.value) {
-          document.exitFullscreen();
         } else {
-          document.documentElement.requestFullscreen();
+          message(messageType.INFO, '暂无音乐，请您添加音乐');
         }
       }
-      break;
+    }
+    break;
+  case 'right':
+    {
+      // 在视频播放页面不设置快捷键,避免冲突
+      if (!rule.test(curPath.value)) {
+        if (songNum.value > 0) {
+          current.value =
+              ++current.value >= songNum.value ? 0 : current.value;
+        } else {
+          message(messageType.INFO, '暂无音乐，请您添加音乐');
+        }
+      }
+    }
+    break;
+  case 'f':
+    {
+      if (isFullScreen.value) {
+        document.exitFullscreen();
+      } else {
+        document.documentElement.requestFullscreen();
+      }
+    }
+    break;
   }
 });
 
@@ -161,7 +161,7 @@ const {
   skinUrl,
   skin,
   bgMode,
-  isFullScreen,
+  isFullScreen
 } = storeToRefs(config);
 
 // 配置主题
@@ -192,7 +192,7 @@ const mapper = new Map([
   ['/hall', '/hall'],
   ['/station', '/station'],
   ['/rvideo', 'rvideo'],
-  ['/artistlist', '/artistlist'],
+  ['/artistlist', '/artistlist']
 ]);
 // 自动隐藏进度条
 const autoHide = throttle(
@@ -222,7 +222,7 @@ const {
   playTime,
   showDetail,
   songNum,
-  playMode,
+  playMode
 } = storeToRefs(footer);
 const soucreComments = reactive<Comment[]>([]);
 // 是否展示歌曲评论区
@@ -242,7 +242,7 @@ const {
   searchBg,
   menuActive,
   themeColor,
-  fontGray,
+  fontGray
 } = storeToRefs(themeStore);
 const user = useUserStore();
 const {
@@ -255,7 +255,7 @@ const {
   mvDownload,
   songRecord,
   videoRecord,
-  loveRadio,
+  loveRadio
 } = storeToRefs(user);
 onMounted(() => {
   window.addEventListener('beforeunload', () => {
@@ -270,7 +270,7 @@ onMounted(() => {
       searchBg: searchBg.value,
       menuActive: menuActive.value,
       themeColor: themeColor.value,
-      fontGray: fontGray.value,
+      fontGray: fontGray.value
     });
     // 背景模式
     ls.set('skin', skin.value);

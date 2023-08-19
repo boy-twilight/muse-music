@@ -8,7 +8,7 @@
       <el-dropdown-menu
         :style="{
           color: fontColor,
-          background: bg,
+          background,
         }">
         <el-dropdown-item
           v-for="item in more"
@@ -40,21 +40,21 @@ const emits = defineEmits<{
 }>();
 
 // 获取主题
-const { background: bg, fontColor, boxShadow, dropDownMode } = useTheme();
+const { background, fontColor, boxShadow, dropDownMode } = useTheme();
 
 const more = reactive<DropDownItem[]>([
   {
     name: '批量操作',
     icon: '\ue617',
     command: '批量操作',
-    style: 'font-size:17px;margin:0 5px 0 0;',
+    style: 'font-size:17px;margin:0 5px 0 0;'
   },
   {
     name: '分享',
     icon: '\ue680',
     command: '分享',
-    style: 'font-size:14px;margin:0.5px 7px 0 2px;',
-  },
+    style: 'font-size:14px;margin:0.5px 7px 0 2px;'
+  }
 ]);
 
 const operateMore = (command: string) => {

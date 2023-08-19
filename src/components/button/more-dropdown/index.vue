@@ -13,7 +13,7 @@
       <el-dropdown-menu
         :style="{
           color: fontColor,
-          background: bg,
+          background,
         }">
         <el-dropdown-item
           v-for="dropItem in dropItems"
@@ -51,7 +51,7 @@ const props = defineProps<{
   song: Song;
 }>();
 // 主题设置
-const { background: bg, fontColor, dropDownMode } = useTheme();
+const { background, fontColor, dropDownMode } = useTheme();
 // 用户数据
 const user = useUserStore();
 // 更多图标的容器

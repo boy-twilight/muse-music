@@ -42,7 +42,7 @@
           placement="bottom-start"
           :popper-style="{
             color: fontColor,
-            background: bg,
+            background,
           }"
           :popper-class="{
             'search-tip': true,
@@ -145,6 +145,8 @@
                 @focusin="showSuggest = true"
                 @focusout="showSuggest = false"
                 @input="getSearchSuggest"
+                @compositionstart="isComplete = true"
+                @compositionend="isComplete = false"
                 type="text"
                 placeholder="请输入你想要搜索的歌曲，歌手"
                 class="search" />
@@ -209,7 +211,7 @@
           <el-dropdown-menu
             :style="{
               color: fontColor,
-              background: bg,
+              background,
             }">
             <el-dropdown-item
               v-for="item in dropDownItems"
@@ -236,7 +238,7 @@ import {
   inject,
   computed,
   onMounted,
-  nextTick,
+  nextTick
 } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
@@ -247,7 +249,7 @@ import {
   throttle,
   getMusicUrls,
   ls,
-  ss,
+  ss
 } from '@/utils';
 import { messageType } from '@/constants/common';
 import {
@@ -256,7 +258,7 @@ import {
   checkStatus,
   getHotSearch,
   getSuggest,
-  getMusicDetail,
+  getMusicDetail
 } from '@/api';
 import {
   DropDownItem,
@@ -266,7 +268,7 @@ import {
   Song,
   Artist,
   Album,
-  SearchSuggest,
+  SearchSuggest
 } from '@/type';
 import useHeaderStore from '@/store/header';
 import useConfigStore from '@/store/config';
@@ -282,12 +284,12 @@ import useTheme from '@/hooks/useTheme';
 
 const {
   fontColor,
-  background: bg,
+  background,
   boxShadow,
   themeColor,
   searchBg: searchColor,
   fontGray,
-  dropDownMode,
+  dropDownMode
 } = useTheme();
 
 // 设置隐藏滚动条
@@ -321,12 +323,14 @@ const {
   musicDownloadId,
   mvDownloadId,
   songRecordId,
-  videoRecordId,
+  videoRecordId
 } = storeToRefs(user);
 const themeStore = useThemeStore();
 
 // 用户搜素的内容
 const search = ref<string>('');
+// 中文合成是否开始
+let isComplete = false;
 // 判断用户是否正在搜索
 const isSearching = computed(() => {
   const isEmpty = Array.from(suggestMap.values()).every(
@@ -344,7 +348,7 @@ const suggestMap = reactive<Map<string, SearchSuggest[]>>(
     ['单曲', []],
     ['歌手', []],
     ['专辑', []],
-    ['歌单', []],
+    ['歌单', []]
   ])
 );
 // 是否展示搜索推荐列表
@@ -356,43 +360,43 @@ const dropDownItems = reactive<DropDownItem[]>([
     icon: '\ue61b',
     command: 'logout',
     style: 'font-size:14px;margin:0 9px 0 2px;',
-    spanClass: 'iconfont_1',
+    spanClass: 'iconfont_1'
   },
   {
     name: '纯色模式',
     icon: '\ue822',
     command: 'color',
     style: 'font-size:18px;margin-right:7px;',
-    spanClass: 'iconfont_1',
+    spanClass: 'iconfont_1'
   },
   {
     name: '皮肤模式',
     icon: '\ue743',
     command: 'skin',
     style: 'font-size:15px;margin:0 7px 0 4px;',
-    spanClass: 'iconfont_1',
+    spanClass: 'iconfont_1'
   },
   {
     name: '主题设置',
     icon: '\ueb6f',
     command: 'theme',
     style: 'font-size:18px;margin:0 7px 0 1.8px;',
-    spanClass: 'iconfont_1',
+    spanClass: 'iconfont_1'
   },
   {
     name: '导入数据',
     icon: '\ue610',
     command: 'import',
     style: 'font-size: 15px;margin: 0.5px 8.5px 0 2.8px;display: inline-block;',
-    spanClass: 'iconfont_2',
+    spanClass: 'iconfont_2'
   },
   {
     name: '导出数据',
     icon: '\ue635',
     command: 'export',
     style: 'font-size: 15px;margin: 0.5px 8.5px 0 2.8px;display: inline-block;',
-    spanClass: 'iconfont_2',
-  },
+    spanClass: 'iconfont_2'
+  }
 ]);
 // 存放二维码照片的容器
 const qrcode = ref<HTMLImageElement>();
@@ -417,7 +421,7 @@ const createKeyCode = (): void => {
   createKey()
     .then((response: any) => {
       const {
-        data: { unikey },
+        data: { unikey }
       } = response;
       creatQrImage(unikey);
       CheckLoginStatus(unikey);
@@ -432,7 +436,7 @@ const creatQrImage = (key: string): void => {
   createQrCode(key)
     .then((response: any) => {
       const {
-        data: { qrimg },
+        data: { qrimg }
       } = response;
       qrcode.value!.src = qrimg;
     })
@@ -443,7 +447,7 @@ const creatQrImage = (key: string): void => {
 
 // 监测登陆状态
 const CheckLoginStatus = (key: string): void => {
-  timeid = setInterval(async () => {
+  timeid = setInterval(async() => {
     const response: any = await checkStatus(key).catch((err: any) => {
       message(messageType.ERROR, err.message);
     });
@@ -494,7 +498,7 @@ const changeSkin = () => {
   input.style.display = 'none';
   document.body.appendChild(input);
   input.click();
-  input.onchange = async () => {
+  input.onchange = async() => {
     const files = input.files;
     if (files && files.length > 0) {
       const file = files[0];
@@ -531,7 +535,7 @@ const exportConfig = () => {
     bgMode.value
   }\nskin-p-(*)-${skin.value}`;
   const blob = new Blob([userInfo], {
-    type: 'text/plain; charset=utf-8',
+    type: 'text/plain; charset=utf-8'
   });
   downloadFile(blob, 'config.txt');
 };
@@ -542,7 +546,7 @@ const parseConfig = () => {
   upload.style.display = 'none';
   upload.type = 'file';
   upload.accept = '.txt';
-  upload.onchange = async (event: any) => {
+  upload.onchange = async(event: any) => {
     const files = event.target.files;
     if (files.length > 0) {
       const file = files[0];
@@ -627,7 +631,7 @@ const parseConfig = () => {
 };
 
 // 下拉框选择处理
-const handleClick = async (command: string) => {
+const handleClick = async(command: string) => {
   if (command == 'logout' && cookie.value) {
     header.logout();
   } else if (command == 'fullScreen') {
@@ -658,7 +662,7 @@ const handleClick = async (command: string) => {
 
 // 搜索相关的事件
 // 得到推荐的搜索列表
-const getSearchData = async () => {
+const getSearchData = async() => {
   if (hotSearch.length == 0) {
     try {
       const response: any = await getHotSearch();
@@ -666,7 +670,7 @@ const getSearchData = async () => {
       data.forEach((item: any) => {
         hotSearch.push({
           searchWord: item.searchWord,
-          score: item.score,
+          score: item.score
         });
       });
     } catch (err: any) {
@@ -684,8 +688,8 @@ const goSearch = () => {
   router.push({
     name: 'search',
     query: {
-      keyWord: search.value,
-    },
+      keyWord: search.value
+    }
   });
 };
 
@@ -699,18 +703,18 @@ const goSearchByRe = (keyWord: string) => {
   router.push({
     name: 'search',
     query: {
-      keyWord,
-    },
+      keyWord
+    }
   });
 };
 
 // 获取搜索建议
-const getSearchSuggest = throttle(async () => {
-  if (!search.value) return;
+const getSearchSuggest = throttle(async() => {
+  if (isComplete || !search.value) return;
   try {
     const response: any = await getSuggest(search.value);
     const {
-      result: { albums, artists, songs, playlists },
+      result: { albums, artists, songs, playlists }
     } = response;
     if (songs) {
       const target = suggestMap.get('单曲') as SearchSuggest[];
@@ -722,14 +726,14 @@ const getSearchSuggest = throttle(async () => {
             type: 'song',
             id,
             name: name + '-' + artists[0].name,
-            pic: artists[0].img1v1Url,
+            pic: artists[0].img1v1Url
           };
         } else {
           target.push({
             type: 'song',
             id,
             name: name + '-' + artists[0].name,
-            pic: artists[0].img1v1Url,
+            pic: artists[0].img1v1Url
           });
         }
       });
@@ -744,14 +748,14 @@ const getSearchSuggest = throttle(async () => {
             type: 'artist',
             id,
             name,
-            pic: picUrl,
+            pic: picUrl
           };
         } else {
           target?.push({
             type: 'artist',
             id,
             name,
-            pic: picUrl,
+            pic: picUrl
           });
         }
       });
@@ -767,7 +771,7 @@ const getSearchSuggest = throttle(async () => {
             id,
             pic: artist.picUrl,
             name: name + '-' + artist.name,
-            artistId: artist.id,
+            artistId: artist.id
           };
         } else {
           target?.push({
@@ -775,7 +779,7 @@ const getSearchSuggest = throttle(async () => {
             id,
             pic: artist.picUrl,
             name: name + '-' + artist.name,
-            artistId: artist.id,
+            artistId: artist.id
           });
         }
       });
@@ -790,14 +794,14 @@ const getSearchSuggest = throttle(async () => {
             type: 'playlist',
             id,
             name,
-            pic: coverImgUrl,
+            pic: coverImgUrl
           };
         } else {
           target.push({
             type: 'playlist',
             id,
             name,
-            pic: coverImgUrl,
+            pic: coverImgUrl
           });
         }
       });
@@ -805,11 +809,11 @@ const getSearchSuggest = throttle(async () => {
   } catch (err: any) {
     message(messageType.ERROR, err.message);
   }
-}, 300);
+}, 200);
 
 const { playMusic } = usePlayMusic();
 // 前往搜索建议
-const goSuggest = async (item: SearchSuggest) => {
+const goSuggest = async(item: SearchSuggest) => {
   if (item.type != 'song') {
     hideScroll();
     if (item.type == 'artist') {
@@ -817,24 +821,24 @@ const goSuggest = async (item: SearchSuggest) => {
         name: item.type,
         query: {
           type: 'playlist',
-          id: item.id,
-        },
+          id: item.id
+        }
       });
     } else if (item.type == 'album') {
       router.push({
         name: item.type,
         query: {
           id: item.id,
-          artistId: item.artistId,
-        },
+          artistId: item.artistId
+        }
       });
     } else {
       router.push({
         name: item.type,
         query: {
           id: item.id,
-          score: Math.floor(+item.id / 100),
-        },
+          score: Math.floor(+item.id / 100)
+        }
       });
     }
   } else {
@@ -851,7 +855,7 @@ const goSuggest = async (item: SearchSuggest) => {
           album: al.name,
           available: fee,
           time: dt,
-          url: '',
+          url: ''
         };
       });
       await getMusicUrls(temp);
@@ -887,7 +891,7 @@ onMounted(() => {
 
 <style lang="less" scoped>
 @font-color: v-bind(fontColor);
-@background: v-bind(bg);
+@background: v-bind(background);
 @shadow: v-bind(boxShadow);
 @search-bg: v-bind(searchColor);
 @font-color-gray: v-bind(fontGray);
@@ -1152,7 +1156,7 @@ onMounted(() => {
 </style>
 
 <style lang="less">
-@background: v-bind(bg);
+@background: v-bind(background);
 @shadow: v-bind(boxShadow);
 @import './index.less';
 </style>

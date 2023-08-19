@@ -29,7 +29,7 @@ import {
   skin_table_hover,
   skin_font_black,
   skin_font_color,
-  theme_color,
+  theme_color
 } from '@/constants/theme';
 const useThemeStore = defineStore('theme', () => {
   // 字体主色调颜色
@@ -122,7 +122,7 @@ const useThemeStore = defineStore('theme', () => {
     changeLight,
     changeDark,
     changeSkinMode,
-    setTheme,
+    setTheme
   };
 });
 

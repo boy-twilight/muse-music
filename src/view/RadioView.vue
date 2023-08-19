@@ -39,7 +39,7 @@ import { Loading } from '@components/result';
 import useTheme from '@/hooks/useTheme';
 
 // 配置主题
-const { shadow: boxShadow, fontColor } = useTheme();
+const { boxShadow, fontColor } = useTheme();
 // 路由器
 const router = useRouter();
 // 电台banner

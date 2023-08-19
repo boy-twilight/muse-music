@@ -117,7 +117,7 @@ import {
   getArtistDesc,
   getArtistAlbum,
   getArtistSongs,
-  getMusicDetail,
+  getMusicDetail
 } from '@/api';
 import { Artist, Song, MV, ArtistDesc, Album } from '@/type';
 import { messageType } from '@/constants/common';
@@ -127,7 +127,7 @@ import {
   formatTime,
   getRequset,
   message,
-  share,
+  share
 } from '@/utils';
 import useUserStore from '@/store/user';
 import { PlayButton, MoreButton, CommonButton } from '@components/button';
@@ -159,7 +159,7 @@ const singer = reactive<Artist>({
   score,
   id: id,
   avatar: '',
-  alias: [],
+  alias: []
 });
 // 歌手基本简介
 const introduce = reactive<ArtistDesc[]>([]);
@@ -220,7 +220,7 @@ const getActive = (active: string) => {
   // 点击加载数据
   if (active == 'album' && artistAlbum.length == 0) {
     // 获取歌手专辑
-    getRequset(async () => {
+    getRequset(async() => {
       try {
         const response: any = await getArtistAlbum(id);
         const { hotAlbums } = response;
@@ -231,7 +231,7 @@ const getActive = (active: string) => {
             id: item.id,
             cover: picUrl,
             publishTime: formatTime(publishTime),
-            artistId: id + '',
+            artistId: id + ''
           });
         });
       } catch (err: any) {
@@ -242,7 +242,7 @@ const getActive = (active: string) => {
     }, isLoading);
   } else if (active == 'mv' && artistMv.length == 0) {
     // 获取歌手的Mv
-    getRequset(async () => {
+    getRequset(async() => {
       try {
         const response: any = await getArtistMv(id);
         const { mvs } = response;
@@ -253,7 +253,7 @@ const getActive = (active: string) => {
             name,
             artist: artistName,
             image: imgurl16v9,
-            playCount,
+            playCount
           });
         });
       } catch (err: any) {
@@ -263,14 +263,14 @@ const getActive = (active: string) => {
       isLoading.value = false;
     }, isLoading);
   } else if (active == 'detail' && introduce.length == 0) {
-    getRequset(async () => {
+    getRequset(async() => {
       try {
         const response: any = await getArtistDesc(id);
         const { introduction } = response;
         introduction.forEach((item: any) => {
           introduce.push({
             title: item.ti,
-            content: item.txt,
+            content: item.txt
           });
         });
       } catch (err: any) {
@@ -282,13 +282,13 @@ const getActive = (active: string) => {
 };
 
 // 获取初始数据
-getRequset(async () => {
+getRequset(async() => {
   try {
     const responses: any[] = await Promise.all([
       getArtistInfo(id),
-      getArtistSongs(id, 1000),
+      getArtistSongs(id, 1000)
     ]);
-    responses.forEach(async (response, index) => {
+    responses.forEach(async(response, index) => {
       // 获取歌手的具体信息
       if (index == 0) {
         const { artist } = response;

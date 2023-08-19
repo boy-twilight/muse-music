@@ -24,7 +24,7 @@ withDefaults(
   }>(),
   {
     iconStyle: '',
-    isIconOne: false,
+    isIconOne: false
   }
 );
 const { boxShadow, themeColor } = useTheme();
