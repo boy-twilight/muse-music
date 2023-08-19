@@ -113,17 +113,15 @@ import {
 import { message, getRequset, formatTime, share, getComment } from '@/utils';
 import DPlayer from 'dplayer';
 import useUserStore from '@/store/user';
-import useConfigStore from '@/store/config';
 import { CommonButton } from '@components/button';
 import { ArtistMv } from '@components/datalist';
 import { SourceComment } from '@components/common';
 import useTheme from '@/hooks/useTheme';
 
 // 设置主题
-const config = useConfigStore();
-const { fontColor, fontBlack, boxShadow, themeColor, fontGray } = useTheme();
-// 全屏模式改变播放器高度
-const videoHeight = computed(() => (config.isFullScreen ? '695px' : '555px'));
+const { fontColor, fontBlack, boxShadow, themeColor, fontGray, videoHeight } =
+  useTheme();
+
 const user = useUserStore();
 // dplayer实例
 const dplayer = ref<DPlayer>();

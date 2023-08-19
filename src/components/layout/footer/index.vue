@@ -196,7 +196,7 @@
           background,
         }"
         :popper-class="{
-          'popover-skin': config.bgMode == 'skin',
+          'popover-skin': bgMode == 'skin',
         }">
         <template #reference>
           <div>
@@ -271,7 +271,6 @@ import { storeToRefs } from 'pinia';
 import { throttle } from 'lodash-es';
 import useFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
-import useConfigStore from '@/store/config';
 import {
   transformTime,
   message,
@@ -288,8 +287,6 @@ import image from '@assets/image/暂无音乐.svg';
 import usePlayMusic from '@/hooks/usePlayMuisc';
 import useTheme from '@/hooks/useTheme';
 
-// 设置主题
-const config = useConfigStore();
 const {
   fontColor,
   boxShadow,
@@ -298,9 +295,11 @@ const {
   fontGray,
   processColor,
   dropDownMode,
+  bgMode,
+  drawerMode,
 } = useTheme();
-// 设置隐藏滚动条
-const hideScroll = inject('hideScroll') as () => void;
+// 隐藏滚动条
+const hideScrollbar = inject('hideScrollbar') as () => void;
 // 评论
 const soucreComments = inject('soucreComments') as Comment[];
 // 是否展开评论区
@@ -426,7 +425,7 @@ const downloadCurrent = () => {
 const playMv = () => {
   if (songNum.value > 0) {
     playVideo(songList.value[current.value], () => {
-      hideScroll();
+      hideScrollbar();
       if (showDetail.value) {
         playTime.value = 0;
         playProcess.value = 0;
@@ -484,7 +483,7 @@ const handleClick = async (command: string) => {
 // 打开播放列表
 const openDrawer = () => {
   showList.value = true;
-  config.drawerMode = 'playlist';
+  drawerMode.value = 'playlist';
 };
 
 // 切换播放模式

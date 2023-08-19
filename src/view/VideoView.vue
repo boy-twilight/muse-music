@@ -53,6 +53,8 @@ import useTheme from '@/hooks/useTheme';
 
 // 配置主题
 const { fontColor, boxShadow, fontBlack, themeColor, fontGray } = useTheme();
+// 隐藏滚动条
+const hideScrollbar = inject('hideScrollbar') as () => void;
 
 // mv地区分类
 const area = reactive<string[]>([
@@ -92,8 +94,6 @@ const disabled = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
 // 页面第一次加载动画
 const first = inject('firstLoading') as Ref<boolean>;
-// 设置隐藏滚动条
-const hideScroll = inject('hideScroll') as () => void;
 // 是否展示更多
 const showMore = ref<boolean>(false);
 
@@ -119,7 +119,7 @@ const getActive = async(index: number, type: string) => {
     areaActive.value + '' + typeActive.value + '' + orderActive.value,
     limit.value
   );
-  hideScroll();
+  hideScrollbar();
   // 清空当前展示
   mvs.splice(0);
   currentList.splice(0);

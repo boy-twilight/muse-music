@@ -116,7 +116,6 @@ import { Song } from '@/type';
 import userFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
 import { MoreDropdown } from '@components/button';
-import useConfigStore from '@/store/config';
 import usePlayMusic from '@/hooks/usePlayMuisc';
 import useTheme from '@/hooks/useTheme';
 
@@ -148,13 +147,11 @@ const props = withDefaults(
     pageSize: 0
   }
 );
-// 设置主题
-const config = useConfigStore();
-const { bgMode } = storeToRefs(config);
-const { fontColor, background, fontGray, themeColor, tableHover } = useTheme();
 
-// 设置隐藏滚动条
-const hideScroll = inject('hideScroll') as () => void;
+const { fontColor, background, fontGray, themeColor, tableHover, bgMode } =
+  useTheme();
+// 隐藏滚动条
+const hideScrollbar = inject('hideScrollbar') as () => void;
 const footer = userFooterStore();
 const { songList, current, isPlay } = storeToRefs(footer);
 const user = useUserStore();
@@ -244,7 +241,7 @@ const { playMusic } = usePlayMusic();
 // 播放mv
 const playMV = (song: Song) => {
   playVideo(song, () => {
-    hideScroll();
+    hideScrollbar();
   });
 };
 

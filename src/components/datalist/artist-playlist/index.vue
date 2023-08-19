@@ -79,8 +79,8 @@ const emits = defineEmits<{
 
 // 设置主题
 const { fontColor, boxShadow, themeColor, fontGray } = useTheme();
-// 设置隐藏滚动条
-const hideScroll = inject('hideScroll') as () => void;
+// 隐藏滚动条
+const hideScrollbar = inject('hideScrollbar') as () => void;
 const router = useRouter();
 // 当前页数
 const curPage = ref<number>(1);
@@ -102,7 +102,7 @@ const pageChange = async(page: number) => {
 };
 // 前往歌单页面
 const toPlayList = (list: Playlist) => {
-  hideScroll();
+  hideScrollbar();
   router.push({
     name: 'playlist',
     query: {

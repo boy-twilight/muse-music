@@ -48,10 +48,11 @@ const emits = defineEmits<{
 }>();
 // 配置主题
 const { themeColor } = useTheme();
+// 隐藏滚动条
+const hideScrollbar = inject('hideScrollbar') as () => void;
+// 用户数据
 const user = useUserStore();
 const { songRecord, musicDownload, loveSongs } = storeToRefs(user);
-// 设置隐藏滚动条
-const hideScroll = inject('hideScroll') as () => void;
 // 表格容器
 const table = ref<InstanceType<typeof SongTable>>();
 // 歌曲
@@ -105,7 +106,7 @@ const deleteSelect = () => {
 
 // 处理关闭
 const close = () => {
-  hideScroll();
+  hideScrollbar();
   emits('closeSelect', false);
 };
 </script>

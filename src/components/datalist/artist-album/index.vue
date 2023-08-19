@@ -76,9 +76,9 @@ const emits = defineEmits<{
 
 // 主题配置
 const { fontColor, fontBlack, boxShadow, themeColor, fontGray } = useTheme();
+// 隐藏滚动条
+const hideScrollbar = inject('hideScrollbar') as () => void;
 const router = useRouter();
-// 设置隐藏滚动条
-const hideScroll = inject('hideScroll') as () => void;
 // 当前页数
 const curPage = ref<number>(1);
 // 一页多少数据
@@ -100,7 +100,7 @@ const pageChange = (page: number) => {
 
 // 跳转专辑详情
 const toAlbumDetail = (id: string, artistId: string) => {
-  hideScroll();
+  hideScrollbar();
   router.push({
     name: 'album',
     query: {

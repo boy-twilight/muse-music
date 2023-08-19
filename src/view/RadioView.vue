@@ -40,6 +40,8 @@ import useTheme from '@/hooks/useTheme';
 
 // 配置主题
 const { boxShadow, fontColor } = useTheme();
+// 隐藏滚动条
+const hideScrollbar = inject('hideScrollbar') as () => void;
 // 路由器
 const router = useRouter();
 // 电台banner
@@ -52,8 +54,6 @@ const radios = reactive<Playlist[][]>([]);
 const curIndex = ref<number>(0);
 // 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
-// 隐藏滚动条
-const hideScroll = inject('hideScroll') as () => void;
 // 是否禁用滚动
 const disabled = ref<boolean>(false);
 // 是否正在加载
@@ -94,7 +94,7 @@ const loadData = () => {
 };
 // 前往banner对应的电台
 const go = (id: string) => {
-  hideScroll();
+  hideScrollbar();
   router.push({
     name: 'playlist',
     query: {

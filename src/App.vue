@@ -32,7 +32,7 @@
             :element-loading-spinner="svg">
             <router-view
               v-slot="{ Component }"
-              @scroll="autoHide()"
+              @scroll="autoHideGscrollbar()"
               class="view">
               <KeepAlive
                 :max="8"
@@ -68,21 +68,20 @@
 import { provide, ref, Ref, reactive, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import hotkeys, { HotkeysEvent } from 'hotkeys-js';
-import { throttle } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 import { getMusicUrls, ls, message } from '@/utils';
 import { Comment } from '@/type';
 import { svg } from '@assets/icon';
 import { messageType } from '@/constants/common';
 import useThemeStore from '@/store/theme';
-import useConfigStore from '@/store/config';
 import useFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
 import { Header, Footer, Aside } from '@components/layout';
 import MusicDetail from '@/view/MusicDetail.vue';
 import Drawer from '@components/drawer';
 import { Modal } from '@components/common';
-import useTheme from './hooks/useTheme';
+import useTheme from '@/hooks/useTheme';
+import useScroll from '@/hooks/useScroll';
 
 // 快捷键列表
 // space播放,上进入/退出音乐详情，左前一首，右后一首，f进入/退出全屏
@@ -94,124 +93,85 @@ const rule = /^\/video/;
 hotkeys(keys.join(','), (event: KeyboardEvent, handler: HotkeysEvent) => {
   event.preventDefault();
   switch (handler.key) {
-  case 'space':
-    {
-      // 在视频播放页面不设置快捷键,避免冲突
-      if (!rule.test(curPath.value)) {
-        isPlay.value = !isPlay.value;
+    case 'space':
+      {
+        // 在视频播放页面不设置快捷键,避免冲突
+        if (!rule.test(curPath.value)) {
+          isPlay.value = !isPlay.value;
+        }
       }
-    }
-    break;
-  case 'up':
-    {
-      if (!rule.test(curPath.value)) {
-        isPlay.value = false;
-        playProcess.value = 0;
-        playTime.value = 0;
-        showDetail.value = !showDetail.value;
+      break;
+    case 'up':
+      {
+        if (!rule.test(curPath.value)) {
+          isPlay.value = false;
+          playProcess.value = 0;
+          playTime.value = 0;
+          showDetail.value = !showDetail.value;
+        }
       }
-    }
-    break;
-  case 'left':
-    {
-      // 在视频播放页面不设置快捷键,避免冲突
-      if (!rule.test(curPath.value)) {
-        if (songNum.value > 0) {
-          current.value =
+      break;
+    case 'left':
+      {
+        // 在视频播放页面不设置快捷键,避免冲突
+        if (!rule.test(curPath.value)) {
+          if (songNum.value > 0) {
+            current.value =
               --current.value < 0 ? songNum.value - 1 : current.value;
-        } else {
-          message(messageType.INFO, '暂无音乐，请您添加音乐');
+          } else {
+            message(messageType.INFO, '暂无音乐，请您添加音乐');
+          }
         }
       }
-    }
-    break;
-  case 'right':
-    {
-      // 在视频播放页面不设置快捷键,避免冲突
-      if (!rule.test(curPath.value)) {
-        if (songNum.value > 0) {
-          current.value =
+      break;
+    case 'right':
+      {
+        // 在视频播放页面不设置快捷键,避免冲突
+        if (!rule.test(curPath.value)) {
+          if (songNum.value > 0) {
+            current.value =
               ++current.value >= songNum.value ? 0 : current.value;
-        } else {
-          message(messageType.INFO, '暂无音乐，请您添加音乐');
+          } else {
+            message(messageType.INFO, '暂无音乐，请您添加音乐');
+          }
         }
       }
-    }
-    break;
-  case 'f':
-    {
-      if (isFullScreen.value) {
-        document.exitFullscreen();
-      } else {
-        document.documentElement.requestFullscreen();
+      break;
+    case 'f':
+      {
+        if (isFullScreen.value) {
+          document.exitFullscreen();
+        } else {
+          document.documentElement.requestFullscreen();
+        }
       }
-    }
-    break;
+      break;
   }
 });
 
-const config = useConfigStore();
+// 配置主题
 const {
-  showScroll,
-  left,
+  menuColor: menu,
+  background: bg,
+  loadingBg,
   contentHeight,
   headerHeight,
   musicFooterHeight,
   musicContentHeight,
-  skinUrl,
   skin,
+  skinUrl,
   bgMode,
-  isFullScreen
-} = storeToRefs(config);
+  isFullScreen,
+} = useTheme();
+// 设置滚动条滚动时显示，不滚动自动消失
+const { globalVisible, globalWidth, autoHideGscrollbar, hideGscrollbar } =
+  useScroll();
+provide('hideScrollbar', hideGscrollbar);
 
-// 配置主题
-const { menuColor: menu, background: bg, loadingBg } = useTheme();
-// 在全屏模式改变屏占比,看起来更加合理
-const mHeight = contentHeight;
-const hHeight = headerHeight;
-const dHeight = musicContentHeight;
-const dmHeight = musicFooterHeight;
 // 页面加载动画
 const firstLoading = ref<boolean>(true);
 provide<Ref<boolean>>('firstLoading', firstLoading);
-// 解决页面抖动问题
-const scrollVisible = showScroll;
-const leftDis = left;
-// 计时器判断是否显示进度条
-let timeid: any = 0;
-// 设置隐藏滚动条
-const hideScroll = () => {
-  if (showScroll.value != 'none') {
-    showScroll.value = 'none';
-  }
-};
-provide<() => void>('hideScroll', hideScroll);
-// 需要滚动的页面地址映射
-const mapper = new Map([
-  ['/video', '/video'],
-  ['/hall', '/hall'],
-  ['/station', '/station'],
-  ['/rvideo', 'rvideo'],
-  ['/artistlist', '/artistlist']
-]);
-// 自动隐藏进度条
-const autoHide = throttle(
-  () => {
-    if (mapper.get(route.fullPath.split('?')[0])) {
-      if (showScroll.value != 'block') {
-        showScroll.value = 'block';
-      }
-      if (timeid) {
-        clearTimeout(timeid);
-      }
-      timeid = setTimeout(() => {
-        hideScroll();
-      }, 3000);
-    }
-  },
-  600,
-  { leading: true, trailing: false }
-);
+
 // 歌曲评论
 const footer = useFooterStore();
 const {
@@ -222,7 +182,7 @@ const {
   playTime,
   showDetail,
   songNum,
-  playMode
+  playMode,
 } = storeToRefs(footer);
 const soucreComments = reactive<Comment[]>([]);
 // 是否展示歌曲评论区
@@ -231,7 +191,7 @@ provide<Comment[]>('soucreComments', soucreComments);
 provide<Ref<boolean>>('showComments', showComments);
 
 // 关闭网页之前，缓存相关记录
-const themeStore = useThemeStore();
+const theme = useThemeStore();
 const {
   fontColor,
   background,
@@ -242,8 +202,8 @@ const {
   searchBg,
   menuActive,
   themeColor,
-  fontGray
-} = storeToRefs(themeStore);
+  fontGray,
+} = storeToRefs(theme);
 const user = useUserStore();
 const {
   loveSongs,
@@ -255,7 +215,7 @@ const {
   mvDownload,
   songRecord,
   videoRecord,
-  loveRadio
+  loveRadio,
 } = storeToRefs(user);
 onMounted(() => {
   window.addEventListener('beforeunload', () => {
@@ -270,7 +230,7 @@ onMounted(() => {
       searchBg: searchBg.value,
       menuActive: menuActive.value,
       themeColor: themeColor.value,
-      fontGray: fontGray.value
+      fontGray: fontGray.value,
     });
     // 背景模式
     ls.set('skin', skin.value);
@@ -358,10 +318,10 @@ getUrlOntime();
 .app-container {
   .song-detail-container {
     &:deep(.footer-container) {
-      height: v-bind(dmHeight);
+      height: v-bind(musicFooterHeight);
     }
     &:deep(.main) {
-      height: v-bind(dHeight);
+      height: v-bind(musicContentHeight);
     }
   }
   .home-container {
@@ -379,18 +339,18 @@ getUrlOntime();
 
       .header,
       .footer {
-        height: v-bind(hHeight);
+        height: v-bind(headerHeight);
         padding: 0;
       }
 
       .header-container,
       .footer-container {
-        height: v-bind(hHeight);
+        height: v-bind(headerHeight);
       }
 
       .content {
         padding: 0;
-        height: v-bind(mHeight);
+        height: v-bind(contentHeight);
         width: 87vw;
         overflow: auto;
 
@@ -398,9 +358,9 @@ getUrlOntime();
           display: none;
         }
         .view {
-          padding-left: v-bind(leftDis);
+          padding-left: v-bind(globalWidth);
           &::-webkit-scrollbar {
-            display: v-bind(scrollVisible);
+            display: v-bind(globalVisible);
           }
         }
       }
@@ -445,6 +405,6 @@ getUrlOntime();
 
 //动态改变主容器高度
 .scroll-container {
-  height: v-bind(mHeight);
+  height: v-bind(contentHeight);
 }
 </style>

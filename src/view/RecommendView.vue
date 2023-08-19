@@ -62,7 +62,6 @@ const playLists = reactive<Playlist[]>([]);
 const songLists = reactive<Song[]>([]);
 // 推荐mv
 const mvLists = reactive<MV[]>([]);
-
 // 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
 

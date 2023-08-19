@@ -9,7 +9,7 @@
           name="top">
           <div
             class="container scroll-container"
-            @scroll="autoHide()"
+            @scroll="autoHideScrollbar()"
             v-infinite-scroll="loadTopData"
             infinite-scroll-distance="2"
             :infinite-scroll-immediate="false"
@@ -29,7 +29,7 @@
           name="rec">
           <div
             class="container scroll-container"
-            @scroll="autoHide()"
+            @scroll="autoHideScrollbar()"
             v-infinite-scroll="loadRecData"
             infinite-scroll-distance="2"
             :infinite-scroll-immediate="false"
@@ -49,7 +49,7 @@
           name="style">
           <div
             class="container scroll-container"
-            @scroll="autoHide()"
+            @scroll="autoHideScrollbar()"
             v-infinite-scroll="loadStyleData"
             infinite-scroll-distance="2"
             :infinite-scroll-immediate="false"
@@ -70,62 +70,27 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, inject, Ref, computed } from 'vue';
-import { throttle } from 'lodash-es';
+import { ref, reactive, inject, Ref } from 'vue';
 import { MusicStyle, Playlist } from '@/type';
 import { message, getRequset } from '@/utils';
 import { messageType } from '@/constants/common';
-import useConfigStore from '@/store/config';
 import {
   getStyleList,
   getStylePlayList,
   getTopPlaylist,
   getRecPlaylist,
   getRecTags,
-  getTopTags
+  getTopTags,
 } from '@/api';
 import { ArtistPlaylist } from '@components/datalist';
 import { Loading } from '@components/result';
 import Tab from '@components/tab';
 import useTheme from '@/hooks/useTheme';
+import useScroll from '@/hooks/useScroll';
 // 配置主题
-const { fontColor, boxShadow, fontGray } = useTheme();
-
-// 根据是否全屏改变容器高
-const config = useConfigStore();
-const containerHeight = computed(() =>
-  config.isFullScreen ? '76.3vh' : '73.3vh'
-);
-// 防止页面抖动
-const left = ref<string>('0px');
-const showScroll = ref<string>('none');
-// 设置隐藏滚动条
-const hideScroll = () => {
-  showScroll.value = 'none';
-  left.value = '0';
-};
-// 计时器判断是否显示进度条
-let timeid: any = 0;
-// 自动隐藏进度条
-const autoHide = throttle(
-  () => {
-    if (showScroll.value != 'block') {
-      showScroll.value = 'block';
-      left.value = '6px';
-    }
-    if (timeid) {
-      clearTimeout(timeid);
-    }
-    timeid = setTimeout(() => {
-      if (showScroll.value != 'none') {
-        hideScroll();
-      }
-    }, 3000);
-  },
-  600,
-  { leading: true, trailing: false }
-);
-
+const { fontColor, boxShadow, fontGray, containerHeight } = useTheme();
+const { scrollBarWidth, scrollVisible, autoHideScrollbar, hideScrollbar } =
+  useScroll();
 // 页面进入时的动画
 const first = inject('firstLoading') as Ref<boolean>;
 // 加载动画
@@ -145,7 +110,7 @@ const topCurIndex = ref<number>(0);
 // 是否禁用滚动
 const topDisabled = ref<boolean>(false);
 // 获取精品歌单分类学的数据
-const getTopTagPlaylist = async() => {
+const getTopTagPlaylist = async () => {
   try {
     // 请求数据
     const response: any = await getTopPlaylist(100, topTags[topCurIndex.value]);
@@ -159,10 +124,10 @@ const getTopTagPlaylist = async() => {
         playCount,
         creator: {
           nickname: '',
-          avatarUrl: ''
+          avatarUrl: '',
         },
         description: '',
-        tag: []
+        tag: [],
       });
     });
   } catch (err: any) {
@@ -229,7 +194,7 @@ const recCurIndex = ref<number>(0);
 // 是否禁用滚动
 const recDisabled = ref<boolean>(false);
 // 获取网友推荐歌单
-const getRecTagPlaylist = async() => {
+const getRecTagPlaylist = async () => {
   try {
     // 请求数据
     const response: any = await getRecPlaylist(100, recTags[recCurIndex.value]);
@@ -243,10 +208,10 @@ const getRecTagPlaylist = async() => {
         playCount,
         creator: {
           nickname: '',
-          avatarUrl: ''
+          avatarUrl: '',
         },
         description: '',
-        tag: []
+        tag: [],
       });
     });
   } catch (err: any) {
@@ -316,11 +281,11 @@ const loadStyleData = () => {
   }
 };
 // 获取曲风分类下的歌单数据
-const getStyleTagPlaylist = async() => {
+const getStyleTagPlaylist = async () => {
   try {
     const response = await getStylePlayList(styleTags[styleCurIndex.value].id);
     const {
-      data: { playlist }
+      data: { playlist },
     } = response;
     playlist.forEach((item: any) => {
       const { id, name, cover, playCount } = item;
@@ -333,8 +298,8 @@ const getStyleTagPlaylist = async() => {
         tag: [],
         creator: {
           nickname: '',
-          avatarUrl: ''
-        }
+          avatarUrl: '',
+        },
       });
     });
   } catch (err: any) {
@@ -350,7 +315,7 @@ const getStyleTagPlaylist = async() => {
 
 // 根据当前的活跃项动态请求数据
 const getActive = (active: string) => {
-  hideScroll();
+  hideScrollbar();
   if (active == 'rec' && recPlaylist[0].length == 0) {
     first.value = true;
     getRecTagPlaylist();
@@ -361,12 +326,12 @@ const getActive = (active: string) => {
 };
 
 // 请求初始数据
-getRequset(async() => {
+getRequset(async () => {
   try {
     const responses: any[] = await Promise.all([
       getTopTags(),
       getRecTags(),
-      getStyleList()
+      getStyleList(),
     ]);
     responses.forEach((response, index) => {
       // 精品歌单分类
@@ -395,7 +360,7 @@ getRequset(async() => {
           const { tagId, tagName } = item;
           styleTags.push({
             id: tagId,
-            name: tagName
+            name: tagName,
           });
           stylePlaylist.push([]);
         });
@@ -429,11 +394,11 @@ getRequset(async() => {
 }
 
 .container {
-  padding: 0 0 20px v-bind(left);
+  padding: 0 0 20px v-bind(scrollBarWidth);
   height: v-bind(containerHeight);
   overflow-x: hidden !important;
   &::-webkit-scrollbar {
-    display: v-bind(showScroll) !important;
+    display: v-bind(scrollVisible) !important;
   }
 }
 

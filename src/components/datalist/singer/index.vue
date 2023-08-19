@@ -57,6 +57,7 @@ import { computed, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { Artist } from '@/type';
 import useTheme from '@/hooks/useTheme';
+
 const props = withDefaults(
   defineProps<{
     singerList: Artist[];
@@ -77,20 +78,21 @@ const emits = defineEmits<{
 
 // 配置主题
 const { fontColor, boxShadow, themeColor, fontGray } = useTheme();
+// 隐藏滚动条
+const hideScrollbar = inject('hideScrollbar') as () => void;
 // 有头像的歌手
 const singerWithAvatar = computed(() =>
   props.singerList.slice(0, props.avatarNum)
 );
 // 无头像的歌手
 const singerWithNo = computed(() => props.singerList.slice(props.avatarNum));
-// 设置隐藏滚动条
-const hideScroll = inject('hideScroll') as () => void;
+
 // 路由
 const router = useRouter();
 
 // 点击跳转歌手详情
 const toArtist = (id: string, score: string) => {
-  hideScroll();
+  hideScrollbar();
   router.push({
     name: 'artist',
     query: {

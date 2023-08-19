@@ -79,9 +79,9 @@ const emits = defineEmits<{
 
 // 设置主题
 const { fontColor, boxShadow, themeColor, fontGray } = useTheme();
+// 隐藏滚动条
+const hideScrollbar = inject('hideScrollbar') as () => void;
 const router = useRouter();
-// 设置隐藏滚动条
-const hideScroll = inject('hideScroll') as () => void;
 // 当前页数
 const curPage = ref<number>(1);
 // 一页多少数据
@@ -102,7 +102,7 @@ const pageChange = (page: number) => {
 
 // 点击推荐跳转
 const toMv = (id: string) => {
-  hideScroll();
+  hideScrollbar();
   router.push({
     name: 'video',
     query: {

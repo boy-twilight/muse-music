@@ -45,6 +45,8 @@ import useTheme from '@/hooks/useTheme';
 
 // 配置主题
 const { fontColor, fontBlack, boxShadow, themeColor, fontGray } = useTheme();
+// 隐藏滚动条
+const hideScrollbar = inject('hideScrollbar') as () => void;
 // 歌手榜单
 const artistlist = reactive<Artist[]>([]);
 // 搜索
@@ -93,12 +95,10 @@ const nameCh = reactive<string[]>(
 const nameActive = ref<string>('全部');
 // 页面第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
-// 设置隐藏滚动条
-const hideScroll = inject('hideScroll') as () => void;
 
 // 获取到当前活跃的按钮切换并加载对应数据
 const getActive = async(index: number, type: string) => {
-  hideScroll();
+  hideScrollbar();
   artistlist.splice(0);
   // 切换index
   if (type == '歌手地区') {

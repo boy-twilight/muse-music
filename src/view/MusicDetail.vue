@@ -44,24 +44,22 @@
 import { ref, reactive, watch, nextTick, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import useFooterStore from '@/store/footer';
-import useConfigStore from '@/store/config';
 import { getLyrics } from '@/api';
 import { message, formatToTimeStap } from '@/utils';
 import { messageType } from '@/constants/common';
 import image from '@assets/image/暂无音乐.svg';
 import { Footer } from '@components/layout';
 import useTheme from '@/hooks/useTheme';
-
-// 主题配置
-const config = useConfigStore();
-const { lyricHeight, lyricContentHeight, firstLyricMargin, imageHeight } =
-  storeToRefs(config);
-
-const { boxShadow, themeColor, fontGray } = useTheme();
-const lHeight = lyricHeight;
-const lcHeight = lyricContentHeight;
-const lMargin = firstLyricMargin;
-const iHeight = imageHeight;
+// 配置主题
+const {
+  boxShadow,
+  themeColor,
+  fontGray,
+  lyricHeight,
+  firstLyricMargin,
+  lyricContentHeight,
+  imageHeight
+} = useTheme();
 
 const footer = useFooterStore();
 const {
@@ -212,10 +210,10 @@ if (songNum.value > 0) {
 
 <style lang="less" scoped>
 @font-color-gray: v-bind(fontGray);
-@lyric-height: v-bind(lHeight);
-@lyric-content-height: v-bind(lcHeight);
-@first-lyric-margin: v-bind(lMargin);
-@image-height: v-bind(iHeight);
+@lyric-height: v-bind(lyricHeight);
+@lyric-content-height: v-bind(lyricContentHeight);
+@first-lyric-margin: v-bind(firstLyricMargin);
+@image-height: v-bind(imageHeight);
 @theme-color: v-bind(themeColor);
 @color-white: #ffffff;
 @light-white: rgba(240, 240, 240, 0.8);

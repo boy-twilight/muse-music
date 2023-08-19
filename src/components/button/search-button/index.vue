@@ -38,8 +38,8 @@ const emits = defineEmits<{
 }>();
 // 配置主题
 const { fontColor, themeColor, fontGray, searchColor } = useTheme();
-// 设置隐藏滚动条
-const hideScroll = inject('hideScroll') as () => void;
+// 隐藏滚动条
+const hideScrollbar = inject('hideScrollbar') as () => void;
 // 搜索容器
 const search = ref<HTMLDivElement>();
 // 隐藏文字
@@ -51,7 +51,7 @@ const content = ref<string>('');
 const searchMusic = () => {
   throttle(
     () => {
-      hideScroll();
+      hideScrollbar();
       emits('getContent', content.value);
     },
     800,

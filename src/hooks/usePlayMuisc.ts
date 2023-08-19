@@ -6,6 +6,8 @@ import { nextTick } from 'vue';
 import { message } from '@/utils';
 import { messageType } from '@/constants/common';
 import { getMusicUrl, getSimiMusic } from '@/api';
+
+// 播放音乐的hook
 export default function usePlay() {
   const user = useUserStore();
   const footer = useFooterStore();
