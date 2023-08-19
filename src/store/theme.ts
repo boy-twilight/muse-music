@@ -11,7 +11,7 @@ import {
   light_search_bg,
   light_table_hover,
   light_font_gray,
-  theme_color,
+  theme_color
 } from '@/constants/theme';
 const useThemeStore = defineStore('theme', () => {
   // 字体主色调颜色
@@ -76,7 +76,7 @@ const useThemeStore = defineStore('theme', () => {
     bgMode,
     skin,
     skinUrl,
-    drawerMode,
+    drawerMode
   };
 });
 

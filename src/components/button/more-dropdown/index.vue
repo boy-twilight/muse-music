@@ -43,15 +43,15 @@ import { shareMuiscInfo, getSourceComments, downloadLyric } from '@/utils';
 import { Song, DropDownItem, Comment } from '@/type';
 import useUserStore from '@/store/user';
 import usePlayMusic from '@/hooks/usePlayMuisc';
-import useTheme from '@/hooks/useTheme';
 
 // 声明接受值
 const props = defineProps<{
   // 传入歌曲
   song: Song;
 }>();
-// 主题设置
-const { background, fontColor, dropDownMode } = useTheme();
+// 配置主题
+
+const { background, fontColor, dropDownMode } = inject('theme') as any;
 // 用户数据
 const user = useUserStore();
 // 更多图标的容器
@@ -73,54 +73,54 @@ const dropItems: DropDownItem[] = [
     name: '播放',
     icon: '&#xea6e;',
     style: 'margin: 0 9px 0 2px; font-size: 15px;',
-    command: 'playMusic'
+    command: 'playMusic',
   },
   {
     name: '下一首播放',
     icon: '&#xe63c;',
     style: 'margin: 0 7px 0 0px; font-size: 20px',
-    command: 'playNext'
+    command: 'playNext',
   },
   {
     name: '播放相似单曲',
     icon: '&#xe602;',
     style: 'margin: 0 8px 0 3px;',
     command: 'playSimi',
-    isIcon1: true
+    isIcon1: true,
   },
   {
     name: '复制歌曲信息',
     icon: '&#xe63b;',
     style: 'margin: 1px 7px 0 4px;',
-    command: 'copyMusic'
+    command: 'copyMusic',
   },
 
   {
     name: '我喜欢',
     icon: '&#xe761;',
     style: 'margin: 0 7px 0 4px;',
-    command: 'love'
+    command: 'love',
   },
   {
     name: '查看评论',
     icon: '&#xe60b;',
     style: 'margin: 1px 7px 0 4px;',
-    command: 'comment'
+    command: 'comment',
   },
 
   {
     name: '下载歌词',
     icon: '&#xe602;',
     style: 'margin: 0 7px 0 4px;',
-    command: 'downLyric'
+    command: 'downLyric',
   },
 
   {
     name: '下载歌曲',
     icon: '&#xf0304;',
     style: 'margin: 0 8px 0 3px; font-size: 16px;',
-    command: 'downloadMusic'
-  }
+    command: 'downloadMusic',
+  },
 ];
 // 评论
 const soucreComments = inject('soucreComments') as Comment[];
@@ -130,7 +130,7 @@ const showComments = inject('showComments') as Ref<boolean>;
 // 播放音乐，相似音乐，下一首播放
 const { playMusic, playMusicNext, playSimiMusic } = usePlayMusic();
 // 点击显示下拉框
-const showDropMenu = async() => {
+const showDropMenu = async () => {
   showDrop.value = true;
   await nextTick();
   more.value?.click();

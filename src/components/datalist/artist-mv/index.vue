@@ -55,7 +55,6 @@ import { inject, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { MV } from '@/type';
 import Pagination from '@components/pagination';
-import useTheme from '@/hooks/useTheme';
 
 const props = withDefaults(
   defineProps<{
@@ -69,7 +68,7 @@ const props = withDefaults(
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false
+    showPagination: false,
   }
 );
 
@@ -77,8 +76,8 @@ const emits = defineEmits<{
   (e: 'getDeleteId', id: string): void;
 }>();
 
-// 设置主题
-const { fontColor, boxShadow, themeColor, fontGray } = useTheme();
+// 配置主题
+const { fontColor, boxShadow, themeColor, fontGray } = inject('theme') as any;
 // 隐藏滚动条
 const hideScrollbar = inject('hideScrollbar') as () => void;
 const router = useRouter();
@@ -106,8 +105,8 @@ const toMv = (id: string) => {
   router.push({
     name: 'video',
     query: {
-      id
-    }
+      id,
+    },
   });
 };
 </script>

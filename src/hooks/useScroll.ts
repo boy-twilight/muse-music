@@ -15,7 +15,7 @@ export default function useScroll() {
     ['/video', '/video'],
     ['/station', '/station'],
     ['/rvideo', '/rvideo'],
-    ['/artistlist', '/artistlist'],
+    ['/artistlist', '/artistlist']
   ]);
   // 防止抖动
   // 全局滚动条的可见性和宽度
@@ -78,6 +78,6 @@ export default function useScroll() {
     globalVisible,
     hideGscrollbar,
     showGscrollbar,
-    autoHideGscrollbar,
+    autoHideGscrollbar
   };
 }

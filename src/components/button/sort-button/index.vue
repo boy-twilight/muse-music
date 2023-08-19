@@ -35,22 +35,22 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, computed } from 'vue';
-import useTheme from '@/hooks/useTheme';
+import { ref, reactive, computed, inject } from 'vue';
 
 const emits = defineEmits<{
   (e: 'getSortChoice', sortType: boolean[], isCancelSort: boolean): void;
 }>();
 // 配置主题
-const { fontColor, background, themeColor, searchColor, dropDownMode } =
-  useTheme();
+const { fontColor, background, themeColor, searchColor, dropDownMode } = inject(
+  'theme'
+) as any;
 
 // 排序的名字
 const sortName = reactive<string[]>([
   '歌曲排序',
   '歌手排序',
   '专辑排序',
-  '时长排序'
+  '时长排序',
 ]);
 // 排序的类型
 const sortType = reactive<boolean[]>([false, false, false, false]);

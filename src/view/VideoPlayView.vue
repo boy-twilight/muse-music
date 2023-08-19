@@ -116,12 +116,9 @@ import useUserStore from '@/store/user';
 import { CommonButton } from '@components/button';
 import { ArtistMv } from '@components/datalist';
 import { SourceComment } from '@components/common';
-import useTheme from '@/hooks/useTheme';
-
 // 设置主题
 const { fontColor, fontBlack, boxShadow, themeColor, fontGray, videoHeight } =
-  useTheme();
-
+  inject('theme') as any;
 const user = useUserStore();
 // dplayer实例
 const dplayer = ref<DPlayer>();

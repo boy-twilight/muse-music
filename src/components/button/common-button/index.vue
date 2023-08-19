@@ -9,8 +9,7 @@
 </template>
 
 <script lang="ts" setup>
-import useTheme from '@/hooks/useTheme';
-
+import { inject } from 'vue';
 withDefaults(
   defineProps<{
     // button名字
@@ -24,10 +23,12 @@ withDefaults(
   }>(),
   {
     iconStyle: '',
-    isIconOne: false
+    isIconOne: false,
   }
 );
-const { boxShadow, themeColor } = useTheme();
+// 配置主题
+
+const { boxShadow, themeColor } = inject('theme') as any;
 </script>
 
 <style lang="less" scoped>

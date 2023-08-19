@@ -7,20 +7,20 @@
 </template>
 
 <script lang="ts" setup>
+import { inject } from 'vue';
 import { Song } from '@/type';
 import usePlayMusic from '@/hooks/usePlayMuisc';
-import useTheme from '@/hooks/useTheme';
 withDefaults(
   defineProps<{
     songs: Song[];
     name?: string;
   }>(),
   {
-    name: '播放全部'
+    name: '播放全部',
   }
 );
 // 配置主题
-const { boxShadow, themeColor } = useTheme();
+const { boxShadow, themeColor } = inject('theme') as any;
 // 播放音乐
 const { playAllMusic } = usePlayMusic();
 </script>

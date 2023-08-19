@@ -276,10 +276,8 @@ import history from '@assets/image/暂无搜索结果.svg';
 import useFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
 import usePlayMusic from '@/hooks/usePlayMuisc';
-import useTheme from '@/hooks/useTheme';
 
 // 配置主题
-
 const {
   fontColor,
   background,
@@ -295,7 +293,7 @@ const {
   changeDark,
   changeLight,
   changeSkinMode,
-} = useTheme();
+} = inject('theme') as any;
 
 // 隐藏滚动条
 const hideScrollbar = inject('hideScrollbar') as () => void;

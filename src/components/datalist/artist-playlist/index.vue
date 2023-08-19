@@ -53,7 +53,6 @@ import { inject, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { Playlist } from '@/type';
 import Pagination from '@components/pagination';
-import useTheme from '@/hooks/useTheme';
 
 const props = withDefaults(
   defineProps<{
@@ -69,7 +68,7 @@ const props = withDefaults(
     showDelete: false,
     transitionName: '',
     showPagination: false,
-    type: 'playlist'
+    type: 'playlist',
   }
 );
 
@@ -77,8 +76,9 @@ const emits = defineEmits<{
   (e: 'getDeleteId', id: string): void;
 }>();
 
-// 设置主题
-const { fontColor, boxShadow, themeColor, fontGray } = useTheme();
+// 配置主题
+
+const { fontColor, boxShadow, themeColor, fontGray } = inject('theme') as any;
 // 隐藏滚动条
 const hideScrollbar = inject('hideScrollbar') as () => void;
 const router = useRouter();
@@ -97,7 +97,7 @@ const curShow = computed(() =>
 );
 
 // 页数变化
-const pageChange = async(page: number) => {
+const pageChange = async (page: number) => {
   curPage.value = page;
 };
 // 前往歌单页面
@@ -107,8 +107,8 @@ const toPlayList = (list: Playlist) => {
     name: 'playlist',
     query: {
       id: list.id,
-      type: props.type
-    }
+      type: props.type,
+    },
   });
 };
 </script>

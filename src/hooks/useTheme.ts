@@ -28,7 +28,7 @@ import {
   skin_font_gray,
   skin_table_hover,
   skin_font_black,
-  skin_font_color,
+  skin_font_color
 } from '@/constants/theme';
 
 // 配置全局的一些样式
@@ -49,7 +49,7 @@ export default function useTheme() {
     skin,
     skinUrl,
     drawerMode,
-    isFullScreen,
+    isFullScreen
   } = storeToRefs(theme);
   // 加载背景
   const loadingBg = computed(() =>
@@ -210,6 +210,6 @@ export default function useTheme() {
     changeLight,
     changeDark,
     changeSkinMode,
-    setTheme,
+    setTheme
   };
 }

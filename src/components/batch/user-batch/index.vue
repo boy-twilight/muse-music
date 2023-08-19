@@ -37,7 +37,6 @@ import { message } from '@/utils';
 import { messageType } from '@/constants/common';
 import { CommonButton } from '@components/button';
 import { SongTable } from '@components/table';
-import useTheme from '@/hooks/useTheme';
 
 const props = defineProps<{
   // 在哪个页面
@@ -47,7 +46,8 @@ const emits = defineEmits<{
   (e: 'closeSelect', showSelect: boolean): void;
 }>();
 // 配置主题
-const { themeColor } = useTheme();
+
+const { themeColor } = inject('theme') as any;
 // 隐藏滚动条
 const hideScrollbar = inject('hideScrollbar') as () => void;
 // 用户数据

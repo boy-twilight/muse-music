@@ -31,14 +31,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { Song } from '@/type';
 import useUserStore from '@/store/user';
 import usePlayMusic from '@/hooks/usePlayMuisc';
 import { CommonButton } from '@components/button';
 import { SongTable } from '@components/table';
-import useTheme from '@/hooks/useTheme';
 
 defineProps<{
   // 歌曲
@@ -50,7 +49,7 @@ const emits = defineEmits<{
   (e: 'closeSelect', showSelect: boolean): void;
 }>();
 // 配置主题
-const { themeColor } = useTheme();
+const { themeColor } = inject('theme') as any;
 // 用户数据
 const user = useUserStore();
 const { loveMusicId, loveSongs } = storeToRefs(user);

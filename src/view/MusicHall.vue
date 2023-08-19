@@ -85,10 +85,11 @@ import {
 import { ArtistPlaylist } from '@components/datalist';
 import { Loading } from '@components/result';
 import Tab from '@components/tab';
-import useTheme from '@/hooks/useTheme';
 import useScroll from '@/hooks/useScroll';
 // 配置主题
-const { fontColor, boxShadow, fontGray, containerHeight } = useTheme();
+const { fontColor, boxShadow, fontGray, containerHeight } = inject(
+  'theme'
+) as any;
 const { scrollBarWidth, scrollVisible, autoHideScrollbar, hideScrollbar } =
   useScroll();
 // 页面进入时的动画

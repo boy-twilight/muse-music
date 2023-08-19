@@ -117,7 +117,6 @@ import userFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
 import { MoreDropdown } from '@components/button';
 import usePlayMusic from '@/hooks/usePlayMuisc';
-import useTheme from '@/hooks/useTheme';
 
 // 申明接受数据
 const props = withDefaults(
@@ -144,12 +143,12 @@ const props = withDefaults(
     sort: undefined,
     isCancelSort: false,
     showHeader: true,
-    pageSize: 0
+    pageSize: 0,
   }
 );
 
 const { fontColor, background, fontGray, themeColor, tableHover, bgMode } =
-  useTheme();
+  inject('theme') as any;
 // 隐藏滚动条
 const hideScrollbar = inject('hideScrollbar') as () => void;
 const footer = userFooterStore();
@@ -273,7 +272,7 @@ onBeforeRouteLeave(() => {
 
 defineExpose({
   clearSelect,
-  getSelectItems
+  getSelectItems,
 });
 </script>
 

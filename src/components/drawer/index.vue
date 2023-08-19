@@ -109,15 +109,15 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, Ref, watch, reactive, ref } from 'vue';
+import { nextTick, Ref, watch, reactive, ref, inject } from 'vue';
 import { storeToRefs } from 'pinia';
 import { Song } from '@/type';
 import useFooterStore from '@/store/footer';
 import { transformTime, playVideo, handleSingerName, message } from '@/utils';
 import { CommonButton, MoreDropdown } from '@components/button';
 import { messageType } from '@/constants/common';
-import useTheme from '@/hooks/useTheme';
 
+// 配置主题
 const {
   fontColor,
   fontGray,
@@ -130,7 +130,7 @@ const {
   drawerMode,
   bgMode,
   setTheme,
-} = useTheme();
+} = inject('theme') as any;
 
 const footer = useFooterStore();
 const {
