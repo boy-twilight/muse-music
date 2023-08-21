@@ -27,8 +27,9 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, inject } from 'vue';
+import { reactive } from 'vue';
 import { DropDownItem } from '@/type';
+import useTheme from '@/hooks/useTheme';
 
 const props = defineProps<{
   shareTo: () => void;
@@ -40,23 +41,21 @@ const emits = defineEmits<{
 
 // 配置主题
 
-const { background, fontColor, boxShadow, dropDownMode } = inject(
-  'theme'
-) as any;
+const { background, fontColor, boxShadow, dropDownMode } = useTheme();
 
 const more = reactive<DropDownItem[]>([
   {
     name: '批量操作',
     icon: '\ue617',
     command: '批量操作',
-    style: 'font-size:17px;margin:0 5px 0 0;',
+    style: 'font-size:17px;margin:0 5px 0 0;'
   },
   {
     name: '分享',
     icon: '\ue680',
     command: '分享',
-    style: 'font-size:14px;margin:0.5px 7px 0 2px;',
-  },
+    style: 'font-size:14px;margin:0.5px 7px 0 2px;'
+  }
 ]);
 
 const operateMore = (command: string) => {

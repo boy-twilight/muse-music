@@ -285,6 +285,7 @@ import { messageType } from '@/constants/common';
 import { DropDownItem, Song, Comment } from '@/type';
 import image from '@assets/image/暂无音乐.svg';
 import usePlayMusic from '@/hooks/usePlayMuisc';
+import useTheme from '@/hooks/useTheme';
 
 //配置主题
 const {
@@ -297,7 +298,7 @@ const {
   dropDownMode,
   bgMode,
   drawerMode,
-} = inject('theme') as any;
+} = useTheme();
 // 隐藏滚动条
 const hideScrollbar = inject('hideScrollbar') as () => void;
 // 评论

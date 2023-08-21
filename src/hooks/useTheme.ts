@@ -47,7 +47,6 @@ export default function useTheme() {
     fontGray,
     bgMode,
     skin,
-    skinUrl,
     drawerMode,
     isFullScreen
   } = storeToRefs(theme);
@@ -129,6 +128,8 @@ export default function useTheme() {
   const firstLyricMargin = computed(() =>
     isFullScreen.value ? '205px' : '165px'
   );
+  // 皮肤地址
+  const skinUrl = computed(() => (bgMode.value == 'color' ? '' : skin.value));
   // 白昼模式
   function changeLight(): void {
     fontColor.value = light_font_color;

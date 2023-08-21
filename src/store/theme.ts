@@ -40,25 +40,21 @@ const useThemeStore = defineStore('theme', () => {
   const searchBg = ref<string>(ls.get('theme')?.searchBg || light_search_bg);
   // 主题色
   const themeColor = ref<string>(ls.get('theme')?.themeColor || theme_color);
+  // 配置背景模式
+  // 背景模式，纯色模式或者皮肤模式
+  const bgMode = ref<string>(ls.get('theme')?.bgMode || 'color');
+  // 皮肤
+  const skin = ref<string>(ls.get('theme')?.skin || '');
+  // 是否全屏
+  const isFullScreen = ref<boolean>(false);
+  // 抽屉模式
+  const drawerMode = ref<string>('playlist');
   // 这部分用来控制全局滚动条的显示和宽度
   const globalVisible = ref<string>('none');
   // 全局滚动条的宽度
   const globalWidth = computed(() =>
     globalVisible.value == 'block' ? '6px' : '0'
   );
-  // 配置背景模式
-  // 背景模式，纯色模式或者皮肤模式
-  const bgMode = ref<string>(ls.get('bgMode') || 'color');
-  // 皮肤
-  const skin = ref<string>(ls.get('skin') || '');
-  // 皮肤地址
-  const skinUrl = computed(() => (bgMode.value == 'color' ? '' : skin.value));
-  // 抽屉模式
-  const drawerMode = ref<string>('playlist');
-  // 此部分用来设置全屏部分的宽高比例
-  // 是否全屏
-  const isFullScreen = ref<boolean>(false);
-
   return {
     fontColor,
     menuColor,
@@ -75,7 +71,6 @@ const useThemeStore = defineStore('theme', () => {
     isFullScreen,
     bgMode,
     skin,
-    skinUrl,
     drawerMode
   };
 });

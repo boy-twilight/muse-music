@@ -73,7 +73,6 @@ import { getMusicUrls, ls, message } from '@/utils';
 import { Comment } from '@/type';
 import { svg } from '@assets/icon';
 import { messageType } from '@/constants/common';
-import useThemeStore from '@/store/theme';
 import useFooterStore from '@/store/footer';
 import useUserStore from '@/store/user';
 import { Header, Footer, Aside } from '@components/layout';
@@ -152,8 +151,16 @@ hotkeys(keys.join(','), (event: KeyboardEvent, handler: HotkeysEvent) => {
 // 配置主题
 const theme = useTheme();
 const {
-  menuColor: menu,
-  background: bg,
+  menuColor,
+  background,
+  fontBlack,
+  tableHover,
+  boxShadow,
+  searchBg,
+  menuActive,
+  themeColor,
+  fontGray,
+  fontColor,
   loadingBg,
   contentHeight,
   headerHeight,
@@ -187,25 +194,7 @@ const {
   playMode
 } = storeToRefs(footer);
 const soucreComments = reactive<Comment[]>([]);
-// 是否展示歌曲评论区
-const showComments = ref<boolean>(false);
-provide<Comment[]>('soucreComments', soucreComments);
-provide<Ref<boolean>>('showComments', showComments);
-
 // 关闭网页之前，缓存相关记录
-const themes = useThemeStore();
-const {
-  fontColor,
-  background,
-  menuColor,
-  fontBlack,
-  tableHover,
-  boxShadow,
-  searchBg,
-  menuActive,
-  themeColor,
-  fontGray
-} = storeToRefs(themes);
 const user = useUserStore();
 const {
   loveSongs,
@@ -232,31 +221,33 @@ onMounted(() => {
       searchBg: searchBg.value,
       menuActive: menuActive.value,
       themeColor: themeColor.value,
-      fontGray: fontGray.value
+      fontGray: fontGray.value,
+      skin: skin.value,
+      bgMode: bgMode.value
     });
-    // 背景模式
-    ls.set('skin', skin.value);
-    ls.set('bgMode', bgMode.value);
-    // 全屏模式
-    ls.set('isFullScreen', isFullScreen.value);
     // 用户数据
-    // 记录当前播放的歌曲
-    ls.set('currentPlay', current.value);
-    // 记录当前播放的模式
-    ls.set('playMode', playMode.value);
-    ls.set('userPlaylist', songList.value);
-    ls.set('loveSongs', loveSongs.value);
-    ls.set('loveAlbum', loveAlbum.value);
-    ls.set('loveSinger', loveSinger.value);
-    ls.set('lovePlaylist', lovePlaylist.value);
-    ls.set('loveVideo', loveVideo.value);
-    ls.set('musicDownload', musicDownload.value);
-    ls.set('mvDownload', mvDownload.value);
-    ls.set('songRecord', songRecord.value);
-    ls.set('videoRecord', videoRecord.value);
-    ls.set('loveRadio', loveRadio.value);
+    ls.set('user', {
+      currentPlay: current.value,
+      playMode: playMode.value,
+      userPlaylist: songList.value,
+      loveSongs: loveSongs.value,
+      loveAlbum: loveAlbum.value,
+      loveSinger: loveSinger.value,
+      loveVideo: loveVideo.value,
+      lovePlaylist: lovePlaylist.value,
+      loveRadio: loveRadio.value,
+      musicDownload: musicDownload.value,
+      mvDownload: mvDownload.value,
+      songRecord: songRecord.value,
+      videoRecord: videoRecord.value
+    });
   });
 });
+
+// 是否展示歌曲评论区
+const showComments = ref<boolean>(false);
+provide<Comment[]>('soucreComments', soucreComments);
+provide<Ref<boolean>>('showComments', showComments);
 
 // 定时重新获取musicurl
 const getUrlOntime = () => {
@@ -275,8 +266,8 @@ getUrlOntime();
 </script>
 
 <style lang="less" scoped>
-@side-background: v-bind(menu);
-@other-background: v-bind(bg);
+@side-background: v-bind(menuColor);
+@other-background: v-bind(background);
 .slide-enter-active,
 .slide-leave-active {
   transition: all 0.75s ease !important;

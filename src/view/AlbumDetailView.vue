@@ -97,9 +97,10 @@ import { OnlineBatch } from '@components/batch';
 import { ArtistAlbum } from '@components/datalist';
 import { SongTable } from '@components/table';
 import Tab from '@components/tab';
+import useTheme from '@/hooks/useTheme';
 
 // 获取主题
-const { fontColor, fontBlack, boxShadow, fontGray } = inject('theme') as any;
+const { fontColor, fontBlack, boxShadow, fontGray } = useTheme();
 const user = useUserStore();
 const route = useRoute();
 // 获取Id

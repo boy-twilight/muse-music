@@ -47,10 +47,9 @@ import { Menu } from '@/type';
 import { ss } from '@/utils';
 import logo from '@assets/image/logo.svg';
 import { PlayAnimation } from '@components/common';
-// 配置主题
-const theme = ;
+import useTheme from '@/hooks/useTheme';
 // 设置主题
-const { fontColor, menuColor, menuActive, fontGray } = theme;
+const { fontColor, menuColor, menuActive, fontGray } = useTheme();
 // 隐藏滚动条
 const hideScrollbar = inject('hideScrollbar') as () => void;
 // 在线音乐

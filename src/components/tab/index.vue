@@ -12,9 +12,10 @@
 // eslint-disable-next-line vue/no-setup-props-destructure
 import { ref } from 'vue';
 import { TabsPaneContext } from 'element-plus';
+import useTheme from '@/hooks/useTheme';
 
 // 配置主题
-const { fontColor, themeColor } = inject('theme') as any;
+const { fontColor, themeColor } = useTheme();
 
 const props = defineProps<{
   active: string;

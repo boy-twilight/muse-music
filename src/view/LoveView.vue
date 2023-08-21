@@ -99,16 +99,16 @@ import {
   ArtistMv,
   Singer,
   ArtistPlaylist,
-  ArtistAlbum,
+  ArtistAlbum
 } from '@components/datalist';
 import { UserBatch } from '@components/batch';
 import { UserMusicTable } from '@components/table';
 import { NoResult } from '@components/result';
 import Tab from '@components/tab';
+import useTheme from '@/hooks/useTheme';
 
 // 配置主题
-const { fontGray } = inject('theme') as any;
-
+const { fontGray } = useTheme();
 // 获取用户数据
 const user = useUserStore();
 const {
@@ -121,7 +121,7 @@ const {
   loveAlbumId,
   loveVideoId,
   lovePlaylistId,
-  loveRadioId,
+  loveRadioId
 } = storeToRefs(user);
 
 // 第一次加载的动画
@@ -162,7 +162,7 @@ const deleteLoveRadio = (id: string) => {
   loveRadio.value.splice(index, 1);
 };
 
-getRequset(async () => {
+getRequset(async() => {
   getMusicUrls(loveSongs.value);
   // 关闭动画
   first.value = false;

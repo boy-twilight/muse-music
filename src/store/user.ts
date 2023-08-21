@@ -1,40 +1,33 @@
 import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive } from 'vue';
-import { Album, Artist, MV, Playlist, Song } from '@/type';
+import { Album, Artist, MV, Playlist, Song, Source } from '@/type';
 import { download, downloadMusic, message, ls } from '@/utils';
 import { messageType } from '@/constants/common';
 import useFooterStore from './footer';
 
 const useUserStore = defineStore('user', () => {
-  interface Source {
-    id: string;
-    isLove?: boolean;
-    [key: string]: any;
-  }
-
   const footer = useFooterStore();
   const { songList, songListId } = storeToRefs(footer);
-
   // 收藏的歌曲,实现
-  const loveSongs = reactive<Song[]>(ls.get('loveSongs') || []);
+  const loveSongs = reactive<Song[]>(ls.get('user')?.loveSongs || []);
   // 收藏的视频,实现
-  const loveVideo = reactive<MV[]>(ls.get('loveVideo') || []);
+  const loveVideo = reactive<MV[]>(ls.get('user')?.loveVideo || []);
   // 收藏的歌单,实现
-  const lovePlaylist = reactive<Playlist[]>(ls.get('lovePlaylist') || []);
+  const lovePlaylist = reactive<Playlist[]>(ls.get('user')?.lovePlaylist || []);
   // 收藏的歌手
-  const loveSinger = reactive<Artist[]>(ls.get('loveSinger') || []);
+  const loveSinger = reactive<Artist[]>(ls.get('user')?.loveSinger || []);
   // 收藏的专辑
-  const loveAlbum = reactive<Album[]>(ls.get('loveAlbum') || []);
+  const loveAlbum = reactive<Album[]>(ls.get('user')?.loveAlbum || []);
   // 收藏的电台
-  const loveRadio = reactive<Playlist[]>(ls.get('loveRadio') || []);
+  const loveRadio = reactive<Playlist[]>(ls.get('user')?.loveRadio || []);
   // 歌曲播放记录，实现
-  const songRecord = reactive<Song[]>(ls.get('songRecord') || []);
+  const songRecord = reactive<Song[]>(ls.get('user')?.songRecord || []);
   // 视频的播放记录，实现
-  const videoRecord = reactive<MV[]>(ls.get('videoRecord') || []);
+  const videoRecord = reactive<MV[]>(ls.get('user')?.videoRecord || []);
   // 下载的音乐，实现
-  const musicDownload = reactive<Song[]>(ls.get('musicDownload') || []);
+  const musicDownload = reactive<Song[]>(ls.get('user')?.musicDownload || []);
   // 下载的视频,实现
-  const mvDownload = reactive<MV[]>(ls.get('mvDownload') || []);
+  const mvDownload = reactive<MV[]>(ls.get('user')?.mvDownload || []);
   // 喜欢音乐的id对应的map
   const loveMusicId = computed(() => {
     const map: Map<string, number> = new Map();

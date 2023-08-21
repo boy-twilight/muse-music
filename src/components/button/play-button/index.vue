@@ -2,14 +2,16 @@
   <el-button
     @click="playAllMusic(songs)"
     :color="themeColor"
-    ><span class="iconfont">&#xea6e;</span>{{ name }}</el-button
+    round
+    ><template #icon> <span class="iconfont">&#xea6e;</span> </template
+    >{{ name }}</el-button
   >
 </template>
 
 <script lang="ts" setup>
-import { inject } from 'vue';
 import { Song } from '@/type';
 import usePlayMusic from '@/hooks/usePlayMuisc';
+import useTheme from '@/hooks/useTheme';
 withDefaults(
   defineProps<{
     songs: Song[];
@@ -20,7 +22,7 @@ withDefaults(
   }
 );
 // 配置主题
-const { boxShadow, themeColor } = inject('theme') as any;
+const { boxShadow, themeColor } = useTheme();
 // 播放音乐
 const { playAllMusic } = usePlayMusic();
 </script>
@@ -29,14 +31,15 @@ const { playAllMusic } = usePlayMusic();
 @theme-color: v-bind(themeColor);
 .el-button {
   .iconfont {
-    margin-right: 5px;
+    font-size: 15px;
   }
-  border: none;
-  box-shadow: v-bind(boxShadow);
+  &:hover {
+    color: #ffffff;
+  }
   color: #ffffff;
-  border-radius: 18px;
   font-size: 14px;
   width: 120px;
   height: 34px;
+  box-shadow: v-bind(boxShadow);
 }
 </style>

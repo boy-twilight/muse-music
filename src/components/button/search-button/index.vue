@@ -30,6 +30,7 @@
 <script lang="ts" setup>
 import { inject, ref } from 'vue';
 import { throttle } from 'lodash-es';
+import useTheme from '@/hooks/useTheme';
 
 // 搜索结果回传
 const emits = defineEmits<{
@@ -37,7 +38,7 @@ const emits = defineEmits<{
 }>();
 // 配置主题
 // 配置主题
-const { fontColor, themeColor, fontGray, searchColor } = inject('theme') as any;
+const { fontColor, themeColor, fontGray, searchColor } = useTheme();
 // 隐藏滚动条
 const hideScrollbar = inject('hideScrollbar') as () => void;
 // 搜索容器
@@ -57,7 +58,7 @@ const searchMusic = () => {
     800,
     {
       leading: true,
-      trailing: false,
+      trailing: false
     }
   )();
 };

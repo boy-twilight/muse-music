@@ -126,12 +126,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, nextTick, inject } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import { Comment } from '@/type';
+import useTheme from '@/hooks/useTheme';
 
 // 配置主题
 const { fontBlack, fontColor, boxShadow, themeColor, fontGray, replyBg } =
-  inject('theme') as any;
+  useTheme();
 
 const props = defineProps<{
   comments: Comment[];
@@ -171,7 +172,7 @@ const getRandomTime = (time: string): string => {
 };
 
 // 打开或关闭评论区
-const openReply = async (commentId: string) => {
+const openReply = async(commentId: string) => {
   if (activeId.value == commentId) {
     activeId.value = '';
   } else {

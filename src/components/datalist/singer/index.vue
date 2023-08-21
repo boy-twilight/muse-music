@@ -56,6 +56,7 @@
 import { computed, inject } from 'vue';
 import { useRouter } from 'vue-router';
 import { Artist } from '@/type';
+import useTheme from '@/hooks/useTheme';
 
 const props = withDefaults(
   defineProps<{
@@ -67,7 +68,7 @@ const props = withDefaults(
   {
     showDelete: false,
     transitionName: '',
-    avatarNum: 10,
+    avatarNum: 10
   }
 );
 
@@ -76,7 +77,7 @@ const emits = defineEmits<{
 }>();
 
 // 配置主题
-const { fontColor, boxShadow, themeColor, fontGray } = inject('theme') as any;
+const { fontColor, boxShadow, themeColor, fontGray } = useTheme();
 // 隐藏滚动条
 const hideScrollbar = inject('hideScrollbar') as () => void;
 // 有头像的歌手
@@ -96,8 +97,8 @@ const toArtist = (id: string, score: string) => {
     name: 'artist',
     query: {
       id,
-      score,
-    },
+      score
+    }
   });
 };
 </script>

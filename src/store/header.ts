@@ -31,7 +31,6 @@ const useHeaderStore = defineStore('header', () => {
     } = response;
     user.uid = id;
     const userInfo: any = await getUserInfo(id);
-    console.log(userInfo);
     const {
       profile: { avatarUrl, nickname }
     } = userInfo;

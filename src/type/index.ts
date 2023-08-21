@@ -190,3 +190,9 @@ export interface SearchSuggest {
   pic: string;
   artistId?: string;
 }
+
+export interface Source {
+  id: string;
+  isLove?: boolean;
+  [key: string]: any;
+}

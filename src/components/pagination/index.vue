@@ -20,7 +20,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, inject } from 'vue';
+import useTheme from '@/hooks/useTheme';
+import { ref } from 'vue';
 
 withDefaults(
   defineProps<{
@@ -30,7 +31,7 @@ withDefaults(
     pageSize: number;
   }>(),
   {
-    text: '首歌曲',
+    text: '首歌曲'
   }
 );
 
@@ -39,7 +40,7 @@ const emits = defineEmits<{
 }>();
 
 // 配置主题
-const { themeColor, fontColor } = inject('theme') as any;
+const { themeColor, fontColor } = useTheme();
 
 const target = ref<string>('');
 
@@ -50,7 +51,7 @@ const checkValid = () => {
 };
 
 // 当页数发生改变时
-const changePage = async (page: number) => {
+const changePage = async(page: number) => {
   if (page) {
     emits('pageChange', page);
   }

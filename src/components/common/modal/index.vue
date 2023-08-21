@@ -17,13 +17,14 @@
 import { inject, Ref } from 'vue';
 import { Comment } from '@/type';
 import { SourceComment } from '@/components/common';
+import useTheme from '@/hooks/useTheme';
 
 defineProps<{
   comments: Comment[];
 }>();
 
 // 配置主题
-const { background, fontColor, boxShadow, themeColor } = inject('theme') as any;
+const { background, fontColor, boxShadow, themeColor } = useTheme();
 const showComments = inject('showComments') as Ref<boolean>;
 </script>
 

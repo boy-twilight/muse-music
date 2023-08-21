@@ -22,6 +22,7 @@
 <script lang="ts" setup>
 /* eslint-disable */
 // eslint-disable-next-line vue/no-setup-props-destructure
+import useTheme from '@/hooks/useTheme';
 import { ref, inject } from 'vue';
 
 const props = withDefaults(
@@ -42,7 +43,7 @@ const emits = defineEmits<{
 
 // 配置主题
 
-const { fontColor, boxShadow, themeColor } = inject('theme') as any;
+const { fontColor, boxShadow, themeColor } = useTheme();
 const active = ref<number>(props.activeValue);
 
 // 改变active时，回传active

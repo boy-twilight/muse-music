@@ -1,15 +1,17 @@
 <template>
-  <el-button color="#e1e1e1"
-    ><span
+  <el-button
+    color="#e1e1e1"
+    round>
+    <span
       v-text="icon"
       :style="iconStyle"
-      :class="isIconOne ? 'iconfont_1' : 'iconfont'"></span
-    >{{ name }}</el-button
+      :class="isIconOne ? 'iconfont_1' : 'iconfont'"></span>
+    {{ name }}</el-button
   >
 </template>
 
 <script lang="ts" setup>
-import { inject } from 'vue';
+import useTheme from '@/hooks/useTheme';
 withDefaults(
   defineProps<{
     // button名字
@@ -28,7 +30,7 @@ withDefaults(
 );
 // 配置主题
 
-const { boxShadow, themeColor } = inject('theme') as any;
+const { boxShadow, themeColor } = useTheme();
 </script>
 
 <style lang="less" scoped>
@@ -38,13 +40,11 @@ const { boxShadow, themeColor } = inject('theme') as any;
   .iconfont_1 {
     margin-right: 5px;
   }
-  border: none;
-  box-shadow: v-bind(boxShadow);
-  color: @button-font-color;
-  border-radius: 18px;
   font-size: 14px;
   width: 120px;
   height: 34px;
+  color: @button-font-color;
+  box-shadow: v-bind(boxShadow);
   &:hover {
     color: v-bind(themeColor);
   }

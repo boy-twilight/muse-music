@@ -266,10 +266,11 @@ import { Loading, NoResult } from '@components/result';
 import Tab from '@components/tab';
 import Pagination from '@components/pagination';
 import usePlayMusic from '@/hooks/usePlayMuisc';
+import useTheme from '@/hooks/useTheme';
 
 // 配置主题
 const { fontGray, fontColor, boxShadow, themeColor, singerBg, buttonBg } =
-  inject('theme') as any;
+  useTheme();
 // 路由器
 const router = useRouter();
 

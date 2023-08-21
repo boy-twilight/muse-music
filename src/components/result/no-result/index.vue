@@ -8,11 +8,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject } from 'vue';
+import { computed } from 'vue';
 
 import noSearch from '@assets/image/暂无搜索结果.svg';
+import useTheme from '@/hooks/useTheme';
 
-const { fontGray } = inject('theme') as any;
+const { fontGray } = useTheme();
 
 const props = withDefaults(
   defineProps<{

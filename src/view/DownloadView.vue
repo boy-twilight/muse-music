@@ -44,9 +44,10 @@ import { UserBatch } from '@components/batch';
 import { UserMusicTable } from '@components/table';
 import { NoResult } from '@components/result';
 import Tab from '@components/tab';
+import useTheme from '@/hooks/useTheme';
 
 // 配置主题
-const { fontColor, fontGray } = inject('theme') as any;
+const { fontColor, fontGray } = useTheme();
 
 // 获取用户播放数据
 const user = useUserStore();
@@ -71,7 +72,7 @@ const deleteDownLoad = (id: string) => {
   mvDownload.value.splice(index, 1);
 };
 // 获取初始数据
-getRequset(async () => {
+getRequset(async() => {
   getMusicUrls(musicDownload.value);
   user.initLoveMusic(musicDownload.value);
   // 关闭动画

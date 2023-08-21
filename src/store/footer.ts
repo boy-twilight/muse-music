@@ -7,17 +7,17 @@ const useFooterStore = defineStore('footer', () => {
   // 是否播放
   const isPlay = ref<boolean>(false);
   // 播放列表
-  const songList = reactive<Song[]>(ls.get('userPlaylist') || []);
+  const songList = reactive<Song[]>(ls.get('user')?.userPlaylist || []);
   // 播放列表对应的id
   const songListId = computed(() => {
     return new Map(songList.map((item, index) => [item.id, index]));
   });
   // 播放模式
-  const playMode = ref<string>(ls.get('playMode') || '2');
+  const playMode = ref<string>(ls.get('user')?.playMode || '2');
   // 歌曲数目
   const songNum = computed<number>(() => songList.length);
   // 当前播放的索引
-  const current = ref<number>(ls.get('currentPlay') || 0);
+  const current = ref<number>(ls.get('user')?.currentPlay || 0);
   // 当前播放的进度
   const playProcess = ref<number>(0);
   // 用户是否改变进度
