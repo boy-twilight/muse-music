@@ -28,15 +28,21 @@
 </template>
 
 <script lang="ts" setup>
+/* eslint-disable */
+// eslint-disable-next-line vue/no-setup-props-destructure
 import { inject, ref } from 'vue';
 import { throttle } from 'lodash-es';
 import useTheme from '@/hooks/useTheme';
 
+const props = defineProps<{
+  modelValue: string;
+}>();
+
 // 搜索结果回传
 const emits = defineEmits<{
-  (e: 'getContent', param: string): void;
+  (e: 'update:modelValue', param: string): void;
 }>();
-// 配置主题
+
 // 配置主题
 const { fontColor, themeColor, fontGray, searchColor } = useTheme();
 // 隐藏滚动条
@@ -46,19 +52,19 @@ const search = ref<HTMLDivElement>();
 // 隐藏文字
 const hideText = ref<boolean>(false);
 // 搜索内容
-const content = ref<string>('');
+const content = ref<string>(props.modelValue);
 
 // 搜索音乐
 const searchMusic = () => {
   throttle(
     () => {
+      emits('update:modelValue', content.value);
       hideScrollbar();
-      emits('getContent', content.value);
     },
-    800,
+    500,
     {
       leading: true,
-      trailing: false
+      trailing: false,
     }
   )();
 };
@@ -79,7 +85,7 @@ const closeSearch = () => {
   search.value!.style.width = '0';
   search.value!.style.opacity = '0';
   content.value = '';
-  emits('getContent', content.value);
+  emits('update:modelValue', '');
   hideText.value = false;
 };
 </script>

@@ -105,27 +105,6 @@ const back = () => {
   showDetail.value = false;
 };
 
-// 开始播放，设置歌词滚动
-const startPlay = () => {
-  timeid = setTimeout(() => {
-    if (currentTime.value >= timeStaps[currentIndex.value]) {
-      currentIndex.value++;
-      content.value!.scrollTop += scrollDis;
-      // 计算动画持续时间
-      if (currentIndex.value == 0) {
-        animationTime.value = '0s';
-      } else {
-        const dis =
-          (timeStaps[currentIndex.value] - timeStaps[currentIndex.value - 1]) /
-          1000;
-        animationTime.value = dis > 4 ? '4s' : dis + 's';
-      }
-    }
-    currentTime.value += 20;
-    startPlay();
-  }, 20);
-};
-
 // 计算进度条改变时滚动距离
 const calCurrentScroll = (cur: number) => {
   content.value!.scrollTop = scrollDis * cur;
@@ -134,7 +113,23 @@ const calCurrentScroll = (cur: number) => {
 // 检测播放还是暂停
 watch(isPlay, (newVal) => {
   if (newVal) {
-    startPlay();
+    timeid = setInterval(() => {
+      if (currentTime.value >= timeStaps[currentIndex.value]) {
+        currentIndex.value++;
+        content.value!.scrollTop += scrollDis;
+        // 计算动画持续时间
+        if (currentIndex.value == 0) {
+          animationTime.value = '0s';
+        } else {
+          const dis =
+            (timeStaps[currentIndex.value] -
+              timeStaps[currentIndex.value - 1]) /
+            1000;
+          animationTime.value = dis > 4 ? '4s' : dis + 's';
+        }
+      }
+      currentTime.value += 20;
+    }, 20);
   } else {
     clearInterval(timeid);
   }

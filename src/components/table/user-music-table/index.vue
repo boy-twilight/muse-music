@@ -10,7 +10,7 @@
         icon="&#xe617;"
         name="批量操作"
         @click="emits('openSelect', true)" />
-      <SearchButton @getContent="getContent" />
+      <SearchButton v-model="content" />
       <SortButton @get-sort-choice="getSortChoice" />
     </div>
     <SongTable
@@ -109,10 +109,7 @@ const buttonName = computed(() => {
 
 // 搜索的内容
 const content = ref<string>('');
-// 搜索
-const getContent = (search: string) => {
-  content.value = search;
-};
+
 // 展示歌曲，歌手，专辑，时长是否排序
 const sortChoice = reactive<boolean[]>([false, false, false, false]);
 // 是否取消排序

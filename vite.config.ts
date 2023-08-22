@@ -20,9 +20,9 @@ export default defineConfig({
     visualizer({
       open: true,
     }),
-    // eslintPlugin({
-    //   // include: ['src/**/*.ts', 'src/**/*.vue', 'src/**/**/*.vue'],
-    // }),
+    eslintPlugin({
+      include: ['src/**/*.ts', 'src/**/*.vue', 'src/**/**/*.vue'],
+    }),
   ],
   base: './',
   resolve: {

@@ -7,26 +7,26 @@
     :infinite-scroll-immediate="false"
     :infinite-scroll-disabled="disabled"
     style="overflow: auto">
-    <SearchButton @getContent="getContent" />
+    <SearchButton v-model="content" />
     <h4 class="title video-choice">视频类型</h4>
     <ButtonGroup
-      @getActive="getActive"
+      @getActiveIndex="getActiveIndex"
       title="视频地区"
-      :activeValue="0"
+      :cur-index="0"
       :show-title="false"
       :type="area"
       class="area" />
     <ButtonGroup
-      @getActive="getActive"
+      @getActiveIndex="getActiveIndex"
       title="视频来源"
-      :activeValue="0"
+      :cur-index="0"
       :show-title="false"
       :type="type" />
     <ButtonGroup
-      @getActive="getActive"
+      @getActiveIndex="getActiveIndex"
       title="视频排序"
       :show-title="false"
-      :activeValue="0"
+      :cur-index="0"
       :type="order" />
     <h4 class="title all">全部视频</h4>
     <ArtistMv :mvs="searchResult" />
@@ -102,13 +102,9 @@ const searchResult = computed(() =>
 );
 // 搜索内容
 const content = ref<string>('');
-// 获取搜索内容
-const getContent = (search: string) => {
-  content.value = search;
-};
 
 // 根据当前活跃值动态请求数据
-const getActive = async(index: number, type: string) => {
+const getActiveIndex = async(index: number, type: string) => {
   // 缓存limit的数量
   limitMap.set(
     areaActive.value + '' + typeActive.value + '' + orderActive.value,

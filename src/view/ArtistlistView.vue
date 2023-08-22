@@ -1,18 +1,18 @@
 <template>
   <div class="artistlist-container scroll-container">
-    <SearchButton @getContent="getContent" />
+    <SearchButton v-model="content" />
     <h4 class="title">歌手类型</h4>
     <ButtonGroup
-      @get-active="getActive"
+      @get-active-index="getActiveIndex"
       :type="area"
-      :active-value="0"
+      :cur-index="0"
       :show-title="false"
       title="歌手地区"
       class="area" />
     <ButtonGroup
-      @get-active="getActive"
+      @get-active-index="getActiveIndex"
       :type="type"
-      :active-value="0"
+      :cur-index="0"
       :show-title="false"
       title="歌手类型" />
     <!-- 姓名筛选 -->
@@ -20,7 +20,7 @@
       <li
         v-for="(item, index) in nameCh"
         :key="item"
-        @click="getActive(index, '歌手姓名')"
+        @click="getActiveIndex(index, '歌手姓名')"
         v-prevent
         :class="{
           'is-active': nameActive == item,
@@ -54,6 +54,7 @@ const artistlist = reactive<Artist[]>([]);
 const searchResult = computed(() =>
   artistlist.filter((artist) => artist.name.includes(content.value))
 );
+// 搜索内容
 const content = ref<string>('');
 // 缓存已经加载的结果
 const resultCache = reactive<Map<string, Artist[]>>(new Map());
@@ -98,7 +99,7 @@ const nameActive = ref<string>('全部');
 const first = inject('firstLoading') as Ref<boolean>;
 
 // 获取到当前活跃的按钮切换并加载对应数据
-const getActive = async(index: number, type: string) => {
+const getActiveIndex = async(index: number, type: string) => {
   hideScrollbar();
   artistlist.splice(0);
   // 切换index
@@ -120,10 +121,6 @@ const getActive = async(index: number, type: string) => {
   } else {
     getData();
   }
-};
-// 搜索
-const getContent = (search: string) => {
-  content.value = search;
 };
 // 请求初始数据
 const getData = async() => {

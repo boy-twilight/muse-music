@@ -11,7 +11,7 @@
         :key="item"
         @click="changeActive(index)"
         :class="{
-          'is-active': index == active,
+          'is-active': index == activeIndex,
         }">
         {{ item }}
       </button>
@@ -23,12 +23,12 @@
 /* eslint-disable */
 // eslint-disable-next-line vue/no-setup-props-destructure
 import useTheme from '@/hooks/useTheme';
-import { ref, inject } from 'vue';
+import { ref } from 'vue';
 
 const props = withDefaults(
   defineProps<{
     title: string;
-    activeValue: number;
+    curIndex: number;
     type: string[];
     showTitle?: boolean;
   }>(),
@@ -38,18 +38,18 @@ const props = withDefaults(
 );
 
 const emits = defineEmits<{
-  (e: 'getActive', value: number, type: string): void;
+  (e: 'getActiveIndex', value: number, type: string): void;
 }>();
 
 // 配置主题
 
 const { fontColor, boxShadow, themeColor } = useTheme();
-const active = ref<number>(props.activeValue);
+const activeIndex = ref<number>(props.curIndex);
 
 // 改变active时，回传active
 const changeActive = (index: number) => {
-  active.value = index;
-  emits('getActive', index, props.title);
+  activeIndex.value = index;
+  emits('getActiveIndex', index, props.title);
 };
 </script>
 
