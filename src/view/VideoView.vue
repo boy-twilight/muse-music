@@ -49,10 +49,9 @@ import { getMv } from '@/api';
 import { ArtistMv } from '@components/datalist';
 import { ButtonGroup, SearchButton } from '@components/button';
 import { Loading } from '@components/result';
+import useTheme from '@/hooks/useTheme';
 // 配置主题
-const { fontColor, boxShadow, fontBlack, themeColor, fontGray } = inject(
-  'theme'
-) as any;
+const { fontColor, boxShadow, fontBlack, themeColor, fontGray } = useTheme();
 // 隐藏滚动条
 const hideScrollbar = inject('hideScrollbar') as () => void;
 // mv地区分类
@@ -103,7 +102,6 @@ const searchResult = computed(() =>
 );
 // 搜索内容
 const content = ref<string>('');
-
 // 获取搜索内容
 const getContent = (search: string) => {
   content.value = search;

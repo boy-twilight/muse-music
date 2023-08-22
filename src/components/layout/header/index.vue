@@ -247,9 +247,7 @@ import {
   compressImage,
   downloadFile,
   throttle,
-  getMusicUrls,
-  ls,
-  ss
+  getMusicUrls
 } from '@/utils';
 import { messageType } from '@/constants/common';
 import {
@@ -284,7 +282,7 @@ const {
   background,
   boxShadow,
   themeColor,
-  searchBg: searchColor,
+  searchColor,
   fontGray,
   dropDownMode,
   isFullScreen,
@@ -295,13 +293,12 @@ const {
   changeLight,
   changeSkinMode
 } = useTheme();
-
 // 隐藏滚动条
 const hideScrollbar = inject('hideScrollbar') as () => void;
 // 路由器
 const router = useRouter();
 const header = useHeaderStore();
-const { showLogin, cookie, user: userInfo } = storeToRefs(header);
+const { showLogin, cookie, user: userInfo, userSearch } = storeToRefs(header);
 const footer = useFooterStore();
 const { songList, songListId } = storeToRefs(footer);
 const user = useUserStore();
@@ -327,7 +324,6 @@ const {
   songRecordId,
   videoRecordId
 } = storeToRefs(user);
-
 // 用户搜素的内容
 const search = ref<string>('');
 // 中文合成是否开始
@@ -339,10 +335,10 @@ const isSearching = computed(() => {
   );
   return search.value.length > 0 && isEmpty;
 });
-// 热门搜索列表
-const hotSearch = reactive<HotSearch[]>(ss.get('hotSearch') || []);
-// 用户的搜索列表
-const userSearch = reactive<string[]>(ls.get('userSearch') || []);
+// 是否展示搜索推荐列表
+const showSuggest = ref<boolean>(false);
+// 热门搜索推荐列表
+const hotSearch = reactive<HotSearch[]>([]);
 // 搜索建议
 const suggestMap = reactive<Map<string, SearchSuggest[]>>(
   new Map([
@@ -352,8 +348,6 @@ const suggestMap = reactive<Map<string, SearchSuggest[]>>(
     ['歌单', []]
   ])
 );
-// 是否展示搜索推荐列表
-const showSuggest = ref<boolean>(false);
 // 下拉列表
 const dropDownItems = reactive<DropDownItem[]>([
   {
@@ -661,26 +655,24 @@ const handleClick = async(command: string) => {
 // 搜索相关的事件
 // 得到推荐的搜索列表
 const getSearchData = async() => {
-  if (hotSearch.length == 0) {
-    try {
-      const response: any = await getHotSearch();
-      const { data } = response;
-      data.forEach((item: any) => {
-        hotSearch.push({
-          searchWord: item.searchWord,
-          score: item.score
-        });
+  try {
+    const response: any = await getHotSearch();
+    const { data } = response;
+    data.forEach((item: any) => {
+      hotSearch.push({
+        searchWord: item.searchWord,
+        score: item.score
       });
-    } catch (err: any) {
-      message(messageType.ERROR, err.message);
-    }
+    });
+  } catch (err: any) {
+    message(messageType.ERROR, err.message);
   }
 };
 
 // 前往搜索的页面
 const goSearch = () => {
-  if (!userSearch.includes(search.value)) {
-    userSearch.push(search.value);
+  if (!userSearch.value.includes(search.value)) {
+    userSearch.value.push(search.value);
   }
   hideScrollbar();
   router.push({
@@ -693,8 +685,8 @@ const goSearch = () => {
 
 // 点击推荐列表搜索
 const goSearchByRe = (keyWord: string) => {
-  if (!userSearch.includes(keyWord)) {
-    userSearch.push(keyWord);
+  if (!userSearch.value.includes(keyWord)) {
+    userSearch.value.push(keyWord);
   }
   search.value = keyWord;
   hideScrollbar();
@@ -880,10 +872,6 @@ onMounted(() => {
   // 屏幕变化时改变值
   document.addEventListener('fullscreenchange', () => {
     isFullScreen.value = !isFullScreen.value;
-  });
-  // 缓存结果
-  window.addEventListener('beforeunload', () => {
-    ls.set('userSearch', userSearch);
   });
 });
 </script>

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, reactive } from 'vue';
-import { message, ss } from '@/utils';
+import { message, ss, ls } from '@/utils';
 import { messageType } from '@/constants/common';
 import { User } from '@/type';
 import { getUserInfo, getUserID, loginOut } from '@/api';
@@ -20,6 +20,8 @@ const useHeaderStore = defineStore('header', () => {
       avatar: avatar
     }
   );
+  // 用户的搜索历史
+  const userSearch = reactive<string[]>(ls.get('user')?.userSearch || []);
 
   // 获取用户信息
   async function getInfo() {
@@ -56,7 +58,7 @@ const useHeaderStore = defineStore('header', () => {
     }
   }
 
-  return { cookie, showLogin, user, getInfo, logout };
+  return { cookie, showLogin, user, userSearch, getInfo, logout };
 });
 
 export default useHeaderStore;

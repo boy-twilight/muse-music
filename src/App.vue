@@ -81,6 +81,7 @@ import Drawer from '@components/drawer';
 import { Modal } from '@components/common';
 import useTheme from '@/hooks/useTheme';
 import useScroll from '@/hooks/useScroll';
+import useHeaderStore from './store/header';
 
 // 快捷键列表
 // space播放,上进入/退出音乐详情，左前一首，右后一首，f进入/退出全屏
@@ -181,7 +182,7 @@ provide('theme', theme);
 const firstLoading = ref<boolean>(true);
 provide<Ref<boolean>>('firstLoading', firstLoading);
 
-// 歌曲评论
+// 关闭网页之前，缓存相关记录
 const footer = useFooterStore();
 const {
   songList,
@@ -193,8 +194,6 @@ const {
   songNum,
   playMode
 } = storeToRefs(footer);
-const soucreComments = reactive<Comment[]>([]);
-// 关闭网页之前，缓存相关记录
 const user = useUserStore();
 const {
   loveSongs,
@@ -208,6 +207,8 @@ const {
   videoRecord,
   loveRadio
 } = storeToRefs(user);
+const header = useHeaderStore();
+const { userSearch } = storeToRefs(header);
 onMounted(() => {
   window.addEventListener('beforeunload', () => {
     // 主题
@@ -230,6 +231,7 @@ onMounted(() => {
       currentPlay: current.value,
       playMode: playMode.value,
       userPlaylist: songList.value,
+      userSearch: userSearch.value,
       loveSongs: loveSongs.value,
       loveAlbum: loveAlbum.value,
       loveSinger: loveSinger.value,
@@ -245,6 +247,7 @@ onMounted(() => {
 });
 
 // 是否展示歌曲评论区
+const soucreComments = reactive<Comment[]>([]);
 const showComments = ref<boolean>(false);
 provide<Comment[]>('soucreComments', soucreComments);
 provide<Ref<boolean>>('showComments', showComments);

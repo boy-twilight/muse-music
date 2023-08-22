@@ -25,7 +25,7 @@ withDefaults(
   }>(),
   {
     iconStyle: '',
-    isIconOne: false,
+    isIconOne: false
   }
 );
 // 配置主题
