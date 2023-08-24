@@ -99,6 +99,8 @@ dist-ssr
 *.sln
 *.sw?
 stats.html
+.env.development
+.env.production
 <<<<<<< HEAD
 =======
 >>>>>>> e31a5ba (total project)
