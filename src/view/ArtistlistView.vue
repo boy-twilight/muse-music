@@ -41,11 +41,10 @@ import { message } from '@/utils';
 import { messageType } from '@/constants/common';
 import { Singer } from '@components/datalist';
 import { ButtonGroup, SearchButton } from '@components/button';
+import useTheme from '@/hooks/useTheme';
 
 // 配置主题
-const { fontColor, fontBlack, boxShadow, themeColor, fontGray } = inject(
-  'theme'
-) as any;
+const { fontColor, fontBlack, boxShadow, themeColor, fontGray } = useTheme();
 // 隐藏滚动条
 const hideScrollbar = inject('hideScrollbar') as () => void;
 // 歌手榜单

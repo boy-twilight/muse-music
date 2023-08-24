@@ -137,6 +137,7 @@ const openSelect = (open: boolean) => {
 const closeSelect = (close: boolean) => {
   showSelect.value = close;
 };
+
 // 删除收藏的视频
 const deleteLoveVideo = (id: string) => {
   const index = loveVideoId.value.get(id) as number;

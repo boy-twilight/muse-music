@@ -137,11 +137,10 @@ import { SongTable } from '@components/table';
 import { NoResult, Loading } from '@components/result';
 import Tab from '@components/tab';
 import Pagination from '@components/pagination';
+import useTheme from '@/hooks/useTheme';
 
 // 获取主题
-const { fontColor, fontBlack, boxShadow, themeColor, fontGray } = inject(
-  'theme'
-) as any;
+const { fontColor, fontBlack, boxShadow, themeColor, fontGray } = useTheme();
 
 const user = useUserStore();
 // 路由参数获取
