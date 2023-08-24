@@ -69,7 +69,7 @@ const props = withDefaults(
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false
+    showPagination: false,
   }
 );
 
@@ -79,8 +79,7 @@ const emits = defineEmits<{
 
 // 配置主题
 const { fontColor, boxShadow, themeColor, fontGray } = useTheme();
-// 隐藏滚动条
-const hideScrollbar = inject('hideScrollbar') as () => void;
+
 const router = useRouter();
 // 当前页数
 const curPage = ref<number>(1);
@@ -102,12 +101,11 @@ const pageChange = (page: number) => {
 
 // 点击推荐跳转
 const toMv = (id: string) => {
-  hideScrollbar();
   router.push({
     name: 'video',
     query: {
-      id
-    }
+      id,
+    },
   });
 };
 </script>

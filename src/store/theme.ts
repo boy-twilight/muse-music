@@ -11,7 +11,7 @@ import {
   light_search_bg,
   light_table_hover,
   light_font_gray,
-  theme_color
+  theme_color,
 } from '@/constants/theme';
 const useThemeStore = defineStore('theme', () => {
   // 字体主色调颜色
@@ -49,12 +49,6 @@ const useThemeStore = defineStore('theme', () => {
   const isFullScreen = ref<boolean>(false);
   // 抽屉模式
   const drawerMode = ref<string>('playlist');
-  // 这部分用来控制全局滚动条的显示和宽度
-  const globalVisible = ref<string>('none');
-  // 全局滚动条的宽度
-  const globalWidth = computed(() =>
-    globalVisible.value == 'block' ? '6px' : '0'
-  );
   return {
     fontColor,
     menuColor,
@@ -66,12 +60,10 @@ const useThemeStore = defineStore('theme', () => {
     menuActive,
     themeColor,
     fontGray,
-    globalVisible,
-    globalWidth,
     isFullScreen,
     bgMode,
     skin,
-    drawerMode
+    drawerMode,
   };
 });
 

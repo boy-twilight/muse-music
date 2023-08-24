@@ -1,93 +1,95 @@
 <template>
-  <div class="love-container scroll-container">
-    <UserBatch
-      page-name="LoveView"
-      v-show="showSelect"
-      @close-select="closeSelect" />
-    <Tab
-      active="song"
-      v-show="!showSelect">
-      <template #content>
-        <el-tab-pane
-          :label="`歌曲`"
-          name="song">
-          <UserMusicTable
-            page-name="LoveView"
-            @open-select="openSelect" />
-        </el-tab-pane>
-        <el-tab-pane
-          :label="`视频`"
-          name="video">
-          <NoResult
-            v-show="loveVideo.length == 0"
-            text="暂无收藏视频" />
-          <ArtistMv
-            :mvs="loveVideo"
-            transitionName="list"
-            :showDelete="true"
-            :show-pagination="true"
-            @get-delete-id="deleteLoveVideo"
-            v-show="loveVideo.length > 0" />
-        </el-tab-pane>
-        <el-tab-pane
-          :label="`歌单`"
-          name="playlist">
-          <NoResult
-            v-show="lovePlaylist.length == 0"
-            text="暂无收藏歌单" />
-          <ArtistPlaylist
-            :playlists="lovePlaylist"
-            transitionName="list"
-            :showDelete="true"
-            :show-pagination="true"
-            @get-delete-id="deleteLovePlaylist"
-            v-show="lovePlaylist.length > 0" />
-        </el-tab-pane>
-        <el-tab-pane
-          :label="`电台`"
-          name="radio">
-          <NoResult
-            v-show="loveRadio.length == 0"
-            text="暂无收藏电台" />
-          <ArtistPlaylist
-            :playlists="loveRadio"
-            type="radio"
-            transitionName="list"
-            :show-pagination="true"
-            :showDelete="true"
-            @get-delete-id="deleteLoveRadio"
-            v-show="loveRadio.length > 0" />
-        </el-tab-pane>
-        <el-tab-pane
-          :label="`歌手`"
-          name="singer">
-          <NoResult
-            v-show="loveSinger.length == 0"
-            text="暂无收藏歌手" />
-          <Singer
-            :singer-list="loveSinger"
-            transitionName="list"
-            :showDelete="true"
-            @get-delete-index="deleteLoveSinger"
-            v-show="loveSinger.length > 0" />
-        </el-tab-pane>
-        <el-tab-pane
-          :label="`专辑`"
-          name="album">
-          <NoResult
-            v-show="loveAlbum.length == 0"
-            text="暂无收藏专辑" />
-          <ArtistAlbum
-            :albums="loveAlbum"
-            transitionName="list"
-            :showDelete="true"
-            :show-pagination="true"
-            @get-delete-id="deleteLoveAlbum"
-            v-show="loveAlbum.length >= 0" />
-        </el-tab-pane>
-      </template>
-    </Tab>
-  </div>
+  <el-scrollbar :max-height="contentHeight">
+    <div class="love-container scroll-container">
+      <UserBatch
+        page-name="LoveView"
+        v-show="showSelect"
+        @close-select="closeSelect" />
+      <Tab
+        active="song"
+        v-show="!showSelect">
+        <template #content>
+          <el-tab-pane
+            :label="`歌曲`"
+            name="song">
+            <UserMusicTable
+              page-name="LoveView"
+              @open-select="openSelect" />
+          </el-tab-pane>
+          <el-tab-pane
+            :label="`视频`"
+            name="video">
+            <NoResult
+              v-show="loveVideo.length == 0"
+              text="暂无收藏视频" />
+            <ArtistMv
+              :mvs="loveVideo"
+              transitionName="list"
+              :showDelete="true"
+              :show-pagination="true"
+              @get-delete-id="deleteLoveVideo"
+              v-show="loveVideo.length > 0" />
+          </el-tab-pane>
+          <el-tab-pane
+            :label="`歌单`"
+            name="playlist">
+            <NoResult
+              v-show="lovePlaylist.length == 0"
+              text="暂无收藏歌单" />
+            <ArtistPlaylist
+              :playlists="lovePlaylist"
+              transitionName="list"
+              :showDelete="true"
+              :show-pagination="true"
+              @get-delete-id="deleteLovePlaylist"
+              v-show="lovePlaylist.length > 0" />
+          </el-tab-pane>
+          <el-tab-pane
+            :label="`电台`"
+            name="radio">
+            <NoResult
+              v-show="loveRadio.length == 0"
+              text="暂无收藏电台" />
+            <ArtistPlaylist
+              :playlists="loveRadio"
+              type="radio"
+              transitionName="list"
+              :show-pagination="true"
+              :showDelete="true"
+              @get-delete-id="deleteLoveRadio"
+              v-show="loveRadio.length > 0" />
+          </el-tab-pane>
+          <el-tab-pane
+            :label="`歌手`"
+            name="singer">
+            <NoResult
+              v-show="loveSinger.length == 0"
+              text="暂无收藏歌手" />
+            <Singer
+              :singer-list="loveSinger"
+              transitionName="list"
+              :showDelete="true"
+              @get-delete-index="deleteLoveSinger"
+              v-show="loveSinger.length > 0" />
+          </el-tab-pane>
+          <el-tab-pane
+            :label="`专辑`"
+            name="album">
+            <NoResult
+              v-show="loveAlbum.length == 0"
+              text="暂无收藏专辑" />
+            <ArtistAlbum
+              :albums="loveAlbum"
+              transitionName="list"
+              :showDelete="true"
+              :show-pagination="true"
+              @get-delete-id="deleteLoveAlbum"
+              v-show="loveAlbum.length >= 0" />
+          </el-tab-pane>
+        </template>
+      </Tab>
+    </div>
+  </el-scrollbar>
 </template>
 
 <script lang="ts" setup>
@@ -99,7 +101,7 @@ import {
   ArtistMv,
   Singer,
   ArtistPlaylist,
-  ArtistAlbum
+  ArtistAlbum,
 } from '@components/datalist';
 import { UserBatch } from '@components/batch';
 import { UserMusicTable } from '@components/table';
@@ -108,7 +110,7 @@ import Tab from '@components/tab';
 import useTheme from '@/hooks/useTheme';
 
 // 配置主题
-const { fontGray } = useTheme();
+const { fontGray, contentHeight } = useTheme();
 // 获取用户数据
 const user = useUserStore();
 const {
@@ -121,7 +123,7 @@ const {
   loveAlbumId,
   loveVideoId,
   lovePlaylistId,
-  loveRadioId
+  loveRadioId,
 } = storeToRefs(user);
 
 // 第一次加载的动画
@@ -163,7 +165,7 @@ const deleteLoveRadio = (id: string) => {
   loveRadio.value.splice(index, 1);
 };
 
-getRequset(async() => {
+getRequset(async () => {
   getMusicUrls(loveSongs.value);
   // 关闭动画
   first.value = false;

@@ -1,111 +1,114 @@
 <template>
-  <div class="artist-detail-container scroll-container">
-    <!-- 批量操作 -->
+  <el-scrollbar :max-height="contentHeight">
+    <div class="artist-detail-container scroll-container">
+      <!-- 批量操作 -->
+      <OnlineBatch
+        v-show="showSelect"
+        :songs="curList"
+        :song-id-mapper="songIdMapper"
+        @close-select="closeSelect" />
 
-    <OnlineBatch
-      v-show="showSelect"
-      :songs="curList"
-      :song-id-mapper="songIdMapper"
-      @close-select="closeSelect" />
-
-    <div
-      v-show="!showSelect"
-      class="header">
-      <img
-        :src="singer.avatar"
-        class="left" />
-      <div class="right">
-        <h4 class="name">{{ singer.name }}</h4>
-        <div class="info">
-          <p v-if="singer.alias?.length != 0">
-            英文名：{{ singer.alias?.join('、') }}
-          </p>
-          <p class="job">职业：歌手、词曲创作者</p>
-        </div>
-        <span class="fans">粉丝数：{{ singer.score }}</span>
-        <div class="header-operation">
-          <PlayButton :songs="curList" />
-          <CommonButton
-            :name="singer.isLove ? '取消关注' : '关注'"
-            :icon="singer.isLove ? '&#xe760;' : '&#xe761;'"
-            :icon-style="singer.isLove ? 'color:#ff6a6a;' : ''"
-            @click="user.addLove(singer, user.loveSinger, user.loveSingerId)" />
-          <MoreButton
-            v-if="!showSelect"
-            :share-to="shareSinger"
-            @open-select="openSelect" />
+      <div
+        v-show="!showSelect"
+        class="header">
+        <img
+          :src="singer.avatar"
+          class="left" />
+        <div class="right">
+          <h4 class="name">{{ singer.name }}</h4>
+          <div class="info">
+            <p v-if="singer.alias?.length != 0">
+              英文名：{{ singer.alias?.join('、') }}
+            </p>
+            <p class="job">职业：歌手、词曲创作者</p>
+          </div>
+          <span class="fans">粉丝数：{{ singer.score }}</span>
+          <div class="header-operation">
+            <PlayButton :songs="curList" />
+            <CommonButton
+              :name="singer.isLove ? '取消关注' : '关注'"
+              :icon="singer.isLove ? '&#xe760;' : '&#xe761;'"
+              :icon-style="singer.isLove ? 'color:#ff6a6a;' : ''"
+              @click="
+                user.addLove(singer, user.loveSinger, user.loveSingerId)
+              " />
+            <MoreButton
+              v-if="!showSelect"
+              :share-to="shareSinger"
+              @open-select="openSelect" />
+          </div>
         </div>
       </div>
-    </div>
 
-    <div
-      class="content"
-      v-show="!showSelect">
-      <Tab
-        active="hot"
-        @getActive="getActive">
-        <template #content>
-          <el-tab-pane
-            label="精选"
-            name="hot">
-            <SongTable
-              :songs="curList"
-              :page-size="pageSize"
-              :song-id-mapper="songIdMapper" />
-            <Pagination
-              v-show="pageSize < total"
-              :cur-page="curPage"
-              :page-size="pageSize"
-              :total="total"
-              @page-change="pageChange" />
-          </el-tab-pane>
-          <el-tab-pane
-            label="专辑"
-            name="album">
-            <NoResult
-              v-show="needNoSearch[0]"
-              text="歌手暂无专辑"
-              :size="280" />
-            <Loading :isLoading="isLoading" />
-            <ArtistAlbum
-              :albums="artistAlbum"
-              :show-pagination="true"
-              v-show="!needNoSearch[0]" />
-          </el-tab-pane>
-          <el-tab-pane
-            label="视频"
-            name="mv">
-            <NoResult
-              v-show="needNoSearch[1]"
-              text="歌手暂无视频"
-              :size="280" />
-            <Loading :isLoading="isLoading" />
-            <ArtistMv
-              :mvs="artistMv"
-              :show-pagination="true"
-              v-show="!needNoSearch[1]" />
-          </el-tab-pane>
-          <el-tab-pane
-            label="详情"
-            name="detail">
-            <Loading :isLoading="isLoading" />
-            <div class="detail">
-              <p class="desc">
-                {{ singer.briefDesc }}
-              </p>
-              <div
-                v-for="item in introduce"
-                :key="item.title"
-                v-show="introduce.length > 0">
-                <h4>{{ item.title }}</h4>
-                <p>{{ item.content }}</p>
+      <div
+        class="content"
+        v-show="!showSelect">
+        <Tab
+          active="hot"
+          @getActive="getActive">
+          <template #content>
+            <el-tab-pane
+              label="精选"
+              name="hot">
+              <SongTable
+                :songs="curList"
+                :page-size="pageSize"
+                :song-id-mapper="songIdMapper" />
+              <Pagination
+                v-show="pageSize < total"
+                :cur-page="curPage"
+                :page-size="pageSize"
+                :total="total"
+                @page-change="pageChange" />
+            </el-tab-pane>
+            <el-tab-pane
+              label="专辑"
+              name="album">
+              <NoResult
+                v-show="needNoSearch[0]"
+                text="歌手暂无专辑"
+                :size="280" />
+              <Loading :isLoading="isLoading" />
+              <ArtistAlbum
+                :albums="artistAlbum"
+                :show-pagination="true"
+                v-show="!needNoSearch[0]" />
+            </el-tab-pane>
+            <el-tab-pane
+              label="视频"
+              name="mv">
+              <NoResult
+                v-show="needNoSearch[1]"
+                text="歌手暂无视频"
+                :size="280" />
+              <Loading :isLoading="isLoading" />
+              <ArtistMv
+                :mvs="artistMv"
+                :show-pagination="true"
+                v-show="!needNoSearch[1]" />
+            </el-tab-pane>
+            <el-tab-pane
+              label="详情"
+              name="detail">
+              <Loading :isLoading="isLoading" />
+              <div class="detail">
+                <p class="desc">
+                  {{ singer.briefDesc }}
+                </p>
+                <div
+                  v-for="item in introduce"
+                  :key="item.title"
+                  v-show="introduce.length > 0">
+                  <h4>{{ item.title }}</h4>
+                  <p>{{ item.content }}</p>
+                </div>
               </div>
-            </div>
-          </el-tab-pane>
-        </template>
-      </Tab>
+            </el-tab-pane>
+          </template>
+        </Tab>
+      </div>
     </div>
-  </div>
+  </el-scrollbar>
 </template>
 
 <script lang="ts" setup>
@@ -117,7 +120,7 @@ import {
   getArtistDesc,
   getArtistAlbum,
   getArtistSongs,
-  getMusicDetail
+  getMusicDetail,
 } from '@/api';
 import { Artist, Song, MV, ArtistDesc, Album } from '@/type';
 import { messageType } from '@/constants/common';
@@ -127,7 +130,7 @@ import {
   formatTime,
   getRequset,
   message,
-  share
+  share,
 } from '@/utils';
 import useUserStore from '@/store/user';
 import { PlayButton, MoreButton, CommonButton } from '@components/button';
@@ -140,7 +143,8 @@ import Pagination from '@components/pagination';
 import useTheme from '@/hooks/useTheme';
 
 // 获取主题
-const { fontColor, fontBlack, boxShadow, themeColor, fontGray } = useTheme();
+const { fontColor, fontBlack, boxShadow, themeColor, fontGray, contentHeight } =
+  useTheme();
 
 const user = useUserStore();
 // 路由参数获取
@@ -159,7 +163,7 @@ const singer = reactive<Artist>({
   score,
   id: id,
   avatar: '',
-  alias: []
+  alias: [],
 });
 // 歌手基本简介
 const introduce = reactive<ArtistDesc[]>([]);
@@ -220,7 +224,7 @@ const getActive = (active: string) => {
   // 点击加载数据
   if (active == 'album' && artistAlbum.length == 0) {
     // 获取歌手专辑
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await getArtistAlbum(id);
         const { hotAlbums } = response;
@@ -231,7 +235,7 @@ const getActive = (active: string) => {
             id: item.id,
             cover: picUrl,
             publishTime: formatTime(publishTime),
-            artistId: id + ''
+            artistId: id + '',
           });
         });
       } catch (err: any) {
@@ -242,7 +246,7 @@ const getActive = (active: string) => {
     }, isLoading);
   } else if (active == 'mv' && artistMv.length == 0) {
     // 获取歌手的Mv
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await getArtistMv(id);
         const { mvs } = response;
@@ -253,7 +257,7 @@ const getActive = (active: string) => {
             name,
             artist: artistName,
             image: imgurl16v9,
-            playCount
+            playCount,
           });
         });
       } catch (err: any) {
@@ -263,14 +267,14 @@ const getActive = (active: string) => {
       isLoading.value = false;
     }, isLoading);
   } else if (active == 'detail' && introduce.length == 0) {
-    getRequset(async() => {
+    getRequset(async () => {
       try {
         const response: any = await getArtistDesc(id);
         const { introduction } = response;
         introduction.forEach((item: any) => {
           introduce.push({
             title: item.ti,
-            content: item.txt
+            content: item.txt,
           });
         });
       } catch (err: any) {
@@ -282,13 +286,13 @@ const getActive = (active: string) => {
 };
 
 // 获取初始数据
-getRequset(async() => {
+getRequset(async () => {
   try {
     const responses: any[] = await Promise.all([
       getArtistInfo(id),
-      getArtistSongs(id, 1000)
+      getArtistSongs(id, 1000),
     ]);
-    responses.forEach(async(response, index) => {
+    responses.forEach(async (response, index) => {
       // 获取歌手的具体信息
       if (index == 0) {
         const { artist } = response;

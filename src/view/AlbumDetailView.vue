@@ -1,80 +1,84 @@
 <template>
-  <div class="album-detail-container scroll-container">
-    <!-- 批量操作 -->
-    <OnlineBatch
-      v-show="showSelect"
-      :songs="albumSongs"
-      :song-id-mapper="songIdMapper"
-      @close-select="closeSelect" />
+  <el-scrollbar :max-height="contentHeight">
+    <div class="album-detail-container scroll-container">
+      <!-- 批量操作 -->
+      <OnlineBatch
+        v-show="showSelect"
+        :songs="albumSongs"
+        :song-id-mapper="songIdMapper"
+        @close-select="closeSelect" />
 
-    <div
-      class="header"
-      v-show="!showSelect">
-      <el-image
-        :src="albumInfo.cover"
-        loading="lazy"
-        class="left" />
-      <div class="right">
-        <h4>{{ albumInfo.name }}</h4>
-        <p class="artist">{{ albumInfo.artist }}</p>
-        <p>{{ albumInfo.publishTime }}</p>
-        <div class="header-operation">
-          <PlayButton :songs="albumSongs" />
-          <CommonButton
-            :name="albumInfo.isLove ? '取消收藏' : '收藏'"
-            :icon="albumInfo.isLove ? '&#xe760;' : '&#xe761;'"
-            :icon-style="albumInfo.isLove ? 'color:#ff6a6a;' : ''"
-            @click="
-              user.addLove(albumInfo, user.loveAlbum, user.loveAlbumId)
-            " />
-          <MoreButton
-            v-if="!showSelect"
-            :share-to="shareAlbum"
-            @open-select="openSelect" />
+      <div
+        class="header"
+        v-show="!showSelect">
+        <el-image
+          :src="albumInfo.cover"
+          loading="lazy"
+          class="left" />
+        <div class="right">
+          <h4>{{ albumInfo.name }}</h4>
+          <p class="artist">{{ albumInfo.artist }}</p>
+          <p>{{ albumInfo.publishTime }}</p>
+          <div class="header-operation">
+            <PlayButton :songs="albumSongs" />
+            <CommonButton
+              :name="albumInfo.isLove ? '取消收藏' : '收藏'"
+              :icon="albumInfo.isLove ? '&#xe760;' : '&#xe761;'"
+              :icon-style="albumInfo.isLove ? 'color:#ff6a6a;' : ''"
+              @click="
+                user.addLove(albumInfo, user.loveAlbum, user.loveAlbumId)
+              " />
+            <MoreButton
+              v-if="!showSelect"
+              :share-to="shareAlbum"
+              @open-select="openSelect" />
+          </div>
         </div>
       </div>
-    </div>
 
-    <div
-      class="content"
-      v-show="!showSelect">
-      <Tab active="songs">
-        <template #content>
-          <el-tab-pane
-            label="歌曲"
-            name="songs">
-            <SongTable
-              :songs="albumSongs"
-              :song-id-mapper="songIdMapper" />
-            <ArtistAlbum
-              :albums="otherAlbum"
-              title="该歌手的其它专辑" />
-          </el-tab-pane>
-          <el-tab-pane
-            label="详情"
-            name="album">
-            <div class="info">
-              <p>
-                专辑：<span>{{ albumInfo.name }}</span>
-              </p>
-              <p>
-                歌手：<span>{{ albumInfo.artist }}</span>
-              </p>
-              <p>
-                唱片公司：<span>{{ albumInfo.company }}</span>
-              </p>
-              <p>
-                发布时间：<span>{{ albumInfo.publishTime }}</span>
-              </p>
-              <p>
-                专辑简介：<span class="desc">{{ albumInfo.description }}</span>
-              </p>
-            </div>
-          </el-tab-pane>
-        </template>
-      </Tab>
+      <div
+        class="content"
+        v-show="!showSelect">
+        <Tab active="songs">
+          <template #content>
+            <el-tab-pane
+              label="歌曲"
+              name="songs">
+              <SongTable
+                :songs="albumSongs"
+                :song-id-mapper="songIdMapper" />
+              <ArtistAlbum
+                :albums="otherAlbum"
+                title="该歌手的其它专辑" />
+            </el-tab-pane>
+            <el-tab-pane
+              label="详情"
+              name="album">
+              <div class="info">
+                <p>
+                  专辑：<span>{{ albumInfo.name }}</span>
+                </p>
+                <p>
+                  歌手：<span>{{ albumInfo.artist }}</span>
+                </p>
+                <p>
+                  唱片公司：<span>{{ albumInfo.company }}</span>
+                </p>
+                <p>
+                  发布时间：<span>{{ albumInfo.publishTime }}</span>
+                </p>
+                <p>
+                  专辑简介：<span class="desc">{{
+                    albumInfo.description
+                  }}</span>
+                </p>
+              </div>
+            </el-tab-pane>
+          </template>
+        </Tab>
+      </div>
     </div>
-  </div>
+  </el-scrollbar>
 </template>
 
 <script lang="ts" setup>
@@ -88,7 +92,7 @@ import {
   getMusicUrls,
   getRequset,
   message,
-  share
+  share,
 } from '@/utils';
 import { messageType } from '@/constants/common';
 import useUserStore from '@/store/user';
@@ -100,7 +104,7 @@ import Tab from '@components/tab';
 import useTheme from '@/hooks/useTheme';
 
 // 获取主题
-const { fontColor, fontBlack, boxShadow, fontGray } = useTheme();
+const { fontColor, fontBlack, boxShadow, fontGray, contentHeight } = useTheme();
 const user = useUserStore();
 const route = useRoute();
 // 获取Id
@@ -114,7 +118,7 @@ const albumInfo = reactive<Album>({
   name: '',
   cover: '',
   artist: '',
-  publishTime: ''
+  publishTime: '',
 });
 // 歌手其它专辑
 const otherAlbum = reactive<Album[]>([]);
@@ -151,11 +155,11 @@ const shareAlbum = () => {
 };
 
 // 请求页面数据
-getRequset(async() => {
+getRequset(async () => {
   try {
     const responses: any[] = await Promise.all([
       getArtistAlbum(artistId),
-      getAlbumDetail(id)
+      getAlbumDetail(id),
     ]);
     responses.forEach((response, index) => {
       // 获取该艺术家的其它专辑
@@ -170,7 +174,7 @@ getRequset(async() => {
               id: albumId,
               cover: picUrl,
               publishTime: formatTime(publishTime),
-              artistId: artistId + ''
+              artistId: artistId + '',
             });
           } else if (otherAlbum.length > 5) {
             break;
@@ -181,7 +185,7 @@ getRequset(async() => {
       else if (index == 1) {
         const {
           album: { picUrl, artist, publishTime, name, company, description },
-          songs
+          songs,
         } = response;
         albumInfo.name = name;
         albumInfo.cover = picUrl;

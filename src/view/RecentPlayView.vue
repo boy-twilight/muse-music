@@ -1,37 +1,39 @@
 <template>
-  <div class="recent-container scroll-container">
-    <UserBatch
-      page-name="RecentPlayView"
-      v-show="showSelect"
-      @close-select="closeSelect" />
-    <Tab
-      v-show="!showSelect"
-      active="song">
-      <template #content>
-        <el-tab-pane
-          :label="`歌曲`"
-          name="song">
-          <UserMusicTable
-            @open-select="openSelect"
-            page-name="RecentPlayView" />
-        </el-tab-pane>
-        <el-tab-pane
-          :label="`视频`"
-          name="video ">
-          <NoResult
-            v-show="videoRecord.length == 0"
-            text="暂无视频播放记录" />
-          <ArtistMv
-            :mvs="videoRecord"
-            :show-delete="true"
-            transitionName="list"
-            :show-pagination="true"
-            @get-delete-id="deleteVideoRecord"
-            v-show="videoRecord.length > 0" />
-        </el-tab-pane>
-      </template>
-    </Tab>
-  </div>
+  <el-scrollbar :max-height="contentHeight">
+    <div class="recent-container scroll-container">
+      <UserBatch
+        page-name="RecentPlayView"
+        v-show="showSelect"
+        @close-select="closeSelect" />
+      <Tab
+        v-show="!showSelect"
+        active="song">
+        <template #content>
+          <el-tab-pane
+            :label="`歌曲`"
+            name="song">
+            <UserMusicTable
+              @open-select="openSelect"
+              page-name="RecentPlayView" />
+          </el-tab-pane>
+          <el-tab-pane
+            :label="`视频`"
+            name="video ">
+            <NoResult
+              v-show="videoRecord.length == 0"
+              text="暂无视频播放记录" />
+            <ArtistMv
+              :mvs="videoRecord"
+              :show-delete="true"
+              transitionName="list"
+              :show-pagination="true"
+              @get-delete-id="deleteVideoRecord"
+              v-show="videoRecord.length > 0" />
+          </el-tab-pane>
+        </template>
+      </Tab>
+    </div>
+  </el-scrollbar>
 </template>
 
 <script lang="ts" setup>
@@ -47,7 +49,7 @@ import Tab from '@components/tab';
 import useTheme from '@/hooks/useTheme';
 
 // 配置主题
-const { fontColor, fontGray } = useTheme();
+const { fontColor, fontGray, contentHeight } = useTheme();
 
 // 获取用户播放数据
 const user = useUserStore();
@@ -74,7 +76,7 @@ const deleteVideoRecord = (id: string) => {
 };
 
 // 获取初始数据
-getRequset(async() => {
+getRequset(async () => {
   getMusicUrls(songRecord.value);
   user.initLoveMusic(songRecord.value);
   // 关闭动画

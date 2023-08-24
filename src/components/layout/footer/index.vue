@@ -299,8 +299,7 @@ const {
   bgMode,
   drawerMode,
 } = useTheme();
-// 隐藏滚动条
-const hideScrollbar = inject('hideScrollbar') as () => void;
+
 // 评论
 const soucreComments = inject('soucreComments') as Comment[];
 // 是否展开评论区
@@ -426,7 +425,6 @@ const downloadCurrent = () => {
 const playMv = () => {
   if (songNum.value > 0) {
     playVideo(songList.value[current.value], () => {
-      hideScrollbar();
       if (showDetail.value) {
         playTime.value = 0;
         playProcess.value = 0;

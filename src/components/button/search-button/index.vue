@@ -45,8 +45,7 @@ const emits = defineEmits<{
 
 // 配置主题
 const { fontColor, themeColor, fontGray, searchColor } = useTheme();
-// 隐藏滚动条
-const hideScrollbar = inject('hideScrollbar') as () => void;
+
 // 搜索容器
 const search = ref<HTMLDivElement>();
 // 隐藏文字
@@ -59,7 +58,6 @@ const searchMusic = () => {
   throttle(
     () => {
       emits('update:modelValue', content.value);
-      hideScrollbar();
     },
     500,
     {

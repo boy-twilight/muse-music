@@ -31,7 +31,7 @@ withDefaults(
     pageSize: number;
   }>(),
   {
-    text: '首歌曲'
+    text: '首歌曲',
   }
 );
 
@@ -42,7 +42,7 @@ const emits = defineEmits<{
 // 配置主题
 const { themeColor, fontColor } = useTheme();
 
-const target = ref<string>('');
+const target = ref<string>;
 
 const checkValid = () => {
   if (!/^[0-9]+$/.test(target.value)) {
@@ -51,7 +51,7 @@ const checkValid = () => {
 };
 
 // 当页数发生改变时
-const changePage = async(page: number) => {
+const changePage = async (page: number) => {
   if (page) {
     emits('pageChange', page);
   }

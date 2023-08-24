@@ -1,36 +1,38 @@
 <template>
-  <div class="artistlist-container scroll-container">
-    <SearchButton v-model="content" />
-    <h4 class="title">歌手类型</h4>
-    <ButtonGroup
-      @get-active-index="getActiveIndex"
-      :type="area"
-      :cur-index="0"
-      :show-title="false"
-      title="歌手地区"
-      class="area" />
-    <ButtonGroup
-      @get-active-index="getActiveIndex"
-      :type="type"
-      :cur-index="0"
-      :show-title="false"
-      title="歌手类型" />
-    <!-- 姓名筛选 -->
-    <ul class="name-ch">
-      <li
-        v-for="(item, index) in nameCh"
-        :key="item"
-        @click="getActiveIndex(index, '歌手姓名')"
-        v-prevent
-        :class="{
-          'is-active': nameActive == item,
-        }">
-        {{ item }}
-      </li>
-    </ul>
-    <h4 class="title">全部歌手</h4>
-    <Singer :singer-list="searchResult" />
-  </div>
+  <el-scrollbar :max-height="contentHeight">
+    <div class="artistlist-container scroll-container">
+      <SearchButton v-model="content" />
+      <h4 class="title">歌手类型</h4>
+      <ButtonGroup
+        @get-active-index="getActiveIndex"
+        :type="area"
+        :cur-index="0"
+        :show-title="false"
+        title="歌手地区"
+        class="area" />
+      <ButtonGroup
+        @get-active-index="getActiveIndex"
+        :type="type"
+        :cur-index="0"
+        :show-title="false"
+        title="歌手类型" />
+      <!-- 姓名筛选 -->
+      <ul class="name-ch">
+        <li
+          v-for="(item, index) in nameCh"
+          :key="item"
+          @click="getActiveIndex(index, '歌手姓名')"
+          v-prevent
+          :class="{
+            'is-active': nameActive == item,
+          }">
+          {{ item }}
+        </li>
+      </ul>
+      <h4 class="title">全部歌手</h4>
+      <Singer :singer-list="searchResult" />
+    </div>
+  </el-scrollbar>
 </template>
 
 <script lang="ts" setup>
@@ -44,9 +46,9 @@ import { ButtonGroup, SearchButton } from '@components/button';
 import useTheme from '@/hooks/useTheme';
 
 // 配置主题
-const { fontColor, fontBlack, boxShadow, themeColor, fontGray } = useTheme();
-// 隐藏滚动条
-const hideScrollbar = inject('hideScrollbar') as () => void;
+const { fontColor, fontBlack, boxShadow, themeColor, fontGray, contentHeight } =
+  useTheme();
+
 // 歌手榜单
 const artistlist = reactive<Artist[]>([]);
 // 搜索
@@ -69,7 +71,7 @@ const typeMapper = new Map([
   ['全部', -1],
   ['男歌手', 1],
   ['女歌手', 2],
-  ['组合', 3]
+  ['组合', 3],
 ]);
 // 歌手地区默认活跃的Index
 const areaActive = ref<number>(0);
@@ -86,7 +88,7 @@ const areaMapper = new Map([
   ['欧美', 96],
   ['日本', 8],
   ['韩国', 16],
-  ['其他', 0]
+  ['其他', 0],
 ]);
 // 姓名首字母，用于筛选
 const nameCh = reactive<string[]>(
@@ -98,8 +100,7 @@ const nameActive = ref<string>('全部');
 const first = inject('firstLoading') as Ref<boolean>;
 
 // 获取到当前活跃的按钮切换并加载对应数据
-const getActiveIndex = async(index: number, type: string) => {
-  hideScrollbar();
+const getActiveIndex = async (index: number, type: string) => {
   artistlist.splice(0);
   // 切换index
   if (type == '歌手地区') {
@@ -122,7 +123,7 @@ const getActiveIndex = async(index: number, type: string) => {
   }
 };
 // 请求初始数据
-const getData = async() => {
+const getData = async () => {
   // 第一次请求开启动画
   first.value = true;
   try {
@@ -139,7 +140,7 @@ const getData = async() => {
         id,
         name,
         avatar: img1v1Url,
-        score: fansCount
+        score: fansCount,
       });
     });
     // 缓存请求结果
@@ -166,7 +167,6 @@ getData();
   height: 50px;
   margin-bottom: 10px;
 }
-
 .is-active {
   color: @theme-color!important;
 }

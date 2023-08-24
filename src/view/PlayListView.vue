@@ -1,88 +1,90 @@
 <template>
-  <div class="playlist-container scroll-container">
-    <!-- 批量操作 -->
-    <OnlineBatch
-      v-show="showSelect"
-      :song-id-mapper="songIdMapper"
-      :songs="curList"
-      @close-select="closeSelect" />
-    <!-- 歌单头部 -->
-    <div
-      class="header"
-      v-show="!showSelect">
-      <img
-        :src="playList.image"
-        class="left-image" />
-      <div class="right">
-        <p class="title">{{ playList.name }}</p>
-        <div class="creator">
-          <el-image :src="playList.creator.avatarUrl" />
-          <span class="creator-name">{{ playList.creator.nickname }}</span>
-          <div class="tag">
-            <span
-              v-for="item in playList.tag"
-              :key="item"
-              >#{{ item }}</span
-            >
+  <el-scrollbar :max-height="contentHeight">
+    <div class="playlist-container scroll-container">
+      <!-- 批量操作 -->
+      <OnlineBatch
+        v-show="showSelect"
+        :song-id-mapper="songIdMapper"
+        :songs="curList"
+        @close-select="closeSelect" />
+      <!-- 歌单头部 -->
+      <div
+        class="header"
+        v-show="!showSelect">
+        <img
+          :src="playList.image"
+          class="left-image" />
+        <div class="right">
+          <p class="title">{{ playList.name }}</p>
+          <div class="creator">
+            <el-image :src="playList.creator.avatarUrl" />
+            <span class="creator-name">{{ playList.creator.nickname }}</span>
+            <div class="tag">
+              <span
+                v-for="item in playList.tag"
+                :key="item"
+                >#{{ item }}</span
+              >
+            </div>
+          </div>
+
+          <p class="description">
+            {{ playList.description }}
+          </p>
+          <div class="header-operation">
+            <PlayButton :songs="curList" />
+            <CommonButton
+              :name="playList.isLove ? '取消收藏' : '收藏'"
+              :icon="playList.isLove ? '&#xe760;' : '&#xe761;'"
+              :icon-style="playList.isLove ? 'color:#ff6a6a;' : ''"
+              @click="addLove" />
+            <!-- 更多 -->
+            <MoreButton
+              v-if="!showSelect"
+              :share-to="sharePlaylist"
+              @open-select="openSelect" />
           </div>
         </div>
-
-        <p class="description">
-          {{ playList.description }}
-        </p>
-        <div class="header-operation">
-          <PlayButton :songs="curList" />
-          <CommonButton
-            :name="playList.isLove ? '取消收藏' : '收藏'"
-            :icon="playList.isLove ? '&#xe760;' : '&#xe761;'"
-            :icon-style="playList.isLove ? 'color:#ff6a6a;' : ''"
-            @click="addLove" />
-          <!-- 更多 -->
-          <MoreButton
-            v-if="!showSelect"
-            :share-to="sharePlaylist"
-            @open-select="openSelect" />
-        </div>
       </div>
+      <!-- 歌单主题 -->
+      <Tab
+        v-show="!showSelect"
+        active="song"
+        class="playlist-tab">
+        <template #content>
+          <el-tab-pane
+            :label="`歌曲 ${playListSong.length}`"
+            name="song">
+            <SongTable
+              :songs="curList"
+              :page-size="pageSize"
+              :song-id-mapper="songIdMapper" />
+            <Pagination
+              v-show="pageSize < total"
+              :cur-page="curPage"
+              :page-size="pageSize"
+              :total="total"
+              @page-change="pageChange" />
+          </el-tab-pane>
+          <el-tab-pane
+            :label="`评论 ${
+              playlistComments.length < 10
+                ? playlistComments.length + 10
+                : playlistComments.length
+            }`"
+            name="comment">
+            <SourceComment
+              :comments="playlistComments"
+              v-if="!showNo" />
+            <NoResult
+              v-else
+              :size="280"
+              text="暂无评论数据" />
+          </el-tab-pane>
+        </template>
+      </Tab>
     </div>
-    <!-- 歌单主题 -->
-    <Tab
-      v-show="!showSelect"
-      active="song"
-      class="playlist-tab">
-      <template #content>
-        <el-tab-pane
-          :label="`歌曲 ${playListSong.length}`"
-          name="song">
-          <SongTable
-            :songs="curList"
-            :page-size="pageSize"
-            :song-id-mapper="songIdMapper" />
-          <Pagination
-            v-show="pageSize < total"
-            :cur-page="curPage"
-            :page-size="pageSize"
-            :total="total"
-            @page-change="pageChange" />
-        </el-tab-pane>
-        <el-tab-pane
-          :label="`评论 ${
-            playlistComments.length < 10
-              ? playlistComments.length + 10
-              : playlistComments.length
-          }`"
-          name="comment">
-          <SourceComment
-            :comments="playlistComments"
-            v-if="!showNo" />
-          <NoResult
-            v-else
-            :size="280"
-            text="暂无评论数据" />
-        </el-tab-pane>
-      </template>
-    </Tab>
-  </div>
+  </el-scrollbar>
 </template>
 
 <script lang="ts" setup>
@@ -95,7 +97,7 @@ import {
   getRequset,
   share,
   getComment,
-  getSourceComments
+  getSourceComments,
 } from '@/utils';
 import { messageType } from '@/constants/common';
 import {
@@ -103,7 +105,7 @@ import {
   getPlayListSong,
   getPlaylistComment,
   getRadioDetail,
-  getRadioSong
+  getRadioSong,
 } from '@/api';
 import { Playlist, Song, Comment } from '@/type';
 import useUserStore from '@/store/user';
@@ -117,7 +119,7 @@ import { SourceComment } from '@components/common';
 import useTheme from '@/hooks/useTheme';
 
 // 设置主题
-const { fontColor, fontBlack, boxShadow, fontGray } = useTheme();
+const { fontColor, fontBlack, boxShadow, fontGray, contentHeight } = useTheme();
 
 // 是否展示占位图片
 const showNo = ref<boolean>(false);
@@ -136,8 +138,8 @@ const playList = reactive<Playlist>({
   description: '',
   creator: {
     nickname: '',
-    avatarUrl: ''
-  }
+    avatarUrl: '',
+  },
 });
 // 歌单歌曲
 const playListSong = reactive<Song[]>([]);
@@ -200,13 +202,13 @@ const addLove = () => {
 };
 
 // 获取歌曲详情和音乐
-getRequset(async() => {
+getRequset(async () => {
   if (type == 'playlist') {
     try {
       const responses: any[] = await Promise.all([
         getPlayListDetail(id),
         getPlayListSong(id),
-        getPlaylistComment(id, 100)
+        getPlaylistComment(id, 100),
       ]);
       responses.forEach((response, index) => {
         // 获取歌单详情
@@ -218,8 +220,8 @@ getRequset(async() => {
               description,
               tags,
               creator,
-              playCount
-            }
+              playCount,
+            },
           } = response;
           playList.name = name;
           playList.image = coverImgUrl;
@@ -257,7 +259,7 @@ getRequset(async() => {
     try {
       const responses: any[] = await Promise.all([
         getRadioDetail(id),
-        getRadioSong(id, 100)
+        getRadioSong(id, 100),
       ]);
       responses.forEach((response, index) => {
         // 获取电台详情
@@ -268,8 +270,8 @@ getRequset(async() => {
               dj: { avatarUrl, nickname },
               picUrl,
               desc,
-              subCount
-            }
+              subCount,
+            },
           } = response;
           playList.name = name;
           playList.id = id;
@@ -292,8 +294,8 @@ getRequset(async() => {
                 fee,
                 artists,
                 album: { name: albumName, picUrl },
-                duration
-              }
+                duration,
+              },
             } = item;
             playListSong.push({
               id,
@@ -302,7 +304,7 @@ getRequset(async() => {
               songImage: picUrl,
               album: albumName,
               available: fee,
-              time: duration
+              time: duration,
             });
           });
           user.initLoveMusic(playListSong);

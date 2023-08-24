@@ -69,7 +69,7 @@ const props = withDefaults(
     showDelete: false,
     transitionName: '',
     showPagination: false,
-    type: 'playlist'
+    type: 'playlist',
   }
 );
 
@@ -80,8 +80,7 @@ const emits = defineEmits<{
 // 配置主题
 
 const { fontColor, boxShadow, themeColor, fontGray } = useTheme();
-// 隐藏滚动条
-const hideScrollbar = inject('hideScrollbar') as () => void;
+
 const router = useRouter();
 // 当前页数
 const curPage = ref<number>(1);
@@ -98,18 +97,17 @@ const curShow = computed(() =>
 );
 
 // 页数变化
-const pageChange = async(page: number) => {
+const pageChange = async (page: number) => {
   curPage.value = page;
 };
 // 前往歌单页面
 const toPlayList = (list: Playlist) => {
-  hideScrollbar();
   router.push({
     name: 'playlist',
     query: {
       id: list.id,
-      type: props.type
-    }
+      type: props.type,
+    },
   });
 };
 </script>

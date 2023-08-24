@@ -1,90 +1,94 @@
 <template>
-  <div class="video-container scroll-container">
-    <div class="players-container">
-      <Transition name="show">
-        <div
-          class="recommend-container"
-          v-show="showRecommned">
-          <h4 v-show="reMvs.length > 1">相关推荐</h4>
-          <div class="content">
-            <div
-              class="recommend-video"
-              v-for="(mv, index) in reMvs"
-              :key="mv.id">
-              <el-image
-                :src="mv.image"
-                class="image" />
-              <div class="mask">
-                <span
-                  class="iconfont play"
-                  @click="playRe(index, mv.id)"
-                  v-prevent
-                  >&#xea82;</span
-                >
+  <el-scrollbar :max-height="contentHeight">
+    <div class="video-container scroll-container">
+      <div class="players-container">
+        <Transition name="show">
+          <div
+            class="recommend-container"
+            v-show="showRecommned">
+            <h4 v-show="reMvs.length > 1">相关推荐</h4>
+            <div class="content">
+              <div
+                class="recommend-video"
+                v-for="(mv, index) in reMvs"
+                :key="mv.id">
+                <el-image
+                  :src="mv.image"
+                  class="image" />
+                <div class="mask">
+                  <span
+                    class="iconfont play"
+                    @click="playRe(index, mv.id)"
+                    v-prevent
+                    >&#xea82;</span
+                  >
+                </div>
               </div>
             </div>
           </div>
+        </Transition>
+        <div class="players"></div>
+      </div>
+      <!-- 视频相关信息 -->
+      <div class="detail">
+        <p class="title">
+          {{ mv.name }}
+        </p>
+        <div class="artist-info">
+          <span>{{
+            /.*[A-Z]+.*/.test(id)
+              ? '创作者：' + mv.artist
+              : '演唱：' + mv.artist
+          }}</span>
+          <span>{{ mv.playCount }}次观看</span>
+          <span>发布时间：{{ mv.publishTime }}</span>
         </div>
-      </Transition>
-      <div class="players"></div>
-    </div>
-    <!-- 视频相关信息 -->
-    <div class="detail">
-      <p class="title">
-        {{ mv.name }}
-      </p>
-      <div class="artist-info">
-        <span>{{
-          /.*[A-Z]+.*/.test(id) ? '创作者：' + mv.artist : '演唱：' + mv.artist
-        }}</span>
-        <span>{{ mv.playCount }}次观看</span>
-        <span>发布时间：{{ mv.publishTime }}</span>
+        <div
+          class="operation"
+          v-show="!showComments">
+          <CommonButton
+            :name="mv.isLove ? '取消收藏' : '收藏'"
+            :icon="mv.isLove ? '&#xe760;' : '&#xe761;'"
+            :icon-style="mv.isLove ? 'color:#ff6a6a;' : ''"
+            @click="user.addLove(mv, user.loveVideo, user.loveVideoId)"
+            class="operate" />
+          <CommonButton
+            name="下载"
+            @click="user.addVideoDownload(mv)"
+            icon="&#xe61a;"
+            class="operate" />
+          <CommonButton
+            name="分享"
+            icon="&#xe680;"
+            @click="shareVideo"
+            class="operate" />
+          <CommonButton
+            name="评论"
+            icon="&#xe60b;"
+            @click="showComments = true"
+            class="operate" />
+        </div>
       </div>
+      <!-- 相关视频推荐 -->
+      <ArtistMv
+        v-show="!showComments && mvSimi.length > 0"
+        :mvs="mvSimi"
+        title="相关推荐" />
+      <!-- 评论 -->
       <div
-        class="operation"
-        v-show="!showComments">
-        <CommonButton
-          :name="mv.isLove ? '取消收藏' : '收藏'"
-          :icon="mv.isLove ? '&#xe760;' : '&#xe761;'"
-          :icon-style="mv.isLove ? 'color:#ff6a6a;' : ''"
-          @click="user.addLove(mv, user.loveVideo, user.loveVideoId)"
-          class="operate" />
-        <CommonButton
-          name="下载"
-          @click="user.addVideoDownload(mv)"
-          icon="&#xe61a;"
-          class="operate" />
-        <CommonButton
-          name="分享"
-          icon="&#xe680;"
-          @click="shareVideo"
-          class="operate" />
-        <CommonButton
-          name="评论"
-          icon="&#xe60b;"
-          @click="showComments = true"
-          class="operate" />
+        v-show="showComments"
+        class="comment-area">
+        <h4 class="title">全部评论</h4>
+        <button
+          class="exit"
+          @click="showComments = false">
+          <span class="iconfont_1">&#xe62c; </span>
+          退出
+        </button>
+        <SourceComment :comments="videoComments" />
       </div>
     </div>
-    <!-- 相关视频推荐 -->
-    <ArtistMv
-      v-show="!showComments && mvSimi.length > 0"
-      :mvs="mvSimi"
-      title="相关推荐" />
-    <!-- 评论 -->
-    <div
-      v-show="showComments"
-      class="comment-area">
-      <h4 class="title">全部评论</h4>
-      <button
-        class="exit"
-        @click="showComments = false">
-        <span class="iconfont_1">&#xe62c; </span>
-        退出
-      </button>
-      <SourceComment :comments="videoComments" />
-    </div>
-  </div>
+  </el-scrollbar>
 </template>
 
 <script lang="ts" setup>
@@ -95,7 +99,7 @@ import {
   ref,
   computed,
   nextTick,
-  onBeforeUnmount
+  onBeforeUnmount,
 } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { MV, Comment } from '@/type';
@@ -108,7 +112,7 @@ import {
   getVideoUrl,
   getSimiVideo,
   getVideoComment,
-  getMvComment
+  getMvComment,
 } from '@/api';
 import { message, getRequset, formatTime, share, getComment } from '@/utils';
 import DPlayer from 'dplayer';
@@ -118,8 +122,15 @@ import { ArtistMv } from '@components/datalist';
 import { SourceComment } from '@components/common';
 import useTheme from '@/hooks/useTheme';
 // 设置主题
-const { fontColor, fontBlack, boxShadow, themeColor, fontGray, videoHeight } =
-  useTheme();
+const {
+  fontColor,
+  fontBlack,
+  boxShadow,
+  themeColor,
+  fontGray,
+  videoHeight,
+  contentHeight,
+} = useTheme();
 const user = useUserStore();
 // dplayer实例
 const dplayer = ref<DPlayer>();
@@ -137,7 +148,7 @@ const mv = reactive<MV>({
   url: '',
   time: '',
   publishTime: '',
-  available: ''
+  available: '',
 });
 // 相似的mv推荐
 const mvSimi = reactive<MV[]>([]);
@@ -165,7 +176,7 @@ const shareVideo = () => {
 };
 
 // 初始化播放器
-const init = async() => {
+const init = async () => {
   await nextTick();
   dplayer.value = new DPlayer({
     container: document.querySelector('.players'),
@@ -173,7 +184,7 @@ const init = async() => {
       url: mv.url as string,
       thumbnails: mv.image,
       type: 'video/mp4',
-      pic: mv.image
+      pic: mv.image,
     },
     autoplay: false,
     loop: false,
@@ -190,21 +201,21 @@ const init = async() => {
         text: '下载',
         click: () => {
           user.addVideoDownload(mv);
-        }
+        },
       },
       {
         text: '收藏',
         click: () => {
           user.addLove(mv, user.loveVideo, user.loveVideoId);
-        }
+        },
       },
       {
         text: '分享',
         click: () => {
           shareVideo();
-        }
-      }
-    ]
+        },
+      },
+    ],
   });
   // 视频结束时推荐其他视频
   const video = document.querySelector('.dplayer-video') as HTMLVideoElement;
@@ -223,13 +234,13 @@ const playRe = (index: number, id: string) => {
     router.push({
       name: 'video',
       query: {
-        id
-      }
+        id,
+      },
     });
   }
 };
 
-getRequset(async() => {
+getRequset(async () => {
   // 判断地址是否包含字母，有则用视频接口请求地址
   const rule = /.*[A-Z]+.*/;
   if (!rule.test(id)) {
@@ -238,13 +249,13 @@ getRequset(async() => {
         getMvDetail(id),
         getMvUrl(id),
         getSimiMv(id),
-        getMvComment(id, 1000)
+        getMvComment(id, 1000),
       ]);
       responses.forEach((response, index) => {
         // 获取mv详情
         if (index == 0) {
           const {
-            data: { name, artistName, cover, playCount, duration, publishTime }
+            data: { name, artistName, cover, playCount, duration, publishTime },
           } = response;
           mv.name = name;
           mv.playCount = playCount;
@@ -256,7 +267,7 @@ getRequset(async() => {
         // 获取mv播放地址
         else if (index == 1) {
           const {
-            data: { url, fee }
+            data: { url, fee },
           } = response;
           if (url) {
             mv.url = url;
@@ -276,7 +287,7 @@ getRequset(async() => {
                 image: cover,
                 name,
                 artist: artistName,
-                playCount
+                playCount,
               });
             });
           }
@@ -297,13 +308,13 @@ getRequset(async() => {
         getVideoDetail(id),
         getVideoUrl(id),
         getSimiVideo(id),
-        getVideoComment(id, 1000)
+        getVideoComment(id, 1000),
       ]);
       responses.forEach((response, index) => {
         // 获取视频详情
         if (index == 0) {
           const {
-            data: { title, coverUrl, publishTime, playTime, creator }
+            data: { title, coverUrl, publishTime, playTime, creator },
           } = response;
           mv.name = title;
           mv.image = coverUrl;
@@ -330,7 +341,7 @@ getRequset(async() => {
               name: title,
               image: coverUrl,
               playCount: playTime,
-              artist: creator[0].userName
+              artist: creator[0].userName,
             });
           });
         }

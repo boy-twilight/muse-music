@@ -1,42 +1,44 @@
 <template>
-  <div class="main-container">
-    <Carousel
-      :pictures="banners.slice(0, 5)"
-      type="card"
-      height="230px" />
-    <!-- 推荐歌单 -->
-    <ArtistPlaylist
-      title="你的歌单补给站"
-      :playlists="playLists" />
-    <!-- 推荐音乐 -->
-    <div class="musiclist">
-      <h4 class="title">推荐新音乐</h4>
-      <div class="content">
-        <div
-          v-for="song in songLists"
-          :key="song.id"
-          class="song-recommend">
+  <el-scrollbar :max-height="contentHeight">
+    <div class="main-container scroll-container">
+      <Carousel
+        :pictures="banners.slice(0, 5)"
+        type="card"
+        height="230px" />
+      <!-- 推荐歌单 -->
+      <ArtistPlaylist
+        title="你的歌单补给站"
+        :playlists="playLists" />
+      <!-- 推荐音乐 -->
+      <div class="musiclist">
+        <h4 class="title">推荐新音乐</h4>
+        <div class="content">
           <div
-            @click="playMusic(song)"
-            class="mask">
-            <span class="iconfont">&#xea82;</span>
-          </div>
-          <el-image
-            :src="song.songImage"
-            loading="lazy"
-            class="left" />
-          <div class="right">
-            <p>{{ song.name }}</p>
-            <p>{{ song.singer }}</p>
+            v-for="song in songLists"
+            :key="song.id"
+            class="song-recommend">
+            <div
+              @click="playMusic(song)"
+              class="mask">
+              <span class="iconfont">&#xea82;</span>
+            </div>
+            <el-image
+              :src="song.songImage"
+              loading="lazy"
+              class="left" />
+            <div class="right">
+              <p>{{ song.name }}</p>
+              <p>{{ song.singer }}</p>
+            </div>
           </div>
         </div>
       </div>
+      <ArtistMv
+        title="最新mv"
+        :mvs="mvLists"
+        class="mv-list" />
     </div>
-    <ArtistMv
-      title="最新mv"
-      :mvs="mvLists"
-      class="mv-list" />
-  </div>
+  </el-scrollbar>
 </template>
 
 <script lang="ts" setup>
@@ -51,7 +53,8 @@ import Carousel from '@components/carousel';
 import useTheme from '@/hooks/useTheme';
 
 // 获取主题
-const { fontColor, fontBlack, boxShadow, themeColor, fontGray } = useTheme();
+const { fontColor, fontBlack, boxShadow, themeColor, fontGray, contentHeight } =
+  useTheme();
 
 const { playMusic } = usePlayMusic();
 // 轮播图片
@@ -65,13 +68,13 @@ const mvLists = reactive<MV[]>([]);
 // 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
 
-getRequset(async() => {
+getRequset(async () => {
   try {
     const responses: any[] = await Promise.all([
       getBanner(),
       getRecPlaylist(10),
       getDeafultSong(40),
-      getMv(10, '内地', '全部', '最新')
+      getMv(10, '内地', '全部', '最新'),
     ]);
     responses.forEach((response, index) => {
       // 获取banner
@@ -81,7 +84,7 @@ getRequset(async() => {
           const { imageUrl, targetId } = item;
           banners.push({
             id: targetId,
-            pic: imageUrl
+            pic: imageUrl,
           });
         });
       }
@@ -97,7 +100,7 @@ getRequset(async() => {
               playCount,
               description,
               tags,
-              creator
+              creator,
             } = item;
             playLists.push({
               name,
@@ -108,8 +111,8 @@ getRequset(async() => {
               tag: tags,
               creator: {
                 avatarUrl: creator.avatarUrl,
-                nickname: creator.nickname
-              }
+                nickname: creator.nickname,
+              },
             });
           }
         });
@@ -117,7 +120,7 @@ getRequset(async() => {
       // 获取推荐歌曲
       else if (index == 2) {
         const {
-          data: { list }
+          data: { list },
         } = response;
         // 获取歌曲的基本信息
         for (let item of list) {
@@ -142,7 +145,7 @@ getRequset(async() => {
             name: name as string,
             image: cover as string,
             playCount: playCount as string,
-            artist: artistName as string
+            artist: artistName as string,
           });
         });
       }
@@ -163,12 +166,6 @@ getRequset(async() => {
 @theme-color: v-bind(themeColor);
 
 .main-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: auto;
-  padding-top: 10px;
-
   .carousel {
     margin-bottom: 15px;
   }

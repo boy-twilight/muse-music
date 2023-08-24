@@ -85,6 +85,9 @@ lerna-debug.log*
 
 node_modules
 dist
+stats.html
+.env.development
+.env.production
 dist-ssr
 *.local
 
@@ -98,9 +101,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-stats.html
-.env.development
-.env.production
 <<<<<<< HEAD
 =======
 >>>>>>> e31a5ba (total project)

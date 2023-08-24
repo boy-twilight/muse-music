@@ -1,43 +1,44 @@
 <template>
-  <!-- -->
-  <div
-    class="rvideo-container scroll-container"
-    v-infinite-scroll="loadData"
-    infinite-scroll-distance="2"
-    :infinite-scroll-immediate="false"
-    :infinite-scroll-disabled="disabled"
-    style="overflow: auto">
-    <SearchButton v-model="content" />
-    <h4 class="title video-choice">视频类型</h4>
-    <ButtonGroup
-      @getActiveIndex="getActiveIndex"
-      title="视频地区"
-      :cur-index="0"
-      :show-title="false"
-      :type="area"
-      class="area" />
-    <ButtonGroup
-      @getActiveIndex="getActiveIndex"
-      title="视频来源"
-      :cur-index="0"
-      :show-title="false"
-      :type="type" />
-    <ButtonGroup
-      @getActiveIndex="getActiveIndex"
-      title="视频排序"
-      :show-title="false"
-      :cur-index="0"
-      :type="order" />
-    <h4 class="title all">全部视频</h4>
-    <ArtistMv :mvs="searchResult" />
-    <Loading :is-loading="isLoading" />
-    <button
-      class="more-video"
-      v-show="showMore"
-      @click="loadMore">
-      更多精彩视频<span class="iconfont">&#xe775;</span>
-    </button>
-  </div>
+  <el-scrollbar :max-height="contentHeight">
+    <div
+      class="rvideo-container scroll-container"
+      v-infinite-scroll="loadData"
+      infinite-scroll-distance="2"
+      :infinite-scroll-immediate="false"
+      :infinite-scroll-disabled="disabled"
+      style="overflow: auto">
+      <SearchButton v-model="content" />
+      <h4 class="title video-choice">视频类型</h4>
+      <ButtonGroup
+        @getActiveIndex="getActiveIndex"
+        title="视频地区"
+        :cur-index="0"
+        :show-title="false"
+        :type="area"
+        class="area" />
+      <ButtonGroup
+        @getActiveIndex="getActiveIndex"
+        title="视频来源"
+        :cur-index="0"
+        :show-title="false"
+        :type="type" />
+      <ButtonGroup
+        @getActiveIndex="getActiveIndex"
+        title="视频排序"
+        :show-title="false"
+        :cur-index="0"
+        :type="order" />
+      <h4 class="title all">全部视频</h4>
+      <ArtistMv :mvs="searchResult" />
+      <Loading :is-loading="isLoading" />
+      <button
+        class="more-video"
+        v-show="showMore"
+        @click="loadMore">
+        更多精彩视频<span class="iconfont">&#xe775;</span>
+      </button>
+    </div>
+  </el-scrollbar>
 </template>
 
 <script lang="ts" setup>
@@ -51,9 +52,9 @@ import { ButtonGroup, SearchButton } from '@components/button';
 import { Loading } from '@components/result';
 import useTheme from '@/hooks/useTheme';
 // 配置主题
-const { fontColor, boxShadow, fontBlack, themeColor, fontGray } = useTheme();
-// 隐藏滚动条
-const hideScrollbar = inject('hideScrollbar') as () => void;
+const { fontColor, boxShadow, fontBlack, themeColor, fontGray, contentHeight } =
+  useTheme();
+
 // mv地区分类
 const area = reactive<string[]>([
   '全部',
@@ -61,7 +62,7 @@ const area = reactive<string[]>([
   '日本',
   '欧美',
   '港台',
-  '内地'
+  '内地',
 ]);
 // mv来源类型
 const type = reactive<string[]>(['全部', '官方版', '现场版', '网易出品']);
@@ -104,13 +105,12 @@ const searchResult = computed(() =>
 const content = ref<string>('');
 
 // 根据当前活跃值动态请求数据
-const getActiveIndex = async(index: number, type: string) => {
+const getActiveIndex = async (index: number, type: string) => {
   // 缓存limit的数量
   limitMap.set(
     areaActive.value + '' + typeActive.value + '' + orderActive.value,
     limit.value
   );
-  hideScrollbar();
   // 清空当前展示
   mvs.splice(0);
   currentList.splice(0);
@@ -169,7 +169,7 @@ const loadData = () => {
 const loadMore = () => {
   // 关闭再加更多按钮
   showMore.value = false;
-  getRequset(async() => {
+  getRequset(async () => {
     // 加载更多数据
     try {
       const response: any = await getMv(
@@ -186,7 +186,7 @@ const loadMore = () => {
           name: name as string,
           image: cover as string,
           playCount: playCount as string,
-          artist: artistName as string
+          artist: artistName as string,
         });
       });
       videoMap.set(
@@ -206,7 +206,7 @@ const loadMore = () => {
 
 // 请求数据
 const getData = () => {
-  getRequset(async() => {
+  getRequset(async () => {
     // 获取视频信息
     try {
       const response: any = await getMv(
@@ -223,7 +223,7 @@ const getData = () => {
           name: name as string,
           image: cover as string,
           playCount: playCount as string,
-          artist: artistName as string
+          artist: artistName as string,
         });
       });
       // 缓存结果

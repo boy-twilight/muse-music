@@ -144,14 +144,13 @@ const props = withDefaults(
     sort: undefined,
     isCancelSort: false,
     showHeader: true,
-    pageSize: 0
+    pageSize: 0,
   }
 );
 
 const { fontColor, background, fontGray, themeColor, tableHover, bgMode } =
   useTheme();
-// 隐藏滚动条
-const hideScrollbar = inject('hideScrollbar') as () => void;
+
 const footer = userFooterStore();
 const { songList, current, isPlay } = storeToRefs(footer);
 const user = useUserStore();
@@ -240,9 +239,7 @@ const { playMusic } = usePlayMusic();
 
 // 播放mv
 const playMV = (song: Song) => {
-  playVideo(song, () => {
-    hideScrollbar();
-  });
+  playVideo(song, () => {});
 };
 
 // 定时重新获取musicurl
@@ -273,7 +270,7 @@ onBeforeRouteLeave(() => {
 
 defineExpose({
   clearSelect,
-  getSelectItems
+  getSelectItems,
 });
 </script>
 

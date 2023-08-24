@@ -49,8 +49,7 @@ const emits = defineEmits<{
 // 配置主题
 
 const { themeColor } = useTheme();
-// 隐藏滚动条
-const hideScrollbar = inject('hideScrollbar') as () => void;
+
 // 用户数据
 const user = useUserStore();
 const { songRecord, musicDownload, loveSongs } = storeToRefs(user);
@@ -107,7 +106,6 @@ const deleteSelect = () => {
 
 // 处理关闭
 const close = () => {
-  hideScrollbar();
   emits('closeSelect', false);
 };
 </script>

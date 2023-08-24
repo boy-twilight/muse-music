@@ -1,37 +1,38 @@
 <template>
-  <div class="download-container scroll-container">
-    <UserBatch
-      v-show="showSelect"
-      page-name="DownloadView"
-      @close-select="closeSelect" />
-    <Tab
-      v-show="!showSelect"
-      active="song">
-      <template #content>
-        <el-tab-pane
-          :label="`下载歌曲`"
-          name="song">
-          <UserMusicTable
-            @open-select="openSelect"
-            page-name="DownloadView" />
-        </el-tab-pane>
-        <el-tab-pane
-          :label="`下载视频`"
-          name="video ">
-          <NoResult
-            v-show="mvDownload.length == 0"
-            text="暂无视频下载记录" />
-          <ArtistMv
-            :mvs="mvDownload"
-            :show-delete="true"
-            transitionName="list"
-            :show-pagination="true"
-            @get-delete-id="deleteDownLoad"
-            v-show="mvDownload.length > 0" />
-        </el-tab-pane>
-      </template>
-    </Tab>
-  </div>
+  <el-scrollbar :max-height="contentHeight">
+    <div class="download-container scroll-container">
+      <UserBatch
+        v-show="showSelect"
+        page-name="DownloadView"
+        @close-select="closeSelect" />
+      <Tab
+        v-show="!showSelect"
+        active="song">
+        <template #content>
+          <el-tab-pane
+            :label="`下载歌曲`"
+            name="song">
+            <UserMusicTable
+              @open-select="openSelect"
+              page-name="DownloadView" />
+          </el-tab-pane>
+          <el-tab-pane
+            :label="`下载视频`"
+            name="video ">
+            <NoResult
+              v-show="mvDownload.length == 0"
+              text="暂无视频下载记录" />
+            <ArtistMv
+              :mvs="mvDownload"
+              :show-delete="true"
+              transitionName="list"
+              :show-pagination="true"
+              @get-delete-id="deleteDownLoad"
+              v-show="mvDownload.length > 0" />
+          </el-tab-pane>
+        </template>
+      </Tab></div
+  ></el-scrollbar>
 </template>
 
 <script lang="ts" setup>
@@ -47,7 +48,7 @@ import Tab from '@components/tab';
 import useTheme from '@/hooks/useTheme';
 
 // 配置主题
-const { fontColor, fontGray } = useTheme();
+const { fontColor, fontGray, contentHeight } = useTheme();
 
 // 获取用户播放数据
 const user = useUserStore();
@@ -72,7 +73,7 @@ const deleteDownLoad = (id: string) => {
   mvDownload.value.splice(index, 1);
 };
 // 获取初始数据
-getRequset(async() => {
+getRequset(async () => {
   getMusicUrls(musicDownload.value);
   user.initLoveMusic(musicDownload.value);
   // 关闭动画

@@ -68,7 +68,7 @@ const props = withDefaults(
   {
     showDelete: false,
     transitionName: '',
-    avatarNum: 10
+    avatarNum: 10,
   }
 );
 
@@ -78,8 +78,7 @@ const emits = defineEmits<{
 
 // 配置主题
 const { fontColor, boxShadow, themeColor, fontGray } = useTheme();
-// 隐藏滚动条
-const hideScrollbar = inject('hideScrollbar') as () => void;
+
 // 有头像的歌手
 const singerWithAvatar = computed(() =>
   props.singerList.slice(0, props.avatarNum)
@@ -92,13 +91,12 @@ const router = useRouter();
 
 // 点击跳转歌手详情
 const toArtist = (id: string, score: string) => {
-  hideScrollbar();
   router.push({
     name: 'artist',
     query: {
       id,
-      score
-    }
+      score,
+    },
   });
 };
 </script>

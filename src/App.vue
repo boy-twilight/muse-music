@@ -32,7 +32,6 @@
             :element-loading-spinner="svg">
             <router-view
               v-slot="{ Component }"
-              @scroll="autoHideGscrollbar()"
               class="view">
               <KeepAlive
                 :max="8"
@@ -80,7 +79,6 @@ import MusicDetail from '@/view/MusicDetail.vue';
 import Drawer from '@components/drawer';
 import { Modal } from '@components/common';
 import useTheme from '@/hooks/useTheme';
-import useScroll from '@/hooks/useScroll';
 import useHeaderStore from './store/header';
 
 // 快捷键列表
@@ -93,59 +91,59 @@ const rule = /^\/video/;
 hotkeys(keys.join(','), (event: KeyboardEvent, handler: HotkeysEvent) => {
   event.preventDefault();
   switch (handler.key) {
-  case 'space':
-    {
-      // 在视频播放页面不设置快捷键,避免冲突
-      if (!rule.test(curPath.value)) {
-        isPlay.value = !isPlay.value;
+    case 'space':
+      {
+        // 在视频播放页面不设置快捷键,避免冲突
+        if (!rule.test(curPath.value)) {
+          isPlay.value = !isPlay.value;
+        }
       }
-    }
-    break;
-  case 'up':
-    {
-      if (!rule.test(curPath.value)) {
-        isPlay.value = false;
-        playProcess.value = 0;
-        playTime.value = 0;
-        showDetail.value = !showDetail.value;
+      break;
+    case 'up':
+      {
+        if (!rule.test(curPath.value)) {
+          isPlay.value = false;
+          playProcess.value = 0;
+          playTime.value = 0;
+          showDetail.value = !showDetail.value;
+        }
       }
-    }
-    break;
-  case 'left':
-    {
-      // 在视频播放页面不设置快捷键,避免冲突
-      if (!rule.test(curPath.value)) {
-        if (songNum.value > 0) {
-          current.value =
+      break;
+    case 'left':
+      {
+        // 在视频播放页面不设置快捷键,避免冲突
+        if (!rule.test(curPath.value)) {
+          if (songNum.value > 0) {
+            current.value =
               --current.value < 0 ? songNum.value - 1 : current.value;
-        } else {
-          message(messageType.INFO, '暂无音乐，请您添加音乐');
+          } else {
+            message(messageType.INFO, '暂无音乐，请您添加音乐');
+          }
         }
       }
-    }
-    break;
-  case 'right':
-    {
-      // 在视频播放页面不设置快捷键,避免冲突
-      if (!rule.test(curPath.value)) {
-        if (songNum.value > 0) {
-          current.value =
+      break;
+    case 'right':
+      {
+        // 在视频播放页面不设置快捷键,避免冲突
+        if (!rule.test(curPath.value)) {
+          if (songNum.value > 0) {
+            current.value =
               ++current.value >= songNum.value ? 0 : current.value;
-        } else {
-          message(messageType.INFO, '暂无音乐，请您添加音乐');
+          } else {
+            message(messageType.INFO, '暂无音乐，请您添加音乐');
+          }
         }
       }
-    }
-    break;
-  case 'f':
-    {
-      if (isFullScreen.value) {
-        document.exitFullscreen();
-      } else {
-        document.documentElement.requestFullscreen();
+      break;
+    case 'f':
+      {
+        if (isFullScreen.value) {
+          document.exitFullscreen();
+        } else {
+          document.documentElement.requestFullscreen();
+        }
       }
-    }
-    break;
+      break;
   }
 });
 
@@ -170,13 +168,8 @@ const {
   skin,
   skinUrl,
   bgMode,
-  isFullScreen
+  isFullScreen,
 } = theme;
-// 设置滚动条滚动时显示，不滚动自动消失
-const { globalVisible, globalWidth, autoHideGscrollbar, hideGscrollbar } =
-  useScroll();
-provide('hideScrollbar', hideGscrollbar);
-provide('theme', theme);
 
 // 页面加载动画
 const firstLoading = ref<boolean>(true);
@@ -192,7 +185,7 @@ const {
   playTime,
   showDetail,
   songNum,
-  playMode
+  playMode,
 } = storeToRefs(footer);
 const user = useUserStore();
 const {
@@ -205,7 +198,7 @@ const {
   mvDownload,
   songRecord,
   videoRecord,
-  loveRadio
+  loveRadio,
 } = storeToRefs(user);
 const header = useHeaderStore();
 const { userSearch } = storeToRefs(header);
@@ -224,7 +217,7 @@ onMounted(() => {
       themeColor: themeColor.value,
       fontGray: fontGray.value,
       skin: skin.value,
-      bgMode: bgMode.value
+      bgMode: bgMode.value,
     });
     // 用户数据
     ls.set('user', {
@@ -241,7 +234,7 @@ onMounted(() => {
       musicDownload: musicDownload.value,
       mvDownload: mvDownload.value,
       songRecord: songRecord.value,
-      videoRecord: videoRecord.value
+      videoRecord: videoRecord.value,
     });
   });
 });
@@ -312,6 +305,9 @@ getUrlOntime();
 }
 
 .app-container {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
   .song-detail-container {
     &:deep(.footer-container) {
       height: v-bind(musicFooterHeight);
@@ -321,9 +317,6 @@ getUrlOntime();
     }
   }
   .home-container {
-    height: 100vh;
-    width: 100vw;
-    overflow: hidden;
     .side {
       background-color: @side-background;
       display: flex;
@@ -333,32 +326,24 @@ getUrlOntime();
     .main {
       background-color: @other-background;
 
+      //头部与底部高度
+      .header,
+      .footer {
+        padding: 0;
+      }
+      .header-container,
+      .footer-container,
       .header,
       .footer {
         height: v-bind(headerHeight);
-        padding: 0;
       }
 
-      .header-container,
-      .footer-container {
-        height: v-bind(headerHeight);
-      }
-
+      // 内容高度
       .content {
         padding: 0;
         height: v-bind(contentHeight);
         width: 87vw;
-        overflow: auto;
-
-        &::-webkit-scrollbar {
-          display: none;
-        }
-        .view {
-          padding-left: v-bind(globalWidth);
-          &::-webkit-scrollbar {
-            display: v-bind(globalVisible);
-          }
-        }
+        overflow: hidden;
       }
     }
   }
@@ -366,41 +351,12 @@ getUrlOntime();
 </style>
 
 <style lang="less">
-#nprogress {
-  .bar {
-    background: #1ed2a9 !important;
-  }
-}
-.el-popover {
-  min-width: 60px !important;
-}
-.el-popper__arrow::before {
-  display: none !important;
-}
-.search-tip {
-  padding: 0px !important;
-  border-radius: 6px !important;
-  inset: 8vh auto auto 21.5vw !important;
-}
-
-//搜索提示和音量再皮肤模式下的毛玻璃效果
-.popover-skin {
-  backdrop-filter: blur(10px) brightness(0.8) saturate(120%) contrast(1.2);
-}
-
-//下拉框处于皮肤模式下的效果
-.dropdown-skin {
-  background-color: transparent !important;
-  backdrop-filter: blur(10px) brightness(0.8) saturate(120%) contrast(1.2);
-  .el-dropdown-menu__item {
-    &:hover {
-      background-color: rgba(220, 220, 220, 0.2) !important;
-    }
-  }
-}
-
-//动态改变主容器高度
 .scroll-container {
-  height: v-bind(contentHeight);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 87vw;
+  padding-top: 10px;
+  overflow: auto;
 }
 </style>

@@ -66,7 +66,7 @@ const props = withDefaults(
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false
+    showPagination: false,
   }
 );
 
@@ -75,8 +75,7 @@ const emits = defineEmits<{
 }>();
 // 配置主题
 const { fontColor, fontBlack, boxShadow, themeColor, fontGray } = useTheme();
-// 隐藏滚动条
-const hideScrollbar = inject('hideScrollbar') as () => void;
+
 const router = useRouter();
 // 当前页数
 const curPage = ref<number>(1);
@@ -99,13 +98,12 @@ const pageChange = (page: number) => {
 
 // 跳转专辑详情
 const toAlbumDetail = (id: string, artistId: string) => {
-  hideScrollbar();
   router.push({
     name: 'album',
     query: {
       id,
-      artistId
-    }
+      artistId,
+    },
   });
 };
 </script>
