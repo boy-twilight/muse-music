@@ -5,7 +5,7 @@
     infinite-scroll-distance="2"
     :infinite-scroll-immediate="false"
     :infinite-scroll-disabled="disabled"
-    style="overflow: auto">
+    style="overflow: scroll">
     <h4 class="r-title">精彩推荐</h4>
     <div class="banner">
       <el-image
@@ -39,8 +39,7 @@ import { Loading } from '@components/result';
 import useTheme from '@/hooks/useTheme';
 
 // 配置主题
-const { boxShadow, fontColor } = useTheme();
-
+const { boxShadow, fontColor, contentHeight } = useTheme();
 // 路由器
 const router = useRouter();
 // 电台banner
@@ -78,6 +77,7 @@ const getRadioData = async () => {
   disabled.value = false;
   isLoading.value = false;
 };
+
 const loadData = () => {
   disabled.value = true;
   isLoading.value = true;
@@ -91,6 +91,7 @@ const loadData = () => {
     message(messageType.SUCCESS, '已经到达底部！');
   }
 };
+
 // 前往banner对应的电台
 const go = (id: string) => {
   router.push({
@@ -143,8 +144,10 @@ getRequset(async () => {
 <style lang="less" scoped>
 @shadow: v-bind(boxShadow);
 @font-color: v-bind(fontColor);
+@content-height: v-bind(contentHeight);
 .radio-container {
   padding-bottom: 20px;
+  height: @content-height;
   .loading {
     height: 50px;
     margin: 20px 0;

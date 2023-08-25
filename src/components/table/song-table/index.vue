@@ -107,7 +107,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { onBeforeRouteLeave } from 'vue-router';
 import { ElTable } from 'element-plus';
@@ -150,7 +150,6 @@ const props = withDefaults(
 
 const { fontColor, background, fontGray, themeColor, tableHover, bgMode } =
   useTheme();
-
 const footer = userFooterStore();
 const { songList, current, isPlay } = storeToRefs(footer);
 const user = useUserStore();

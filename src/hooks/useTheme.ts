@@ -112,7 +112,7 @@ export default function useTheme() {
   const musicFooterHeight = computed(() =>
     isFullScreen.value ? '8vh' : '10vh'
   );
-  // 音乐详情容器高度
+  // 音乐馆tab容器高度
   const containerHeight = computed(() =>
     isFullScreen.value ? '76.3vh' : '73.3vh'
   );

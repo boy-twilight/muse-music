@@ -40,7 +40,7 @@ import {
   SearchButton,
   SortButton,
   PlayButton,
-  CommonButton,
+  CommonButton
 } from '@components/button';
 import Pagination from '@components/pagination';
 
@@ -72,7 +72,6 @@ const target = computed(() => {
 const songIdMapper = computed(
   () => new Map(target.value.map((item, index) => [item.id, index]))
 );
-
 // 用于分页
 // 当前页数
 const curPage = ref<number>(1);
@@ -95,7 +94,6 @@ const total = computed(() => target.value.length);
 const pageChange = (page: number) => {
   curPage.value = page;
 };
-
 // 按钮名字
 const buttonName = computed(() => {
   if (props.pageName == 'LoveView') {
@@ -106,14 +104,13 @@ const buttonName = computed(() => {
     return '清空下载记录';
   }
 });
-
 // 搜索的内容
 const content = ref<string>('');
-
 // 展示歌曲，歌手，专辑，时长是否排序
 const sortChoice = reactive<boolean[]>([false, false, false, false]);
 // 是否取消排序
 const cancelSort = ref<boolean>(false);
+
 // 得到用户选择的排序类型
 const getSortChoice = (sortType: boolean[], isCancelSort: boolean) => {
   for (let i = 0; i < sortChoice.length; i++) {

@@ -69,7 +69,7 @@ const props = withDefaults(
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false,
+    showPagination: false
   }
 );
 
@@ -79,7 +79,6 @@ const emits = defineEmits<{
 
 // 配置主题
 const { fontColor, boxShadow, themeColor, fontGray } = useTheme();
-
 const router = useRouter();
 // 当前页数
 const curPage = ref<number>(1);
@@ -104,8 +103,8 @@ const toMv = (id: string) => {
   router.push({
     name: 'video',
     query: {
-      id,
-    },
+      id
+    }
   });
 };
 </script>

@@ -299,7 +299,6 @@ const {
   bgMode,
   drawerMode,
 } = useTheme();
-
 // 评论
 const soucreComments = inject('soucreComments') as Comment[];
 // 是否展开评论区

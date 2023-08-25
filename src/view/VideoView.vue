@@ -1,44 +1,42 @@
 <template>
-  <el-scrollbar :max-height="contentHeight">
-    <div
-      class="rvideo-container scroll-container"
-      v-infinite-scroll="loadData"
-      infinite-scroll-distance="2"
-      :infinite-scroll-immediate="false"
-      :infinite-scroll-disabled="disabled"
-      style="overflow: auto">
-      <SearchButton v-model="content" />
-      <h4 class="title video-choice">视频类型</h4>
-      <ButtonGroup
-        @getActiveIndex="getActiveIndex"
-        title="视频地区"
-        :cur-index="0"
-        :show-title="false"
-        :type="area"
-        class="area" />
-      <ButtonGroup
-        @getActiveIndex="getActiveIndex"
-        title="视频来源"
-        :cur-index="0"
-        :show-title="false"
-        :type="type" />
-      <ButtonGroup
-        @getActiveIndex="getActiveIndex"
-        title="视频排序"
-        :show-title="false"
-        :cur-index="0"
-        :type="order" />
-      <h4 class="title all">全部视频</h4>
-      <ArtistMv :mvs="searchResult" />
-      <Loading :is-loading="isLoading" />
-      <button
-        class="more-video"
-        v-show="showMore"
-        @click="loadMore">
-        更多精彩视频<span class="iconfont">&#xe775;</span>
-      </button>
-    </div>
-  </el-scrollbar>
+  <div
+    class="rvideo-container scroll-container"
+    v-infinite-scroll="loadData"
+    infinite-scroll-distance="2"
+    :infinite-scroll-immediate="false"
+    :infinite-scroll-disabled="disabled"
+    style="overflow: scroll">
+    <SearchButton v-model="content" />
+    <h4 class="title video-choice">视频类型</h4>
+    <ButtonGroup
+      @getActiveIndex="getActiveIndex"
+      title="视频地区"
+      :cur-index="0"
+      :show-title="false"
+      :type="area"
+      class="area" />
+    <ButtonGroup
+      @getActiveIndex="getActiveIndex"
+      title="视频来源"
+      :cur-index="0"
+      :show-title="false"
+      :type="type" />
+    <ButtonGroup
+      @getActiveIndex="getActiveIndex"
+      title="视频排序"
+      :show-title="false"
+      :cur-index="0"
+      :type="order" />
+    <h4 class="title all">全部视频</h4>
+    <ArtistMv :mvs="searchResult" />
+    <Loading :is-loading="isLoading" />
+    <button
+      class="more-video"
+      v-show="showMore"
+      @click="loadMore">
+      更多精彩视频<span class="iconfont">&#xe775;</span>
+    </button>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -54,7 +52,6 @@ import useTheme from '@/hooks/useTheme';
 // 配置主题
 const { fontColor, boxShadow, fontBlack, themeColor, fontGray, contentHeight } =
   useTheme();
-
 // mv地区分类
 const area = reactive<string[]>([
   '全部',
@@ -128,7 +125,7 @@ const getActiveIndex = async (index: number, type: string) => {
   const num = limitMap.get(
     areaActive.value + '' + typeActive.value + '' + orderActive.value
   ) as number;
-  limit.value = num ? num : 1500;
+  limit.value = num ? num : 600;
   await nextTick();
   // 判断是否有缓存
   const cache = videoMap.get(
@@ -248,11 +245,13 @@ getData();
 @font-color-gray: v-bind(fontGray);
 @shadow: v-bind(boxShadow);
 @theme-color: v-bind(themeColor);
+@content-height: v-bind(contentHeight);
 @color-gray: #7b7b7b;
 
 .rvideo-container {
   overflow-x: hidden !important;
   position: relative;
+  height: @content-height;
 
   .search-area {
     position: absolute;

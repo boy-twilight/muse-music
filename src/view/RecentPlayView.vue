@@ -50,20 +50,19 @@ import useTheme from '@/hooks/useTheme';
 
 // 配置主题
 const { fontColor, fontGray, contentHeight } = useTheme();
-
 // 获取用户播放数据
 const user = useUserStore();
 const { videoRecord, songRecord } = storeToRefs(user);
-
 // 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
-
 // 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
+
 // 打开批量操作
 const openSelect = (open: boolean) => {
   showSelect.value = open;
 };
+
 // 关闭批量操作
 const closeSelect = (close: boolean) => {
   showSelect.value = close;
@@ -76,7 +75,7 @@ const deleteVideoRecord = (id: string) => {
 };
 
 // 获取初始数据
-getRequset(async () => {
+getRequset(async() => {
   getMusicUrls(songRecord.value);
   user.initLoveMusic(songRecord.value);
   // 关闭动画

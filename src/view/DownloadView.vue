@@ -49,7 +49,6 @@ import useTheme from '@/hooks/useTheme';
 
 // 配置主题
 const { fontColor, fontGray, contentHeight } = useTheme();
-
 // 获取用户播放数据
 const user = useUserStore();
 const { mvDownload, musicDownload } = storeToRefs(user);
@@ -67,13 +66,15 @@ const openSelect = (open: boolean) => {
 const closeSelect = (close: boolean) => {
   showSelect.value = close;
 };
+
 // 删除播放的视频记录
 const deleteDownLoad = (id: string) => {
   const index = mvDownload.value.findIndex((item) => item.id == id);
   mvDownload.value.splice(index, 1);
 };
+
 // 获取初始数据
-getRequset(async () => {
+getRequset(async() => {
   getMusicUrls(musicDownload.value);
   user.initLoveMusic(musicDownload.value);
   // 关闭动画

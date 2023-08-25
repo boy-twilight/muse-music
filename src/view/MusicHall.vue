@@ -13,7 +13,7 @@
             infinite-scroll-distance="2"
             :infinite-scroll-immediate="false"
             :infinite-scroll-disabled="topDisabled"
-            style="overflow: auto">
+            style="overflow: scroll">
             <ArtistPlaylist
               v-for="(playlist, index) in curTopPlaylist"
               v-show="playlist.length > 0"
@@ -32,7 +32,7 @@
             infinite-scroll-distance="2"
             :infinite-scroll-immediate="false"
             :infinite-scroll-disabled="recDisabled"
-            style="overflow: auto">
+            style="overflow: scroll">
             <ArtistPlaylist
               v-for="(playlist, index) in curRecPlaylist"
               v-show="playlist.length > 0"
@@ -51,7 +51,7 @@
             infinite-scroll-distance="2"
             :infinite-scroll-immediate="false"
             :infinite-scroll-disabled="styleDisabled"
-            style="overflow: auto">
+            style="overflow: scroll">
             <ArtistPlaylist
               v-for="(playlist, index) in stylePlaylist"
               v-show="playlist.length > 0"
@@ -82,17 +82,14 @@ import {
 import { ArtistPlaylist } from '@components/datalist';
 import { Loading } from '@components/result';
 import Tab from '@components/tab';
-import useScroll from '@/hooks/useScroll';
 import useTheme from '@/hooks/useTheme';
 // 配置主题
 const { fontColor, boxShadow, fontGray, containerHeight } = useTheme();
-const { scrollBarWidth, scrollVisible, autoHideScrollbar, hideScrollbar } =
-  useScroll();
+
 // 页面进入时的动画
 const first = inject('firstLoading') as Ref<boolean>;
 // 加载动画
 const isLoading = ref<boolean>(false);
-
 // 精选歌单
 // 总的歌单数据
 const topPlaylist = reactive<Playlist[][]>([]);
@@ -176,7 +173,6 @@ const loadTopData = () => {
     }
   }
 };
-
 // 网友推荐
 // 总的歌单数据
 const recPlaylist = reactive<Playlist[][]>([]);
@@ -254,7 +250,6 @@ const loadRecData = () => {
     }
   }
 };
-
 // 精品曲风
 // 总的歌单数据
 const stylePlaylist = reactive<Playlist[][]>([]);
@@ -309,7 +304,6 @@ const getStyleTagPlaylist = async () => {
     isLoading.value = false;
   }
 };
-
 // 根据当前的活跃项动态请求数据
 const getActive = (active: string) => {
   if (active == 'rec' && recPlaylist[0].length == 0) {
@@ -375,55 +369,53 @@ getRequset(async () => {
 @font-color: v-bind(fontColor);
 @font-color-gray: v-bind(fontGray);
 @shadow: v-bind(boxShadow);
+.music-hall-container {
+  .container {
+    padding-bottom: 20px;
+    height: v-bind(containerHeight);
+    overflow-x: hidden !important;
+  }
 
-.tab {
-  width: 87vw;
+  .tab {
+    width: 87vw;
 
-  &:deep(.el-tabs__active-bar) {
-    width: 25px !important;
-    left: 19px;
+    &:deep(.el-tabs__active-bar) {
+      width: 25px !important;
+      left: 19px;
+    }
+    &:deep(.el-tabs__header) {
+      padding-left: 3.5vw !important;
+      margin-bottom: 10px;
+    }
   }
-  &:deep(.el-tabs__header) {
-    padding-left: 3.5vw !important;
-    margin-bottom: 10px;
-  }
-}
 
-.container {
-  padding: 0 0 20px v-bind(scrollBarWidth);
-  height: v-bind(containerHeight);
-  overflow-x: hidden !important;
-  &::-webkit-scrollbar {
-    display: v-bind(scrollVisible) !important;
-  }
-}
-
-.playlist {
-  @common: 190px;
-  margin-bottom: 20px;
-  &:deep(.content) {
-    width: 80vw;
-  }
-  &:deep(.title) {
-    width: 80vw;
-    padding-left: 7.3px;
-  }
-  &:deep(.content .list) {
-    margin: 20px 7.3px 0;
-  }
-  &:deep(.content .list .mask) {
-    width: @common;
-    height: @common;
-  }
-  &:deep(.content .list .playcount) {
-    top: 160px;
-  }
-  &:deep(.content .list .el-image) {
-    width: @common;
-    height: @common;
-  }
-  &:deep(.content .list .name) {
-    width: @common;
+  .playlist {
+    @common: 190px;
+    margin-bottom: 20px;
+    &:deep(.content) {
+      width: 80vw;
+    }
+    &:deep(.title) {
+      width: 80vw;
+      padding-left: 7.3px;
+    }
+    &:deep(.content .list) {
+      margin: 20px 7.3px 0;
+    }
+    &:deep(.content .list .mask) {
+      width: @common;
+      height: @common;
+    }
+    &:deep(.content .list .playcount) {
+      top: 160px;
+    }
+    &:deep(.content .list .el-image) {
+      width: @common;
+      height: @common;
+    }
+    &:deep(.content .list .name) {
+      width: @common;
+    }
   }
 }
 </style>

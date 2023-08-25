@@ -132,7 +132,6 @@ const {
   bgMode,
   setTheme
 } = useTheme();
-
 const footer = useFooterStore();
 const {
   isPlay,

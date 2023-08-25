@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import useUserStore from '@/store/user';
 import usePlayMusic from '@/hooks/usePlayMuisc';

@@ -163,8 +163,6 @@ const {
   loadingBg,
   contentHeight,
   headerHeight,
-  musicFooterHeight,
-  musicContentHeight,
   skin,
   skinUrl,
   bgMode,
@@ -264,26 +262,25 @@ getUrlOntime();
 <style lang="less" scoped>
 @side-background: v-bind(menuColor);
 @other-background: v-bind(background);
+@header-height: v-bind(headerHeight);
+@main-height: v-bind(contentHeight);
+//过渡
 .slide-enter-active,
 .slide-leave-active {
   transition: all 0.75s ease !important;
 }
-
 .slide-enter-to {
   position: absolute;
   transform: translateY(0);
 }
-
 .slide-enter-from {
   position: absolute;
   transform: translateY(100%);
 }
-
 .slide-leave-to {
   position: absolute;
   transform: translateY(-100%);
 }
-
 .slide-leave-from {
   position: absolute;
   transform: translateY(0);
@@ -308,14 +305,7 @@ getUrlOntime();
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  .song-detail-container {
-    &:deep(.footer-container) {
-      height: v-bind(musicFooterHeight);
-    }
-    &:deep(.main) {
-      height: v-bind(musicContentHeight);
-    }
-  }
+
   .home-container {
     .side {
       background-color: @side-background;
@@ -335,13 +325,13 @@ getUrlOntime();
       .footer-container,
       .header,
       .footer {
-        height: v-bind(headerHeight);
+        height: @header-height;
       }
 
       // 内容高度
       .content {
         padding: 0;
-        height: v-bind(contentHeight);
+        height: @main-height;
         width: 87vw;
         overflow: hidden;
       }
@@ -351,6 +341,34 @@ getUrlOntime();
 </style>
 
 <style lang="less">
+.el-popover {
+  min-width: 60px !important;
+}
+
+.el-popper__arrow::before {
+  display: none !important;
+}
+
+.search-tip {
+  padding: 0px !important;
+  border-radius: 6px !important;
+  inset: 8vh auto auto 21.5vw !important;
+}
+
+.popover-skin {
+  backdrop-filter: blur(10px) brightness(0.8) saturate(120%) contrast(1.2);
+}
+
+.dropdown-skin {
+  background-color: transparent !important;
+  backdrop-filter: blur(10px) brightness(0.8) saturate(120%) contrast(1.2);
+  .el-dropdown-menu__item {
+    &:hover {
+      background-color: rgba(220, 220, 220, 0.2) !important;
+    }
+  }
+}
+
 .scroll-container {
   display: flex;
   flex-direction: column;

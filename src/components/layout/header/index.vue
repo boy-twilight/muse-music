@@ -234,15 +234,7 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  reactive,
-  ref,
-  watch,
-  inject,
-  computed,
-  onMounted,
-  nextTick,
-} from 'vue';
+import { reactive, ref, watch, computed, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import {

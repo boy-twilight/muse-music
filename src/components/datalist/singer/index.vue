@@ -53,7 +53,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject } from 'vue';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { Artist } from '@/type';
 import useTheme from '@/hooks/useTheme';
@@ -68,7 +68,7 @@ const props = withDefaults(
   {
     showDelete: false,
     transitionName: '',
-    avatarNum: 10,
+    avatarNum: 10
   }
 );
 
@@ -95,8 +95,8 @@ const toArtist = (id: string, score: string) => {
     name: 'artist',
     query: {
       id,
-      score,
-    },
+      score
+    }
   });
 };
 </script>

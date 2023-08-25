@@ -101,7 +101,7 @@ import {
   ArtistMv,
   Singer,
   ArtistPlaylist,
-  ArtistAlbum,
+  ArtistAlbum
 } from '@components/datalist';
 import { UserBatch } from '@components/batch';
 import { UserMusicTable } from '@components/table';
@@ -123,9 +123,8 @@ const {
   loveAlbumId,
   loveVideoId,
   lovePlaylistId,
-  loveRadioId,
+  loveRadioId
 } = storeToRefs(user);
-
 // 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
 // 是否加载选择框进入批量操作模式
@@ -135,6 +134,7 @@ const showSelect = ref<boolean>(false);
 const openSelect = (open: boolean) => {
   showSelect.value = open;
 };
+
 // 关闭批量操作
 const closeSelect = (close: boolean) => {
   showSelect.value = close;
@@ -145,27 +145,31 @@ const deleteLoveVideo = (id: string) => {
   const index = loveVideoId.value.get(id) as number;
   loveVideo.value.splice(index, 1);
 };
+
 // 删除收藏的专辑
 const deleteLoveAlbum = (id: string) => {
   const index = loveAlbumId.value.get(id) as number;
   loveAlbum.value.splice(index, 1);
 };
+
 // 删除收藏的歌手
 const deleteLoveSinger = (index: number) => {
   loveSinger.value.splice(index, 1);
 };
+
 // 删除收藏的歌单
 const deleteLovePlaylist = (id: string) => {
   const index = lovePlaylistId.value.get(id) as number;
   lovePlaylist.value.splice(index, 1);
 };
+
 // 删除收藏的电台
 const deleteLoveRadio = (id: string) => {
   const index = loveRadioId.value.get(id) as number;
   loveRadio.value.splice(index, 1);
 };
 
-getRequset(async () => {
+getRequset(async() => {
   getMusicUrls(loveSongs.value);
   // 关闭动画
   first.value = false;

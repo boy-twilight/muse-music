@@ -32,12 +32,12 @@ import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import useFooterStore from '@/store/footer';
 
-const footer = useFooterStore();
-const { isPlay } = storeToRefs(footer);
-
 const props = defineProps<{
   showAnimation: boolean;
 }>();
+
+const footer = useFooterStore();
+const { isPlay } = storeToRefs(footer);
 
 // 是否展示动画
 const show = computed(() => props.showAnimation);

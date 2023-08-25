@@ -59,10 +59,12 @@ const {
   lyricHeight,
   firstLyricMargin,
   lyricContentHeight,
-  imageHeight
+  imageHeight,
+  musicContentHeight,
+  musicFooterHeight
 } = useTheme();
-
 const footer = useFooterStore();
+// 音乐播放器相关的设置
 const {
   songList,
   current,
@@ -81,7 +83,6 @@ const animationState = computed(() => (isPlay.value ? 'running' : 'paused'));
 const imageUrl = computed(() =>
   songNum.value == 0 ? image : songList.value[current.value].songImage
 );
-
 // 每一次滚动的距离
 const scrollDis = 44;
 // 歌词
@@ -197,8 +198,8 @@ const getLyric = async() => {
     message(messageType.INFO, '请添加音乐！');
   }
 };
-// 请求歌词
 
+// 请求歌词
 if (songNum.value > 0) {
   getLyric();
 }
@@ -211,6 +212,11 @@ if (songNum.value > 0) {
 @first-lyric-margin: v-bind(firstLyricMargin);
 @image-height: v-bind(imageHeight);
 @theme-color: v-bind(themeColor);
+@main-height: v-bind(musicContentHeight);
+@footer-height: v-bind(musicFooterHeight);
+@animation-time: v-bind(animationTime);
+@animatiom-state: v-bind(animationState);
+@box-shadow: v-bind(boxShadow);
 @color-white: #ffffff;
 @light-white: rgba(240, 240, 240, 0.8);
 
@@ -243,7 +249,7 @@ if (songNum.value > 0) {
 
   .is-current {
     background-size: 100% 100%;
-    animation: scan v-bind(animationTime) linear 1 forwards;
+    animation: scan @animation-time linear 1 forwards;
     font-size: 20px;
     transition: 0.4s;
   }
@@ -272,16 +278,17 @@ if (songNum.value > 0) {
     justify-content: center;
     align-items: center;
     position: relative;
+    height: @main-height;
 
     .left {
       width: @image-height;
       height: @image-height;
       margin-right: 120px;
       border-radius: 50%;
-      box-shadow: v-bind(boxShadow);
+      box-shadow: @box-shadow;
       object-fit: cover;
       animation: rotate 10s linear infinite;
-      animation-play-state: v-bind(animationState);
+      animation-play-state: @animatiom-state;
     }
     .right {
       width: @lyric-height;
@@ -335,6 +342,7 @@ if (songNum.value > 0) {
     }
   }
   .footer-container {
+    height: @footer-height;
     &:deep(.left) {
       padding-left: 2vw;
       .music-image,
