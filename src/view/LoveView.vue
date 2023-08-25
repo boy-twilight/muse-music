@@ -101,7 +101,7 @@ import {
   ArtistMv,
   Singer,
   ArtistPlaylist,
-  ArtistAlbum
+  ArtistAlbum,
 } from '@components/datalist';
 import { UserBatch } from '@components/batch';
 import { UserMusicTable } from '@components/table';
@@ -123,7 +123,7 @@ const {
   loveAlbumId,
   loveVideoId,
   lovePlaylistId,
-  loveRadioId
+  loveRadioId,
 } = storeToRefs(user);
 // 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
@@ -169,7 +169,7 @@ const deleteLoveRadio = (id: string) => {
   loveRadio.value.splice(index, 1);
 };
 
-getRequset(async() => {
+getRequset(async () => {
   getMusicUrls(loveSongs.value);
   // 关闭动画
   first.value = false;

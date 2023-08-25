@@ -40,7 +40,7 @@ import {
   SearchButton,
   SortButton,
   PlayButton,
-  CommonButton
+  CommonButton,
 } from '@components/button';
 import Pagination from '@components/pagination';
 
@@ -76,7 +76,7 @@ const songIdMapper = computed(
 // 当前页数
 const curPage = ref<number>(1);
 // 一页多少数据
-const pageSize = ref<number>(40);
+const pageSize = ref<number>(60);
 // 歌曲
 const songs = computed(() => {
   return target.value

@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, inject } from 'vue';
+import { ref } from 'vue';
 import { Menu } from '@/type';
 import { ss } from '@/utils';
 import logo from '@assets/image/logo.svg';

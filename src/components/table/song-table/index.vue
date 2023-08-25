@@ -144,7 +144,7 @@ const props = withDefaults(
     sort: undefined,
     isCancelSort: false,
     showHeader: true,
-    pageSize: 0,
+    pageSize: 0
   }
 );
 
@@ -269,7 +269,7 @@ onBeforeRouteLeave(() => {
 
 defineExpose({
   clearSelect,
-  getSelectItems,
+  getSelectItems
 });
 </script>
 
