@@ -115,12 +115,6 @@ select {
   }
 }
 
-#nprogress {
-  .bar {
-    background: #1ed2a9 !important;
-  }
-}
-
 ::-webkit-scrollbar {
   width: 7px;
   box-sizing: border-box;

@@ -30,6 +30,8 @@ const imageSize = computed(() => props.size + 'px');
 </script>
 
 <style lang="less" scoped>
+@image-size: v-bind(imageSize);
+@font-color-gray: v-bind(fontGray);
 .no-search {
   display: flex;
   flex-direction: column;
@@ -37,8 +39,8 @@ const imageSize = computed(() => props.size + 'px');
   width: 80vw;
   position: relative;
   .image {
-    width: v-bind(imageSize);
-    height: v-bind(imageSize);
+    width: @image-size;
+    height: @image-size;
   }
 
   .no-data {
@@ -48,7 +50,7 @@ const imageSize = computed(() => props.size + 'px');
     bottom: 0;
     font-size: 18px;
     font-weight: 520;
-    color: v-bind(fontGray);
+    color: @font-color-gray;
   }
 }
 </style>

@@ -74,7 +74,7 @@ const deleteDownLoad = (id: string) => {
 };
 
 // 获取初始数据
-getRequset(async () => {
+getRequset(async() => {
   getMusicUrls(musicDownload.value);
   user.initLoveMusic(musicDownload.value);
   // 关闭动画

@@ -369,10 +369,11 @@ getRequset(async() => {
 @font-color: v-bind(fontColor);
 @font-color-gray: v-bind(fontGray);
 @shadow: v-bind(boxShadow);
+@container-height: v-bind(containerHeight);
 .music-hall-container {
   .container {
     padding-bottom: 20px;
-    height: v-bind(containerHeight);
+    height: @container-height;
     overflow-x: hidden !important;
   }
 

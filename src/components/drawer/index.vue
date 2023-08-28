@@ -306,7 +306,7 @@ const cancel = () => {
           font-size: 13px;
           display: inline-block;
           letter-spacing: 1px;
-          color: v-bind(fontColor);
+          color: @font-color;
         }
         .color-btn {
           margin-top: 7px;

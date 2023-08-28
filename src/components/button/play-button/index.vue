@@ -29,6 +29,7 @@ const { playAllMusic } = usePlayMusic();
 
 <style lang="less" scoped>
 @theme-color: v-bind(themeColor);
+@box-shadow: v-bind(boxShadow);
 .el-button {
   .iconfont {
     font-size: 15px;
@@ -40,6 +41,6 @@ const { playAllMusic } = usePlayMusic();
   font-size: 14px;
   width: 120px;
   height: 34px;
-  box-shadow: v-bind(boxShadow);
+  box-shadow: @box-shadow;
 }
 </style>

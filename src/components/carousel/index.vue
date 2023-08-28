@@ -28,6 +28,7 @@ defineProps<{
 </script>
 
 <style lang="less" scoped>
+@image-size: v-bind(height);
 .carousel {
   width: 80vw;
   border-radius: 10px;
@@ -37,7 +38,7 @@ defineProps<{
   }
 
   img {
-    height: v-bind(height);
+    height: @image-size;
     object-fit: cover;
     object-position: center top;
     border-radius: 10px;

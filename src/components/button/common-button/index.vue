@@ -35,6 +35,8 @@ const { boxShadow, themeColor } = useTheme();
 
 <style lang="less" scoped>
 @button-font-color: #334155;
+@box-shadow: v-bind(boxShadow);
+@theme-color: v-bind(themeColor);
 .el-button {
   .iconfont,
   .iconfont_1 {
@@ -44,9 +46,9 @@ const { boxShadow, themeColor } = useTheme();
   width: 120px;
   height: 34px;
   color: @button-font-color;
-  box-shadow: v-bind(boxShadow);
+  box-shadow: @box-shadow;
   &:hover {
-    color: v-bind(themeColor);
+    color: @theme-color;
   }
 }
 </style>
