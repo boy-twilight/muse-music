@@ -55,10 +55,9 @@
                 :page-size="pageSize" />
               <Pagination
                 v-show="pageSize < total"
-                :cur-page="curPage"
+                v-model:cur-page="curPage"
                 :page-size="pageSize"
-                :total="total"
-                @page-change="pageChange" />
+                :total="total" />
             </el-tab-pane>
             <el-tab-pane
               label="专辑"
@@ -119,7 +118,7 @@ import {
   getArtistDesc,
   getArtistAlbum,
   getArtistSongs,
-  getMusicDetail,
+  getMusicDetail
 } from '@/api';
 import { Artist, Song, MV, ArtistDesc, Album } from '@/type';
 import { messageType } from '@/constants/common';
@@ -128,8 +127,9 @@ import {
   getMusicInfos,
   formatTime,
   message,
-  share,
+  share
 } from '@/utils';
+import { ONLINE_MUISC_PAGESIZE } from '@/constants/common';
 import useUserStore from '@/store/user';
 import { PlayButton, MoreButton, CommonButton } from '@components/button';
 import { ArtistMv, ArtistAlbum } from '@components/datalist';
@@ -154,7 +154,7 @@ const singer = reactive<Artist>({
   score,
   id: id,
   avatar: '',
-  alias: [],
+  alias: []
 });
 // 歌手基本简介
 const introduce = reactive<ArtistDesc[]>([]);
@@ -164,7 +164,7 @@ const hotSongList = reactive<Song[]>([]);
 // 当前页数
 const curPage = ref<number>(1);
 // 一页多少数据
-const pageSize = ref<number>(30);
+const pageSize = ref<number>(ONLINE_MUISC_PAGESIZE);
 // 总的数据数
 const total = computed(() => hotSongList.length);
 // 当前展示的歌曲列表
@@ -186,18 +186,13 @@ const first = inject('firstLoading') as Ref<boolean>;
 const noResult = reactive<Map<string, boolean>>(
   new Map([
     ['album', true],
-    ['mv', true],
+    ['mv', true]
   ])
 );
 // 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
 // 批量操作容器
 const batch = ref<InstanceType<typeof OnlineBatch>>();
-
-// 页数变化
-const pageChange = (page: number) => {
-  curPage.value = page;
-};
 
 // 分享歌手
 const shareSinger = () => {
@@ -211,7 +206,7 @@ const shareSinger = () => {
 };
 
 // 获取当前活跃的选项，并根据选项加载数据
-const getActive = async (active: string) => {
+const getActive = async(active: string) => {
   // 点击加载数据
   if (active == 'album') {
     if (artistAlbum.length != 0) return;
@@ -227,7 +222,7 @@ const getActive = async (active: string) => {
           id: item.id,
           cover: picUrl,
           publishTime: formatTime(publishTime),
-          artistId: id + '',
+          artistId: id + ''
         });
       });
     } catch (err: any) {
@@ -248,7 +243,7 @@ const getActive = async (active: string) => {
           name,
           artist: artistName,
           image: imgurl16v9,
-          playCount,
+          playCount
         });
       });
     } catch (err: any) {
@@ -264,7 +259,7 @@ const getActive = async (active: string) => {
       introduction.forEach((item: any) => {
         introduce.push({
           title: item.ti,
-          content: item.txt,
+          content: item.txt
         });
       });
     } catch (err: any) {
@@ -275,14 +270,14 @@ const getActive = async (active: string) => {
 };
 
 // 获取初始数据
-const getData = async () => {
+const getData = async() => {
   first.value = true;
   try {
     const responses: any[] = await Promise.all([
       getArtistInfo(id),
-      getArtistSongs(id, 1000),
+      getArtistSongs(id, 1000)
     ]);
-    responses.forEach(async (response, index) => {
+    responses.forEach(async(response, index) => {
       // 获取歌手的具体信息
       if (index == 0) {
         const { artist } = response;

@@ -40,7 +40,7 @@ import useTheme from '@/hooks/useTheme';
 const props = defineProps<{
   // 在哪个页面
   pageName: string;
-  //是否开启多选
+  // 是否开启多选
   showSelect: boolean;
 }>();
 
@@ -70,12 +70,12 @@ const songs = computed(() => {
 const selectSongs = computed(() => table.value?.getSelectItems() || []);
 const { playSelectMusic } = usePlayMusic();
 
-//打开多选
+// 打开多选
 const openSelectBox = () => {
   emits('update:showSelect', true);
   table.value?.openSelectBox();
 };
-//关闭多选
+// 关闭多选
 const closeSelectBox = () => {
   emits('update:showSelect', false);
   table.value?.closeSelectBox();
@@ -114,7 +114,7 @@ const deleteSelect = () => {
 
 defineExpose({
   openSelectBox,
-  closeSelectBox,
+  closeSelectBox
 });
 </script>
 

@@ -3,7 +3,9 @@
     <div class="recent-container scroll-container">
       <UserBatch
         page-name="RecentPlayView"
-        v-show="showSelect" />
+        v-model:showSelect="showSelect"
+        v-show="showSelect"
+        ref="batch" />
       <Tab
         v-show="!showSelect"
         active="song">
@@ -56,10 +58,12 @@ const { videoRecord, songRecord } = storeToRefs(user);
 const first = inject('firstLoading') as Ref<boolean>;
 // 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
+// 批量操作容器
+const batch = ref<InstanceType<typeof UserBatch>>();
 
 // 打开批量操作
-const openSelect = (open: boolean) => {
-  showSelect.value = open;
+const openSelect = () => {
+  batch.value?.openSelectBox();
 };
 
 // 删除播放记录的视频
@@ -69,7 +73,7 @@ const deleteVideoRecord = (id: string) => {
 };
 
 // 获取初始数据
-const getData = async () => {
+const getData = async() => {
   first.value = true;
   await getMusicUrls(songRecord.value);
   user.initLoveMusic(songRecord.value);

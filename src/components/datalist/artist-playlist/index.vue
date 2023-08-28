@@ -39,10 +39,9 @@
       </TransitionGroup>
       <Pagination
         v-if="showPagination && playlists.length > pageSize"
-        :cur-page="curPage"
+        v-model:cur-page="curPage"
         :page-size="pageSize"
         text="个歌单"
-        @page-change="pageChange"
         :total="total" />
     </div>
   </div>
@@ -95,10 +94,6 @@ const curShow = computed(() =>
   )
 );
 
-// 页数变化
-const pageChange = async(page: number) => {
-  curPage.value = page;
-};
 // 前往歌单页面
 const toPlayList = (list: Playlist) => {
   router.push({

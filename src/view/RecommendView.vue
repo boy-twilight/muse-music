@@ -71,14 +71,14 @@ const first = inject('firstLoading') as Ref<boolean>;
 // 播放音乐
 const { playMusic } = usePlayMusic();
 
-const getData = async () => {
+const getData = async() => {
   first.value = true;
   try {
     const responses: any[] = await Promise.all([
       getBanner(),
       getRecPlaylist(10),
       getDeafultSong(40),
-      getMv(10, '内地', '全部', '最新'),
+      getMv(10, '内地', '全部', '最新')
     ]);
     responses.forEach((response, index) => {
       // 获取banner
@@ -88,7 +88,7 @@ const getData = async () => {
           const { imageUrl, targetId } = item;
           banners.push({
             id: targetId,
-            pic: imageUrl,
+            pic: imageUrl
           });
         });
       }
@@ -104,7 +104,7 @@ const getData = async () => {
               playCount,
               description,
               tags,
-              creator,
+              creator
             } = item;
             playLists.push({
               name,
@@ -115,8 +115,8 @@ const getData = async () => {
               tag: tags,
               creator: {
                 avatarUrl: creator.avatarUrl,
-                nickname: creator.nickname,
-              },
+                nickname: creator.nickname
+              }
             });
           }
         });
@@ -124,7 +124,7 @@ const getData = async () => {
       // 获取推荐歌曲
       else if (index == 2) {
         const {
-          data: { list },
+          data: { list }
         } = response;
         // 获取歌曲的基本信息
         for (let item of list) {
@@ -149,7 +149,7 @@ const getData = async () => {
             name: name as string,
             image: cover as string,
             playCount: playCount as string,
-            artist: artistName as string,
+            artist: artistName as string
           });
         });
       }

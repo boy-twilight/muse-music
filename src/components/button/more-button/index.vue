@@ -36,7 +36,7 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-  (e: 'openSelect', showSelect: boolean): void;
+  (e: 'openSelect'): void;
 }>();
 
 // 配置主题
@@ -60,7 +60,7 @@ const more = reactive<DropDownItem[]>([
 
 const operateMore = (command: string) => {
   if (command == '批量操作') {
-    emits('openSelect', true);
+    emits('openSelect');
   } else if (command == '分享') {
     props.shareTo();
   }

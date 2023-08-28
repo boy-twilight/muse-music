@@ -4,7 +4,8 @@
       <UserBatch
         page-name="LoveView"
         v-show="showSelect"
-        v-model:show-select="showSelect" />
+        v-model:show-select="showSelect"
+        ref="batch" />
       <Tab
         active="song"
         v-show="!showSelect">
@@ -101,7 +102,7 @@ import {
   ArtistMv,
   Singer,
   ArtistPlaylist,
-  ArtistAlbum,
+  ArtistAlbum
 } from '@components/datalist';
 import { UserBatch } from '@components/batch';
 import { UserMusicTable } from '@components/table';
@@ -123,16 +124,17 @@ const {
   loveAlbumId,
   loveVideoId,
   lovePlaylistId,
-  loveRadioId,
+  loveRadioId
 } = storeToRefs(user);
 // 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
 // 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
-
+// 批量操作容器
+const batch = ref<InstanceType<typeof UserBatch>>();
 // 打开批量操作
-const openSelect = (open: boolean) => {
-  showSelect.value = open;
+const openSelect = () => {
+  batch.value?.openSelectBox();
 };
 
 // 删除收藏的视频
@@ -164,7 +166,7 @@ const deleteLoveRadio = (id: string) => {
   loveRadio.value.splice(index, 1);
 };
 
-const getData = async () => {
+const getData = async() => {
   first.value = true;
   await getMusicUrls(loveSongs.value);
   // 关闭动画

@@ -117,11 +117,10 @@
     <!-- 分页 -->
     <Pagination
       v-if="pageSize < total"
-      :cur-page="curPage"
-      :page-size="pageSize"
+      v-model:curPage="curPage"
+      :pageSize="pageSize"
       :total="total"
-      text="个评论"
-      @page-change="pageChange" />
+      text="个评论" />
   </div>
 </template>
 
@@ -157,11 +156,6 @@ const curList = computed(() =>
 );
 // 总的数据数
 const total = computed(() => props.comments.length);
-
-// 页数变化
-const pageChange = (page: number) => {
-  curPage.value = page;
-};
 
 // 获取一个随机评论时间
 const getRandomTime = (time: string): string => {

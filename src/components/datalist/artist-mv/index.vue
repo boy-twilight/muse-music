@@ -42,9 +42,8 @@
       <Pagination
         v-if="showPagination && mvs.length > pageSize"
         text="个视频"
-        :cur-page="curPage"
-        :page-size="pageSize"
-        @page-change="pageChange"
+        v-model:curPage="curPage"
+        :pageSize="pageSize"
         :total="total" />
     </div>
   </div>
@@ -93,10 +92,6 @@ const curShow = computed(() =>
     curPage.value * pageSize.value
   )
 );
-// 页数变化
-const pageChange = (page: number) => {
-  curPage.value = page;
-};
 
 // 点击推荐跳转
 const toMv = (id: string) => {

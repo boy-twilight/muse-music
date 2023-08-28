@@ -36,7 +36,7 @@ withDefaults(
 );
 
 const emits = defineEmits<{
-  (e: 'pageChange', page: number): void;
+  (e: 'update:curPage', page: number): void;
 }>();
 
 // 配置主题
@@ -52,7 +52,7 @@ const checkValid = () => {
 // 当页数发生改变时
 const changePage = async(page: number) => {
   if (page) {
-    emits('pageChange', page);
+    emits('update:curPage', page);
   }
 };
 </script>

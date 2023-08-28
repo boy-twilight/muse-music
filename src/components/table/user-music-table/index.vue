@@ -9,7 +9,7 @@
       <CommonButton
         icon="&#xe617;"
         name="批量操作"
-        @click="emits('openSelect', true)" />
+        @click="emits('openSelect')" />
       <SearchButton v-model="content" />
       <SortButton @get-sort-choice="getSortChoice" />
     </div>
@@ -20,10 +20,9 @@
       :is-cancel-sort="cancelSort" />
     <Pagination
       v-show="pageSize < total"
-      :cur-page="curPage"
+      v-model:cur-page="curPage"
       :page-size="pageSize"
-      :total="total"
-      @page-change="pageChange" />
+      :total="total" />
   </div>
 </template>
 
@@ -34,6 +33,7 @@ import useUserStore from '@/store/user';
 import { messageType } from '@/constants/common';
 import { message } from '@/utils';
 import { Song } from '@/type';
+import { USER_MUSIC_PAGESIZE } from '@/constants/common';
 import { SongTable } from '@components/table';
 import {
   SearchButton,
@@ -52,7 +52,7 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-  (e: 'openSelect', showSelect: boolean): void;
+  (e: 'openSelect'): void;
 }>();
 
 // 根据页面传递的参数加载歌曲
@@ -71,7 +71,7 @@ const target = computed(() => {
 // 当前页数
 const curPage = ref<number>(1);
 // 一页多少数据
-const pageSize = ref<number>(60);
+const pageSize = ref<number>(USER_MUSIC_PAGESIZE);
 // 歌曲
 const songs = computed(() => {
   return target.value
@@ -85,10 +85,6 @@ const songs = computed(() => {
 });
 // 总的数据数
 const total = computed(() => target.value.length);
-// 页数变化
-const pageChange = (page: number) => {
-  curPage.value = page;
-};
 // 按钮名字
 const buttonName = computed(() => {
   if (props.pageName == 'LoveView') {

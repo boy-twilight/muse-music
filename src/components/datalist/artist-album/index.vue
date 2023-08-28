@@ -33,9 +33,8 @@
       </TransitionGroup>
       <Pagination
         v-if="showPagination && albums.length > pageSize"
-        :cur-page="curPage"
+        v-model:cur-page="curPage"
         :page-size="pageSize"
-        @page-change="pageChange"
         text="个专辑"
         :total="total" />
     </div>
@@ -90,11 +89,6 @@ const curShow = computed(() =>
     curPage.value * pageSize.value
   )
 );
-
-// 页数变化
-const pageChange = (page: number) => {
-  curPage.value = page;
-};
 
 // 跳转专辑详情
 const toAlbumDetail = (id: string, artistId: string) => {

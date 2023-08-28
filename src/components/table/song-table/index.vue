@@ -140,7 +140,7 @@ const props = withDefaults(
     sort: undefined,
     isCancelSort: false,
     showHeader: true,
-    pageSize: 0,
+    pageSize: 0
   }
 );
 
@@ -166,11 +166,11 @@ const getSelectItems = (): Song[] => tableContainer.value?.getSelectionRows();
 const clearSelect = () => {
   tableContainer.value!.clearSelection();
 };
-//打开多选
+// 打开多选
 const openSelectBox = () => {
   showSelectBox.value = true;
 };
-//关闭多选
+// 关闭多选
 const closeSelectBox = () => {
   showSelectBox.value = false;
   clearSelect();
@@ -277,7 +277,7 @@ defineExpose({
   clearSelect,
   getSelectItems,
   openSelectBox,
-  closeSelectBox,
+  closeSelectBox
 });
 </script>
 

@@ -3,7 +3,9 @@
     <div class="download-container scroll-container">
       <UserBatch
         v-show="showSelect"
-        page-name="DownloadView" />
+        v-model:showSelect="showSelect"
+        page-name="DownloadView"
+        ref="batch" />
       <Tab
         v-show="!showSelect"
         active="song">
@@ -55,10 +57,12 @@ const { mvDownload, musicDownload } = storeToRefs(user);
 const first = inject('firstLoading') as Ref<boolean>;
 // 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
+// 批量操作容器
+const batch = ref<InstanceType<typeof UserBatch>>();
 
 // 打开批量操作
-const openSelect = (open: boolean) => {
-  showSelect.value = open;
+const openSelect = () => {
+  batch.value?.openSelectBox();
 };
 
 // 删除播放的视频记录
@@ -68,7 +72,7 @@ const deleteDownLoad = (id: string) => {
 };
 
 // 获取初始数据
-const getData = async () => {
+const getData = async() => {
   first.value = true;
   await getMusicUrls(musicDownload.value);
   user.initLoveMusic(musicDownload.value);
