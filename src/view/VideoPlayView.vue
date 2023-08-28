@@ -114,7 +114,7 @@ import {
   getVideoComment,
   getMvComment
 } from '@/api';
-import { message, getRequset, formatTime, share, getComment } from '@/utils';
+import { message, formatTime, share, getComment } from '@/utils';
 import DPlayer from 'dplayer';
 import useUserStore from '@/store/user';
 import { CommonButton } from '@components/button';
@@ -240,7 +240,16 @@ const playRe = (index: number, id: string) => {
   }
 };
 
-getRequset(async() => {
+// 卸载播放器，取消事件监听
+onBeforeUnmount(() => {
+  const video = document.querySelector('.dplayer-video') as HTMLVideoElement;
+  video.onended = null;
+  dplayer.value?.destroy();
+});
+
+// 获取初始数据
+const getData = async() => {
+  first.value = true;
   // 判断地址是否包含字母，有则用视频接口请求地址
   const rule = /.*[A-Z]+.*/;
   if (!rule.test(id)) {
@@ -363,14 +372,9 @@ getRequset(async() => {
   init();
   // 关闭动画
   first.value = false;
-}, first);
+};
 
-// 卸载播放器，取消事件监听
-onBeforeUnmount(() => {
-  const video = document.querySelector('.dplayer-video') as HTMLVideoElement;
-  video.onended = null;
-  dplayer.value?.destroy();
-});
+getData();
 </script>
 
 <style lang="less" scoped>

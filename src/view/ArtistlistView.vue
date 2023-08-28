@@ -50,7 +50,6 @@ import useTheme from '@/hooks/useTheme';
 // 配置主题
 const { fontColor, fontBlack, boxShadow, themeColor, fontGray, contentHeight } =
   useTheme();
-
 // 歌手榜单
 const artistlist = reactive<Artist[]>([]);
 // 搜索

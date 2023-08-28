@@ -38,7 +38,7 @@
 <script lang="ts" setup>
 import { ref, inject, Ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { getMusicUrls, getRequset } from '@/utils';
+import { getMusicUrls } from '@/utils';
 import useUserStore from '@/store/user';
 import { ArtistMv } from '@components/datalist';
 import { UserBatch } from '@components/batch';
@@ -74,12 +74,15 @@ const deleteDownLoad = (id: string) => {
 };
 
 // 获取初始数据
-getRequset(async() => {
-  getMusicUrls(musicDownload.value);
+const getData = async() => {
+  first.value = true;
+  await getMusicUrls(musicDownload.value);
   user.initLoveMusic(musicDownload.value);
   // 关闭动画
   first.value = false;
-}, first);
+};
+
+getData();
 </script>
 
 <style lang="less" scoped>

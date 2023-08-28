@@ -39,7 +39,7 @@
 <script lang="ts" setup>
 import { ref, inject, Ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { getMusicUrls, getRequset } from '@/utils';
+import { getMusicUrls } from '@/utils';
 import useUserStore from '@/store/user';
 import { ArtistMv } from '@components/datalist';
 import { UserBatch } from '@components/batch';
@@ -75,12 +75,15 @@ const deleteVideoRecord = (id: string) => {
 };
 
 // 获取初始数据
-getRequset(async() => {
-  getMusicUrls(songRecord.value);
+const getData = async() => {
+  first.value = true;
+  await getMusicUrls(songRecord.value);
   user.initLoveMusic(songRecord.value);
   // 关闭动画
   first.value = false;
-}, first);
+};
+
+getData();
 </script>
 
 <style lang="less" scoped>

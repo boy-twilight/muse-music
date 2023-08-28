@@ -5,7 +5,6 @@
       <OnlineBatch
         v-show="showSelect"
         :songs="curList"
-        :song-id-mapper="songIdMapper"
         @close-select="closeSelect" />
       <!-- 顶部歌手搜索结果展示 -->
       <div
@@ -61,8 +60,7 @@
               </div>
               <SongTable
                 :songs="curList"
-                :page-size="pageSize"
-                :song-id-mapper="songIdMapper" />
+                :page-size="pageSize" />
               <Pagination
                 v-show="pageSize < total"
                 :cur-page="curPage"
@@ -76,71 +74,71 @@
             name="video">
             <Loading :is-loading="isLoading" />
             <NoResult
-              v-show="needNoSearch[0]"
+              v-show="noResult.get('video')"
               text="暂无搜索结果" />
             <ArtistMv
               :mvs="videoResult"
               :show-pagination="true"
-              v-show="!needNoSearch[0]" />
+              v-show="!noResult.get('video')" />
           </el-tab-pane>
           <el-tab-pane
             label="MV"
             name="mv">
             <Loading :is-loading="isLoading" />
             <No
-              v-show="needNoSearch[1]"
+              v-show="noResult.get('mv')"
               text="暂无搜索结果" />
             <ArtistMv
               :mvs="mvResult"
               :show-pagination="true"
-              v-show="!needNoSearch[1]" />
+              v-show="!noResult.get('mv')" />
           </el-tab-pane>
           <el-tab-pane
             label="专辑"
             name="album">
             <Loading :is-loading="isLoading" />
             <NoResult
-              v-show="needNoSearch[2]"
+              v-show="noResult.get('album')"
               text="暂无搜索结果" />
             <ArtistAlbum
               :albums="albumResult"
               :show-pagination="true"
-              v-show="!needNoSearch[2]" />
+              v-show="!noResult.get('album')" />
           </el-tab-pane>
           <el-tab-pane
             label="电台"
             name="radio">
             <Loading :is-loading="isLoading" />
             <NoResult
-              v-show="needNoSearch[3]"
+              v-show="noResult.get('radio')"
               text="暂无搜索结果" />
             <ArtistPlaylist
               :playlists="radioResult"
               :show-pagination="true"
               type="radio"
-              v-show="!needNoSearch[3]" />
+              v-show="!noResult.get('radio')" />
           </el-tab-pane>
           <el-tab-pane
             label="歌单"
             name="playList">
             <Loading :is-loading="isLoading" />
             <NoResult
-              v-show="needNoSearch[4]"
+              v-show="noResult.get('playList')"
               text="暂无搜索结果" />
             <ArtistPlaylist
               :playlists="playlistResult"
               :show-pagination="true"
-              v-show="!needNoSearch[4]" />
+              v-show="!noResult.get('playList')" />
           </el-tab-pane>
           <el-tab-pane
             label="歌手"
             name="singer">
             <Loading :is-loading="isLoading" />
             <NoResult
-              v-show="needNoSearch[5]"
+              v-show="noResult.get('singer')"
               text="暂无搜索结果" />
             <Singer
-              v-show="!needNoSearch[5]"
+              v-show="!noResult.get('singer')"
               :singer-list="singerResult" />
           </el-tab-pane>
           <el-tab-pane
@@ -148,9 +146,11 @@
             name="lyric">
             <Loading :is-loading="isLoading" />
             <NoResult
-              v-show="needNoSearch[6]"
+              v-show="noResult.get('lyric')"
               text="暂无搜索结果" />
-            <div class="lyric-container">
+            <div
+              v-show="!noResult.get('lyric')"
+              class="lyric-container">
               <div
                 class="lyric"
                 v-for="song in curList"
@@ -246,12 +246,11 @@ import {
   message,
   getMusicUrls,
   formatTime,
-  getRequset,
   getMusicInfos,
   transformTime,
   downloadLyric,
   share,
-  shareMuiscInfo
+  shareMuiscInfo,
 } from '@/utils';
 import { searchMusic, getMusicDetail } from '@/api';
 import useUserStore from '@/store/user';
@@ -262,7 +261,7 @@ import {
   ArtistAlbum,
   ArtistMv,
   ArtistPlaylist,
-  Singer
+  Singer,
 } from '@components/datalist';
 import { Loading, NoResult } from '@components/result';
 import Tab from '@components/tab';
@@ -278,7 +277,7 @@ const {
   themeColor,
   singerBg,
   buttonBg,
-  contentHeight
+  contentHeight,
 } = useTheme();
 // 路由器
 const router = useRouter();
@@ -292,10 +291,6 @@ const keyWord = route.query.keyWord + '';
 const activeTab = ref<string>('song');
 // 音乐搜索的结果
 const musicResult = reactive<Song[]>([]);
-// 歌曲id与Index对应的map
-const songIdMapper = computed(
-  () => new Map(musicResult.map((item, index) => [item.id, index]))
-);
 // 视频搜索结果
 const videoResult = reactive<MV[]>([]);
 // mv搜索结果
@@ -313,13 +308,13 @@ const firstSinger = computed(() =>
   singerResult.length > 0
     ? singerResult[0]
     : ({
-      name: '',
-      avatar: '',
-      id: '',
-      score: '',
-      albumSize: '',
-      mvSize: ''
-    } as Artist)
+        name: '',
+        avatar: '',
+        id: '',
+        score: '',
+        albumSize: '',
+        mvSize: '',
+      } as Artist)
 );
 // 歌词的搜索结果
 const lyricResult = reactive<Song[]>([]);
@@ -332,15 +327,17 @@ const isLoading = ref<boolean>(false);
 // 页面第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
 // 是否展示占位图片
-const needNoSearch = reactive<boolean[]>([
-  false,
-  false,
-  false,
-  false,
-  false,
-  false,
-  false
-]);
+const noResult = reactive<Map<string, boolean>>(
+  new Map([
+    ['video', true],
+    ['mv', true],
+    ['album', true],
+    ['radio', true],
+    ['playList', true],
+    ['lyric', true],
+    ['singer', true],
+  ])
+);
 // 当前展示歌词的长度
 const lyricLen = reactive<number[]>([]);
 // 展开或者关闭歌词
@@ -398,199 +395,191 @@ const pageChange = (page: number) => {
 const { playMusic } = usePlayMusic();
 
 // 根据当前的活跃请求搜索结果
-const getActive = (active: string) => {
+const getActive = async (active: string) => {
   activeTab.value = active;
-  if (active == 'video' && videoResult.length == 0) {
-    getRequset(async() => {
-      try {
-        const response: any = await searchMusic(1014, 100, keyWord);
-        const {
-          result: { videos }
-        } = response;
-        if (videos && videos.length > 0) {
-          videos.forEach((item: any) => {
-            const { vid, title, coverUrl, creator, playTime } = item;
-            videoResult.push({
-              id: vid,
-              name: title,
-              image: coverUrl,
-              artist: creator[0].userName,
-              playCount: playTime
-            });
+  if (active == 'video') {
+    if (videoResult.length != 0) return;
+    isLoading.value = true;
+    try {
+      const response: any = await searchMusic(1014, 100, keyWord);
+      const {
+        result: { videos },
+      } = response;
+      if (videos && videos.length > 0) {
+        videos.forEach((item: any) => {
+          const { vid, title, coverUrl, creator, playTime } = item;
+          videoResult.push({
+            id: vid,
+            name: title,
+            image: coverUrl,
+            artist: creator[0].userName,
+            playCount: playTime,
           });
-        }
-      } catch (err: any) {
-        message(messageType.ERROR, err.message);
+        });
       }
-      // 关闭动画
-      isLoading.value = false;
-      // 判断是否需要占位图片
-      needNoSearch[0] = videoResult.length == 0;
-    }, isLoading);
-  } else if (active == 'mv' && mvResult.length == 0) {
-    getRequset(async() => {
-      try {
-        const response: any = await searchMusic(1004, 100, keyWord);
-        const {
-          result: { mvs }
-        } = response;
-        if (mvs && mvs.length != 0) {
-          mvs.forEach((item: any) => {
-            const { id, name, cover, artistName, playCount } = item;
-            mvResult.push({
-              id,
-              name,
-              image: cover,
-              artist: artistName,
-              playCount
-            });
+    } catch (err: any) {
+      message(messageType.ERROR, err.message);
+    }
+    // 判断是否需要占位图片
+    noResult.set('video', videoResult.length == 0);
+  } else if (active == 'mv') {
+    if (mvResult.length != 0) return;
+    isLoading.value = true;
+    try {
+      const response: any = await searchMusic(1004, 100, keyWord);
+      const {
+        result: { mvs },
+      } = response;
+      if (mvs && mvs.length != 0) {
+        mvs.forEach((item: any) => {
+          const { id, name, cover, artistName, playCount } = item;
+          mvResult.push({
+            id,
+            name,
+            image: cover,
+            artist: artistName,
+            playCount,
           });
-        }
-      } catch (err: any) {
-        message(messageType.ERROR, err.message);
+        });
       }
-      // 关闭动画
-      isLoading.value = false;
-      // 判断是否需要占位图片
-      needNoSearch[1] = mvResult.length == 0;
-    }, isLoading);
-  } else if (active == 'album' && albumResult.length == 0) {
-    getRequset(async() => {
-      try {
-        const response: any = await searchMusic(10, 60, keyWord);
-        const {
-          result: { albums }
-        } = response;
-        if (albums && albums.length > 0) {
-          albums.forEach((item: any) => {
-            const { id, name, picUrl, publishTime, artist } = item;
-            albumResult.push({
-              id,
-              name,
-              cover: picUrl,
-              publishTime: formatTime(publishTime),
-              artistId: artist.id
-            });
+    } catch (err: any) {
+      message(messageType.ERROR, err.message);
+    }
+    // 判断是否需要占位图片
+    noResult.set('mv', mvResult.length == 0);
+  } else if (active == 'album') {
+    if (albumResult.length != 0) return;
+    isLoading.value = true;
+    try {
+      const response: any = await searchMusic(10, 60, keyWord);
+      const {
+        result: { albums },
+      } = response;
+      if (albums && albums.length > 0) {
+        albums.forEach((item: any) => {
+          const { id, name, picUrl, publishTime, artist } = item;
+          albumResult.push({
+            id,
+            name,
+            cover: picUrl,
+            publishTime: formatTime(publishTime),
+            artistId: artist.id,
           });
-        }
-      } catch (err: any) {
-        message(messageType.ERROR, err.message);
+        });
       }
-      // 关闭动画
-      isLoading.value = false;
-      // 判断是否需要占位图片
-      needNoSearch[2] = albumResult.length == 0;
-    }, isLoading);
-  } else if (active == 'radio' && radioResult.length == 0) {
-    getRequset(async() => {
-      try {
-        const response: any = await searchMusic(1009, 100, keyWord);
-        const {
-          result: { djRadios }
-        } = response;
-        if (djRadios && djRadios.length > 0) {
-          djRadios.forEach((item: any) => {
-            const { id, name, picUrl, playCount } = item;
-            radioResult.push({
-              name,
-              id,
-              image: picUrl,
-              playCount,
-              creator: { nickname: '', avatarUrl: '' },
-              tag: [],
-              description: ''
-            });
+    } catch (err: any) {
+      message(messageType.ERROR, err.message);
+    }
+    // 判断是否需要占位图片
+    noResult.set('mv', albumResult.length == 0);
+  } else if (active == 'radio') {
+    if (radioResult.length != 0) return;
+    isLoading.value = true;
+    try {
+      const response: any = await searchMusic(1009, 100, keyWord);
+      const {
+        result: { djRadios },
+      } = response;
+      if (djRadios && djRadios.length > 0) {
+        djRadios.forEach((item: any) => {
+          const { id, name, picUrl, playCount } = item;
+          radioResult.push({
+            name,
+            id,
+            image: picUrl,
+            playCount,
+            creator: { nickname: '', avatarUrl: '' },
+            tag: [],
+            description: '',
           });
-        }
-      } catch (err: any) {
-        message(messageType.ERROR, err.message);
+        });
       }
-      // 关闭动画
-      isLoading.value = false;
-      // 判断是否需要占位图片
-      needNoSearch[3] = radioResult.length == 0;
-    }, isLoading);
+    } catch (err: any) {
+      message(messageType.ERROR, err.message);
+    }
+    // 判断是否需要占位图片
+    noResult.set('radio', radioResult.length == 0);
   } else if (active == 'playList' && playlistResult.length == 0) {
-    getRequset(async() => {
-      try {
-        const response: any = await searchMusic(1000, 100, keyWord);
-        const {
-          result: { playlists }
-        } = response;
-        if (playlists && playlists.length > 0) {
-          playlists.forEach((item: any) => {
-            const { id, name, coverImgUrl, playCount } = item;
-            playlistResult.push({
-              id,
-              name,
-              image: coverImgUrl,
-              playCount,
-              description: '',
-              tag: [],
-              creator: { nickname: '', avatarUrl: '' }
-            });
+    if (playlistResult.length != 0) return;
+    isLoading.value = true;
+    try {
+      const response: any = await searchMusic(1000, 100, keyWord);
+      const {
+        result: { playlists },
+      } = response;
+      if (playlists && playlists.length > 0) {
+        playlists.forEach((item: any) => {
+          const { id, name, coverImgUrl, playCount } = item;
+          playlistResult.push({
+            id,
+            name,
+            image: coverImgUrl,
+            playCount,
+            description: '',
+            tag: [],
+            creator: { nickname: '', avatarUrl: '' },
           });
-        }
-      } catch (err: any) {
-        message(messageType.ERROR, err.message);
+        });
       }
-      // 关闭动画
-      isLoading.value = false;
-      // 判断是否需要占位图片
-      needNoSearch[4] = playlistResult.length == 0;
-    }, isLoading);
-  } else if (active == 'lyric' && lyricResult.length == 0) {
+    } catch (err: any) {
+      message(messageType.ERROR, err.message);
+    }
+    // 判断是否需要占位图片
+    noResult.set('radio', playlistResult.length == 0);
+  } else if (active == 'lyric') {
+    if (lyricResult.length != 0) return;
+    isLoading.value = true;
     // 获取歌词的搜索结果并进行处理
-    getRequset(async() => {
-      try {
-        const response: any = await searchMusic(1006, 100, keyWord);
-        const {
-          result: { songs }
-        } = response;
-        if (songs && songs.length > 0) {
-          // 获取id
-          const ids = songs.map((item: any) => item.id).join(',');
-          // 重新获取图片
-          const dResponse: any = await getMusicDetail(ids);
-          const { songs: muiscs } = dResponse;
-          muiscs.forEach((item: any) => {
-            lyricLen.push(3);
-            getMusicInfos(lyricResult, item);
-          });
-          // 获取歌词
-          songs.forEach((item: any, index: number) => {
-            const {
-              lyrics: { txt }
-            } = item;
-            lyricResult[index].lyric = txt.split('\n');
-          });
-          // 获取搜索歌曲的urls
-          getMusicUrls(lyricResult);
-          // 初始化歌曲喜欢状态
-          user.initLoveMusic(musicResult);
-        }
-      } catch (err: any) {
-        message(messageType.ERROR, err.message);
+    try {
+      const response: any = await searchMusic(1006, 100, keyWord);
+      const {
+        result: { songs },
+      } = response;
+      if (songs && songs.length > 0) {
+        // 获取id
+        const ids = songs.map((item: any) => item.id).join(',');
+        // 重新获取图片
+        const dResponse: any = await getMusicDetail(ids);
+        const { songs: muiscs } = dResponse;
+        muiscs.forEach((item: any) => {
+          lyricLen.push(3);
+          getMusicInfos(lyricResult, item);
+        });
+        // 获取歌词
+        songs.forEach((item: any, index: number) => {
+          const {
+            lyrics: { txt },
+          } = item;
+          lyricResult[index].lyric = txt.split('\n');
+        });
+        // 获取搜索歌曲的urls
+        getMusicUrls(lyricResult);
+        // 初始化歌曲喜欢状态
+        user.initLoveMusic(musicResult);
       }
-      // 关闭动画
-      isLoading.value = false;
-      // 判断是否需要占位图片
-      needNoSearch[6] = lyricResult.length == 0;
-    }, isLoading);
+    } catch (err: any) {
+      message(messageType.ERROR, err.message);
+    }
+    // 判断是否需要占位图片
+    noResult.set('lyric', lyricResult.length == 0);
   }
+  // 关闭动画
+  isLoading.value = false;
 };
 
-getRequset(async() => {
+// 获取初始数据
+const getData = async () => {
+  first.value = true;
   try {
     const responses: any[] = await Promise.all([
       searchMusic(1, 100, keyWord),
-      searchMusic(100, 100, keyWord)
+      searchMusic(100, 100, keyWord),
     ]);
-    responses.forEach(async(response, index) => {
+    responses.forEach(async (response, index) => {
       // 获取音乐搜索结果
       if (index == 0) {
         const {
-          result: { songs }
+          result: { songs },
         } = response;
         // 获取搜索歌曲
         if (songs && songs.length > 0) {
@@ -611,22 +600,23 @@ getRequset(async() => {
       // 获取搜索歌手
       else if (index == 1) {
         const {
-          result: { artists }
+          result: { artists },
         } = response;
         if (artists && artists.length > 0) {
-          artists.forEach((item: any) => {
+          const temp = (artists as any[]).map((item) => {
             const { id, name, picUrl, accountId, albumSize, mvSize } = item;
-            singerResult.push({
+            return {
               id,
               name,
               avatar: picUrl,
               score: accountId,
               albumSize,
-              mvSize
-            });
+              mvSize,
+            };
           });
+          singerResult.push(...temp);
         }
-        needNoSearch[5] = singerResult.length == 0;
+        noResult.set('singer', singerResult.length == 0);
       }
     });
   } catch (err: any) {
@@ -634,7 +624,9 @@ getRequset(async() => {
   }
   // 关闭动画
   first.value = false;
-}, first);
+};
+
+getData();
 </script>
 
 <style lang="less" scoped>

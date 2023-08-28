@@ -5,7 +5,6 @@
       <OnlineBatch
         v-show="showSelect"
         :songs="curList"
-        :song-id-mapper="songIdMapper"
         @close-select="closeSelect" />
 
       <div
@@ -52,8 +51,7 @@
               name="hot">
               <SongTable
                 :songs="curList"
-                :page-size="pageSize"
-                :song-id-mapper="songIdMapper" />
+                :page-size="pageSize" />
               <Pagination
                 v-show="pageSize < total"
                 :cur-page="curPage"
@@ -65,27 +63,27 @@
               label="专辑"
               name="album">
               <NoResult
-                v-show="needNoSearch[0]"
+                v-show="noResult.get('album')"
                 text="歌手暂无专辑"
                 :size="280" />
               <Loading :isLoading="isLoading" />
               <ArtistAlbum
                 :albums="artistAlbum"
                 :show-pagination="true"
-                v-show="!needNoSearch[0]" />
+                v-show="!noResult.get('album')" />
             </el-tab-pane>
             <el-tab-pane
               label="视频"
               name="mv">
               <NoResult
-                v-show="needNoSearch[1]"
+                v-show="noResult.get('mv')"
                 text="歌手暂无视频"
                 :size="280" />
               <Loading :isLoading="isLoading" />
               <ArtistMv
                 :mvs="artistMv"
                 :show-pagination="true"
-                v-show="!needNoSearch[1]" />
+                v-show="!noResult.get('mv')" />
             </el-tab-pane>
             <el-tab-pane
               label="详情"
@@ -120,7 +118,7 @@ import {
   getArtistDesc,
   getArtistAlbum,
   getArtistSongs,
-  getMusicDetail
+  getMusicDetail,
 } from '@/api';
 import { Artist, Song, MV, ArtistDesc, Album } from '@/type';
 import { messageType } from '@/constants/common';
@@ -128,9 +126,8 @@ import {
   getMusicUrls,
   getMusicInfos,
   formatTime,
-  getRequset,
   message,
-  share
+  share,
 } from '@/utils';
 import useUserStore from '@/store/user';
 import { PlayButton, MoreButton, CommonButton } from '@components/button';
@@ -145,34 +142,23 @@ import useTheme from '@/hooks/useTheme';
 // 获取主题
 const { fontColor, fontBlack, boxShadow, themeColor, fontGray, contentHeight } =
   useTheme();
-
 const user = useUserStore();
 // 路由参数获取
 const route = useRoute();
 const id = route.query.id + '';
 const score = route.query.score + '';
-// 加载数据的动画
-const isLoading = ref<boolean>(false);
-// 页面第一次加载的动画
-const first = inject('firstLoading') as Ref<boolean>;
-// 是否需要占位图片
-const needNoSearch = reactive<boolean[]>([false, false]);
 // 歌手基本信息
 const singer = reactive<Artist>({
   name: '',
   score,
   id: id,
   avatar: '',
-  alias: []
+  alias: [],
 });
 // 歌手基本简介
 const introduce = reactive<ArtistDesc[]>([]);
 // 热门歌曲列表
 const hotSongList = reactive<Song[]>([]);
-// 歌曲id与Index对应的map
-const songIdMapper = computed(
-  () => new Map(hotSongList.map((item, index) => [item.id, index]))
-);
 // 用于分页
 // 当前页数
 const curPage = ref<number>(1);
@@ -193,6 +179,17 @@ const artistMv = reactive<MV[]>([]);
 const artistAlbum = reactive<Album[]>([]);
 // 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
+// 加载数据的动画
+const isLoading = ref<boolean>(false);
+// 页面第一次加载的动画
+const first = inject('firstLoading') as Ref<boolean>;
+// 是否需要占位图片
+const noResult = reactive<Map<string, boolean>>(
+  new Map([
+    ['album', true],
+    ['mv', true],
+  ])
+);
 
 // 页数变化
 const pageChange = (page: number) => {
@@ -220,79 +217,78 @@ const shareSinger = () => {
 };
 
 // 获取当前活跃的选项，并根据选项加载数据
-const getActive = (active: string) => {
+const getActive = async (active: string) => {
   // 点击加载数据
-  if (active == 'album' && artistAlbum.length == 0) {
+  if (active == 'album') {
+    if (artistAlbum.length != 0) return;
+    isLoading.value = true;
     // 获取歌手专辑
-    getRequset(async() => {
-      try {
-        const response: any = await getArtistAlbum(id);
-        const { hotAlbums } = response;
-        hotAlbums.forEach((item: any) => {
-          const { picUrl, name, publishTime } = item;
-          artistAlbum.push({
-            name,
-            id: item.id,
-            cover: picUrl,
-            publishTime: formatTime(publishTime),
-            artistId: id + ''
-          });
+    try {
+      const response: any = await getArtistAlbum(id);
+      const { hotAlbums } = response;
+      hotAlbums.forEach((item: any) => {
+        const { picUrl, name, publishTime } = item;
+        artistAlbum.push({
+          name,
+          id: item.id,
+          cover: picUrl,
+          publishTime: formatTime(publishTime),
+          artistId: id + '',
         });
-      } catch (err: any) {
-        message(messageType.ERROR, err.message);
-      }
-      needNoSearch[0] = artistAlbum.length == 0;
-      isLoading.value = false;
-    }, isLoading);
-  } else if (active == 'mv' && artistMv.length == 0) {
+      });
+    } catch (err: any) {
+      message(messageType.ERROR, err.message);
+    }
+    noResult.set('album', artistAlbum.length == 0);
+  } else if (active == 'mv') {
+    if (artistMv.length != 0) return;
     // 获取歌手的Mv
-    getRequset(async() => {
-      try {
-        const response: any = await getArtistMv(id);
-        const { mvs } = response;
-        mvs.forEach((mv: any) => {
-          const { id, name, artistName, imgurl16v9, playCount } = mv;
-          artistMv.push({
-            id,
-            name,
-            artist: artistName,
-            image: imgurl16v9,
-            playCount
-          });
+    isLoading.value = true;
+    try {
+      const response: any = await getArtistMv(id);
+      const { mvs } = response;
+      mvs.forEach((mv: any) => {
+        const { id, name, artistName, imgurl16v9, playCount } = mv;
+        artistMv.push({
+          id,
+          name,
+          artist: artistName,
+          image: imgurl16v9,
+          playCount,
         });
-      } catch (err: any) {
-        message(messageType.ERROR, err.message);
-      }
-      needNoSearch[1] = artistMv.length == 0;
-      isLoading.value = false;
-    }, isLoading);
-  } else if (active == 'detail' && introduce.length == 0) {
-    getRequset(async() => {
-      try {
-        const response: any = await getArtistDesc(id);
-        const { introduction } = response;
-        introduction.forEach((item: any) => {
-          introduce.push({
-            title: item.ti,
-            content: item.txt
-          });
+      });
+    } catch (err: any) {
+      message(messageType.ERROR, err.message);
+    }
+    noResult.set('mv', artistMv.length == 0);
+  } else if (active == 'detail') {
+    if (introduce.length != 0) return;
+    isLoading.value = true;
+    try {
+      const response: any = await getArtistDesc(id);
+      const { introduction } = response;
+      introduction.forEach((item: any) => {
+        introduce.push({
+          title: item.ti,
+          content: item.txt,
         });
-      } catch (err: any) {
-        message(messageType.ERROR, err.message);
-      }
-      isLoading.value = false;
-    }, isLoading);
+      });
+    } catch (err: any) {
+      message(messageType.ERROR, err.message);
+    }
   }
+  isLoading.value = false;
 };
 
 // 获取初始数据
-getRequset(async() => {
+const getData = async () => {
+  first.value = true;
   try {
     const responses: any[] = await Promise.all([
       getArtistInfo(id),
-      getArtistSongs(id, 1000)
+      getArtistSongs(id, 1000),
     ]);
-    responses.forEach(async(response, index) => {
+    responses.forEach(async (response, index) => {
       // 获取歌手的具体信息
       if (index == 0) {
         const { artist } = response;
@@ -318,14 +314,16 @@ getRequset(async() => {
         user.initLoveMusic(hotSongList);
         // 批量获取音乐链接
         getMusicUrls(hotSongList);
-        // 关闭动画
-        first.value = false;
       }
     });
   } catch (err: any) {
     message(messageType.ERROR, err.message);
   }
-}, first);
+  // 关闭动画
+  first.value = false;
+};
+
+getData();
 </script>
 
 <style lang="less" scoped>

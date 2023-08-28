@@ -23,7 +23,6 @@
     </div>
     <SongTable
       :songs="songs"
-      :song-id-mapper="songIdMapper"
       :show-select="true"
       :show-header="false"
       ref="table" />
@@ -43,8 +42,6 @@ import useTheme from '@/hooks/useTheme';
 defineProps<{
   // 歌曲
   songs: Song[];
-  // 歌曲id与Index对应的map
-  songIdMapper: Map<string, number>;
 }>();
 const emits = defineEmits<{
   (e: 'closeSelect', showSelect: boolean): void;

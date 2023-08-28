@@ -22,7 +22,7 @@
         </div>
         <div
           class="content"
-          ref="content">
+          ref="lyricContent">
           <p
             v-for="(item, index) in words"
             :key="item">
@@ -75,6 +75,20 @@ const {
   songNum,
   showDetail
 } = storeToRefs(footer);
+// 每一次滚动的距离
+const scrollDis = 44;
+// 歌词
+const words = ref<string[]>(['']);
+// 歌词对应的时间戳
+const timeStaps = ref<number[]>([]);
+// 计时器
+let timeid: any = 0;
+// 当前播放时间
+const currentTime = ref<number>(0);
+// 当前对应时间戳的index
+const currentIndex = ref<number>(0);
+// 歌词的容器
+const lyricContent = ref<HTMLDivElement>();
 // 动画持续的时间
 const animationTime = ref<string>('0s');
 // 控制动画是否继续
@@ -83,20 +97,6 @@ const animationState = computed(() => (isPlay.value ? 'running' : 'paused'));
 const imageUrl = computed(() =>
   songNum.value == 0 ? image : songList.value[current.value].songImage
 );
-// 每一次滚动的距离
-const scrollDis = 44;
-// 歌词
-let words = reactive<string[]>(['']);
-// 歌词对应的时间戳
-let timeStaps = reactive<number[]>([]);
-// 计时器
-let timeid: any = 0;
-// 当前播放时间
-const currentTime = ref<number>(0);
-// 当前对应时间戳的index
-const currentIndex = ref<number>(0);
-// 歌词的容器
-const content = ref<HTMLDivElement>();
 
 // 返回
 const back = () => {
@@ -108,23 +108,23 @@ const back = () => {
 
 // 计算进度条改变时滚动距离
 const calCurrentScroll = (cur: number) => {
-  content.value!.scrollTop = scrollDis * cur;
+  lyricContent.value!.scrollTop = scrollDis * cur;
 };
 
 // 检测播放还是暂停
 watch(isPlay, (newVal) => {
   if (newVal) {
     timeid = setInterval(() => {
-      if (currentTime.value >= timeStaps[currentIndex.value]) {
+      if (currentTime.value >= timeStaps.value[currentIndex.value]) {
         currentIndex.value++;
-        content.value!.scrollTop += scrollDis;
+        lyricContent.value!.scrollTop += scrollDis;
         // 计算动画持续时间
         if (currentIndex.value == 0) {
           animationTime.value = '0s';
         } else {
           const dis =
-            (timeStaps[currentIndex.value] -
-              timeStaps[currentIndex.value - 1]) /
+            (timeStaps.value[currentIndex.value] -
+              timeStaps.value[currentIndex.value - 1]) /
             1000;
           animationTime.value = dis > 4 ? '4s' : dis + 's';
         }
@@ -144,7 +144,7 @@ watch(isChanging, async(newVal) => {
       (playProcess.value *
         Number.parseInt(songList.value[current.value].time as string)) /
       100;
-    currentIndex.value = timeStaps.findIndex(
+    currentIndex.value = timeStaps.value.findIndex(
       (item) => item > currentTime.value
     );
     calCurrentScroll(currentIndex.value);
@@ -156,9 +156,9 @@ watch(isChanging, async(newVal) => {
 
 // 当歌曲切换时对应切换
 watch(current, async() => {
-  words = reactive<string[]>(['']);
-  timeStaps = reactive<number[]>([]);
-  content.value!.scrollTop = 0;
+  words.value = reactive<string[]>(['']);
+  timeStaps.value = reactive<number[]>([]);
+  lyricContent.value!.scrollTop = 0;
   currentTime.value = 0;
   currentIndex.value = 0;
   await nextTick();
@@ -167,42 +167,37 @@ watch(current, async() => {
 
 // 获取歌词
 const getLyric = async() => {
-  if (songNum.value > 0) {
-    try {
-      const response: any = await getLyrics(songList.value[current.value].id);
-      const {
-        lrc: { lyric }
-      } = response;
-      // 计算歌曲总时间
-      const totalTime = Number.parseInt(
-        songList.value[current.value].time as string
-      );
-      // 获取歌词
-      let lyrics = (lyric as string).split('\n').map((item) => item.split(']'));
-      lyrics.forEach((item) => {
-        if (item.length > 1) {
-          // 获取每一句歌词
-          const word = item[1] ? item[1].trim() : item[1];
-          // 获取歌词的时间戳
-          const time = formatToTimeStap(item[0].slice(1));
-          if (time < totalTime && word) {
-            timeStaps.push(time);
-            words.push(word);
-          }
+  if (songNum.value <= 0) return message(messageType.INFO, '请添加音乐！');
+  try {
+    const response: any = await getLyrics(songList.value[current.value].id);
+    const {
+      lrc: { lyric }
+    } = response;
+    // 计算歌曲总时间
+    const totalTime = Number.parseInt(
+      songList.value[current.value].time as string
+    );
+    // 获取歌词
+    let lyrics = (lyric as string).split('\n').map((item) => item.split(']'));
+    lyrics.forEach((item) => {
+      if (item.length > 1) {
+        // 获取每一句歌词
+        const word = item[1] ? item[1].trim() : item[1];
+        // 获取歌词的时间戳
+        const time = formatToTimeStap(item[0].slice(1));
+        if (time < totalTime && word) {
+          timeStaps.value.push(time);
+          words.value.push(word);
         }
-      });
-    } catch (err: any) {
-      message(messageType.ERROR, err.message);
-    }
-  } else {
-    message(messageType.INFO, '请添加音乐！');
+      }
+    });
+  } catch (err: any) {
+    message(messageType.ERROR, err.message);
   }
 };
 
 // 请求歌词
-if (songNum.value > 0) {
-  getLyric();
-}
+getLyric();
 </script>
 
 <style lang="less" scoped>

@@ -16,7 +16,7 @@
         <h4 class="title">推荐新音乐</h4>
         <div class="content">
           <div
-            v-for="song in songLists"
+            v-for="song in musiclists"
             :key="song.id"
             class="song-recommend">
             <div
@@ -46,7 +46,7 @@
 <script lang="ts" setup>
 import { reactive, inject, Ref } from 'vue';
 import { getBanner, getRecPlaylist, getDeafultSong, getMv } from '@/api';
-import { message, getMusicUrls, getMusicInfos, getRequset } from '@/utils';
+import { message, getMusicUrls, getMusicInfos } from '@/utils';
 import { messageType } from '@/constants/common';
 import { Playlist, Song, MV, Banner } from '@/type';
 import { ArtistMv, ArtistPlaylist } from '@components/datalist';
@@ -62,7 +62,7 @@ const banners = reactive<Banner[]>([]);
 // 推荐歌单
 const playLists = reactive<Playlist[]>([]);
 // 推荐歌曲
-const songLists = reactive<Song[]>([]);
+const musiclists = reactive<Song[]>([]);
 // 推荐mv
 const mvLists = reactive<MV[]>([]);
 // 第一次加载的动画
@@ -71,14 +71,14 @@ const first = inject('firstLoading') as Ref<boolean>;
 // 播放音乐
 const { playMusic } = usePlayMusic();
 
-// 获取初始数据
-getRequset(async() => {
+const getData = async () => {
+  first.value = true;
   try {
     const responses: any[] = await Promise.all([
       getBanner(),
       getRecPlaylist(10),
       getDeafultSong(40),
-      getMv(10, '内地', '全部', '最新')
+      getMv(10, '内地', '全部', '最新'),
     ]);
     responses.forEach((response, index) => {
       // 获取banner
@@ -88,7 +88,7 @@ getRequset(async() => {
           const { imageUrl, targetId } = item;
           banners.push({
             id: targetId,
-            pic: imageUrl
+            pic: imageUrl,
           });
         });
       }
@@ -104,7 +104,7 @@ getRequset(async() => {
               playCount,
               description,
               tags,
-              creator
+              creator,
             } = item;
             playLists.push({
               name,
@@ -115,8 +115,8 @@ getRequset(async() => {
               tag: tags,
               creator: {
                 avatarUrl: creator.avatarUrl,
-                nickname: creator.nickname
-              }
+                nickname: creator.nickname,
+              },
             });
           }
         });
@@ -124,20 +124,20 @@ getRequset(async() => {
       // 获取推荐歌曲
       else if (index == 2) {
         const {
-          data: { list }
+          data: { list },
         } = response;
         // 获取歌曲的基本信息
         for (let item of list) {
           const { fee } = item.data;
-          if (songLists.length < 10) {
+          if (musiclists.length < 10) {
             if (fee == '0' || fee == '8') {
-              getMusicInfos(songLists, item.data);
+              getMusicInfos(musiclists, item.data);
             }
           } else {
             break;
           }
         }
-        getMusicUrls(songLists);
+        getMusicUrls(musiclists);
       }
       // 获取推荐视频
       else {
@@ -149,7 +149,7 @@ getRequset(async() => {
             name: name as string,
             image: cover as string,
             playCount: playCount as string,
-            artist: artistName as string
+            artist: artistName as string,
           });
         });
       }
@@ -159,7 +159,9 @@ getRequset(async() => {
   }
   // 关闭动画
   first.value = false;
-}, first);
+};
+// 获取初始数据
+getData();
 </script>
 
 <style lang="less" scoped>

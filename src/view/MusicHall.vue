@@ -69,7 +69,7 @@
 <script lang="ts" setup>
 import { ref, reactive, inject, Ref } from 'vue';
 import { MusicStyle, Playlist } from '@/type';
-import { message, getRequset } from '@/utils';
+import { message } from '@/utils';
 import { messageType } from '@/constants/common';
 import {
   getStyleList,
@@ -85,7 +85,6 @@ import Tab from '@components/tab';
 import useTheme from '@/hooks/useTheme';
 // 配置主题
 const { fontColor, boxShadow, fontGray, containerHeight } = useTheme();
-
 // 页面进入时的动画
 const first = inject('firstLoading') as Ref<boolean>;
 // 加载动画
@@ -306,17 +305,19 @@ const getStyleTagPlaylist = async() => {
 };
 // 根据当前的活跃项动态请求数据
 const getActive = (active: string) => {
-  if (active == 'rec' && recPlaylist[0].length == 0) {
+  if (active == 'rec') {
+    if (recPlaylist[0].length != 0) return;
     first.value = true;
     getRecTagPlaylist();
-  } else if (active == 'style' && stylePlaylist[0].length == 0) {
+  } else if (active == 'style') {
+    if (stylePlaylist[0].length != 0) return;
     first.value = true;
     getStyleTagPlaylist();
   }
 };
-
 // 请求初始数据
-getRequset(async() => {
+const getData = async() => {
+  first.value = true;
   try {
     const responses: any[] = await Promise.all([
       getTopTags(),
@@ -362,7 +363,9 @@ getRequset(async() => {
   // 请求初始数据
   await getTopTagPlaylist();
   first.value = false;
-}, first);
+};
+
+getData();
 </script>
 
 <style lang="less" scoped>

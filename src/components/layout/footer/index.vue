@@ -662,6 +662,7 @@ onMounted(() => {
       height: 12px;
       width: 12px;
       border: none;
+      margin-top: -2px;
       background-color: @theme-color;
       display: none;
     }

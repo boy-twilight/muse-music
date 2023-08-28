@@ -21,7 +21,6 @@
     </div>
     <SongTable
       :songs="songs"
-      :song-id-mapper="songIdMapper"
       :showSelect="true"
       :show-header="false"
       ref="table" />
@@ -65,10 +64,6 @@ const songs = computed(() => {
     return musicDownload.value;
   }
 });
-// 歌曲id与Index对应的map
-const songIdMapper = computed(
-  () => new Map(songs.value.map((item, index) => [item.id, index]))
-);
 // 选择的歌曲
 const selectSongs = computed(() => table.value?.getSelectItems() || []);
 const { playSelectMusic } = usePlayMusic();

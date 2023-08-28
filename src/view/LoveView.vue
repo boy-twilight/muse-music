@@ -95,7 +95,7 @@
 <script lang="ts" setup>
 import { ref, inject, Ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { getMusicUrls, getRequset } from '@/utils';
+import { getMusicUrls } from '@/utils';
 import useUserStore from '@/store/user';
 import {
   ArtistMv,
@@ -169,11 +169,14 @@ const deleteLoveRadio = (id: string) => {
   loveRadio.value.splice(index, 1);
 };
 
-getRequset(async() => {
-  getMusicUrls(loveSongs.value);
+const getData = async() => {
+  first.value = true;
+  await getMusicUrls(loveSongs.value);
   // 关闭动画
   first.value = false;
-}, first);
+};
+
+getData();
 </script>
 
 <style lang="less" scoped>

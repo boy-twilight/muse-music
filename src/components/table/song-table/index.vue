@@ -124,8 +124,6 @@ const props = withDefaults(
   defineProps<{
     // 歌曲
     songs: Song[];
-    // 歌曲id与Index对应的map，方便后续查找
-    songIdMapper: Map<string, number>;
     // 表格高度
     height?: string;
     // 是否展示多选框
@@ -144,7 +142,7 @@ const props = withDefaults(
     sort: undefined,
     isCancelSort: false,
     showHeader: true,
-    pageSize: 0
+    pageSize: 0,
   }
 );
 
@@ -155,6 +153,10 @@ const { songList, current, isPlay } = storeToRefs(footer);
 const user = useUserStore();
 // table容器
 const tableContainer = ref<InstanceType<typeof ElTable>>();
+// 歌曲id与index的映射
+const songIdMapper = computed(
+  () => new Map(props.songs.map((item, index) => [item.id, index]))
+);
 // 表格多选
 // 是否展开选择框
 const showSelectBox = computed(() => props.showSelect);
@@ -202,12 +204,12 @@ const enter = (row: Song) => {
   let index = 0;
   if (props.pageSize > 0) {
     const curPage = Math.floor(
-      (props.songIdMapper.get(row.id) as number) / props.pageSize
+      (songIdMapper.value.get(row.id) as number) / props.pageSize
     );
     index =
-      (props.songIdMapper.get(row.id) as number) - curPage * props.pageSize;
+      (songIdMapper.value.get(row.id) as number) - curPage * props.pageSize;
   } else {
-    index = props.songIdMapper.get(row.id) as number;
+    index = songIdMapper.value.get(row.id) as number;
   }
   const curOpera = getNodeList()[index];
   if (curOpera) {
@@ -220,12 +222,12 @@ const leave = (row: Song) => {
   let index = 0;
   if (props.pageSize > 0) {
     const curPage = Math.floor(
-      (props.songIdMapper.get(row.id) as number) / props.pageSize
+      (songIdMapper.value.get(row.id) as number) / props.pageSize
     );
     index =
-      (props.songIdMapper.get(row.id) as number) - curPage * props.pageSize;
+      (songIdMapper.value.get(row.id) as number) - curPage * props.pageSize;
   } else {
-    index = props.songIdMapper.get(row.id) as number;
+    index = songIdMapper.value.get(row.id) as number;
   }
   const curOpera = getNodeList()[index];
   if (curOpera) {
@@ -238,7 +240,7 @@ const { playMusic } = usePlayMusic();
 
 // 播放mv
 const playMV = (song: Song) => {
-  playVideo(song, () => {});
+  playVideo(song);
 };
 
 // 定时重新获取musicurl
@@ -269,7 +271,7 @@ onBeforeRouteLeave(() => {
 
 defineExpose({
   clearSelect,
-  getSelectItems
+  getSelectItems,
 });
 </script>
 

@@ -4,7 +4,6 @@
       <!-- 批量操作 -->
       <OnlineBatch
         v-show="showSelect"
-        :song-id-mapper="songIdMapper"
         :songs="curList"
         @close-select="closeSelect" />
       <!-- 歌单头部 -->
@@ -57,8 +56,7 @@
             name="song">
             <SongTable
               :songs="curList"
-              :page-size="pageSize"
-              :song-id-mapper="songIdMapper" />
+              :page-size="pageSize" />
             <Pagination
               v-show="pageSize < total"
               :cur-page="curPage"
@@ -75,9 +73,9 @@
             name="comment">
             <SourceComment
               :comments="playlistComments"
-              v-if="!showNo" />
+              v-show="noResult" />
             <NoResult
-              v-else
+              v-show="!noResult"
               :size="280"
               text="暂无评论数据" />
           </el-tab-pane>
@@ -94,7 +92,6 @@ import {
   message,
   getMusicUrls,
   getMusicInfos,
-  getRequset,
   share,
   getComment,
   getSourceComments
@@ -142,10 +139,6 @@ const playList = reactive<Playlist>({
 const playListSong = reactive<Song[]>([]);
 // 歌单评论
 const playlistComments = reactive<Comment[]>([]);
-// 歌曲id与Index对应的map
-const songIdMapper = computed(
-  () => new Map(playListSong.map((item, index) => [item.id, index]))
-);
 // 用于分页
 // 当前页数
 const curPage = ref<number>(1);
@@ -165,7 +158,7 @@ const first = inject('firstLoading') as Ref<boolean>;
 // 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
 // 是否展示占位图片
-const showNo = ref<boolean>(false);
+const noResult = ref<boolean>(true);
 
 // 页数变化
 const pageChange = (page: number) => {
@@ -203,7 +196,8 @@ const addLove = () => {
 };
 
 // 获取歌曲详情和音乐
-getRequset(async() => {
+const getData = async() => {
+  first.value = true;
   if (type == 'playlist') {
     try {
       const responses: any[] = await Promise.all([
@@ -250,7 +244,7 @@ getRequset(async() => {
           const { comments, hotComments } = response;
           getComment(hotComments, playlistComments);
           getComment(comments, playlistComments);
-          showNo.value = playlistComments.length == 0 ? true : false;
+          noResult.value = playlistComments.length == 0;
         }
       });
     } catch (err: any) {
@@ -317,11 +311,13 @@ getRequset(async() => {
     }
     // 获取电台评论
     getSourceComments(id, '7', playlistComments, () => {
-      showNo.value = playlistComments.length == 0;
+      noResult.value = playlistComments.length == 0;
     });
   }
   first.value = false;
-}, first);
+};
+
+getData();
 </script>
 
 <style lang="less" scoped>

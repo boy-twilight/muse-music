@@ -15,7 +15,6 @@
     </div>
     <SongTable
       :songs="songs"
-      :song-id-mapper="songIdMapper"
       :sort="sortChoice"
       :page-size="pageSize"
       :is-cancel-sort="cancelSort" />
@@ -68,10 +67,6 @@ const target = computed(() => {
   }
   return songs;
 });
-// 歌曲id与Index的映射
-const songIdMapper = computed(
-  () => new Map(target.value.map((item, index) => [item.id, index]))
-);
 // 用于分页
 // 当前页数
 const curPage = ref<number>(1);

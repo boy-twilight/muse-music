@@ -5,7 +5,6 @@
       <OnlineBatch
         v-show="showSelect"
         :songs="albumSongs"
-        :song-id-mapper="songIdMapper"
         @close-select="closeSelect" />
 
       <div
@@ -44,9 +43,7 @@
             <el-tab-pane
               label="歌曲"
               name="songs">
-              <SongTable
-                :songs="albumSongs"
-                :song-id-mapper="songIdMapper" />
+              <SongTable :songs="albumSongs" />
               <ArtistAlbum
                 :albums="otherAlbum"
                 title="该歌手的其它专辑" />
@@ -82,7 +79,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, inject, Ref, ref, computed } from 'vue';
+import { reactive, inject, Ref, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { Album, Song } from '@/type';
 import { getAlbumDetail, getArtistAlbum } from '@/api';
@@ -90,9 +87,8 @@ import {
   formatTime,
   getMusicInfos,
   getMusicUrls,
-  getRequset,
   message,
-  share
+  share,
 } from '@/utils';
 import { messageType } from '@/constants/common';
 import useUserStore from '@/store/user';
@@ -118,16 +114,12 @@ const albumInfo = reactive<Album>({
   name: '',
   cover: '',
   artist: '',
-  publishTime: ''
+  publishTime: '',
 });
 // 歌手其它专辑
 const otherAlbum = reactive<Album[]>([]);
 // 专辑对应的歌曲
 const albumSongs = reactive<Song[]>([]);
-// 歌曲id与Index对应的map
-const songIdMapper = computed(
-  () => new Map(albumSongs.map((item, index) => [item.id, index]))
-);
 // 页面第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
 // 是否加载选择框进入批量操作模式
@@ -155,11 +147,12 @@ const shareAlbum = () => {
 };
 
 // 请求页面数据
-getRequset(async() => {
+const getData = async () => {
+  first.value = true;
   try {
     const responses: any[] = await Promise.all([
       getArtistAlbum(artistId),
-      getAlbumDetail(id)
+      getAlbumDetail(id),
     ]);
     responses.forEach((response, index) => {
       // 获取该艺术家的其它专辑
@@ -174,7 +167,7 @@ getRequset(async() => {
               id: albumId,
               cover: picUrl,
               publishTime: formatTime(publishTime),
-              artistId: artistId + ''
+              artistId: artistId + '',
             });
           } else if (otherAlbum.length > 5) {
             break;
@@ -185,7 +178,7 @@ getRequset(async() => {
       else if (index == 1) {
         const {
           album: { picUrl, artist, publishTime, name, company, description },
-          songs
+          songs,
         } = response;
         albumInfo.name = name;
         albumInfo.cover = picUrl;
@@ -208,7 +201,10 @@ getRequset(async() => {
   }
   // 关闭动画
   first.value = false;
-}, first);
+};
+
+// 获取数据
+getData();
 </script>
 
 <style lang="less" scoped>

@@ -30,7 +30,7 @@
 <script lang="ts" setup>
 import { ref, reactive, inject, Ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { message, getRequset } from '@/utils';
+import { message } from '@/utils';
 import { getRadioBanner, getRadios, getRadioType } from '@/api';
 import { messageType } from '@/constants/common';
 import { Banner, Playlist, RadioType } from '@/type';
@@ -103,7 +103,9 @@ const go = (id: string) => {
   });
 };
 
-getRequset(async() => {
+// 获取初始数据
+const getData = async() => {
+  first.value = true;
   try {
     const responses: any[] = await Promise.all([
       getRadioBanner(),
@@ -138,7 +140,9 @@ getRequset(async() => {
   }
   await getRadioData();
   first.value = false;
-}, first);
+};
+
+getData();
 </script>
 
 <style lang="less" scoped>

@@ -41,7 +41,7 @@
 
 <script lang="ts" setup>
 import { inject, nextTick, reactive, ref, Ref, computed } from 'vue';
-import { message, getRequset } from '@/utils';
+import { message } from '@/utils';
 import { messageType } from '@/constants/common';
 import { MV } from '@/type';
 import { getMv } from '@/api';
@@ -49,6 +49,7 @@ import { ArtistMv } from '@components/datalist';
 import { ButtonGroup, SearchButton } from '@components/button';
 import { Loading } from '@components/result';
 import useTheme from '@/hooks/useTheme';
+import { trickle } from 'nprogress';
 // 配置主题
 const { fontColor, boxShadow, fontBlack, themeColor, fontGray, contentHeight } =
   useTheme();
@@ -59,7 +60,7 @@ const area = reactive<string[]>([
   '日本',
   '欧美',
   '港台',
-  '内地'
+  '内地',
 ]);
 // mv来源类型
 const type = reactive<string[]>(['全部', '官方版', '现场版', '网易出品']);
@@ -102,7 +103,7 @@ const searchResult = computed(() =>
 const content = ref<string>('');
 
 // 根据当前活跃值动态请求数据
-const getActiveIndex = async(index: number, type: string) => {
+const getActiveIndex = async (index: number, type: string) => {
   // 缓存limit的数量
   limitMap.set(
     areaActive.value + '' + typeActive.value + '' + orderActive.value,
@@ -163,78 +164,76 @@ const loadData = () => {
 };
 
 // 加载跟多的数据
-const loadMore = () => {
+const loadMore = async () => {
   // 关闭再加更多按钮
   showMore.value = false;
-  getRequset(async() => {
-    // 加载更多数据
-    try {
-      const response: any = await getMv(
-        limit.value,
-        area[areaActive.value],
-        type[typeActive.value],
-        order[orderActive.value]
-      );
-      const { data } = response;
-      data.slice(mvs.length).forEach((item: any) => {
-        const { id, name, cover, playCount, artistName } = item;
-        mvs.push({
-          id: id as string,
-          name: name as string,
-          image: cover as string,
-          playCount: playCount as string,
-          artist: artistName as string
-        });
+  isLoading.value = true;
+  // 加载更多数据
+  try {
+    const response: any = await getMv(
+      limit.value,
+      area[areaActive.value],
+      type[typeActive.value],
+      order[orderActive.value]
+    );
+    const { data } = response;
+    data.slice(mvs.length).forEach((item: any) => {
+      const { id, name, cover, playCount, artistName } = item;
+      mvs.push({
+        id: id as string,
+        name: name as string,
+        image: cover as string,
+        playCount: playCount as string,
+        artist: artistName as string,
       });
-      videoMap.set(
-        areaActive.value + '' + typeActive.value + '' + orderActive.value,
-        [...mvs]
-      );
-      currentList.push(...mvs.slice(currentList.length, dataNum.value));
-    } catch (err: any) {
-      message(messageType.ERROR, err.message);
-    }
-    // 关闭动画
-    isLoading.value = false;
-    // 关闭禁止滚动
-    disabled.value = false;
-  }, isLoading);
+    });
+    videoMap.set(
+      areaActive.value + '' + typeActive.value + '' + orderActive.value,
+      [...mvs]
+    );
+    currentList.push(...mvs.slice(currentList.length, dataNum.value));
+  } catch (err: any) {
+    message(messageType.ERROR, err.message);
+  }
+  // 关闭动画
+  isLoading.value = false;
+  // 关闭禁止滚动
+  disabled.value = false;
 };
 
 // 请求数据
-const getData = () => {
-  getRequset(async() => {
-    // 获取视频信息
-    try {
-      const response: any = await getMv(
-        limit.value,
-        area[areaActive.value],
-        type[typeActive.value],
-        order[orderActive.value]
-      );
-      const { data } = response;
-      data.forEach((item: any) => {
-        const { id, name, cover, playCount, artistName } = item;
-        mvs.push({
-          id: id as string,
-          name: name as string,
-          image: cover as string,
-          playCount: playCount as string,
-          artist: artistName as string
-        });
+const getData = async () => {
+  first.value = true;
+  // 获取视频信息
+  try {
+    const response: any = await getMv(
+      limit.value,
+      area[areaActive.value],
+      type[typeActive.value],
+      order[orderActive.value]
+    );
+    const { data } = response;
+    data.forEach((item: any) => {
+      const { id, name, cover, playCount, artistName } = item;
+      mvs.push({
+        id: id as string,
+        name: name as string,
+        image: cover as string,
+        playCount: playCount as string,
+        artist: artistName as string,
       });
-      // 缓存结果
-      videoMap.set(
-        areaActive.value + '' + typeActive.value + '' + orderActive.value,
-        [...mvs]
-      );
-      currentList.push(...mvs.slice(0, dataNum.value));
-    } catch (err: any) {
-      message(messageType.ERROR, err.message);
-    }
-    // 关闭动画
-    first.value = false;
-  }, first);
+    });
+    // 缓存结果
+    videoMap.set(
+      areaActive.value + '' + typeActive.value + '' + orderActive.value,
+      [...mvs]
+    );
+    currentList.push(...mvs.slice(0, dataNum.value));
+  } catch (err: any) {
+    message(messageType.ERROR, err.message);
+  }
+  // 关闭动画
+  first.value = false;
 };
 getData();
 </script>

@@ -1,4 +1,4 @@
-import { Ref, nextTick } from 'vue';
+import { nextTick } from 'vue';
 import axios from 'axios';
 import { messageType } from '@/constants/common';
 import {
@@ -6,7 +6,7 @@ import {
   searchMusic,
   getLyrics,
   getHotComments,
-  getComments
+  getComments,
 } from '@/api';
 import { Song, Comment } from '@/type';
 import router from '@/router';
@@ -21,18 +21,18 @@ export const ss = initStorage('session');
 // 创建一个message的提示
 export const message = (type: string = 'success', msg: string): void => {
   switch (type) {
-  case messageType.SUCCESS:
-    ElMessage.success(msg);
-    break;
-  case messageType.ERROR:
-    ElMessage.error(msg);
-    break;
-  case messageType.INFO:
-    ElMessage.info(msg);
-    break;
-  case messageType.WARNING:
-    ElMessage.warning(msg);
-    break;
+    case messageType.SUCCESS:
+      ElMessage.success(msg);
+      break;
+    case messageType.ERROR:
+      ElMessage.error(msg);
+      break;
+    case messageType.INFO:
+      ElMessage.info(msg);
+      break;
+    case messageType.WARNING:
+      ElMessage.warning(msg);
+      break;
   }
 };
 
@@ -77,7 +77,7 @@ export const formatTime = (time: string): string => {
 };
 
 // 获取音乐的url
-export const getMusicUrls = async(songs: Song[], exclude?: number) => {
+export const getMusicUrls = async (songs: Song[], exclude?: number) => {
   try {
     // id映射
     const mapper: Map<string, number> = new Map(
@@ -126,7 +126,7 @@ export const getMusicInfos = (songs: Song[], song: any) => {
     album: al.name,
     available: fee,
     time: dt,
-    url: ''
+    url: '',
   });
 };
 
@@ -135,13 +135,13 @@ export const handleSingerName = (name: string): string => {
 };
 
 // 通过url进行下载
-export const download = async(url: string, fileName: string) => {
+export const download = async (url: string, fileName: string) => {
   try {
     const response = await axios({
       method: 'get',
       url,
       // 必须显式指明响应类型是一个Blob对象，这样生成二进制的数据，才能通过window.URL.createObjectURL进行创建成功
-      responseType: 'blob'
+      responseType: 'blob',
     });
     if (!response) {
       return;
@@ -164,14 +164,6 @@ export const download = async(url: string, fileName: string) => {
   }
 };
 
-// 在请求数据的过程中附带加载动画
-export const getRequset = (getData: () => void, loading?: Ref<boolean>) => {
-  if (loading) {
-    loading.value = true;
-  }
-  getData();
-};
-
 // 下载音乐
 export const downloadMusic = (song: Song) => {
   if (song.available == '0' || song.available == '8') {
@@ -188,34 +180,32 @@ export const downloadMusic = (song: Song) => {
 };
 
 // 前往音乐的Mv
-export const playVideo = (song: Song, beforeGo: () => void) => {
-  getRequset(async() => {
-    // 获取mv
-    try {
-      const response: any = await searchMusic(
-        1014,
-        1,
-        song.name + '' + handleSingerName(song.singer)
-      );
-      const {
-        result: { videos }
-      } = response;
-      if (videos && videos.length > 0) {
-        beforeGo();
-        await nextTick();
-        router.push({
-          name: 'video',
-          query: {
-            id: videos[0].vid
-          }
-        });
-      } else {
-        message(messageType.INFO, '该歌曲暂无mv.');
-      }
-    } catch (err: any) {
-      message(messageType.ERROR, err.message);
+export const playVideo = async (song: Song, beforeGo?: () => void) => {
+  // 获取mv
+  try {
+    const response: any = await searchMusic(
+      1014,
+      1,
+      song.name + '' + handleSingerName(song.singer)
+    );
+    const {
+      result: { videos },
+    } = response;
+    if (videos && videos.length > 0) {
+      if (beforeGo) beforeGo();
+      await nextTick();
+      router.push({
+        name: 'video',
+        query: {
+          id: videos[0].vid,
+        },
+      });
+    } else {
+      message(messageType.INFO, '该歌曲暂无mv.');
     }
-  });
+  } catch (err: any) {
+    message(messageType.ERROR, err.message);
+  }
 };
 
 // 分享
@@ -225,11 +215,11 @@ export const share = (content: string, tip?: string) => {
 };
 
 // 下载歌词
-export const downloadLyric = async(song: Song) => {
+export const downloadLyric = async (song: Song) => {
   try {
     const response: any = await getLyrics(song.id);
     const {
-      lrc: { lyric }
+      lrc: { lyric },
     } = response;
     const words: string[] = [song.name];
     const totalTime = +(song.time as string);
@@ -247,7 +237,7 @@ export const downloadLyric = async(song: Song) => {
       }
     });
     const blob: Blob = new Blob([words.join('\r\n')], {
-      type: 'type:text/plain; charset=utf-8'
+      type: 'type:text/plain; charset=utf-8',
     });
     const data = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -293,7 +283,7 @@ export const getComment = (comments: any, target: Comment[]) => {
       commentId,
       time,
       likedCount,
-      ipLocation: { location }
+      ipLocation: { location },
     } = item;
     let { beReplied } = item;
     if (beReplied) {
@@ -302,7 +292,7 @@ export const getComment = (comments: any, target: Comment[]) => {
           user: { avatarUrl, nickname },
           content,
           beRepliedCommentId,
-          ipLocation: { location }
+          ipLocation: { location },
         } = item;
         const comment: Comment = {
           commentId: beRepliedCommentId,
@@ -311,7 +301,7 @@ export const getComment = (comments: any, target: Comment[]) => {
           time: '',
           likeCount: '0',
           avatar: avatarUrl,
-          ip: location
+          ip: location,
         };
         return comment;
       });
@@ -325,14 +315,14 @@ export const getComment = (comments: any, target: Comment[]) => {
         likeCount: likedCount,
         commentId,
         reply: beReplied,
-        ip: location
+        ip: location,
       });
     }
   });
 };
 
 // 获取资源评论
-export const getSourceComments = async(
+export const getSourceComments = async (
   id: string,
   type: string,
   target: Comment[],
@@ -342,7 +332,7 @@ export const getSourceComments = async(
     const result: any = await Promise.all([
       getHotComments(id, type, 100),
       getComments(id, type, 100, '1'),
-      getComments(id, type, 100, '2')
+      getComments(id, type, 100, '2'),
     ]);
     result.forEach((response: any, index: number) => {
       if (index == 0) {
@@ -352,7 +342,7 @@ export const getSourceComments = async(
         }
       } else {
         const {
-          data: { comments }
+          data: { comments },
         } = response;
         if (comments) {
           getComment(comments, target);
@@ -497,7 +487,7 @@ export const downloadFile = (blob: File | Blob, fileName: string) => {
 
 export const throttle = (fn: (...args: any[]) => void, delay: number) => {
   let last = 0;
-  return function(this: any, ...args: any[]) {
+  return function (this: any, ...args: any[]) {
     const cur = getTimeStamp();
     if (cur - last > delay) {
       fn.apply(this, args);
