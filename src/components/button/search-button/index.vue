@@ -30,7 +30,7 @@
 <script lang="ts" setup>
 /* eslint-disable */
 // eslint-disable-next-line vue/no-setup-props-destructure
-import { inject, ref } from 'vue';
+import { ref } from 'vue';
 import { throttle } from 'lodash-es';
 import useTheme from '@/hooks/useTheme';
 
@@ -45,7 +45,6 @@ const emits = defineEmits<{
 
 // 配置主题
 const { fontColor, themeColor, fontGray, searchColor } = useTheme();
-
 // 搜索容器
 const search = ref<HTMLDivElement>();
 // 隐藏文字
@@ -59,7 +58,7 @@ const searchMusic = () => {
     () => {
       emits('update:modelValue', content.value);
     },
-    500,
+    200,
     {
       leading: true,
       trailing: false,

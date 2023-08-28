@@ -20,7 +20,6 @@ withDefaults(
     icon: string;
     // icon样式
     iconStyle?: string;
-
     isIconOne?: boolean;
   }>(),
   {

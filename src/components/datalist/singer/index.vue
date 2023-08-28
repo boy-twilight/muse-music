@@ -78,14 +78,12 @@ const emits = defineEmits<{
 
 // 配置主题
 const { fontColor, boxShadow, themeColor, fontGray } = useTheme();
-
 // 有头像的歌手
 const singerWithAvatar = computed(() =>
   props.singerList.slice(0, props.avatarNum)
 );
 // 无头像的歌手
 const singerWithNo = computed(() => props.singerList.slice(props.avatarNum));
-
 // 路由
 const router = useRouter();
 
@@ -106,21 +104,7 @@ const toArtist = (id: string, score: string) => {
 @shadow: v-bind(boxShadow);
 @font-color-gray: v-bind(fontGray);
 @theme-color: v-bind(themeColor);
-.list-move,
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.5s ease;
-}
-.list-leave-from {
-  opacity: 1;
-}
-.list-leave-to {
-  opacity: 0;
-}
-.list-leave-active {
-  position: absolute !important;
-}
-
+@import '../style.less';
 .singer-container {
   .singer-list {
     display: flex;

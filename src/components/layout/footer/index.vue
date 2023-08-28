@@ -642,7 +642,7 @@ onMounted(() => {
     display: flex;
     align-items: center;
     width: 2%;
-    z-index: 101;
+    z-index: 9999;
     .run_body {
       width: 100%;
       height: 3px;
@@ -653,7 +653,7 @@ onMounted(() => {
   }
 
   .music-process {
-    z-index: 100;
+    z-index: 9999;
     position: absolute;
     top: -16px;
     width: 98%;

@@ -44,7 +44,6 @@ const emits = defineEmits<{
 // 配置主题
 const { fontColor, background, themeColor, searchColor, dropDownMode } =
   useTheme();
-
 // 排序的名字
 const sortName = reactive<string[]>([
   '歌曲排序',

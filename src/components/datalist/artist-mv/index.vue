@@ -55,6 +55,7 @@ import { useRouter } from 'vue-router';
 import { MV } from '@/type';
 import Pagination from '@components/pagination';
 import useTheme from '@/hooks/useTheme';
+import { VIDEO_PAGESIZE } from '@/constants/common';
 
 const props = withDefaults(
   defineProps<{
@@ -68,7 +69,7 @@ const props = withDefaults(
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false
+    showPagination: false,
   }
 );
 
@@ -82,7 +83,7 @@ const router = useRouter();
 // 当前页数
 const curPage = ref<number>(1);
 // 一页多少数据
-const pageSize = ref<number>(15);
+const pageSize = ref<number>(VIDEO_PAGESIZE);
 // 总的数据数
 const total = computed(() => props.mvs.length);
 // 当前展示的专辑
@@ -98,8 +99,8 @@ const toMv = (id: string) => {
   router.push({
     name: 'video',
     query: {
-      id
-    }
+      id,
+    },
   });
 };
 </script>
@@ -110,23 +111,7 @@ const toMv = (id: string) => {
 @font-color-gray: v-bind(fontGray);
 @font-color-green: v-bind(themeColor);
 @font-color-white: #ffffff;
-
-.list-move,
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.5s ease;
-}
-
-.list-leave-from {
-  opacity: 1;
-}
-.list-leave-to {
-  opacity: 0;
-}
-.list-leave-active {
-  position: absolute !important;
-}
-
+@import '../style.less';
 .mv {
   display: flex;
   flex-direction: column;

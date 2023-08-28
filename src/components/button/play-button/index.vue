@@ -23,6 +23,7 @@ withDefaults(
 );
 // 配置主题
 const { boxShadow, themeColor } = useTheme();
+
 // 播放音乐
 const { playAllMusic } = usePlayMusic();
 </script>

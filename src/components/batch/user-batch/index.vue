@@ -50,10 +50,16 @@ const emits = defineEmits<{
 
 // 配置主题
 const { themeColor } = useTheme();
-
 // 用户数据
 const user = useUserStore();
-const { songRecord, musicDownload, loveSongs } = storeToRefs(user);
+const {
+  songRecord,
+  musicDownload,
+  loveSongs,
+  songRecordId,
+  musicDownloadId,
+  loveMusicId
+} = storeToRefs(user);
 // 表格容器
 const table = ref<InstanceType<typeof SongTable>>();
 // 歌曲
@@ -68,6 +74,8 @@ const songs = computed(() => {
 });
 // 选择的歌曲
 const selectSongs = computed(() => table.value?.getSelectItems() || []);
+
+// 播放选中的音乐
 const { playSelectMusic } = usePlayMusic();
 
 // 打开多选
@@ -75,6 +83,7 @@ const openSelectBox = () => {
   emits('update:showSelect', true);
   table.value?.openSelectBox();
 };
+
 // 关闭多选
 const closeSelectBox = () => {
   emits('update:showSelect', false);
@@ -98,17 +107,21 @@ const downloadSelect = () => {
 // 删除选择的歌曲
 const deleteSelect = () => {
   if (selectSongs.value.length > 0) {
-    // 得到要删除的Id
-    const ids = selectSongs.value.map((item) => item.id);
-    // 找出不删除的歌曲
-    const temp = songs.value.filter((item) => !ids.includes(item.id));
-    // 清空播放列表
-    songs.value.splice(0);
-    // 添加
-    songs.value.push(...temp);
+    selectSongs.value.forEach((item) => {
+      if (props.pageName == 'LoveView') {
+        loveSongs.value.splice(loveMusicId.value.get(item.id) as number, 1);
+      } else if (props.pageName == 'RecentPlayView') {
+        songRecord.value.splice(songRecordId.value.get(item.id) as number, 1);
+      } else {
+        musicDownload.value.splice(
+          musicDownloadId.value.get(item.id) as number,
+          1
+        );
+      }
+    });
     message(messageType.SUCCESS, '已清除选中的歌曲！');
   } else {
-    message(messageType.INFO, '请添加歌曲！');
+    message(messageType.INFO, '请先选择歌曲！');
   }
 };
 

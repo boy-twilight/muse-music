@@ -1,7 +1,7 @@
 <template>
   <el-dropdown
     trigger="click"
-    @command="operateMore"
+    @command="handleClick"
     :popper-class="`dropdown more-drop ${dropDownMode}`">
     <button class="more-btn">•••</button>
     <template #dropdown>
@@ -31,38 +31,34 @@ import { reactive } from 'vue';
 import { DropDownItem } from '@/type';
 import useTheme from '@/hooks/useTheme';
 
-const props = defineProps<{
-  shareTo: () => void;
-}>();
-
 const emits = defineEmits<{
   (e: 'openSelect'): void;
+  (e: 'share'): void;
 }>();
 
 // 配置主题
-
 const { background, fontColor, boxShadow, dropDownMode } = useTheme();
-
+// 下拉选项
 const more = reactive<DropDownItem[]>([
   {
     name: '批量操作',
     icon: '\ue617',
     command: '批量操作',
-    style: 'font-size:17px;margin:0 5px 0 0;'
+    style: 'font-size:17px;margin:0 5px 0 0;',
   },
   {
     name: '分享',
     icon: '\ue680',
     command: '分享',
-    style: 'font-size:14px;margin:0.5px 7px 0 2px;'
-  }
+    style: 'font-size:14px;margin:0.5px 7px 0 2px;',
+  },
 ]);
 
-const operateMore = (command: string) => {
+const handleClick = (command: string) => {
   if (command == '批量操作') {
     emits('openSelect');
   } else if (command == '分享') {
-    props.shareTo();
+    emits('share');
   }
 };
 </script>

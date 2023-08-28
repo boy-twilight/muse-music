@@ -47,6 +47,7 @@ import { useRouter } from 'vue-router';
 import { Album } from '@/type';
 import Pagination from '@components/pagination';
 import useTheme from '@/hooks/useTheme';
+import { ALBUM_PAGESIZE } from '@/constants/common';
 
 const props = withDefaults(
   defineProps<{
@@ -65,7 +66,7 @@ const props = withDefaults(
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false
+    showPagination: false,
   }
 );
 
@@ -74,12 +75,11 @@ const emits = defineEmits<{
 }>();
 // 配置主题
 const { fontColor, fontBlack, boxShadow, themeColor, fontGray } = useTheme();
-
 const router = useRouter();
 // 当前页数
 const curPage = ref<number>(1);
 // 一页多少数据
-const pageSize = ref<number>(18);
+const pageSize = ref<number>(ALBUM_PAGESIZE);
 // 总的数据数
 const total = computed(() => props.albums.length);
 // 当前展示的专辑
@@ -96,8 +96,8 @@ const toAlbumDetail = (id: string, artistId: string) => {
     name: 'album',
     query: {
       id,
-      artistId
-    }
+      artistId,
+    },
   });
 };
 </script>
@@ -108,22 +108,7 @@ const toAlbumDetail = (id: string, artistId: string) => {
 @shadow: v-bind(boxShadow);
 @font-color-gray: v-bind(fontGray);
 @theme-color: v-bind(themeColor);
-
-.list-move,
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.5s ease;
-}
-.list-leave-from {
-  opacity: 1;
-}
-.list-leave-to {
-  opacity: 0;
-}
-.list-leave-active {
-  position: absolute !important;
-}
-
+@import '../style.less';
 .album-container {
   display: flex;
   flex-direction: column;

@@ -128,15 +128,15 @@
 import { ref, computed, nextTick } from 'vue';
 import { Comment } from '@/type';
 import useTheme from '@/hooks/useTheme';
-
-// 配置主题
-const { fontBlack, fontColor, boxShadow, themeColor, fontGray, replyBg } =
-  useTheme();
+import { COMMENT_PAGESIZE } from '@/constants/common';
 
 const props = defineProps<{
   comments: Comment[];
 }>();
 
+// 配置主题
+const { fontBlack, fontColor, boxShadow, themeColor, fontGray, replyBg } =
+  useTheme();
 // 评论id的映射
 const mapper = computed(
   () => new Map(props.comments.map((item, index) => [item.commentId, index]))
@@ -146,7 +146,7 @@ const activeId = ref<string>('');
 // 当前页数
 const curPage = ref<number>(1);
 // 一页多少数据
-const pageSize = ref<number>(20);
+const pageSize = ref<number>(COMMENT_PAGESIZE);
 // 当前展示的歌曲列表
 const curList = computed(() =>
   props.comments.slice(
@@ -166,7 +166,7 @@ const getRandomTime = (time: string): string => {
 };
 
 // 打开或关闭评论区
-const openReply = async(commentId: string) => {
+const openReply = async (commentId: string) => {
   if (activeId.value == commentId) {
     activeId.value = '';
   } else {

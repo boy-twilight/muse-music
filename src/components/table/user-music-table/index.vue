@@ -85,6 +85,12 @@ const songs = computed(() => {
 });
 // 总的数据数
 const total = computed(() => target.value.length);
+// 搜索的内容
+const content = ref<string>('');
+// 展示歌曲，歌手，专辑，时长是否排序
+const sortChoice = reactive<boolean[]>([false, false, false, false]);
+// 是否取消排序
+const cancelSort = ref<boolean>(false);
 // 按钮名字
 const buttonName = computed(() => {
   if (props.pageName == 'LoveView') {
@@ -95,12 +101,6 @@ const buttonName = computed(() => {
     return '清空下载记录';
   }
 });
-// 搜索的内容
-const content = ref<string>('');
-// 展示歌曲，歌手，专辑，时长是否排序
-const sortChoice = reactive<boolean[]>([false, false, false, false]);
-// 是否取消排序
-const cancelSort = ref<boolean>(false);
 
 // 得到用户选择的排序类型
 const getSortChoice = (sortType: boolean[], isCancelSort: boolean) => {

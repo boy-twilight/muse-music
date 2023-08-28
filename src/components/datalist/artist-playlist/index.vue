@@ -52,6 +52,7 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { Playlist } from '@/type';
 import Pagination from '@components/pagination';
+import { PLAYLIST_PAGESIZE } from '@/constants/common';
 import useTheme from '@/hooks/useTheme';
 
 const props = withDefaults(
@@ -68,7 +69,7 @@ const props = withDefaults(
     showDelete: false,
     transitionName: '',
     showPagination: false,
-    type: 'playlist'
+    type: 'playlist',
   }
 );
 
@@ -77,13 +78,12 @@ const emits = defineEmits<{
 }>();
 
 // 配置主题
-
 const { fontColor, boxShadow, themeColor, fontGray } = useTheme();
 const router = useRouter();
 // 当前页数
 const curPage = ref<number>(1);
 // 一页多少数据
-const pageSize = ref<number>(18);
+const pageSize = ref<number>(PLAYLIST_PAGESIZE);
 // 总的数据数
 const total = computed(() => props.playlists.length);
 // 当前展示的专辑
@@ -100,8 +100,8 @@ const toPlayList = (list: Playlist) => {
     name: 'playlist',
     query: {
       id: list.id,
-      type: props.type
-    }
+      type: props.type,
+    },
   });
 };
 </script>
@@ -113,22 +113,7 @@ const toPlayList = (list: Playlist) => {
 @theme-color: v-bind(themeColor);
 @font-color-white: #ffffff;
 @common-width: 230px;
-.list-move,
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.5s ease;
-}
-
-.list-leave-from {
-  opacity: 1;
-}
-.list-leave-to {
-  opacity: 0;
-}
-.list-leave-active {
-  position: absolute !important;
-}
-
+@import '../style.less';
 .playlist {
   display: flex;
   flex-direction: column;

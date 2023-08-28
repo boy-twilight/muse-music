@@ -34,7 +34,7 @@
               " />
             <MoreButton
               v-if="!showSelect"
-              :share-to="shareSinger"
+              @share="shareSinger"
               @open-select="batch?.openSelectBox()" />
           </div>
         </div>
@@ -118,7 +118,7 @@ import {
   getArtistDesc,
   getArtistAlbum,
   getArtistSongs,
-  getMusicDetail
+  getMusicDetail,
 } from '@/api';
 import { Artist, Song, MV, ArtistDesc, Album } from '@/type';
 import { messageType } from '@/constants/common';
@@ -127,7 +127,7 @@ import {
   getMusicInfos,
   formatTime,
   message,
-  share
+  share,
 } from '@/utils';
 import { ONLINE_MUISC_PAGESIZE } from '@/constants/common';
 import useUserStore from '@/store/user';
@@ -154,7 +154,7 @@ const singer = reactive<Artist>({
   score,
   id: id,
   avatar: '',
-  alias: []
+  alias: [],
 });
 // 歌手基本简介
 const introduce = reactive<ArtistDesc[]>([]);
@@ -186,7 +186,7 @@ const first = inject('firstLoading') as Ref<boolean>;
 const noResult = reactive<Map<string, boolean>>(
   new Map([
     ['album', true],
-    ['mv', true]
+    ['mv', true],
   ])
 );
 // 是否加载选择框进入批量操作模式
@@ -206,7 +206,7 @@ const shareSinger = () => {
 };
 
 // 获取当前活跃的选项，并根据选项加载数据
-const getActive = async(active: string) => {
+const getActive = async (active: string) => {
   // 点击加载数据
   if (active == 'album') {
     if (artistAlbum.length != 0) return;
@@ -222,7 +222,7 @@ const getActive = async(active: string) => {
           id: item.id,
           cover: picUrl,
           publishTime: formatTime(publishTime),
-          artistId: id + ''
+          artistId: id + '',
         });
       });
     } catch (err: any) {
@@ -243,7 +243,7 @@ const getActive = async(active: string) => {
           name,
           artist: artistName,
           image: imgurl16v9,
-          playCount
+          playCount,
         });
       });
     } catch (err: any) {
@@ -259,7 +259,7 @@ const getActive = async(active: string) => {
       introduction.forEach((item: any) => {
         introduce.push({
           title: item.ti,
-          content: item.txt
+          content: item.txt,
         });
       });
     } catch (err: any) {
@@ -270,14 +270,14 @@ const getActive = async(active: string) => {
 };
 
 // 获取初始数据
-const getData = async() => {
+const getData = async () => {
   first.value = true;
   try {
     const responses: any[] = await Promise.all([
       getArtistInfo(id),
-      getArtistSongs(id, 1000)
+      getArtistSongs(id, 1000),
     ]);
-    responses.forEach(async(response, index) => {
+    responses.forEach(async (response, index) => {
       // 获取歌手的具体信息
       if (index == 0) {
         const { artist } = response;

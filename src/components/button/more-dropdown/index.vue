@@ -63,6 +63,7 @@ const showDrop = ref<boolean>(false);
 const loveIcon = computed<string>(() =>
   props.song.isLove ? '&#xe760;' : '&#xe761'
 );
+// 喜欢图标的表换
 const lovetyle = computed<string>(() =>
   props.song.isLove
     ? 'margin: 0 7px 0 4px;color:#ff6a6a;'
@@ -130,12 +131,14 @@ const showComments = inject('showComments') as Ref<boolean>;
 
 // 播放音乐，相似音乐，下一首播放
 const { playMusic, playMusicNext, playSimiMusic } = usePlayMusic();
+
 // 点击显示下拉框
 const showDropMenu = async() => {
   showDrop.value = true;
   await nextTick();
   more.value?.click();
 };
+
 // 点击更多操作
 const handleClick = (command: string) => {
   const song = props.song;

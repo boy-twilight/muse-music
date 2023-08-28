@@ -64,6 +64,7 @@ const openSelectBox = () => {
   emits('update:showSelect', true);
   table.value?.openSelectBox();
 };
+
 // 关闭多选
 const closeSelectBox = () => {
   emits('update:showSelect', false);

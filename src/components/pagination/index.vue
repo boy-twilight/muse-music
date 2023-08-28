@@ -41,6 +41,7 @@ const emits = defineEmits<{
 
 // 配置主题
 const { themeColor, fontColor } = useTheme();
+// 页码跳转
 const target = ref<string>('');
 
 const checkValid = () => {
