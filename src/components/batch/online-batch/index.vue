@@ -18,12 +18,11 @@
       <CommonButton
         icon="&#xe617;"
         name="取消操作"
-        @click="emits('closeSelect', false)"
+        @click="closeSelectBox"
         class="cancel" />
     </div>
     <SongTable
       :songs="songs"
-      :show-select="true"
       :show-header="false"
       ref="table" />
   </div>
@@ -42,10 +41,14 @@ import useTheme from '@/hooks/useTheme';
 defineProps<{
   // 歌曲
   songs: Song[];
+  //是否开启多选
+  showSelect: boolean;
 }>();
+
 const emits = defineEmits<{
-  (e: 'closeSelect', showSelect: boolean): void;
+  (e: 'update:showSelect', isShow: boolean): void;
 }>();
+
 // 配置主题
 const { themeColor } = useTheme();
 // 用户数据
@@ -55,6 +58,17 @@ const { loveMusicId, loveSongs } = storeToRefs(user);
 const selectSongs = computed(() => table.value?.getSelectItems() || []);
 // 表格容器
 const table = ref<InstanceType<typeof SongTable>>();
+
+//打开多选
+const openSelectBox = () => {
+  emits('update:showSelect', true);
+  table.value?.openSelectBox();
+};
+//关闭多选
+const closeSelectBox = () => {
+  emits('update:showSelect', false);
+  table.value?.closeSelectBox();
+};
 
 // 播放选中音乐
 const { playSelectMusic } = usePlayMusic();
@@ -82,6 +96,11 @@ const loveSelect = () => {
   });
   table.value?.clearSelect();
 };
+
+defineExpose({
+  closeSelectBox,
+  openSelectBox,
+});
 </script>
 
 <style lang="less" scoped>

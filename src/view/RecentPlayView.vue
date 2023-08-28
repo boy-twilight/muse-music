@@ -3,8 +3,7 @@
     <div class="recent-container scroll-container">
       <UserBatch
         page-name="RecentPlayView"
-        v-show="showSelect"
-        @close-select="closeSelect" />
+        v-show="showSelect" />
       <Tab
         v-show="!showSelect"
         active="song">
@@ -63,11 +62,6 @@ const openSelect = (open: boolean) => {
   showSelect.value = open;
 };
 
-// 关闭批量操作
-const closeSelect = (close: boolean) => {
-  showSelect.value = close;
-};
-
 // 删除播放记录的视频
 const deleteVideoRecord = (id: string) => {
   const index = videoRecord.value.findIndex((item) => item.id == id);
@@ -75,7 +69,7 @@ const deleteVideoRecord = (id: string) => {
 };
 
 // 获取初始数据
-const getData = async() => {
+const getData = async () => {
   first.value = true;
   await getMusicUrls(songRecord.value);
   user.initLoveMusic(songRecord.value);

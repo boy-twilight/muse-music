@@ -4,8 +4,9 @@
       <!-- 批量操作 -->
       <OnlineBatch
         v-show="showSelect"
+        v-model:show-select="showSelect"
         :songs="albumSongs"
-        @close-select="closeSelect" />
+        ref="batch" />
 
       <div
         class="header"
@@ -30,7 +31,7 @@
             <MoreButton
               v-if="!showSelect"
               :share-to="shareAlbum"
-              @open-select="openSelect" />
+              @open-select="batch?.openSelectBox()" />
           </div>
         </div>
       </div>
@@ -93,7 +94,7 @@ import {
 import { messageType } from '@/constants/common';
 import useUserStore from '@/store/user';
 import { PlayButton, MoreButton, CommonButton } from '@components/button';
-import { OnlineBatch } from '@components/batch';
+import { OnlineBatch, UserBatch } from '@components/batch';
 import { ArtistAlbum } from '@components/datalist';
 import { SongTable } from '@components/table';
 import Tab from '@components/tab';
@@ -124,16 +125,8 @@ const albumSongs = reactive<Song[]>([]);
 const first = inject('firstLoading') as Ref<boolean>;
 // 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
-
-// 打开批量操作
-const openSelect = (open: boolean) => {
-  showSelect.value = open;
-};
-
-// 关闭批量操作
-const closeSelect = (close: boolean) => {
-  showSelect.value = close;
-};
+// 批量操作容器
+const batch = ref<InstanceType<typeof UserBatch>>();
 
 // 分享歌单
 const shareAlbum = () => {

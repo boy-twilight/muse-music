@@ -5,11 +5,12 @@
       <OnlineBatch
         v-show="showSelect"
         :songs="curList"
-        @close-select="closeSelect" />
+        v-model:show-select="showSelect"
+        ref="batch" />
       <!-- 顶部歌手搜索结果展示 -->
       <div
         class="result-singer"
-        v-show="firstSinger.name"
+        v-show="firstSinger.name && !showSelect"
         @click="
           router.push({
             name: 'artist',
@@ -56,7 +57,7 @@
                 <CommonButton
                   icon="&#xe617;"
                   name="批量操作"
-                  @click="showSelect = !showSelect" />
+                  @click="batch?.openSelectBox()" />
               </div>
               <SongTable
                 :songs="curList"
@@ -349,6 +350,8 @@ const openLyric = (index: number) => {
 };
 // 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
+// 批量加载容器
+const batch = ref<InstanceType<typeof OnlineBatch>>();
 // 用于分页,复用歌曲与歌词的分页
 // 当前页数
 const curPage = ref<number>(1);
@@ -369,11 +372,6 @@ const curList = computed(() =>
 const total = computed(() =>
   activeTab.value == 'song' ? musicResult.length : lyricResult.length
 );
-
-// 关闭批量操作
-const closeSelect = (close: boolean) => {
-  showSelect.value = close;
-};
 
 // 喜欢歌曲
 const loveAll = () => {

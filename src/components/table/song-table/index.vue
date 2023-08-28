@@ -126,8 +126,6 @@ const props = withDefaults(
     songs: Song[];
     // 表格高度
     height?: string;
-    // 是否展示多选框
-    showSelect?: boolean;
     // 该字段表明哪些列需要排序，传入顺序为列的顺序
     sort?: boolean[];
     // 是否取消排序
@@ -159,19 +157,25 @@ const songIdMapper = computed(
 );
 // 表格多选
 // 是否展开选择框
-const showSelectBox = computed(() => props.showSelect);
+const showSelectBox = ref<boolean>(false);
 // 选择框的长度
-const selectWidth = computed(() => (props.showSelect ? 55 : 0));
+const selectWidth = computed(() => (showSelectBox.value ? 55 : 0));
 // 获取选中
 const getSelectItems = (): Song[] => tableContainer.value?.getSelectionRows();
 // 清除选中
 const clearSelect = () => {
   tableContainer.value!.clearSelection();
 };
-// 关闭选中框的适合清空选项
-watch(showSelectBox, (newVal) => {
-  if (!newVal) clearSelect();
-});
+//打开多选
+const openSelectBox = () => {
+  showSelectBox.value = true;
+};
+//关闭多选
+const closeSelectBox = () => {
+  showSelectBox.value = false;
+  clearSelect();
+};
+
 // 表格排序
 // 排序类型
 const sortType = computed(() =>
@@ -272,6 +276,8 @@ onBeforeRouteLeave(() => {
 defineExpose({
   clearSelect,
   getSelectItems,
+  openSelectBox,
+  closeSelectBox,
 });
 </script>
 

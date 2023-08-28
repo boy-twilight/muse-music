@@ -3,8 +3,7 @@
     <div class="download-container scroll-container">
       <UserBatch
         v-show="showSelect"
-        page-name="DownloadView"
-        @close-select="closeSelect" />
+        page-name="DownloadView" />
       <Tab
         v-show="!showSelect"
         active="song">
@@ -62,11 +61,6 @@ const openSelect = (open: boolean) => {
   showSelect.value = open;
 };
 
-// 关闭批量操作
-const closeSelect = (close: boolean) => {
-  showSelect.value = close;
-};
-
 // 删除播放的视频记录
 const deleteDownLoad = (id: string) => {
   const index = mvDownload.value.findIndex((item) => item.id == id);
@@ -74,7 +68,7 @@ const deleteDownLoad = (id: string) => {
 };
 
 // 获取初始数据
-const getData = async() => {
+const getData = async () => {
   first.value = true;
   await getMusicUrls(musicDownload.value);
   user.initLoveMusic(musicDownload.value);

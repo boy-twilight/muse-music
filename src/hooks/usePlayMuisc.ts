@@ -18,10 +18,11 @@ export default function usePlay() {
     playProcess,
     playTime,
     songListId,
-    songNum
+    songNum,
   } = storeToRefs(footer);
+
   // 播放单曲
-  const playMusic = async(song: Song) => {
+  const playMusic = async (song: Song) => {
     if (song.available == '0' || song.available == '8') {
       const index = songListId.value.get(song.id);
       if (index == undefined) {
@@ -102,7 +103,7 @@ export default function usePlay() {
   };
 
   // 播放选中的歌曲
-  const playSelectMusic = async(selectSongs: Song[]) => {
+  const playSelectMusic = async (selectSongs: Song[]) => {
     if (selectSongs.length > 0) {
       isPlay.value = false;
       playProcess.value = 0;
@@ -123,7 +124,7 @@ export default function usePlay() {
   };
 
   // 播放相似音乐
-  const playSimiMusic = async(id: string) => {
+  const playSimiMusic = async (id: string) => {
     try {
       // 当前音乐的数目
       const num = songList.value.length;
@@ -140,7 +141,7 @@ export default function usePlay() {
             singer: artists.map((item: any) => item.name).join('、'),
             songImage: album.blurPicUrl,
             album: album.name,
-            available: fee
+            available: fee,
           };
           // 获取音乐的播放链接
           const musicResponse: any = await getMusicUrl(id);
@@ -170,11 +171,12 @@ export default function usePlay() {
       message(messageType.ERROR, err.message);
     }
   };
+
   return {
     playMusic,
     playAllMusic,
     playMusicNext,
     playSimiMusic,
-    playSelectMusic
+    playSelectMusic,
   };
 }

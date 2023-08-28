@@ -4,8 +4,9 @@
       <!-- 批量操作 -->
       <OnlineBatch
         v-show="showSelect"
+        v-model:show-select="showSelect"
         :songs="curList"
-        @close-select="closeSelect" />
+        ref="batch" />
 
       <div
         v-show="!showSelect"
@@ -34,7 +35,7 @@
             <MoreButton
               v-if="!showSelect"
               :share-to="shareSinger"
-              @open-select="openSelect" />
+              @open-select="batch?.openSelectBox()" />
           </div>
         </div>
       </div>
@@ -177,8 +178,6 @@ const curList = computed(() =>
 const artistMv = reactive<MV[]>([]);
 // 歌手专辑
 const artistAlbum = reactive<Album[]>([]);
-// 是否加载选择框进入批量操作模式
-const showSelect = ref<boolean>(false);
 // 加载数据的动画
 const isLoading = ref<boolean>(false);
 // 页面第一次加载的动画
@@ -190,19 +189,14 @@ const noResult = reactive<Map<string, boolean>>(
     ['mv', true],
   ])
 );
+// 是否加载选择框进入批量操作模式
+const showSelect = ref<boolean>(false);
+// 批量操作容器
+const batch = ref<InstanceType<typeof OnlineBatch>>();
 
 // 页数变化
 const pageChange = (page: number) => {
   curPage.value = page;
-};
-// 批量操作相关
-// 关闭批量操作
-const closeSelect = (close: boolean) => {
-  showSelect.value = close;
-};
-// 打开批量操作
-const openSelect = (open: boolean) => {
-  showSelect.value = open;
 };
 
 // 分享歌手

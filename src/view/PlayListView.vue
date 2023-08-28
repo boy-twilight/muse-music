@@ -5,7 +5,8 @@
       <OnlineBatch
         v-show="showSelect"
         :songs="curList"
-        @close-select="closeSelect" />
+        v-model:show-select="showSelect"
+        ref="batch" />
       <!-- 歌单头部 -->
       <div
         class="header"
@@ -41,7 +42,7 @@
             <MoreButton
               v-if="!showSelect"
               :share-to="sharePlaylist"
-              @open-select="openSelect" />
+              @open-select="batch?.openSelectBox()" />
           </div>
         </div>
       </div>
@@ -94,7 +95,7 @@ import {
   getMusicInfos,
   share,
   getComment,
-  getSourceComments
+  getSourceComments,
 } from '@/utils';
 import { messageType } from '@/constants/common';
 import {
@@ -102,7 +103,7 @@ import {
   getPlayListSong,
   getPlaylistComment,
   getRadioDetail,
-  getRadioSong
+  getRadioSong,
 } from '@/api';
 import { Playlist, Song, Comment } from '@/type';
 import useUserStore from '@/store/user';
@@ -132,8 +133,8 @@ const playList = reactive<Playlist>({
   description: '',
   creator: {
     nickname: '',
-    avatarUrl: ''
-  }
+    avatarUrl: '',
+  },
 });
 // 歌单歌曲
 const playListSong = reactive<Song[]>([]);
@@ -157,22 +158,14 @@ const total = computed(() => playListSong.length);
 const first = inject('firstLoading') as Ref<boolean>;
 // 是否加载选择框进入批量操作模式
 const showSelect = ref<boolean>(false);
+//
+const batch = ref<InstanceType<typeof OnlineBatch>>();
 // 是否展示占位图片
 const noResult = ref<boolean>(true);
 
 // 页数变化
 const pageChange = (page: number) => {
   curPage.value = page;
-};
-
-// 关闭批量操作
-const closeSelect = (close: boolean) => {
-  showSelect.value = close;
-};
-
-// 打开批量操作
-const openSelect = (open: boolean) => {
-  showSelect.value = open;
 };
 
 // 分享歌单
@@ -196,14 +189,14 @@ const addLove = () => {
 };
 
 // 获取歌曲详情和音乐
-const getData = async() => {
+const getData = async () => {
   first.value = true;
   if (type == 'playlist') {
     try {
       const responses: any[] = await Promise.all([
         getPlayListDetail(id),
         getPlayListSong(id),
-        getPlaylistComment(id, 100)
+        getPlaylistComment(id, 100),
       ]);
       responses.forEach((response, index) => {
         // 获取歌单详情
@@ -215,8 +208,8 @@ const getData = async() => {
               description,
               tags,
               creator,
-              playCount
-            }
+              playCount,
+            },
           } = response;
           playList.name = name;
           playList.image = coverImgUrl;
@@ -254,7 +247,7 @@ const getData = async() => {
     try {
       const responses: any[] = await Promise.all([
         getRadioDetail(id),
-        getRadioSong(id, 100)
+        getRadioSong(id, 100),
       ]);
       responses.forEach((response, index) => {
         // 获取电台详情
@@ -265,8 +258,8 @@ const getData = async() => {
               dj: { avatarUrl, nickname },
               picUrl,
               desc,
-              subCount
-            }
+              subCount,
+            },
           } = response;
           playList.name = name;
           playList.id = id;
@@ -289,8 +282,8 @@ const getData = async() => {
                 fee,
                 artists,
                 album: { name: albumName, picUrl },
-                duration
-              }
+                duration,
+              },
             } = item;
             playListSong.push({
               id,
@@ -299,7 +292,7 @@ const getData = async() => {
               songImage: picUrl,
               album: albumName,
               available: fee,
-              time: duration
+              time: duration,
             });
           });
           user.initLoveMusic(playListSong);
