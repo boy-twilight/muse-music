@@ -1,0 +1,133 @@
+// iconfont
+@font-face {
+  font-family: 'iconfont';
+  src: url('../font/iconfont.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'iconfont1';
+  src: url('../font/iconfont1.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'iconfont2';
+  src: url('../font/iconfont2.ttf') format('truetype');
+}
+
+.iconfont {
+  font-family: 'iconfont' !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.iconfont_1 {
+  font-family: 'iconfont1' !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.iconfont_2 {
+  font-family: 'iconfont2' !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 系统滚动条颜色 */
+*::-webkit-scrollbar {
+  width: 7.5px;
+  box-sizing: border-box;
+}
+
+*::-webkit-scrollbar-track {
+  width: 7.5px;
+  border-radius: 2em;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(210, 210, 210, 0.5);
+  background-clip: padding-box;
+  min-height: 28px;
+  border-radius: 2em;
+}
+
+/* 滚动条颜色 */
+.el-scrollbar__thumb {
+  background-color: rgb(210, 210, 210) !important;
+}
+.el-scrollbar__thumb:hover {
+  opacity: 0.5 !important;
+}
+
+/* 主页面与音乐详情页面的过渡 */
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.75s ease !important;
+}
+.slide-enter-to {
+  position: absolute;
+  transform: translateY(0);
+}
+.slide-enter-from {
+  position: absolute;
+  transform: translateY(100%);
+}
+.slide-leave-to {
+  position: absolute;
+  transform: translateY(-100%);
+}
+.slide-leave-from {
+  position: absolute;
+  transform: translateY(0);
+}
+
+// datalist里面组件的过渡
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+.list-leave-from {
+  opacity: 1;
+}
+.list-leave-to {
+  opacity: 0;
+}
+.list-leave-active {
+  position: absolute !important;
+}
+
+//滚动容器
+.scroll-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 87vw;
+  padding-top: 10px;
+  overflow: auto;
+}
+
+// 页面进度条的颜色
+#nprogress {
+  .bar {
+    background: #1ed2a9 !important;
+  }
+}
+
+.popover-skin {
+  backdrop-filter: blur(10px) brightness(0.8) saturate(120%) contrast(1.2);
+}
+
+.dropdown-skin {
+  background-color: transparent !important;
+  backdrop-filter: blur(10px) brightness(0.8) saturate(120%) contrast(1.2);
+  .el-dropdown-menu__item {
+    &:hover {
+      background-color: rgba(220, 220, 220, 0.2) !important;
+    }
+  }
+}

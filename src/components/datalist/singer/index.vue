@@ -104,7 +104,6 @@ const toArtist = (id: string, score: string) => {
 @shadow: v-bind(boxShadow);
 @font-color-gray: v-bind(fontGray);
 @theme-color: v-bind(themeColor);
-@import '../style.less';
 .singer-container {
   .singer-list {
     display: flex;

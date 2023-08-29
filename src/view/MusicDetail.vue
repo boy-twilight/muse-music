@@ -41,11 +41,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, watch, nextTick, computed } from 'vue';
+import { ref, reactive, watch, nextTick, computed, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import useFooterStore from '@/store/footer';
 import { getLyrics } from '@/api';
-import { message, formatToTimeStap } from '@/utils';
+import { message, formatToTimeStap, getTimeStamp } from '@/utils';
 import { messageType } from '@/constants/common';
 import image from '@assets/image/暂无音乐.svg';
 import { Footer } from '@components/layout';
@@ -97,6 +97,8 @@ const animationState = computed(() => (isPlay.value ? 'running' : 'paused'));
 const imageUrl = computed(() =>
   songNum.value == 0 ? image : songList.value[current.value].songImage
 );
+// 页面失活的时间
+let hiddenTime = 0;
 
 // 返回
 const back = () => {
@@ -129,8 +131,8 @@ watch(isPlay, (newVal) => {
           animationTime.value = dis > 4 ? '4s' : dis + 's';
         }
       }
-      currentTime.value += 20;
-    }, 20);
+      currentTime.value += 17;
+    }, 17);
   } else {
     clearInterval(timeid);
   }
@@ -195,6 +197,19 @@ const getLyric = async() => {
     message(messageType.ERROR, err.message);
   }
 };
+
+onMounted(() => {
+  window.addEventListener('visibilitychange', () => {
+    if (document.visibilityState == 'visible') {
+      const cur = getTimeStamp();
+      if (cur - hiddenTime > 1000) {
+        isChanging.value = true;
+      }
+    } else {
+      hiddenTime = getTimeStamp();
+    }
+  });
+});
 
 // 请求歌词
 getLyric();

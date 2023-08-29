@@ -108,7 +108,6 @@ const toAlbumDetail = (id: string, artistId: string) => {
 @shadow: v-bind(boxShadow);
 @font-color-gray: v-bind(fontGray);
 @theme-color: v-bind(themeColor);
-@import '../style.less';
 .album-container {
   display: flex;
   flex-direction: column;

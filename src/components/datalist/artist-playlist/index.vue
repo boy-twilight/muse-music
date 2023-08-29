@@ -113,7 +113,6 @@ const toPlayList = (list: Playlist) => {
 @theme-color: v-bind(themeColor);
 @font-color-white: #ffffff;
 @common-width: 230px;
-@import '../style.less';
 .playlist {
   display: flex;
   flex-direction: column;

@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
-import './style.css';
+import './assets/style/reset.less';
+import './assets/style/global.less';
 import App from '@/App.vue';
 import router from '@/router';
 import pinia from '@/store';

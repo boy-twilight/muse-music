@@ -111,7 +111,6 @@ const toMv = (id: string) => {
 @font-color-gray: v-bind(fontGray);
 @font-color-green: v-bind(themeColor);
 @font-color-white: #ffffff;
-@import '../style.less';
 .mv {
   display: flex;
   flex-direction: column;

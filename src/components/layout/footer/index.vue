@@ -227,14 +227,14 @@
           <span
             v-show="!isMuted"
             @mousedown.prevent="setMuted"
-            class="iconfont volume"
+            class="iconfont"
             >&#xe60d;</span
           >
           <!-- 静音 -->
           <span
             v-show="isMuted"
             @mousedown.prevent="setMuted"
-            class="iconfont volume"
+            class="iconfont"
             >&#xf1f4;</span
           >
         </div>
@@ -496,6 +496,12 @@ const setVolume = () => {
   isMuted.value = volume.value == 0 || player.value!.muted;
 };
 
+// 设置静音
+const setMuted = () => {
+  player.value!.muted = player.value!.muted ? false : true;
+  isMuted.value = volume.value == 0 || player.value!.muted;
+};
+
 // 改变进度;
 const changeProcess = throttle(
   () => {
@@ -515,12 +521,6 @@ const changeProcess = throttle(
     trailing: false,
   }
 );
-
-// 设置静音
-const setMuted = () => {
-  player.value!.muted = !player.value!.muted;
-  isMuted.value = volume.value == 0 || player.value!.muted;
-};
 
 // 下一首
 const next = () => {
@@ -848,104 +848,5 @@ onMounted(() => {
 @font-color-gray: v-bind(fontGray);
 @background: v-bind(background);
 @theme-color: v-bind(themeColor);
-.volume-setting-container {
-  display: flex;
-  flex-direction: column;
-  width: 36px;
-  align-items: center;
-  .volume-setting {
-    .el-slider__button {
-      height: 12px;
-      width: 12px;
-      margin-left: -2px;
-      border: none;
-      background-color: @theme-color;
-    }
-    .el-slider__bar {
-      width: 4px !important;
-      background-color: @theme-color;
-    }
-    .el-slider__runway {
-      width: 4px !important;
-      background-color: rgb(217, 217, 217);
-    }
-  }
-  span {
-    font-size: 13px;
-    color: @font-color;
-    margin-top: 10px;
-  }
-  .el-divider {
-    width: 60px;
-    margin: 10px 0 0 0;
-  }
-  .iconfont {
-    font-size: 18px;
-    &:last-child {
-      color: red;
-    }
-  }
-}
-.music-process {
-  .el-slider__runway:hover .el-slider__button {
-    display: inline-block;
-  }
-}
-//下拉框样式设置
-.dropdown {
-  border-radius: 10px !important;
-  box-shadow: @shadow;
-
-  .el-dropdown-menu {
-    padding: 0;
-    border-radius: 10px !important;
-
-    .el-dropdown-menu__item {
-      padding: 10px 40px 10px 15px;
-      color: inherit !important;
-      font-size: 12px;
-      letter-spacing: 1px;
-      &:first-child {
-        border-top-right-radius: 10px;
-        border-top-left-radius: 10px;
-      }
-      &:last-child {
-        border-bottom-right-radius: 10px;
-        border-bottom-left-radius: 10px;
-      }
-    }
-  }
-}
-.playmode {
-  border-radius: 7px !important;
-  .el-dropdown-menu {
-    border-radius: 7px !important;
-    .el-dropdown-menu__item {
-      padding: 10px 20px 10px 15px;
-      &:first-child {
-        border-top-right-radius: 7px;
-        border-top-left-radius: 7px;
-      }
-      &:last-child {
-        border-bottom-right-radius: 7px;
-        border-bottom-left-radius: 7px;
-      }
-    }
-  }
-}
-// 下拉框激活颜色
-.dropdown-light {
-  .el-dropdown-menu__item {
-    &:hover {
-      background-color: rgba(217, 217, 217, 0.4) !important;
-    }
-  }
-}
-.dropdown-dark {
-  .el-dropdown-menu__item {
-    &:hover {
-      background-color: rgb(70, 70, 70) !important;
-    }
-  }
-}
+@import './index.less';
 </style>

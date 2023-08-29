@@ -11,15 +11,15 @@
         v-show="!footer.showDetail">
         <el-aside
           width="200px"
-          class="side"
           :class="{
+            side: true,
             'side-skin': bgMode == 'skin',
           }">
           <Aside />
         </el-aside>
         <el-container
-          class="main"
           :class="{
+            main: true,
             'main-skin': bgMode == 'skin',
           }">
           <el-header class="header">
@@ -264,27 +264,6 @@ getUrlOntime();
 @other-background: v-bind(background);
 @header-height: v-bind(headerHeight);
 @main-height: v-bind(contentHeight);
-//过渡
-.slide-enter-active,
-.slide-leave-active {
-  transition: all 0.75s ease !important;
-}
-.slide-enter-to {
-  position: absolute;
-  transform: translateY(0);
-}
-.slide-enter-from {
-  position: absolute;
-  transform: translateY(100%);
-}
-.slide-leave-to {
-  position: absolute;
-  transform: translateY(-100%);
-}
-.slide-leave-from {
-  position: absolute;
-  transform: translateY(0);
-}
 
 // 添加皮肤时添加的一些样式
 .main-skin {
@@ -303,7 +282,6 @@ getUrlOntime();
 
 .app-container {
   height: 100vh;
-  width: 100vw;
   overflow: hidden;
 
   .home-container {
@@ -337,43 +315,5 @@ getUrlOntime();
       }
     }
   }
-}
-</style>
-
-<style lang="less">
-#nprogress {
-  .bar {
-    background: #1ed2a9 !important;
-  }
-}
-.el-popover {
-  min-width: 60px !important;
-}
-
-.el-popper__arrow::before {
-  display: none !important;
-}
-
-.popover-skin {
-  backdrop-filter: blur(10px) brightness(0.8) saturate(120%) contrast(1.2);
-}
-
-.dropdown-skin {
-  background-color: transparent !important;
-  backdrop-filter: blur(10px) brightness(0.8) saturate(120%) contrast(1.2);
-  .el-dropdown-menu__item {
-    &:hover {
-      background-color: rgba(220, 220, 220, 0.2) !important;
-    }
-  }
-}
-
-.scroll-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 87vw;
-  padding-top: 10px;
-  overflow: auto;
 }
 </style>

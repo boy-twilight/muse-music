@@ -73,9 +73,9 @@
             name="comment">
             <SourceComment
               :comments="playlistComments"
-              v-show="noResult" />
+              v-show="!noResult" />
             <NoResult
-              v-show="!noResult"
+              v-show="noResult"
               :size="280"
               text="暂无评论数据" />
           </el-tab-pane>
