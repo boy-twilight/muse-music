@@ -166,7 +166,7 @@ const getRandomTime = (time: string): string => {
 };
 
 // 打开或关闭评论区
-const openReply = async (commentId: string) => {
+const openReply = async(commentId: string) => {
   if (activeId.value == commentId) {
     activeId.value = '';
   } else {

@@ -44,14 +44,14 @@ const more = reactive<DropDownItem[]>([
     name: '批量操作',
     icon: '\ue617',
     command: '批量操作',
-    style: 'font-size:17px;margin:0 5px 0 0;',
+    style: 'font-size:17px;margin:0 5px 0 0;'
   },
   {
     name: '分享',
     icon: '\ue680',
     command: '分享',
-    style: 'font-size:14px;margin:0.5px 7px 0 2px;',
-  },
+    style: 'font-size:14px;margin:0.5px 7px 0 2px;'
+  }
 ]);
 
 const handleClick = (command: string) => {
