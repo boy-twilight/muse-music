@@ -2,7 +2,7 @@ import { defineStore, storeToRefs } from 'pinia';
 import { computed, reactive } from 'vue';
 import { Album, Artist, MV, Playlist, Song, Source } from '@/type';
 import { download, downloadMusic, message, ls } from '@/utils';
-import { messageType } from '@/constants/common';
+import { MessageType } from '@/constants/common';
 import useFooterStore from './footer';
 
 const useUserStore = defineStore('user', () => {
@@ -121,7 +121,7 @@ const useUserStore = defineStore('user', () => {
     const downloadIndex = musicDownloadId.value.get(source.id);
     if (source.isLove) {
       sourceList.push(source);
-      message(messageType.SUCCESS, '收藏成功！');
+      message(MessageType.SUCCESS, '收藏成功！');
       // 添加对应页面的喜欢
       if (playIndex != undefined)
         songList.value[playIndex as number].isLove = true;
@@ -131,7 +131,7 @@ const useUserStore = defineStore('user', () => {
         musicDownload[recordIndex as number].isLove = true;
     } else {
       sourceList.splice(idMap.get(source.id) as number, 1);
-      message(messageType.SUCCESS, '取消收藏成功！');
+      message(MessageType.SUCCESS, '取消收藏成功！');
       // 移除对应页面的喜欢
       if (playIndex != undefined)
         songList.value[playIndex as number].isLove = false;
@@ -165,7 +165,7 @@ const useUserStore = defineStore('user', () => {
 
   // 下载视频并添加记录
   function addVideoDownload(mv: MV) {
-    message(messageType.SUCCESS, 'MV开始下载，请稍后。');
+    message(MessageType.SUCCESS, 'MV开始下载，请稍后。');
     const fileName = mv.name + '-' + mv.artist + '.mp4';
     const url = mv.url as string;
     download(url, fileName);
@@ -224,7 +224,7 @@ const useUserStore = defineStore('user', () => {
     addMuiscDownload,
     addVideoDownload,
     initLoveMusic,
-    initLoveStatus
+    initLoveStatus,
   };
 });
 

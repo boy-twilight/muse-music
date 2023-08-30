@@ -42,7 +42,7 @@ import { ref, reactive, Ref, inject, computed, nextTick } from 'vue';
 import { Artist } from '@/type';
 import { getArtists } from '@/api';
 import { message } from '@/utils';
-import { messageType } from '@/constants/common';
+import { MessageType } from '@/constants/common';
 import { Singer } from '@components/datalist';
 import { ButtonGroup, SearchButton } from '@components/button';
 import useTheme from '@/hooks/useTheme';
@@ -73,7 +73,7 @@ const typeMapper = new Map([
   ['全部', -1],
   ['男歌手', 1],
   ['女歌手', 2],
-  ['组合', 3]
+  ['组合', 3],
 ]);
 // 歌手地区默认活跃的Index
 const areaActive = ref<number>(0);
@@ -90,7 +90,7 @@ const areaMapper = new Map([
   ['欧美', 96],
   ['日本', 8],
   ['韩国', 16],
-  ['其他', 0]
+  ['其他', 0],
 ]);
 // 姓名首字母，用于筛选
 const nameCh = reactive<string[]>(
@@ -102,7 +102,7 @@ const nameActive = ref<string>('全部');
 const first = inject('firstLoading') as Ref<boolean>;
 
 // 获取到当前活跃的按钮切换并加载对应数据
-const getActiveIndex = async(index: number, type: string) => {
+const getActiveIndex = async (index: number, type: string) => {
   artistlist.splice(0);
   // 切换index
   if (type == '歌手地区') {
@@ -126,7 +126,7 @@ const getActiveIndex = async(index: number, type: string) => {
 };
 
 // 请求初始数据
-const getData = async() => {
+const getData = async () => {
   // 第一次请求开启动画
   first.value = true;
   try {
@@ -143,7 +143,7 @@ const getData = async() => {
         id,
         name,
         avatar: img1v1Url,
-        score: fansCount
+        score: fansCount,
       });
     });
     // 缓存请求结果
@@ -152,7 +152,7 @@ const getData = async() => {
       [...artistlist]
     );
   } catch (err: any) {
-    message(messageType.ERROR, err.message);
+    message(MessageType.ERROR, err.message);
   }
   first.value = false;
 };

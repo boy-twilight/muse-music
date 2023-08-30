@@ -281,7 +281,7 @@ import {
   getSourceComments,
   downloadLyric,
 } from '@/utils';
-import { messageType } from '@/constants/common';
+import { MessageType } from '@/constants/common';
 import { DropDownItem, Song, Comment } from '@/type';
 import image from '@assets/image/暂无音乐.svg';
 import usePlayMusic from '@/hooks/usePlayMuisc';
@@ -474,7 +474,7 @@ const handleClick = async (command: string) => {
       );
     }
   } else {
-    message(messageType.INFO, '暂无音乐，请添加音乐');
+    message(MessageType.INFO, '暂无音乐，请添加音乐');
   }
 };
 
@@ -512,7 +512,7 @@ const changeProcess = throttle(
         100;
       isChanging.value = true;
     } else {
-      message(messageType.INFO, '请添加音乐！');
+      message(MessageType.INFO, '请添加音乐！');
     }
   },
   100,
@@ -527,7 +527,7 @@ const next = () => {
   if (songNum.value > 0) {
     current.value = ++current.value >= songNum.value ? 0 : current.value;
   } else {
-    message(messageType.INFO, '暂无音乐，请您添加音乐');
+    message(MessageType.INFO, '暂无音乐，请您添加音乐');
   }
 };
 
@@ -537,7 +537,7 @@ const pre = () => {
   if (songNum.value > 0) {
     current.value = --current.value < 0 ? songNum.value - 1 : current.value;
   } else {
-    message(messageType.INFO, '暂无音乐，请您添加音乐');
+    message(MessageType.INFO, '暂无音乐，请您添加音乐');
   }
 };
 
@@ -571,7 +571,7 @@ watch(isPlay, async (newVal) => {
           100;
       }, 1000);
     } else {
-      message(messageType.INFO, '暂无音乐，请您添加音乐');
+      message(MessageType.INFO, '暂无音乐，请您添加音乐');
       isPlay.value = false;
     }
   } else {

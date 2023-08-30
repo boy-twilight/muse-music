@@ -1,11 +1,11 @@
 import axios, { AxiosInstance } from 'axios';
 import { message, ss } from '.';
-import { messageType } from '@/constants/common';
+import { MessageType } from '@/constants/common';
 
 const request: AxiosInstance = axios.create({
   timeout: 10000,
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  withCredentials: true
+  withCredentials: true,
 });
 
 // 添加请求拦截器
@@ -17,7 +17,7 @@ request.interceptors.request.use(
     return config;
   },
   (error) => {
-    message(messageType.ERROR, error.message);
+    message(MessageType.ERROR, error.message);
   }
 );
 

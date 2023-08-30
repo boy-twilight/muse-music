@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia';
 import { Song } from '@/type';
 import { nextTick } from 'vue';
 import { message } from '@/utils';
-import { messageType } from '@/constants/common';
+import { MessageType } from '@/constants/common';
 import { getMusicUrl, getSimiMusic } from '@/api';
 
 // 播放音乐的hook
@@ -18,11 +18,11 @@ export default function usePlay() {
     playProcess,
     playTime,
     songListId,
-    songNum
+    songNum,
   } = storeToRefs(footer);
 
   // 播放单曲
-  const playMusic = async(song: Song) => {
+  const playMusic = async (song: Song) => {
     if (song.available == '0' || song.available == '8') {
       const index = songListId.value.get(song.id);
       if (index == undefined) {
@@ -48,9 +48,9 @@ export default function usePlay() {
         }
       }
     } else if (song.available == '1') {
-      message(messageType.INFO, '此歌曲为vip专属');
+      message(MessageType.INFO, '此歌曲为vip专属');
     } else if (song.available == '10') {
-      message(messageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
+      message(MessageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
     }
   };
 
@@ -68,9 +68,9 @@ export default function usePlay() {
         }
       });
       current.value = temp;
-      message(messageType.SUCCESS, '已经添加到播放列表');
+      message(MessageType.SUCCESS, '已经添加到播放列表');
     } else {
-      message(messageType.INFO, '请添加歌曲');
+      message(MessageType.INFO, '请添加歌曲');
     }
   };
 
@@ -91,19 +91,19 @@ export default function usePlay() {
           user.songRecord,
           user.songRecordId
         );
-        message(messageType.SUCCESS, '已添加到下一首播放');
+        message(MessageType.SUCCESS, '已添加到下一首播放');
       } else if (index == current.value) {
-        message(messageType.INFO, '歌曲正在播放，请勿重复操作');
+        message(MessageType.INFO, '歌曲正在播放，请勿重复操作');
       }
     } else if (song.available == '1') {
-      message(messageType.INFO, '此歌曲为vip专属');
+      message(MessageType.INFO, '此歌曲为vip专属');
     } else if (song.available == '10') {
-      message(messageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
+      message(MessageType.INFO, '此歌曲尚未拥有版权，请切换其它歌曲');
     }
   };
 
   // 播放选中的歌曲
-  const playSelectMusic = async(selectSongs: Song[]) => {
+  const playSelectMusic = async (selectSongs: Song[]) => {
     if (selectSongs.length > 0) {
       isPlay.value = false;
       playProcess.value = 0;
@@ -117,14 +117,14 @@ export default function usePlay() {
       });
       current.value = 0;
       isPlay.value = true;
-      message(messageType.SUCCESS, '已添加到播放列表！');
+      message(MessageType.SUCCESS, '已添加到播放列表！');
     } else {
-      message(messageType.INFO, '请添加歌曲！');
+      message(MessageType.INFO, '请添加歌曲！');
     }
   };
 
   // 播放相似音乐
-  const playSimiMusic = async(id: string) => {
+  const playSimiMusic = async (id: string) => {
     try {
       // 当前音乐的数目
       const num = songList.value.length;
@@ -141,7 +141,7 @@ export default function usePlay() {
             singer: artists.map((item: any) => item.name).join('、'),
             songImage: album.blurPicUrl,
             album: album.name,
-            available: fee
+            available: fee,
           };
           // 获取音乐的播放链接
           const musicResponse: any = await getMusicUrl(id);
@@ -157,7 +157,7 @@ export default function usePlay() {
               user.songRecordId
             );
             message(
-              messageType.SUCCESS,
+              MessageType.SUCCESS,
               '已找到相似歌曲' + muisc.name + '，将于下一首播放。'
             );
             break;
@@ -165,10 +165,10 @@ export default function usePlay() {
         }
       }
       if (songNum.value == num) {
-        message(messageType.INFO, '暂无相似歌曲');
+        message(MessageType.INFO, '暂无相似歌曲');
       }
     } catch (err: any) {
-      message(messageType.ERROR, err.message);
+      message(MessageType.ERROR, err.message);
     }
   };
 
@@ -177,6 +177,6 @@ export default function usePlay() {
     playAllMusic,
     playMusicNext,
     playSimiMusic,
-    playSelectMusic
+    playSelectMusic,
   };
 }

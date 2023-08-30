@@ -99,11 +99,11 @@ import {
   ref,
   computed,
   nextTick,
-  onBeforeUnmount
+  onBeforeUnmount,
 } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { MV, Comment } from '@/type';
-import { messageType } from '@/constants/common';
+import { MessageType } from '@/constants/common';
 import {
   getMvDetail,
   getMvUrl,
@@ -112,7 +112,7 @@ import {
   getVideoUrl,
   getSimiVideo,
   getVideoComment,
-  getMvComment
+  getMvComment,
 } from '@/api';
 import { message, formatTime, share, getComment } from '@/utils';
 import DPlayer from 'dplayer';
@@ -129,7 +129,7 @@ const {
   themeColor,
   fontGray,
   videoHeight,
-  contentHeight
+  contentHeight,
 } = useTheme();
 const user = useUserStore();
 // dplayer实例
@@ -148,7 +148,7 @@ const mv = reactive<MV>({
   url: '',
   time: '',
   publishTime: '',
-  available: ''
+  available: '',
 });
 // 相似的mv推荐
 const mvSimi = reactive<MV[]>([]);
@@ -176,7 +176,7 @@ const shareVideo = () => {
 };
 
 // 初始化播放器
-const init = async() => {
+const init = async () => {
   await nextTick();
   dplayer.value = new DPlayer({
     container: document.querySelector('.players'),
@@ -184,7 +184,7 @@ const init = async() => {
       url: mv.url as string,
       thumbnails: mv.image,
       type: 'video/mp4',
-      pic: mv.image
+      pic: mv.image,
     },
     autoplay: false,
     loop: false,
@@ -201,21 +201,21 @@ const init = async() => {
         text: '下载',
         click: () => {
           user.addVideoDownload(mv);
-        }
+        },
       },
       {
         text: '收藏',
         click: () => {
           user.addLove(mv, user.loveVideo, user.loveVideoId);
-        }
+        },
       },
       {
         text: '分享',
         click: () => {
           shareVideo();
-        }
-      }
-    ]
+        },
+      },
+    ],
   });
   // 视频结束时推荐其他视频
   const video = document.querySelector('.dplayer-video') as HTMLVideoElement;
@@ -234,8 +234,8 @@ const playRe = (index: number, id: string) => {
     router.push({
       name: 'video',
       query: {
-        id
-      }
+        id,
+      },
     });
   }
 };
@@ -248,7 +248,7 @@ onBeforeUnmount(() => {
 });
 
 // 获取初始数据
-const getData = async() => {
+const getData = async () => {
   first.value = true;
   // 判断地址是否包含字母，有则用视频接口请求地址
   const rule = /.*[A-Z]+.*/;
@@ -258,13 +258,13 @@ const getData = async() => {
         getMvDetail(id),
         getMvUrl(id),
         getSimiMv(id),
-        getMvComment(id, 1000)
+        getMvComment(id, 1000),
       ]);
       responses.forEach((response, index) => {
         // 获取mv详情
         if (index == 0) {
           const {
-            data: { name, artistName, cover, playCount, duration, publishTime }
+            data: { name, artistName, cover, playCount, duration, publishTime },
           } = response;
           mv.name = name;
           mv.playCount = playCount;
@@ -276,13 +276,13 @@ const getData = async() => {
         // 获取mv播放地址
         else if (index == 1) {
           const {
-            data: { url, fee }
+            data: { url, fee },
           } = response;
           if (url) {
             mv.url = url;
             mv.available = fee;
           } else {
-            message(messageType.INFO, '此视频暂无播放资源，请切换下一个。');
+            message(MessageType.INFO, '此视频暂无播放资源，请切换下一个。');
           }
         }
         // 获取相似的Mv
@@ -296,7 +296,7 @@ const getData = async() => {
                 image: cover,
                 name,
                 artist: artistName,
-                playCount
+                playCount,
               });
             });
           }
@@ -309,7 +309,7 @@ const getData = async() => {
         }
       });
     } catch (err: any) {
-      message(messageType.ERROR, err.message);
+      message(MessageType.ERROR, err.message);
     }
   } else {
     try {
@@ -317,13 +317,13 @@ const getData = async() => {
         getVideoDetail(id),
         getVideoUrl(id),
         getSimiVideo(id),
-        getVideoComment(id, 1000)
+        getVideoComment(id, 1000),
       ]);
       responses.forEach((response, index) => {
         // 获取视频详情
         if (index == 0) {
           const {
-            data: { title, coverUrl, publishTime, playTime, creator }
+            data: { title, coverUrl, publishTime, playTime, creator },
           } = response;
           mv.name = title;
           mv.image = coverUrl;
@@ -337,7 +337,7 @@ const getData = async() => {
           if (urls) {
             mv.url = urls[0].url;
           } else {
-            message(messageType.INFO, '此视频暂无播放资源，请切换下一个。');
+            message(MessageType.INFO, '此视频暂无播放资源，请切换下一个。');
           }
         }
         // 获取相似的视频
@@ -350,7 +350,7 @@ const getData = async() => {
               name: title,
               image: coverUrl,
               playCount: playTime,
-              artist: creator[0].userName
+              artist: creator[0].userName,
             });
           });
         }
@@ -362,7 +362,7 @@ const getData = async() => {
         }
       });
     } catch (err: any) {
-      message(messageType.ERROR, err.message);
+      message(MessageType.ERROR, err.message);
     }
   }
   // 添加视频播放记录

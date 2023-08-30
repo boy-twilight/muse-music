@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, reactive } from 'vue';
 import { message, ss, ls } from '@/utils';
-import { messageType } from '@/constants/common';
+import { MessageType } from '@/constants/common';
 import { User } from '@/type';
 import { getUserInfo, getUserID, loginOut } from '@/api';
 import avatar from '@assets/image/暂无头像.svg';
@@ -17,7 +17,7 @@ const useHeaderStore = defineStore('header', () => {
     ss.get('userInfo') || {
       uid: '',
       userName: '点击登陆',
-      avatar: avatar
+      avatar: avatar,
     }
   );
   // 用户的搜索历史
@@ -26,15 +26,15 @@ const useHeaderStore = defineStore('header', () => {
   // 获取用户信息
   async function getInfo() {
     const response: any = await getUserID().catch((err: any) => {
-      message(messageType.ERROR, err.message);
+      message(MessageType.ERROR, err.message);
     });
     const {
-      account: { id }
+      account: { id },
     } = response;
     user.uid = id;
     const userInfo: any = await getUserInfo(id);
     const {
-      profile: { avatarUrl, nickname }
+      profile: { avatarUrl, nickname },
     } = userInfo;
     user.avatar = avatarUrl;
     user.userName = nickname;
@@ -43,17 +43,17 @@ const useHeaderStore = defineStore('header', () => {
   // 退出登录
   async function logout() {
     const response: any = await loginOut().catch((err: any) => {
-      message(messageType.ERROR, err.message);
+      message(MessageType.ERROR, err.message);
     });
     if (response.code == '200') {
-      message(messageType.SUCCESS, '成功退出登陆');
+      message(MessageType.SUCCESS, '成功退出登陆');
       ss.remove('cookie');
       ss.remove('userInfo');
       user.avatar = avatar;
       user.userName = '点击登陆';
       user.uid = '';
       router.push({
-        name: 'recommend'
+        name: 'recommend',
       });
     }
   }

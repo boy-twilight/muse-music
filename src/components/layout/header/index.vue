@@ -239,16 +239,16 @@ import {
   compressImage,
   downloadFile,
   throttle,
-  getMusicUrls
+  getMusicUrls,
 } from '@/utils';
-import { messageType } from '@/constants/common';
+import { MessageType } from '@/constants/common';
 import {
   createKey,
   createQrCode,
   checkStatus,
   getHotSearch,
   getSuggest,
-  getMusicDetail
+  getMusicDetail,
 } from '@/api';
 import {
   DropDownItem,
@@ -258,7 +258,7 @@ import {
   Song,
   Artist,
   Album,
-  SearchSuggest
+  SearchSuggest,
 } from '@/type';
 import useHeaderStore from '@/store/header';
 import logo from '@assets/image/网易云.svg';
@@ -283,7 +283,7 @@ const {
   drawerMode,
   changeDark,
   changeLight,
-  changeSkinMode
+  changeSkinMode,
 } = useTheme();
 // 路由器
 const router = useRouter();
@@ -312,7 +312,7 @@ const {
   musicDownloadId,
   mvDownloadId,
   songRecordId,
-  videoRecordId
+  videoRecordId,
 } = storeToRefs(user);
 // 用户搜索的内容
 const search = ref<string>('');
@@ -335,7 +335,7 @@ const suggestMap = reactive<Map<string, SearchSuggest[]>>(
     ['单曲', []],
     ['歌手', []],
     ['专辑', []],
-    ['歌单', []]
+    ['歌单', []],
   ])
 );
 // 下拉列表
@@ -345,43 +345,43 @@ const dropDownItems = reactive<DropDownItem[]>([
     icon: '\ue61b',
     command: 'logout',
     style: 'font-size:14px;margin:0 9px 0 2px;',
-    spanClass: 'iconfont_1'
+    spanClass: 'iconfont_1',
   },
   {
     name: '纯色模式',
     icon: '\ue822',
     command: 'color',
     style: 'font-size:18px;margin-right:7px;',
-    spanClass: 'iconfont_1'
+    spanClass: 'iconfont_1',
   },
   {
     name: '皮肤模式',
     icon: '\ue743',
     command: 'skin',
     style: 'font-size:15px;margin:0 7px 0 4px;',
-    spanClass: 'iconfont_1'
+    spanClass: 'iconfont_1',
   },
   {
     name: '主题设置',
     icon: '\ueb6f',
     command: 'theme',
     style: 'font-size:18px;margin:0 7px 0 1.8px;',
-    spanClass: 'iconfont_1'
+    spanClass: 'iconfont_1',
   },
   {
     name: '导入数据',
     icon: '\ue610',
     command: 'import',
     style: 'font-size: 15px;margin: 0.5px 8.5px 0 2.8px;display: inline-block;',
-    spanClass: 'iconfont_2'
+    spanClass: 'iconfont_2',
   },
   {
     name: '导出数据',
     icon: '\ue635',
     command: 'export',
     style: 'font-size: 15px;margin: 0.5px 8.5px 0 2.8px;display: inline-block;',
-    spanClass: 'iconfont_2'
-  }
+    spanClass: 'iconfont_2',
+  },
 ]);
 // 存放二维码照片的容器
 const qrcode = ref<HTMLImageElement>();
@@ -407,13 +407,13 @@ const createKeyCode = (): void => {
   createKey()
     .then((response: any) => {
       const {
-        data: { unikey }
+        data: { unikey },
       } = response;
       creatQrImage(unikey);
       CheckLoginStatus(unikey);
     })
     .catch((err: any) => {
-      message(messageType.ERROR, err.message);
+      message(MessageType.ERROR, err.message);
     });
 };
 
@@ -422,26 +422,26 @@ const creatQrImage = (key: string): void => {
   createQrCode(key)
     .then((response: any) => {
       const {
-        data: { qrimg }
+        data: { qrimg },
       } = response;
       qrcode.value!.src = qrimg;
     })
     .catch((err: any) => {
-      message(messageType.ERROR, err.message);
+      message(MessageType.ERROR, err.message);
     });
 };
 
 // 监测登陆状态
 const CheckLoginStatus = (key: string): void => {
-  timeid = setInterval(async() => {
+  timeid = setInterval(async () => {
     const response: any = await checkStatus(key).catch((err: any) => {
-      message(messageType.ERROR, err.message);
+      message(MessageType.ERROR, err.message);
     });
     const { code, message } = response;
     // 根据code状态判断登陆状态
     if (code == '800') {
       // 提醒用户二维码已过期
-      message(messageType.INFO, message);
+      message(MessageType.INFO, message);
       // 清除timeid
       clearInterval(timeid);
       // 重新刷新二维码
@@ -454,7 +454,7 @@ const CheckLoginStatus = (key: string): void => {
       // 获取用户信息
       header.getInfo();
       // 提醒用户登陆成功
-      message(messageType.SUCCESS, message);
+      message(MessageType.SUCCESS, message);
       // 清除计时器
       clearInterval(timeid);
     }
@@ -466,7 +466,7 @@ const showLoginBox = () => {
   if (!cookie.value) {
     showLogin.value = true;
   } else {
-    message(messageType.SUCCESS, '已成功登陆，切勿重复点击！');
+    message(MessageType.SUCCESS, '已成功登陆，切勿重复点击！');
   }
 };
 
@@ -484,7 +484,7 @@ const changeSkin = () => {
   input.style.display = 'none';
   document.body.appendChild(input);
   input.click();
-  input.onchange = async() => {
+  input.onchange = async () => {
     const files = input.files;
     if (files && files.length > 0) {
       const file = files[0];
@@ -521,7 +521,7 @@ const exportConfig = () => {
     bgMode.value
   }\nskin-p-(*)-${skin.value}`;
   const blob = new Blob([userInfo], {
-    type: 'text/plain; charset=utf-8'
+    type: 'text/plain; charset=utf-8',
   });
   downloadFile(blob, 'config.txt');
 };
@@ -532,12 +532,12 @@ const parseConfig = () => {
   upload.style.display = 'none';
   upload.type = 'file';
   upload.accept = '.txt';
-  upload.onchange = async(event: any) => {
+  upload.onchange = async (event: any) => {
     const files = event.target.files;
     if (files.length > 0) {
       const file = files[0];
       if (!/\.txt$/.test(file.name) && file.name == 'config') {
-        return message(messageType.ERROR, '请上传配置文件！');
+        return message(MessageType.ERROR, '请上传配置文件！');
       }
       const reader = new FileReader();
       reader.readAsText(file, 'utf-8');
@@ -603,10 +603,10 @@ const parseConfig = () => {
           (song) => songListId.value.get(song.id) == undefined
         );
         songList.value.push(...playData);
-        message(messageType.SUCCESS, '个人数据导入成功');
+        message(MessageType.SUCCESS, '个人数据导入成功');
       };
       reader.onerror = () => {
-        message(messageType.ERROR, '读取配置文件失败！');
+        message(MessageType.ERROR, '读取配置文件失败！');
       };
     }
   };
@@ -616,7 +616,7 @@ const parseConfig = () => {
 };
 
 // 下拉框选择处理
-const handleClick = async(command: string) => {
+const handleClick = async (command: string) => {
   if (command == 'logout' && cookie.value) {
     header.logout();
   } else if (command == 'fullScreen') {
@@ -645,18 +645,18 @@ const handleClick = async(command: string) => {
 
 // 搜索相关的事件
 // 得到推荐的搜索列表
-const getSearchData = async() => {
+const getSearchData = async () => {
   try {
     const response: any = await getHotSearch();
     const { data } = response;
     data.forEach((item: any) => {
       hotSearch.push({
         searchWord: item.searchWord,
-        score: item.score
+        score: item.score,
       });
     });
   } catch (err: any) {
-    message(messageType.ERROR, err.message);
+    message(MessageType.ERROR, err.message);
   }
 };
 
@@ -669,8 +669,8 @@ const goSearch = () => {
   router.push({
     name: 'search',
     query: {
-      keyWord: search.value
-    }
+      keyWord: search.value,
+    },
   });
 };
 
@@ -684,8 +684,8 @@ const goSearchByRe = (keyWord: string) => {
   router.push({
     name: 'search',
     query: {
-      keyWord
-    }
+      keyWord,
+    },
   });
 };
 
@@ -700,7 +700,7 @@ const chineseEnd = () => {
   getSuggestData();
 };
 
-const getSuggestData = async() => {
+const getSuggestData = async () => {
   try {
     controller = new AbortController();
     signal = controller.signal;
@@ -708,7 +708,7 @@ const getSuggestData = async() => {
     controller = null;
     signal = null;
     const {
-      result: { albums, artists, songs, playlists }
+      result: { albums, artists, songs, playlists },
     } = response;
     if (songs) {
       const target = suggestMap.get('单曲') as SearchSuggest[];
@@ -720,14 +720,14 @@ const getSuggestData = async() => {
             type: 'song',
             id,
             name: name + '-' + artists[0].name,
-            pic: artists[0].img1v1Url
+            pic: artists[0].img1v1Url,
           };
         } else {
           target.push({
             type: 'song',
             id,
             name: name + '-' + artists[0].name,
-            pic: artists[0].img1v1Url
+            pic: artists[0].img1v1Url,
           });
         }
       });
@@ -742,14 +742,14 @@ const getSuggestData = async() => {
             type: 'artist',
             id,
             name,
-            pic: picUrl
+            pic: picUrl,
           };
         } else {
           target?.push({
             type: 'artist',
             id,
             name,
-            pic: picUrl
+            pic: picUrl,
           });
         }
       });
@@ -765,7 +765,7 @@ const getSuggestData = async() => {
             id,
             pic: artist.picUrl,
             name: name + '-' + artist.name,
-            artistId: artist.id
+            artistId: artist.id,
           };
         } else {
           target?.push({
@@ -773,7 +773,7 @@ const getSuggestData = async() => {
             id,
             pic: artist.picUrl,
             name: name + '-' + artist.name,
-            artistId: artist.id
+            artistId: artist.id,
           });
         }
       });
@@ -788,14 +788,14 @@ const getSuggestData = async() => {
             type: 'playlist',
             id,
             name,
-            pic: coverImgUrl
+            pic: coverImgUrl,
           };
         } else {
           target.push({
             type: 'playlist',
             id,
             name,
-            pic: coverImgUrl
+            pic: coverImgUrl,
           });
         }
       });
@@ -816,31 +816,31 @@ const getSearchSuggest = throttle(() => {
 const { playMusic } = usePlayMusic();
 
 // 前往搜索建议
-const goSuggest = async(item: SearchSuggest) => {
+const goSuggest = async (item: SearchSuggest) => {
   if (item.type != 'song') {
     if (item.type == 'artist') {
       router.push({
         name: item.type,
         query: {
           type: 'playlist',
-          id: item.id
-        }
+          id: item.id,
+        },
       });
     } else if (item.type == 'album') {
       router.push({
         name: item.type,
         query: {
           id: item.id,
-          artistId: item.artistId
-        }
+          artistId: item.artistId,
+        },
       });
     } else {
       router.push({
         name: item.type,
         query: {
           id: item.id,
-          score: Math.floor(+item.id / 100)
-        }
+          score: Math.floor(+item.id / 100),
+        },
       });
     }
   } else {
@@ -857,13 +857,13 @@ const goSuggest = async(item: SearchSuggest) => {
           album: al.name,
           available: fee,
           time: dt,
-          url: ''
+          url: '',
         };
       });
       await getMusicUrls(temp);
       playMusic(temp[0]);
     } catch (err: any) {
-      message(messageType.ERROR, err.message);
+      message(MessageType.ERROR, err.message);
     }
   }
 };

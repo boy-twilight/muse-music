@@ -32,7 +32,7 @@ import { storeToRefs } from 'pinia';
 import useUserStore from '@/store/user';
 import usePlayMusic from '@/hooks/usePlayMuisc';
 import { message } from '@/utils';
-import { messageType } from '@/constants/common';
+import { MessageType } from '@/constants/common';
 import { CommonButton } from '@components/button';
 import { SongTable } from '@components/table';
 import useTheme from '@/hooks/useTheme';
@@ -58,7 +58,7 @@ const {
   loveSongs,
   songRecordId,
   musicDownloadId,
-  loveMusicId
+  loveMusicId,
 } = storeToRefs(user);
 // 表格容器
 const table = ref<InstanceType<typeof SongTable>>();
@@ -119,15 +119,15 @@ const deleteSelect = () => {
         );
       }
     });
-    message(messageType.SUCCESS, '已清除选中的歌曲！');
+    message(MessageType.SUCCESS, '已清除选中的歌曲！');
   } else {
-    message(messageType.INFO, '请先选择歌曲！');
+    message(MessageType.INFO, '请先选择歌曲！');
   }
 };
 
 defineExpose({
   openSelectBox,
-  closeSelectBox
+  closeSelectBox,
 });
 </script>
 

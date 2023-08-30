@@ -30,7 +30,7 @@
 import { computed, ref, reactive } from 'vue';
 import { storeToRefs } from 'pinia';
 import useUserStore from '@/store/user';
-import { messageType } from '@/constants/common';
+import { MessageType } from '@/constants/common';
 import { message } from '@/utils';
 import { Song } from '@/type';
 import { USER_MUSIC_PAGESIZE } from '@/constants/common';
@@ -39,7 +39,7 @@ import {
   SearchButton,
   SortButton,
   PlayButton,
-  CommonButton
+  CommonButton,
 } from '@components/button';
 import Pagination from '@components/pagination';
 
@@ -121,7 +121,7 @@ const clearAll = () => {
   } else {
     musicDownload.value.splice(0);
   }
-  message(messageType.SUCCESS, '已清空全部下载记录！');
+  message(MessageType.SUCCESS, '已清空全部下载记录！');
 };
 </script>
 

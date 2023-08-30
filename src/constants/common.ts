@@ -1,5 +1,5 @@
 // message枚举类型
-export enum messageType {
+export enum MessageType {
   SUCCESS = 'success',
   ERROR = 'error',
   INFO = 'info',

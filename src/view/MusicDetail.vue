@@ -46,7 +46,7 @@ import { storeToRefs } from 'pinia';
 import useFooterStore from '@/store/footer';
 import { getLyrics } from '@/api';
 import { message, formatToTimeStap, getTimeStamp } from '@/utils';
-import { messageType } from '@/constants/common';
+import { MessageType } from '@/constants/common';
 import image from '@assets/image/暂无音乐.svg';
 import { Footer } from '@components/layout';
 import useTheme from '@/hooks/useTheme';
@@ -61,7 +61,7 @@ const {
   lyricContentHeight,
   imageHeight,
   musicContentHeight,
-  musicFooterHeight
+  musicFooterHeight,
 } = useTheme();
 const footer = useFooterStore();
 // 音乐播放器相关的设置
@@ -73,7 +73,7 @@ const {
   isChanging,
   playTime,
   songNum,
-  showDetail
+  showDetail,
 } = storeToRefs(footer);
 // 每一次滚动的距离
 const scrollDis = 44;
@@ -139,7 +139,7 @@ watch(isPlay, (newVal) => {
 });
 
 // 当进度改变时，对应歌词滚动
-watch(isChanging, async(newVal) => {
+watch(isChanging, async (newVal) => {
   if (newVal) {
     isPlay.value = false;
     currentTime.value =
@@ -157,7 +157,7 @@ watch(isChanging, async(newVal) => {
 });
 
 // 当歌曲切换时对应切换
-watch(current, async() => {
+watch(current, async () => {
   words.value = reactive<string[]>(['']);
   timeStaps.value = reactive<number[]>([]);
   lyricContent.value!.scrollTop = 0;
@@ -168,12 +168,12 @@ watch(current, async() => {
 });
 
 // 获取歌词
-const getLyric = async() => {
-  if (songNum.value <= 0) return message(messageType.INFO, '请添加音乐！');
+const getLyric = async () => {
+  if (songNum.value <= 0) return message(MessageType.INFO, '请添加音乐！');
   try {
     const response: any = await getLyrics(songList.value[current.value].id);
     const {
-      lrc: { lyric }
+      lrc: { lyric },
     } = response;
     // 计算歌曲总时间
     const totalTime = Number.parseInt(
@@ -194,7 +194,7 @@ const getLyric = async() => {
       }
     });
   } catch (err: any) {
-    message(messageType.ERROR, err.message);
+    message(MessageType.ERROR, err.message);
   }
 };
 
@@ -203,7 +203,14 @@ onMounted(() => {
     if (document.visibilityState == 'visible') {
       const cur = getTimeStamp();
       if (cur - hiddenTime > 1000) {
-        isChanging.value = true;
+        currentTime.value =
+          (playProcess.value *
+            Number.parseInt(songList.value[current.value].time as string)) /
+          100;
+        currentIndex.value = timeStaps.value.findIndex(
+          (item) => item > currentTime.value
+        );
+        calCurrentScroll(currentIndex.value);
       }
     } else {
       hiddenTime = getTimeStamp();
