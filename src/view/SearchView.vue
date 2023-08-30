@@ -244,6 +244,7 @@ import {
   LYRIC_PAGESIZE,
   ONLINE_MUISC_PAGESIZE,
   MessageType,
+  SLEEP_TIME
 } from '@/constants/common';
 import {
   message,
@@ -254,7 +255,7 @@ import {
   downloadLyric,
   share,
   shareMuiscInfo,
-  sleep,
+  sleep
 } from '@/utils';
 import { searchMusic, getMusicDetail } from '@/api';
 import useUserStore from '@/store/user';
@@ -265,7 +266,7 @@ import {
   ArtistAlbum,
   ArtistMv,
   ArtistPlaylist,
-  Singer,
+  Singer
 } from '@components/datalist';
 import { Loading, NoResult } from '@components/result';
 import Tab from '@components/tab';
@@ -281,7 +282,7 @@ const {
   themeColor,
   singerBg,
   buttonBg,
-  contentHeight,
+  contentHeight
 } = useTheme();
 // 路由器
 const router = useRouter();
@@ -312,13 +313,13 @@ const firstSinger = computed(() =>
   singerResult.length > 0
     ? singerResult[0]
     : ({
-        name: '',
-        avatar: '',
-        id: '',
-        score: '',
-        albumSize: '',
-        mvSize: '',
-      } as Artist)
+      name: '',
+      avatar: '',
+      id: '',
+      score: '',
+      albumSize: '',
+      mvSize: ''
+    } as Artist)
 );
 // 歌词的搜索结果
 const lyricResult = reactive<Song[]>([]);
@@ -339,7 +340,7 @@ const noResult = reactive<Map<string, boolean>>(
     ['radio', true],
     ['playList', true],
     ['lyric', true],
-    ['singer', true],
+    ['singer', true]
   ])
 );
 // 当前展示歌词的长度
@@ -393,7 +394,7 @@ const loveAll = () => {
 const { playMusic } = usePlayMusic();
 
 // 根据当前的活跃请求搜索结果
-const getActive = async (active: string) => {
+const getActive = async(active: string) => {
   activeTab.value = active;
   if (active == 'video') {
     if (videoResult.length != 0) return;
@@ -401,7 +402,7 @@ const getActive = async (active: string) => {
     try {
       const response: any = await searchMusic(1014, 100, keyWord);
       const {
-        result: { videos },
+        result: { videos }
       } = response;
       if (videos && videos.length > 0) {
         videos.forEach((item: any) => {
@@ -411,7 +412,7 @@ const getActive = async (active: string) => {
             name: title,
             image: coverUrl,
             artist: creator[0].userName,
-            playCount: playTime,
+            playCount: playTime
           });
         });
       }
@@ -426,7 +427,7 @@ const getActive = async (active: string) => {
     try {
       const response: any = await searchMusic(1004, 100, keyWord);
       const {
-        result: { mvs },
+        result: { mvs }
       } = response;
       if (mvs && mvs.length != 0) {
         mvs.forEach((item: any) => {
@@ -436,7 +437,7 @@ const getActive = async (active: string) => {
             name,
             image: cover,
             artist: artistName,
-            playCount,
+            playCount
           });
         });
       }
@@ -451,7 +452,7 @@ const getActive = async (active: string) => {
     try {
       const response: any = await searchMusic(10, 60, keyWord);
       const {
-        result: { albums },
+        result: { albums }
       } = response;
       if (albums && albums.length > 0) {
         albums.forEach((item: any) => {
@@ -461,7 +462,7 @@ const getActive = async (active: string) => {
             name,
             cover: picUrl,
             publishTime: formatTime(publishTime),
-            artistId: artist.id,
+            artistId: artist.id
           });
         });
       }
@@ -476,7 +477,7 @@ const getActive = async (active: string) => {
     try {
       const response: any = await searchMusic(1009, 100, keyWord);
       const {
-        result: { djRadios },
+        result: { djRadios }
       } = response;
       if (djRadios && djRadios.length > 0) {
         djRadios.forEach((item: any) => {
@@ -488,7 +489,7 @@ const getActive = async (active: string) => {
             playCount,
             creator: { nickname: '', avatarUrl: '' },
             tag: [],
-            description: '',
+            description: ''
           });
         });
       }
@@ -503,7 +504,7 @@ const getActive = async (active: string) => {
     try {
       const response: any = await searchMusic(1000, 100, keyWord);
       const {
-        result: { playlists },
+        result: { playlists }
       } = response;
       if (playlists && playlists.length > 0) {
         playlists.forEach((item: any) => {
@@ -515,7 +516,7 @@ const getActive = async (active: string) => {
             playCount,
             description: '',
             tag: [],
-            creator: { nickname: '', avatarUrl: '' },
+            creator: { nickname: '', avatarUrl: '' }
           });
         });
       }
@@ -531,7 +532,7 @@ const getActive = async (active: string) => {
     try {
       const response: any = await searchMusic(1006, 100, keyWord);
       const {
-        result: { songs },
+        result: { songs }
       } = response;
       if (songs && songs.length > 0) {
         // 获取id
@@ -546,7 +547,7 @@ const getActive = async (active: string) => {
         // 获取歌词
         songs.forEach((item: any, index: number) => {
           const {
-            lyrics: { txt },
+            lyrics: { txt }
           } = item;
           lyricResult[index].lyric = txt.split('\n');
         });
@@ -566,18 +567,18 @@ const getActive = async (active: string) => {
 };
 
 // 获取初始数据
-const getData = async () => {
+const getData = async() => {
   first.value = true;
   try {
     const responses: any[] = await Promise.all([
       searchMusic(1, 100, keyWord),
-      searchMusic(100, 100, keyWord),
+      searchMusic(100, 100, keyWord)
     ]);
-    responses.forEach(async (response, index) => {
+    responses.forEach(async(response, index) => {
       // 获取音乐搜索结果
       if (index == 0) {
         const {
-          result: { songs },
+          result: { songs }
         } = response;
         // 获取搜索歌曲
         if (songs && songs.length > 0) {
@@ -598,7 +599,7 @@ const getData = async () => {
       // 获取搜索歌手
       else if (index == 1) {
         const {
-          result: { artists },
+          result: { artists }
         } = response;
         if (artists && artists.length > 0) {
           const temp = (artists as any[]).map((item) => {
@@ -609,7 +610,7 @@ const getData = async () => {
               avatar: picUrl,
               score: accountId,
               albumSize,
-              mvSize,
+              mvSize
             };
           });
           singerResult.push(...temp);
@@ -620,7 +621,7 @@ const getData = async () => {
   } catch (err: any) {
     message(MessageType.ERROR, err.message);
   }
-  await sleep(50);
+  await sleep(SLEEP_TIME);
   // 关闭动画
   first.value = false;
 };

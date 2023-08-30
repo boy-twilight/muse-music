@@ -61,7 +61,7 @@ const {
   lyricContentHeight,
   imageHeight,
   musicContentHeight,
-  musicFooterHeight,
+  musicFooterHeight
 } = useTheme();
 const footer = useFooterStore();
 // 音乐播放器相关的设置
@@ -73,7 +73,7 @@ const {
   isChanging,
   playTime,
   songNum,
-  showDetail,
+  showDetail
 } = storeToRefs(footer);
 // 每一次滚动的距离
 const scrollDis = 44;
@@ -139,7 +139,7 @@ watch(isPlay, (newVal) => {
 });
 
 // 当进度改变时，对应歌词滚动
-watch(isChanging, async (newVal) => {
+watch(isChanging, async(newVal) => {
   if (newVal) {
     isPlay.value = false;
     currentTime.value =
@@ -157,7 +157,7 @@ watch(isChanging, async (newVal) => {
 });
 
 // 当歌曲切换时对应切换
-watch(current, async () => {
+watch(current, async() => {
   words.value = reactive<string[]>(['']);
   timeStaps.value = reactive<number[]>([]);
   lyricContent.value!.scrollTop = 0;
@@ -168,12 +168,12 @@ watch(current, async () => {
 });
 
 // 获取歌词
-const getLyric = async () => {
+const getLyric = async() => {
   if (songNum.value <= 0) return message(MessageType.INFO, '请添加音乐！');
   try {
     const response: any = await getLyrics(songList.value[current.value].id);
     const {
-      lrc: { lyric },
+      lrc: { lyric }
     } = response;
     // 计算歌曲总时间
     const totalTime = Number.parseInt(

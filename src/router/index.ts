@@ -16,7 +16,7 @@ NProgress.configure({
   showSpinner: false, // 进度环显示隐藏
   trickleSpeed: 400, // 自动递增间隔
   minimum: 0.3, // 更改启动时使用的最小百分比
-  parent: 'body', // 指定进度条的父容器
+  parent: 'body' // 指定进度条的父容器
 });
 
 // 自定义路由元信息
@@ -40,8 +40,8 @@ const routes: RouteRecordRaw[] = [
         name: 'recommend',
         component: () => import('@/view/RecommendView.vue'),
         meta: {
-          title: '推荐',
-        },
+          title: '推荐'
+        }
       },
       // 歌单页
       {
@@ -49,8 +49,8 @@ const routes: RouteRecordRaw[] = [
         name: 'playlist',
         component: () => import('@/view/PlayListView.vue'),
         meta: {
-          title: '精品歌单',
-        },
+          title: '精品歌单'
+        }
       },
       // 搜索页
       {
@@ -58,8 +58,8 @@ const routes: RouteRecordRaw[] = [
         name: 'search',
         component: () => import('@/view/SearchView.vue'),
         meta: {
-          title: '搜索',
-        },
+          title: '搜索'
+        }
       },
       // 视频播放页
       {
@@ -67,8 +67,8 @@ const routes: RouteRecordRaw[] = [
         name: 'video',
         component: () => import('@/view/VideoPlayView.vue'),
         meta: {
-          title: '视频播放',
-        },
+          title: '视频播放'
+        }
       },
       // 视频推荐页
       {
@@ -76,8 +76,8 @@ const routes: RouteRecordRaw[] = [
         name: 'rvideo',
         component: () => import('@/view/VideoView.vue'),
         meta: {
-          title: '视频',
-        },
+          title: '视频'
+        }
       },
       // 音乐管页
       {
@@ -85,8 +85,8 @@ const routes: RouteRecordRaw[] = [
         name: 'hall',
         component: () => import('@/view/MusicHall.vue'),
         meta: {
-          title: '音乐馆',
-        },
+          title: '音乐馆'
+        }
       },
       // 歌手榜页
       {
@@ -94,8 +94,8 @@ const routes: RouteRecordRaw[] = [
         name: 'artistlist',
         component: () => import('@/view/ArtistlistView.vue'),
         meta: {
-          title: '热门歌手',
-        },
+          title: '热门歌手'
+        }
       },
       // 歌手详情页
       {
@@ -103,8 +103,8 @@ const routes: RouteRecordRaw[] = [
         name: 'artist',
         component: () => import('@/view/ArtistDetailView.vue'),
         meta: {
-          title: '歌手详情',
-        },
+          title: '歌手详情'
+        }
       },
       // 我喜欢
       {
@@ -112,43 +112,43 @@ const routes: RouteRecordRaw[] = [
         name: 'love',
         component: () => import('@/view/LoveView.vue'),
         meta: {
-          title: '我喜欢',
-        },
+          title: '我喜欢'
+        }
       },
       {
         path: '/recent',
         name: 'recent',
         component: () => import('@/view/RecentPlayView.vue'),
         meta: {
-          title: '最近播放',
-        },
+          title: '最近播放'
+        }
       },
       {
         path: '/album',
         name: 'album',
         component: () => import('@/view/AlbumDetailView.vue'),
         meta: {
-          title: '专辑详情',
-        },
+          title: '专辑详情'
+        }
       },
       {
         path: '/station',
         name: 'station',
         component: () => import('@/view/RadioView.vue'),
         meta: {
-          title: '精彩电台',
-        },
+          title: '精彩电台'
+        }
       },
       {
         path: '/download',
         name: 'download',
         component: () => import('@/view/DownloadView.vue'),
         meta: {
-          title: '下载记录',
-        },
-      },
-    ],
-  },
+          title: '下载记录'
+        }
+      }
+    ]
+  }
 ];
 // 创建router
 const router = createRouter({
@@ -160,7 +160,7 @@ const router = createRouter({
     } else {
       return { top: 0, behavior: 'smooth' };
     }
-  },
+  }
 });
 
 // 需要登陆才可以进入的名单

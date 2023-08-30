@@ -20,7 +20,7 @@
         @click="closeSelectBox" />
     </div>
     <SongTable
-      :songs="songs"
+      :songs="curShow"
       :show-header="false"
       ref="table" />
   </div>
@@ -42,6 +42,10 @@ const props = defineProps<{
   pageName: string;
   // 是否开启多选
   showSelect: boolean;
+  //页码
+  curPage: number;
+  //页数
+  pageSize: number;
 }>();
 
 const emits = defineEmits<{
@@ -72,6 +76,13 @@ const songs = computed(() => {
     return musicDownload.value;
   }
 });
+// 当前展示的歌曲
+const curShow = computed(() =>
+  songs.value.slice(
+    (props.curPage - 1) * props.pageSize,
+    props.curPage * props.pageSize
+  )
+);
 // 选择的歌曲
 const selectSongs = computed(() => table.value?.getSelectItems() || []);
 

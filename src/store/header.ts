@@ -17,7 +17,7 @@ const useHeaderStore = defineStore('header', () => {
     ss.get('userInfo') || {
       uid: '',
       userName: '点击登陆',
-      avatar: avatar,
+      avatar: avatar
     }
   );
   // 用户的搜索历史
@@ -29,12 +29,12 @@ const useHeaderStore = defineStore('header', () => {
       message(MessageType.ERROR, err.message);
     });
     const {
-      account: { id },
+      account: { id }
     } = response;
     user.uid = id;
     const userInfo: any = await getUserInfo(id);
     const {
-      profile: { avatarUrl, nickname },
+      profile: { avatarUrl, nickname }
     } = userInfo;
     user.avatar = avatarUrl;
     user.userName = nickname;
@@ -53,7 +53,7 @@ const useHeaderStore = defineStore('header', () => {
       user.userName = '点击登陆';
       user.uid = '';
       router.push({
-        name: 'recommend',
+        name: 'recommend'
       });
     }
   }

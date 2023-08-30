@@ -102,6 +102,12 @@ const buttonName = computed(() => {
   }
 });
 
+//获取分页内容
+const getPage = (): number => curPage.value;
+
+//获取分页条数
+const getPageSize = (): number => pageSize.value;
+
 // 得到用户选择的排序类型
 const getSortChoice = (sortType: boolean[], isCancelSort: boolean) => {
   for (let i = 0; i < sortChoice.length; i++) {
@@ -123,6 +129,11 @@ const clearAll = () => {
   }
   message(MessageType.SUCCESS, '已清空全部下载记录！');
 };
+
+defineExpose({
+  getPage,
+  getPageSize,
+});
 </script>
 
 <style lang="less" scoped>

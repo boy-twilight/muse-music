@@ -224,7 +224,7 @@ const useUserStore = defineStore('user', () => {
     addMuiscDownload,
     addVideoDownload,
     initLoveMusic,
-    initLoveStatus,
+    initLoveStatus
   };
 });
 

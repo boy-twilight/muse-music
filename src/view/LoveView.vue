@@ -5,6 +5,8 @@
         page-name="LoveView"
         v-show="showSelect"
         v-model:show-select="showSelect"
+        :curPage="curPage"
+        :pageSize="pageSize"
         ref="batch" />
       <Tab
         active="song"
@@ -15,7 +17,8 @@
             name="song">
             <UserMusicTable
               page-name="LoveView"
-              @open-select="openSelect" />
+              @open-select="openSelect"
+              ref="table" />
           </el-tab-pane>
           <el-tab-pane
             :label="`视频`"
@@ -94,7 +97,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, inject, Ref } from 'vue';
+import { ref, inject, Ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { getMusicUrls } from '@/utils';
 import useUserStore from '@/store/user';
@@ -102,7 +105,7 @@ import {
   ArtistMv,
   Singer,
   ArtistPlaylist,
-  ArtistAlbum
+  ArtistAlbum,
 } from '@components/datalist';
 import { UserBatch } from '@components/batch';
 import { UserMusicTable } from '@components/table';
@@ -124,7 +127,7 @@ const {
   loveAlbumId,
   loveVideoId,
   lovePlaylistId,
-  loveRadioId
+  loveRadioId,
 } = storeToRefs(user);
 // 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
@@ -132,6 +135,12 @@ const first = inject('firstLoading') as Ref<boolean>;
 const showSelect = ref<boolean>(false);
 // 批量操作容器
 const batch = ref<InstanceType<typeof UserBatch>>();
+// 表格容器
+const table = ref<InstanceType<typeof UserMusicTable>>();
+//分页内容
+const curPage = computed(() => table.value?.getPage());
+const pageSize = computed(() => table.value?.getPageSize());
+
 // 打开批量操作
 const openSelect = () => {
   batch.value?.openSelectBox();
@@ -166,7 +175,7 @@ const deleteLoveRadio = (id: string) => {
   loveRadio.value.splice(index, 1);
 };
 
-const getData = async() => {
+const getData = async () => {
   first.value = true;
   await getMusicUrls(loveSongs.value);
   // 关闭动画

@@ -4,6 +4,8 @@
       <UserBatch
         v-show="showSelect"
         v-model:showSelect="showSelect"
+        :cur-page="curPage"
+        :page-size="pageSize"
         page-name="DownloadView"
         ref="batch" />
       <Tab
@@ -15,7 +17,8 @@
             name="song">
             <UserMusicTable
               @open-select="openSelect"
-              page-name="DownloadView" />
+              page-name="DownloadView"
+              ref="table" />
           </el-tab-pane>
           <el-tab-pane
             :label="`下载视频`"
@@ -37,7 +40,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, inject, Ref } from 'vue';
+import { ref, inject, Ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { getMusicUrls } from '@/utils';
 import useUserStore from '@/store/user';
@@ -59,6 +62,11 @@ const first = inject('firstLoading') as Ref<boolean>;
 const showSelect = ref<boolean>(false);
 // 批量操作容器
 const batch = ref<InstanceType<typeof UserBatch>>();
+// 表格容器
+const table = ref<InstanceType<typeof UserMusicTable>>();
+//分页内容
+const curPage = computed(() => table.value?.getPage());
+const pageSize = computed(() => table.value?.getPageSize());
 
 // 打开批量操作
 const openSelect = () => {
@@ -72,7 +80,7 @@ const deleteDownLoad = (id: string) => {
 };
 
 // 获取初始数据
-const getData = async() => {
+const getData = async () => {
   first.value = true;
   await getMusicUrls(musicDownload.value);
   user.initLoveMusic(musicDownload.value);

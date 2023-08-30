@@ -20,3 +20,5 @@ export const PLAYLIST_PAGESIZE = 18;
 export const LYRIC_PAGESIZE = 10;
 // 一页多少评论
 export const COMMENT_PAGESIZE = 20;
+// 睡眠时间
+export const SLEEP_TIME = 350;
