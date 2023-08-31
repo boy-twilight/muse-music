@@ -24,13 +24,13 @@
     <div class="left">
       <span
         class="iconfont"
-        @click="back"
+        @click="router.back()"
         v-prevent
         >&#xe660;</span
       >
       <span
         class="iconfont narrow-right"
-        @click="forward"
+        @click="router.forward()"
         v-prevent
         >&#xe65f;
       </span>
@@ -58,7 +58,7 @@
                 <li
                   v-for="item in hotSearch.slice(0, 8)"
                   :key="item.searchWord"
-                  @click="goSearchByRe(item.searchWord)">
+                  @click="searchByClcik(item.searchWord)">
                   <span> {{ item.searchWord }} </span
                   ><span class="score">{{ item.score }}次</span>
                 </li>
@@ -71,25 +71,25 @@
               <h2 class="title">
                 搜索历史
                 <span
-                  @mousedown.prevent="userSearch.splice(0)"
+                  @mousedown.prevent="userSearch.clear()"
                   class="clear"
                   >清空</span
                 >
               </h2>
               <el-divider class="divider-h" />
               <div
-                v-show="userSearch.length == 0"
+                v-show="userSearch.size == 0"
                 class="no-history">
                 <img :src="history" />
                 <span>暂无搜索历史</span>
               </div>
               <ul
                 class="keywords"
-                v-show="userSearch.length != 0">
+                v-show="userSearch.size != 0">
                 <li
                   v-for="item in userSearch"
                   :key="item"
-                  @click="goSearchByRe(item)">
+                  @click="searchByClcik(item)">
                   <span> {{ item }} </span>
                 </li>
               </ul>
@@ -122,7 +122,7 @@
                   v-for="(item, index) in value"
                   :key="index"
                   class="item"
-                  @click="goSuggest(item)">
+                  @click="searchBySuggest(item)">
                   <el-image
                     v-if="key != '单曲'"
                     :src="item.pic"
@@ -141,7 +141,7 @@
             <div>
               <input
                 v-model="search"
-                @keyup.enter="goSearch"
+                @keyup.enter="searchByEnter"
                 @focusin="showSuggest = true"
                 @focusout="showSuggest = false"
                 @input="getSearchSuggest"
@@ -151,7 +151,7 @@
                 placeholder="请输入你想要搜索的歌曲，歌手"
                 class="search" />
               <span
-                @click="goSearch"
+                @click="searchByEnter"
                 v-prevent
                 class="iconfont"
                 >&#xeafe;</span
@@ -290,7 +290,7 @@ const router = useRouter();
 const header = useHeaderStore();
 const { showLogin, cookie, user: userInfo, userSearch } = storeToRefs(header);
 const footer = useFooterStore();
-const { songList, songListId } = storeToRefs(footer);
+const { songList, songListId, showList } = storeToRefs(footer);
 const user = useUserStore();
 const {
   loveSongs,
@@ -314,10 +314,10 @@ const {
   songRecordId,
   videoRecordId
 } = storeToRefs(user);
-// 用户搜索的内容
-const search = ref<string>('');
 // 中文合成是否开始
 let isComplete = false;
+// 用户搜索的内容
+const search = ref<string>('');
 // 判断用户是否正在搜索
 const isSearching = computed(() => {
   const isEmpty = Array.from(suggestMap.values()).every(
@@ -338,6 +338,9 @@ const suggestMap = reactive<Map<string, SearchSuggest[]>>(
     ['歌单', []]
   ])
 );
+// 用来取消请求
+let controller: AbortController | null;
+let signal: AbortSignal | null;
 // 下拉列表
 const dropDownItems = reactive<DropDownItem[]>([
   {
@@ -387,23 +390,12 @@ const dropDownItems = reactive<DropDownItem[]>([
 const qrcode = ref<HTMLImageElement>();
 // 计时器的标志
 let timeid: any = 0;
-// 用来取消请求
-let controller: AbortController | null;
-let signal: AbortSignal | null;
-
-// 路由返回上一级
-const back = () => {
-  router.back();
-};
-
-// 路由来到下一级
-const forward = () => {
-  router.forward();
-};
+// 播放音乐
+const { playMusic } = usePlayMusic();
 
 // 登陆相关的处理函数
 // 创建产生二维码
-const createKeyCode = (): void => {
+const createKeyCode = () => {
   createKey()
     .then((response: any) => {
       const {
@@ -418,7 +410,7 @@ const createKeyCode = (): void => {
 };
 
 // 产生二维码的base64并挂载到容器上
-const creatQrImage = (key: string): void => {
+const creatQrImage = (key: string) => {
   createQrCode(key)
     .then((response: any) => {
       const {
@@ -432,7 +424,7 @@ const creatQrImage = (key: string): void => {
 };
 
 // 监测登陆状态
-const CheckLoginStatus = (key: string): void => {
+const CheckLoginStatus = (key: string) => {
   timeid = setInterval(async() => {
     const response: any = await checkStatus(key).catch((err: any) => {
       message(MessageType.ERROR, err.message);
@@ -617,14 +609,12 @@ const parseConfig = () => {
 
 // 下拉框选择处理
 const handleClick = async(command: string) => {
-  if (command == 'logout' && cookie.value) {
+  if (command == 'logout') {
+    if (!cookie.value) return;
     header.logout();
   } else if (command == 'fullScreen') {
-    if (isFullScreen.value) {
-      document.exitFullscreen();
-    } else {
-      document.documentElement.requestFullscreen();
-    }
+    if (isFullScreen.value) document.exitFullscreen();
+    else document.documentElement.requestFullscreen();
   } else if (command == 'color') {
     bgMode.value = 'color';
     changeLight();
@@ -635,7 +625,7 @@ const handleClick = async(command: string) => {
     changeSkinMode();
   } else if (command == 'theme') {
     drawerMode.value = 'theme';
-    footer.showList = true;
+    showList.value = true;
   } else if (command == 'export') {
     exportConfig();
   } else if (command == 'import') {
@@ -644,7 +634,7 @@ const handleClick = async(command: string) => {
 };
 
 // 搜索相关的事件
-// 得到推荐的搜索列表
+// 获取热门搜索列表
 const getSearchData = async() => {
   try {
     const response: any = await getHotSearch();
@@ -661,11 +651,8 @@ const getSearchData = async() => {
 };
 
 // 前往搜索的页面
-const goSearch = () => {
-  if (!userSearch.value.includes(search.value)) {
-    userSearch.value.push(search.value);
-  }
-
+const searchByEnter = () => {
+  userSearch.value.add(search.value);
   router.push({
     name: 'search',
     query: {
@@ -674,19 +661,52 @@ const goSearch = () => {
   });
 };
 
-// 点击推荐列表搜索
-const goSearchByRe = (keyWord: string) => {
-  if (!userSearch.value.includes(keyWord)) {
-    userSearch.value.push(keyWord);
-  }
+// 点击热门推荐列表搜索
+const searchByClcik = (keyWord: string) => {
   search.value = keyWord;
+  searchByEnter();
+};
 
-  router.push({
-    name: 'search',
-    query: {
-      keyWord
+// 前往搜索建议
+const searchBySuggest = async(item: SearchSuggest) => {
+  if (item.type != 'song') {
+    let query: any = {
+      id: item.id
+    };
+    if (item.type == 'artist') {
+      query.type = 'playlist';
+    } else if (item.type == 'album') {
+      query.artistId = item.artistId;
+    } else {
+      query.score = Math.floor(+item.id / 100);
     }
-  });
+    router.push({
+      name: item.type,
+      query
+    });
+  } else {
+    try {
+      const response: any = await getMusicDetail(item.id);
+      const { songs } = response;
+      const temp: Song[] = (songs as any[]).map((item) => {
+        const { id, name, ar, al, fee, dt } = item;
+        return {
+          id: id,
+          name: name,
+          singer: ar[0].name,
+          songImage: al.picUrl,
+          album: al.name,
+          available: fee,
+          time: dt,
+          url: ''
+        };
+      });
+      await getMusicUrls(temp);
+      playMusic(temp[0]);
+    } catch (err: any) {
+      message(MessageType.ERROR, err.message);
+    }
+  }
 };
 
 // 中文合成开始
@@ -700,6 +720,7 @@ const chineseEnd = () => {
   getSuggestData();
 };
 
+// 获取搜索推荐
 const getSuggestData = async() => {
   try {
     controller = new AbortController();
@@ -811,62 +832,6 @@ const getSearchSuggest = throttle(() => {
   if (isComplete || !search.value) return;
   getSearchSuggest();
 }, 250);
-
-// 播放音乐
-const { playMusic } = usePlayMusic();
-
-// 前往搜索建议
-const goSuggest = async(item: SearchSuggest) => {
-  if (item.type != 'song') {
-    if (item.type == 'artist') {
-      router.push({
-        name: item.type,
-        query: {
-          type: 'playlist',
-          id: item.id
-        }
-      });
-    } else if (item.type == 'album') {
-      router.push({
-        name: item.type,
-        query: {
-          id: item.id,
-          artistId: item.artistId
-        }
-      });
-    } else {
-      router.push({
-        name: item.type,
-        query: {
-          id: item.id,
-          score: Math.floor(+item.id / 100)
-        }
-      });
-    }
-  } else {
-    try {
-      const response: any = await getMusicDetail(item.id);
-      const { songs } = response;
-      const temp: Song[] = (songs as any[]).map((item) => {
-        const { id, name, ar, al, fee, dt } = item;
-        return {
-          id: id,
-          name: name,
-          singer: ar[0].name,
-          songImage: al.picUrl,
-          album: al.name,
-          available: fee,
-          time: dt,
-          url: ''
-        };
-      });
-      await getMusicUrls(temp);
-      playMusic(temp[0]);
-    } catch (err: any) {
-      message(MessageType.ERROR, err.message);
-    }
-  }
-};
 
 // 检测是否展示登陆二维码
 watch(showLogin, (newVal) => {

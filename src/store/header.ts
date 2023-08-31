@@ -21,7 +21,9 @@ const useHeaderStore = defineStore('header', () => {
     }
   );
   // 用户的搜索历史
-  const userSearch = reactive<string[]>(ls.get('user')?.userSearch || []);
+  const userSearch = reactive<Set<string>>(
+    new Set(ls.get('user')?.userSearch || [])
+  );
 
   // 获取用户信息
   async function getInfo() {

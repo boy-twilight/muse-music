@@ -19,7 +19,10 @@ export const ls = initStorage();
 export const ss = initStorage('session');
 
 // 创建一个message的提示
-export const message = (type: string = 'success', msg: string): void => {
+export const message = (
+  type: string = MessageType.SUCCESS,
+  msg: string
+): void => {
   switch (type) {
   case MessageType.SUCCESS:
     ElMessage.success(msg);
@@ -209,8 +212,8 @@ export const playVideo = async(song: Song, beforeGo?: () => void) => {
 };
 
 // 分享
-export const share = (content: string, tip?: string) => {
-  navigator.clipboard.writeText(content);
+export const share = async(content: string, tip?: string) => {
+  await navigator.clipboard.writeText(content);
   message(MessageType.SUCCESS, tip ? tip : '已成功复制到剪切板，快去分享吧！');
 };
 
@@ -325,8 +328,7 @@ export const getComment = (comments: any, target: Comment[]) => {
 export const getSourceComments = async(
   id: string,
   type: string,
-  target: Comment[],
-  callBack?: () => void
+  target: Comment[]
 ) => {
   try {
     const result: any = await Promise.all([
@@ -349,9 +351,6 @@ export const getSourceComments = async(
         }
       }
     });
-    if (callBack) {
-      callBack();
-    }
   } catch (err: any) {
     message(MessageType.ERROR, err.message);
   }

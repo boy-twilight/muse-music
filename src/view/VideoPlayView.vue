@@ -110,11 +110,9 @@ import {
   getSimiMv,
   getVideoDetail,
   getVideoUrl,
-  getSimiVideo,
-  getVideoComment,
-  getMvComment
+  getSimiVideo
 } from '@/api';
-import { message, formatTime, share, getComment } from '@/utils';
+import { message, formatTime, share, getSourceComments } from '@/utils';
 import DPlayer from 'dplayer';
 import useUserStore from '@/store/user';
 import { CommonButton } from '@components/button';
@@ -257,8 +255,7 @@ const getData = async() => {
       const responses: any[] = await Promise.all([
         getMvDetail(id),
         getMvUrl(id),
-        getSimiMv(id),
-        getMvComment(id, 1000)
+        getSimiMv(id)
       ]);
       responses.forEach((response, index) => {
         // 获取mv详情
@@ -301,12 +298,6 @@ const getData = async() => {
             });
           }
         }
-        // 获取mv评论
-        else if (index == 3) {
-          const { comments, hotComments } = response;
-          getComment(hotComments, videoComments);
-          getComment(comments, videoComments);
-        }
       });
     } catch (err: any) {
       message(MessageType.ERROR, err.message);
@@ -316,8 +307,7 @@ const getData = async() => {
       const responses: any[] = await Promise.all([
         getVideoDetail(id),
         getVideoUrl(id),
-        getSimiVideo(id),
-        getVideoComment(id, 1000)
+        getSimiVideo(id)
       ]);
       responses.forEach((response, index) => {
         // 获取视频详情
@@ -354,12 +344,6 @@ const getData = async() => {
             });
           });
         }
-        // 获取视频评论
-        else if (index == 3) {
-          const { comments, hotComments } = response;
-          getComment(hotComments, videoComments);
-          getComment(comments, videoComments);
-        }
       });
     } catch (err: any) {
       message(MessageType.ERROR, err.message);
@@ -372,6 +356,9 @@ const getData = async() => {
   init();
   // 关闭动画
   first.value = false;
+  // 获取mv或者video评论
+  const flag = !rule.test(id) ? '1' : '5';
+  await getSourceComments(id, flag, videoComments);
 };
 
 getData();

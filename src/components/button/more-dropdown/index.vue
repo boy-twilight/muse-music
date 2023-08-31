@@ -140,7 +140,7 @@ const showDropMenu = async() => {
 };
 
 // 点击更多操作
-const handleClick = (command: string) => {
+const handleClick = async(command: string) => {
   const song = props.song;
   if (command == 'love') {
     user.addLove(song, user.loveSongs, user.loveMusicId);
@@ -158,9 +158,8 @@ const handleClick = (command: string) => {
     shareMuiscInfo(song);
   } else if (command == 'comment') {
     if (soucreComments.length > 0) soucreComments.splice(0);
-    getSourceComments(song.id, '0', soucreComments, () => {
-      showComments.value = true;
-    });
+    await getSourceComments(song.id, '0', soucreComments);
+    showComments.value = true;
   }
 };
 </script>

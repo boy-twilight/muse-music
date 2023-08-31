@@ -222,7 +222,7 @@ onMounted(() => {
       currentPlay: current.value,
       playMode: playMode.value,
       userPlaylist: songList.value,
-      userSearch: userSearch.value,
+      userSearch: Array.from(userSearch.value.values()),
       loveSongs: loveSongs.value,
       loveAlbum: loveAlbum.value,
       loveSinger: loveSinger.value,

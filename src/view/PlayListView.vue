@@ -93,7 +93,6 @@ import {
   getMusicUrls,
   getMusicInfos,
   share,
-  getComment,
   getSourceComments,
   sleep
 } from '@/utils';
@@ -105,7 +104,6 @@ import {
 import {
   getPlayListDetail,
   getPlayListSong,
-  getPlaylistComment,
   getRadioDetail,
   getRadioSong
 } from '@/api';
@@ -194,8 +192,7 @@ const getData = async() => {
     try {
       const responses: any[] = await Promise.all([
         getPlayListDetail(id),
-        getPlayListSong(id),
-        getPlaylistComment(id, 100)
+        getPlayListSong(id)
       ]);
       responses.forEach((response, index) => {
         // 获取歌单详情
@@ -230,13 +227,6 @@ const getData = async() => {
           user.initLoveMusic(playListSong);
           // 获取音乐的url
           getMusicUrls(playListSong);
-        }
-        // 获取歌单评论
-        else if (index == 2) {
-          const { comments, hotComments } = response;
-          getComment(hotComments, playlistComments);
-          getComment(comments, playlistComments);
-          noResult.value = playlistComments.length == 0;
         }
       });
     } catch (err: any) {
@@ -298,17 +288,16 @@ const getData = async() => {
           getMusicUrls(playListSong);
         }
       });
-
-      // 获取电台评论
-      getSourceComments(id, '7', playlistComments, () => {
-        noResult.value = playlistComments.length == 0;
-      });
     } catch (err: any) {
       message(MessageType.ERROR, err.message);
     }
   }
   await sleep(SLEEP_TIME);
   first.value = false;
+  // 获取电台或者歌单评论
+  const flag = type == 'playlist' ? '2' : '4';
+  await getSourceComments(id, flag, playlistComments);
+  noResult.value = playlistComments.length == 0;
 };
 
 getData();

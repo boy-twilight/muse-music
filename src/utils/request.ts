@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { message, ss } from '.';
+import { message, ss } from '@/utils';
 import { MessageType } from '@/constants/common';
 
 const request: AxiosInstance = axios.create({
@@ -13,7 +13,9 @@ request.interceptors.request.use(
   (config) => {
     // 如果存在token，请求头携带token
     const token = ss.get('token');
-    if (token) config.headers.Authorization = `${token}`;
+    if (token) {
+      config.headers.Authorization = `${token}`;
+    }
     return config;
   },
   (error) => {

@@ -90,7 +90,6 @@ export const getArtistList = (type: number) =>
 export const getArtistInfo = (id: string) => request.get(`/artists?id=${id}`);
 
 // 获取歌手mv
-
 export const getArtistMv = (id: string) => request.get(`/artist/mv?id=${id}`);
 
 // 获取歌手描述
@@ -147,12 +146,12 @@ export const getArtists = (
   area: number,
   limit: number,
   initial?: string
-) =>
-  initial
-    ? request.get(
-      `/artist/list?type=${type}&area=${area}&initial=${initial}&limit=${limit}`
-    )
-    : request.get(`/artist/list?type=${type}&area=${area}&limit=${limit}`);
+) => {
+  const queryStr = initial
+    ? `/artist/list?type=${type}&area=${area}&initial=${initial}&limit=${limit}`
+    : `/artist/list?type=${type}&area=${area}&limit=${limit}`;
+  return request.get(queryStr);
+};
 
 // 获取网友推荐歌单的分类
 export const getRecTags = () => request.get('/playlist/catlist');
@@ -161,39 +160,30 @@ export const getRecTags = () => request.get('/playlist/catlist');
 export const getTopTags = () => request.get('/playlist/highquality/tags');
 
 // 获取精品歌单
-export const getTopPlaylist = (limit: number, tag?: string) =>
-  tag
-    ? request.get(`/top/playlist/highquality?limit=${limit}&cat=${tag}`)
-    : request.get(`/top/playlist/highquality?limit=${limit}`);
+export const getTopPlaylist = (limit: number, cat?: string) => {
+  const queryStr = cat
+    ? `/top/playlist/highquality?limit=${limit}&cat=${cat}`
+    : `/top/playlist/highquality?limit=${limit}`;
+  return request.get(queryStr);
+};
 
 // 获取网友推荐歌单
-export const getRecPlaylist = (limit: number, tag?: string) =>
-  tag
-    ? request.get(`/top/playlist?limit=${limit}&cat=${tag}`)
-    : request.get(`/top/playlist?limit=${limit}`);
-
-// 获取歌单评论
-export const getPlaylistComment = (id: string, limit: number) =>
-  request.get(`comment/playlist?id=${id}&limit=${limit}`);
-
-// 获取视频评论
-export const getVideoComment = (id: string, limit: number) =>
-  request.get(`/comment/video?id=${id}&limit=${limit}`);
-// 获取Mv评论
-export const getMvComment = (id: string, limit: number) =>
-  request.get(`comment/mv?id=${id}&limit=${limit}`);
+export const getRecPlaylist = (limit: number, cat?: string) => {
+  const queryStr = cat
+    ? `/top/playlist?limit=${limit}&cat=${cat}`
+    : `/top/playlist?limit=${limit}`;
+  return request.get(queryStr);
+};
 
 // 获取评论
 export const getComments = (
   id: string,
   type: string,
   limit: number,
-  sortType?: string
+  sortType: string = '1'
 ) =>
   request.get(
-    `/comment/new?id=${id}&type=${type}&limit=${limit}&sortType=${
-      sortType ? sortType : '1'
-    }`
+    `/comment/new?id=${id}&type=${type}&limit=${limit}&sortType=${sortType}`
   );
 
 // 获取热门评论
@@ -219,5 +209,5 @@ export const getRadios = (type: string) =>
   request.get(`/dj/recommend/type?type=${type}`);
 
 // 获取搜索建议
-export const getSuggest = (keyword: string, signal?: AbortSignal) =>
+export const getSuggest = (keyword: string, signal: AbortSignal) =>
   request.get(`/search/suggest?keywords=${keyword}`, { signal });

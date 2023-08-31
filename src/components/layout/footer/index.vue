@@ -18,7 +18,7 @@
     <!-- 左边边歌曲展示部分 -->
     <div class="left">
       <div
-        @click="toSongDetail"
+        @click="toMusicDetail"
         v-prevent
         class="music-image">
         <img
@@ -101,7 +101,7 @@
                     "
                     :style="
                       dropItem.command == 'love' && songNum > 0
-                        ? lovetyle
+                        ? loveStyle
                         : dropItem.style
                     "
                     :class="
@@ -299,19 +299,7 @@ const {
   bgMode,
   drawerMode,
 } = useTheme();
-// 评论
-const soucreComments = inject('soucreComments') as Comment[];
-// 是否展开评论区
-const showComments = inject('showComments') as Ref<boolean>;
-// 喜欢图标的图标及样式的改变
-const loveIcon = computed<string>(() =>
-  songList.value[current.value].isLove ? '\ue760' : '\ue761'
-);
-const lovetyle = computed<string>(() =>
-  songList.value[current.value].isLove
-    ? 'margin: 0 7px 0 2px;color:#ff6a6a;'
-    : 'margin: 0 7px 0 2px;'
-);
+
 // 播放相关的设置
 const footer = useFooterStore();
 const {
@@ -401,12 +389,24 @@ const volume = ref<number>(80);
 const isMuted = ref<boolean>(false);
 // 计时器
 let timeId: any = 0;
-
+// 评论
+const soucreComments = inject('soucreComments') as Comment[];
+// 是否展开评论区
+const showComments = inject('showComments') as Ref<boolean>;
+// 喜欢图标的图标及样式的改变
+const loveIcon = computed<string>(() =>
+  songList.value[current.value].isLove ? '\ue760' : '\ue761'
+);
+const loveStyle = computed<string>(() =>
+  songList.value[current.value].isLove
+    ? 'margin: 0 7px 0 2px;color:#ff6a6a;'
+    : 'margin: 0 7px 0 2px;'
+);
 //播放相似音乐
 const { playSimiMusic } = usePlayMusic();
 
 // 进入歌曲详情页
-const toSongDetail = () => {
+const toMusicDetail = () => {
   isPlay.value = false;
   playProcess.value = 0;
   playTime.value = 0;
@@ -415,23 +415,21 @@ const toSongDetail = () => {
 
 // 下载歌曲
 const downloadCurrent = () => {
-  if (songNum.value > 0) {
-    user.addMuiscDownload(songList.value[current.value]);
-  }
+  if (songNum.value <= 0) return;
+  user.addMuiscDownload(songList.value[current.value]);
 };
 
 // 播放mv
 const playMv = () => {
-  if (songNum.value > 0) {
-    playVideo(songList.value[current.value], () => {
-      if (showDetail.value) {
-        playTime.value = 0;
-        playProcess.value = 0;
-        isPlay.value = false;
-        showDetail.value = false;
-      }
-    });
-  }
+  if (songNum.value <= 0) return;
+  playVideo(songList.value[current.value], () => {
+    if (showDetail.value) {
+      playTime.value = 0;
+      playProcess.value = 0;
+      isPlay.value = false;
+      showDetail.value = false;
+    }
+  });
 };
 
 // 点击更多的操作
@@ -461,17 +459,13 @@ const handleClick = async (command: string) => {
     } else if (command == 'copyMusicInfo') {
       shareMuiscInfo(songList.value[current.value]);
     } else if (command == 'comment') {
-      if (soucreComments.length > 0) {
-        soucreComments.splice(0);
-      }
-      getSourceComments(
+      if (soucreComments.length > 0) soucreComments.splice(0);
+      await getSourceComments(
         songList.value[current.value].id,
         '0',
-        soucreComments,
-        () => {
-          showComments.value = true;
-        }
+        soucreComments
       );
+      showComments.value = true;
     }
   } else {
     message(MessageType.INFO, '暂无音乐，请添加音乐');
