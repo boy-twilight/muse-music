@@ -7,9 +7,9 @@ export enum MessageType {
 }
 
 // 在线音乐表格一页音乐个数
-export const ONLINE_MUISC_PAGESIZE = 40;
+export const ONLINE_MUISC_PAGESIZE = 50;
 // 用户音乐表格一页音乐个数
-export const USER_MUSIC_PAGESIZE = 50;
+export const USER_MUSIC_PAGESIZE = 60;
 // 一页多少个视频
 export const VIDEO_PAGESIZE = 15;
 // 一页多少专辑

@@ -42,9 +42,9 @@ const props = defineProps<{
   pageName: string;
   // 是否开启多选
   showSelect: boolean;
-  //页码
+  // 页码
   curPage: number;
-  //页数
+  // 页数
   pageSize: number;
 }>();
 
@@ -62,7 +62,7 @@ const {
   loveSongs,
   songRecordId,
   musicDownloadId,
-  loveMusicId,
+  loveMusicId
 } = storeToRefs(user);
 // 表格容器
 const table = ref<InstanceType<typeof SongTable>>();
@@ -138,7 +138,7 @@ const deleteSelect = () => {
 
 defineExpose({
   openSelectBox,
-  closeSelectBox,
+  closeSelectBox
 });
 </script>
 

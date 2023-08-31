@@ -105,14 +105,14 @@ import {
   ArtistMv,
   Singer,
   ArtistPlaylist,
-  ArtistAlbum,
+  ArtistAlbum
 } from '@components/datalist';
 import { UserBatch } from '@components/batch';
 import { UserMusicTable } from '@components/table';
 import { NoResult } from '@components/result';
 import Tab from '@components/tab';
 import useTheme from '@/hooks/useTheme';
-
+import { USER_MUSIC_PAGESIZE } from '@/constants/common';
 // 配置主题
 const { fontGray, contentHeight } = useTheme();
 // 获取用户数据
@@ -127,7 +127,7 @@ const {
   loveAlbumId,
   loveVideoId,
   lovePlaylistId,
-  loveRadioId,
+  loveRadioId
 } = storeToRefs(user);
 // 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
@@ -137,9 +137,16 @@ const showSelect = ref<boolean>(false);
 const batch = ref<InstanceType<typeof UserBatch>>();
 // 表格容器
 const table = ref<InstanceType<typeof UserMusicTable>>();
-//分页内容
-const curPage = computed(() => table.value?.getPage());
-const pageSize = computed(() => table.value?.getPageSize());
+// 分页内容
+// 分页内容
+const curPage = computed(() => {
+  const page = table.value?.getPage();
+  return page ? page : 1;
+});
+const pageSize = computed(() => {
+  const pageSize = table.value?.getPageSize();
+  return pageSize ? pageSize : USER_MUSIC_PAGESIZE;
+});
 
 // 打开批量操作
 const openSelect = () => {
@@ -175,7 +182,7 @@ const deleteLoveRadio = (id: string) => {
   loveRadio.value.splice(index, 1);
 };
 
-const getData = async () => {
+const getData = async() => {
   first.value = true;
   await getMusicUrls(loveSongs.value);
   // 关闭动画

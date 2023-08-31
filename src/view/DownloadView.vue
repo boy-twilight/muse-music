@@ -50,6 +50,7 @@ import { UserMusicTable } from '@components/table';
 import { NoResult } from '@components/result';
 import Tab from '@components/tab';
 import useTheme from '@/hooks/useTheme';
+import { USER_MUSIC_PAGESIZE } from '@/constants/common';
 
 // 配置主题
 const { fontColor, fontGray, contentHeight } = useTheme();
@@ -64,9 +65,15 @@ const showSelect = ref<boolean>(false);
 const batch = ref<InstanceType<typeof UserBatch>>();
 // 表格容器
 const table = ref<InstanceType<typeof UserMusicTable>>();
-//分页内容
-const curPage = computed(() => table.value?.getPage());
-const pageSize = computed(() => table.value?.getPageSize());
+// 分页内容
+const curPage = computed(() => {
+  const page = table.value?.getPage();
+  return page ? page : 1;
+});
+const pageSize = computed(() => {
+  const pageSize = table.value?.getPageSize();
+  return pageSize ? pageSize : USER_MUSIC_PAGESIZE;
+});
 
 // 打开批量操作
 const openSelect = () => {
@@ -80,7 +87,7 @@ const deleteDownLoad = (id: string) => {
 };
 
 // 获取初始数据
-const getData = async () => {
+const getData = async() => {
   first.value = true;
   await getMusicUrls(musicDownload.value);
   user.initLoveMusic(musicDownload.value);

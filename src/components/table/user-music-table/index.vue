@@ -39,7 +39,7 @@ import {
   SearchButton,
   SortButton,
   PlayButton,
-  CommonButton,
+  CommonButton
 } from '@components/button';
 import Pagination from '@components/pagination';
 
@@ -102,10 +102,10 @@ const buttonName = computed(() => {
   }
 });
 
-//获取分页内容
+// 获取分页内容
 const getPage = (): number => curPage.value;
 
-//获取分页条数
+// 获取分页条数
 const getPageSize = (): number => pageSize.value;
 
 // 得到用户选择的排序类型
@@ -132,7 +132,7 @@ const clearAll = () => {
 
 defineExpose({
   getPage,
-  getPageSize,
+  getPageSize
 });
 </script>
 
