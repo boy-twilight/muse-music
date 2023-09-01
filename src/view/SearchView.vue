@@ -645,6 +645,12 @@ getData();
 .lyric-pagination {
   margin-bottom: 20px;
 }
+
+.loading {
+  position: absolute;
+  top: 0;
+  z-index: 100;
+}
 .search-container {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
@@ -824,65 +830,6 @@ getData();
     }
   }
 
-  .loading {
-    position: absolute;
-    top: 0;
-    z-index: 100;
-  }
-  .mv {
-    width: 80vw;
-    &:deep(.mv-simi) {
-      width: 80vw;
-    }
-
-    &:deep(.mv-recommend .mask) {
-      width: 232px;
-    }
-    &:deep(.mv-recommend .image) {
-      width: 232px;
-    }
-    &:deep(.mv-recommend .singer) {
-      width: 232px;
-    }
-    &:deep(.mv-recommend .title-name) {
-      width: 232px;
-    }
-  }
-
-  .singer-container {
-    &:deep(.singer-list) {
-      width: 80vw;
-    }
-
-    &:deep(.singer .el-image) {
-      width: 187.5px;
-    }
-    &:deep(.singer span) {
-      width: 187.5px;
-    }
-  }
-
-  .playlist {
-    @common: 186.5px;
-    &:deep(.content) {
-      width: 80vw;
-    }
-    &:deep(.content .list .mask) {
-      width: @common;
-      height: @common;
-    }
-    &:deep(.content .list .playcount) {
-      top: 155px;
-    }
-    &:deep(.content .list .el-image) {
-      width: @common;
-      height: @common;
-    }
-    &:deep(.content .list .name) {
-      width: @common;
-    }
-  }
-
   .header-operation {
     margin: 15px 0;
     .el-button {
@@ -901,6 +848,59 @@ getData();
     }
     &:deep(.el-tabs__active-bar) {
       left: 5.5px;
+    }
+  }
+  .singer-container {
+    padding-bottom: 15px;
+    @common-width: 12.207vw;
+    @common-height: 26.513vh;
+    &:deep(.singer-list) {
+      width: 80vw;
+      .singer {
+        .image,
+        .span {
+          width: @common-width;
+        }
+        .image {
+          height: @common-height;
+        }
+      }
+    }
+  }
+  .mv {
+    @common-width: 15.104vw;
+    &:deep(.mv-simi) {
+      width: 80vw;
+      .mv-recommend {
+        .image,
+        .mask,
+        .title-name,
+        .singer {
+          width: @common-width;
+        }
+      }
+    }
+  }
+  .playlist {
+    @common-width: 12.1419vw;
+    @common-top: 21.21vh;
+    @common-height: 26.3716vh;
+    &:deep(.content) {
+      width: 80vw;
+
+      .list {
+        .mask,
+        .el-image {
+          width: @common-width;
+          height: @common-height;
+        }
+        .name {
+          width: @common-width;
+        }
+        .playcount {
+          top: @common-top;
+        }
+      }
     }
   }
 }

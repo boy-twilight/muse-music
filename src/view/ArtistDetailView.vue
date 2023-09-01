@@ -416,11 +416,17 @@ getData();
       }
       .mv {
         width: 80vw;
+        @common-width: 15.104vw;
         &:deep(.mv-simi) {
           width: 80vw;
-        }
-        &:deep(.mv-recommend) {
-          width: 232px;
+          .mv-recommend {
+            .image,
+            .mask,
+            .title-name,
+            .singer {
+              width: @common-width;
+            }
+          }
         }
       }
       //个人详情

@@ -66,7 +66,7 @@ const props = withDefaults(
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false
+    showPagination: false,
   }
 );
 
@@ -96,8 +96,8 @@ const toAlbumDetail = (id: string, artistId: string) => {
     name: 'album',
     query: {
       id,
-      artistId
-    }
+      artistId,
+    },
   });
 };
 </script>
@@ -108,6 +108,11 @@ const toAlbumDetail = (id: string, artistId: string) => {
 @shadow: v-bind(boxShadow);
 @font-color-gray: v-bind(fontGray);
 @theme-color: v-bind(themeColor);
+@common-width: 12.369vw;
+@common-height: 26.851vh;
+@common-margin-left: 0.46875vw;
+@common-margin-top: 2.826vh;
+
 .album-container {
   display: flex;
   flex-direction: column;
@@ -123,7 +128,7 @@ const toAlbumDetail = (id: string, artistId: string) => {
     letter-spacing: 1px;
     width: 80vw;
     color: @font-color;
-    padding-left: 7.2px;
+    padding-left: @common-margin-left;
   }
 
   .content {
@@ -134,7 +139,7 @@ const toAlbumDetail = (id: string, artistId: string) => {
     .album {
       display: flex;
       flex-direction: column;
-      margin: 20px 7.2px 0;
+      margin: @common-margin-top @common-margin-left 0;
       position: relative;
 
       &:hover .image {
@@ -152,8 +157,8 @@ const toAlbumDetail = (id: string, artistId: string) => {
         opacity: 1;
       }
       .image {
-        width: 190px;
-        height: 190px;
+        width: @common-width;
+        height: @common-height;
         object-fit: cover;
         box-shadow: @shadow;
         border-radius: 10px;
@@ -162,8 +167,8 @@ const toAlbumDetail = (id: string, artistId: string) => {
       &::after {
         content: '';
         top: 0;
-        height: 190px;
-        width: 190px;
+        height: @common-height;
+        width: @common-width;
         border-radius: 10px;
         z-index: 9;
         background-color: rgba(0, 0, 0, 0.6);
@@ -196,7 +201,7 @@ const toAlbumDetail = (id: string, artistId: string) => {
         margin-top: 5px;
         display: inline-block;
         font-size: 12px;
-        width: 190px;
+        width: @common-width;
         color: @font-color-gray;
       }
 

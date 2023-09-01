@@ -89,7 +89,7 @@ const deleteVideoRecord = (id: string) => {
 };
 
 // 获取初始数据
-const getData = async() => {
+const getData = async () => {
   first.value = true;
   await getMusicUrls(songRecord.value);
   user.initLoveMusic(songRecord.value);
@@ -117,14 +117,18 @@ getData();
       border-radius: 1.5px;
     }
   }
-
   .mv {
-    width: 80vw;
+    @common-width: 15.104vw;
     &:deep(.mv-simi) {
       width: 80vw;
-    }
-    &:deep(.mv-recommend) {
-      width: 232px;
+      .mv-recommend {
+        .image,
+        .mask,
+        .title-name,
+        .singer {
+          width: @common-width;
+        }
+      }
     }
   }
 }

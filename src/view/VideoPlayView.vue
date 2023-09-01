@@ -167,7 +167,7 @@ const showRecommned = ref<boolean>(false);
 const videoComments = reactive<Comment[]>([]);
 // 是否打开评论区
 const showComments = ref<boolean>(false);
-//是否有评论
+// 是否有评论
 const noResult = computed(() => videoComments.length == 0);
 
 // 分享
@@ -382,20 +382,6 @@ getData();
 @theme-color: v-bind(themeColor);
 @color-gray: #7b7b7b;
 @font-color-white: #ffffff;
-
-.show-enter-from,
-.show-leave-to {
-  opacity: 0;
-}
-.show-enter-to,
-.show-leave-from {
-  opacity: 1;
-}
-
-.show-enter-active,
-.show-leave-active {
-  transition: all 0.5s ease-out;
-}
 
 .recommend-container {
   height: @video-height;

@@ -105,7 +105,7 @@ import {
   ArtistMv,
   Singer,
   ArtistPlaylist,
-  ArtistAlbum
+  ArtistAlbum,
 } from '@components/datalist';
 import { UserBatch } from '@components/batch';
 import { UserMusicTable } from '@components/table';
@@ -127,7 +127,7 @@ const {
   loveAlbumId,
   loveVideoId,
   lovePlaylistId,
-  loveRadioId
+  loveRadioId,
 } = storeToRefs(user);
 // 第一次加载的动画
 const first = inject('firstLoading') as Ref<boolean>;
@@ -182,7 +182,7 @@ const deleteLoveRadio = (id: string) => {
   loveRadio.value.splice(index, 1);
 };
 
-const getData = async() => {
+const getData = async () => {
   first.value = true;
   await getMusicUrls(loveSongs.value);
   // 关闭动画
@@ -210,45 +210,58 @@ getData();
   }
 
   .singer-container {
+    padding-bottom: 15px;
+    @common-width: 14.8437vw;
+    @common-height: 32.2398vh;
     &:deep(.singer-list) {
       width: 80vw;
-    }
-    padding-bottom: 15px;
-    &:deep(.singer .el-image) {
-      width: 187.5px;
-    }
-    &:deep(.singer span) {
-      width: 187.5px;
+      .singer {
+        .image,
+        .span {
+          width: @common-width;
+        }
+        .image {
+          height: @common-height;
+        }
+      }
     }
   }
 
   .mv {
+    @common-width: 15.104vw;
     &:deep(.mv-simi) {
       width: 80vw;
-    }
-    &:deep(.mv-recommend) {
-      width: 232px;
+      .mv-recommend {
+        .image,
+        .mask,
+        .title-name,
+        .singer {
+          width: @common-width;
+        }
+      }
     }
   }
 
   .playlist {
-    @common: 186.5px;
+    @common-width: 12.1419vw;
+    @common-top: 21.21vh;
+    @common-height: 26.3716vh;
     &:deep(.content) {
       width: 80vw;
-    }
-    &:deep(.content .list .mask) {
-      width: @common;
-      height: @common;
-    }
-    &:deep(.content .list .playcount) {
-      top: 155px;
-    }
-    &:deep(.content .list .el-image) {
-      width: @common;
-      height: @common;
-    }
-    &:deep(.content .list .name) {
-      width: @common;
+
+      .list {
+        .mask,
+        .el-image {
+          width: @common-width;
+          height: @common-height;
+        }
+        .name {
+          width: @common-width;
+        }
+        .playcount {
+          top: @common-top;
+        }
+      }
     }
   }
 }

@@ -69,7 +69,7 @@ const props = withDefaults(
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false
+    showPagination: false,
   }
 );
 
@@ -99,8 +99,8 @@ const toMv = (id: string) => {
   router.push({
     name: 'video',
     query: {
-      id
-    }
+      id,
+    },
   });
 };
 </script>
@@ -111,10 +111,15 @@ const toMv = (id: string) => {
 @font-color-gray: v-bind(fontGray);
 @font-color-green: v-bind(themeColor);
 @font-color-white: #ffffff;
+@common-width: 15.299vw;
+@common-height: 19.785vh;
+@common-top: 15.545vh;
+@common-margin-top: 2.826vh;
+@common-margin-left: 0.42968vw;
 .mv {
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
+  margin-bottom: @common-margin-top;
 
   .pagination-container {
     margin-top: 10px;
@@ -126,7 +131,7 @@ const toMv = (id: string) => {
     letter-spacing: 1px;
     width: 81vw;
     color: @font-color;
-    padding-left: 6.6px;
+    padding-left: @common-margin-left;
   }
   .mv-simi {
     width: 81vw;
@@ -134,7 +139,7 @@ const toMv = (id: string) => {
     flex-wrap: wrap;
 
     .mv-recommend {
-      margin: 20px 6.6px 0;
+      margin: @common-margin-top @common-margin-left 0;
       display: flex;
       flex-direction: column;
       position: relative;
@@ -163,15 +168,15 @@ const toMv = (id: string) => {
         background-color: rgba(0, 0, 0, 0.6);
         border-radius: 10px;
         position: absolute;
-        top: 110px;
+        top: @common-top;
         right: 12px;
         cursor: pointer;
       }
 
       .mask {
         transition: 0.4s;
-        width: 235px;
-        height: 140px;
+        width: @common-width;
+        height: @common-height;
         background-color: rgba(0, 0, 0, 0.5);
         position: absolute;
         top: 0;
@@ -201,8 +206,8 @@ const toMv = (id: string) => {
         }
       }
       .image {
-        width: 235px;
-        height: 140px;
+        width: @common-width;
+        height: @common-height;
         object-fit: cover;
         border-radius: 10px;
         box-shadow: @shadow;
@@ -213,7 +218,7 @@ const toMv = (id: string) => {
       .singer {
         display: block;
         font-size: 13px;
-        width: 235px;
+        width: @common-width;
         margin-top: 10px;
         white-space: wrap;
         color: @font-color;

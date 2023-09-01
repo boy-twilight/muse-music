@@ -87,7 +87,7 @@ const deleteDownLoad = (id: string) => {
 };
 
 // 获取初始数据
-const getData = async() => {
+const getData = async () => {
   first.value = true;
   await getMusicUrls(musicDownload.value);
   user.initLoveMusic(musicDownload.value);
@@ -118,11 +118,17 @@ getData();
 
   .mv {
     width: 80vw;
+    @common-width: 232px;
     &:deep(.mv-simi) {
       width: 80vw;
-    }
-    &:deep(.mv-recommend) {
-      width: 232px;
+      .mv-recommend {
+        .image,
+        .mask,
+        .title-name,
+        .singer {
+          width: @common-width;
+        }
+      }
     }
   }
 }

@@ -10,7 +10,6 @@
         }"
         v-show="!footer.showDetail">
         <el-aside
-          width="200px"
           :class="{
             side: true,
             'side-skin': bgMode == 'skin',
@@ -91,59 +90,59 @@ const rule = /^\/video/;
 hotkeys(keys.join(','), (event: KeyboardEvent, handler: HotkeysEvent) => {
   event.preventDefault();
   switch (handler.key) {
-  case 'space':
-    {
-      // 在视频播放页面不设置快捷键,避免冲突
-      if (!rule.test(curPath.value)) {
-        isPlay.value = !isPlay.value;
+    case 'space':
+      {
+        // 在视频播放页面不设置快捷键,避免冲突
+        if (!rule.test(curPath.value)) {
+          isPlay.value = !isPlay.value;
+        }
       }
-    }
-    break;
-  case 'up':
-    {
-      if (!rule.test(curPath.value)) {
-        isPlay.value = false;
-        playProcess.value = 0;
-        playTime.value = 0;
-        showDetail.value = !showDetail.value;
+      break;
+    case 'up':
+      {
+        if (!rule.test(curPath.value)) {
+          isPlay.value = false;
+          playProcess.value = 0;
+          playTime.value = 0;
+          showDetail.value = !showDetail.value;
+        }
       }
-    }
-    break;
-  case 'left':
-    {
-      // 在视频播放页面不设置快捷键,避免冲突
-      if (!rule.test(curPath.value)) {
-        if (songNum.value > 0) {
-          current.value =
+      break;
+    case 'left':
+      {
+        // 在视频播放页面不设置快捷键,避免冲突
+        if (!rule.test(curPath.value)) {
+          if (songNum.value > 0) {
+            current.value =
               --current.value < 0 ? songNum.value - 1 : current.value;
-        } else {
-          message(MessageType.INFO, '暂无音乐，请您添加音乐');
+          } else {
+            message(MessageType.INFO, '暂无音乐，请您添加音乐');
+          }
         }
       }
-    }
-    break;
-  case 'right':
-    {
-      // 在视频播放页面不设置快捷键,避免冲突
-      if (!rule.test(curPath.value)) {
-        if (songNum.value > 0) {
-          current.value =
+      break;
+    case 'right':
+      {
+        // 在视频播放页面不设置快捷键,避免冲突
+        if (!rule.test(curPath.value)) {
+          if (songNum.value > 0) {
+            current.value =
               ++current.value >= songNum.value ? 0 : current.value;
-        } else {
-          message(MessageType.INFO, '暂无音乐，请您添加音乐');
+          } else {
+            message(MessageType.INFO, '暂无音乐，请您添加音乐');
+          }
         }
       }
-    }
-    break;
-  case 'f':
-    {
-      if (isFullScreen.value) {
-        document.exitFullscreen();
-      } else {
-        document.documentElement.requestFullscreen();
+      break;
+    case 'f':
+      {
+        if (isFullScreen.value) {
+          document.exitFullscreen();
+        } else {
+          document.documentElement.requestFullscreen();
+        }
       }
-    }
-    break;
+      break;
   }
 });
 
@@ -166,7 +165,7 @@ const {
   skin,
   skinUrl,
   bgMode,
-  isFullScreen
+  isFullScreen,
 } = theme;
 
 // 页面加载动画
@@ -183,7 +182,7 @@ const {
   playTime,
   showDetail,
   songNum,
-  playMode
+  playMode,
 } = storeToRefs(footer);
 const user = useUserStore();
 const {
@@ -196,7 +195,7 @@ const {
   mvDownload,
   songRecord,
   videoRecord,
-  loveRadio
+  loveRadio,
 } = storeToRefs(user);
 const header = useHeaderStore();
 const { userSearch } = storeToRefs(header);
@@ -215,7 +214,7 @@ onMounted(() => {
       themeColor: themeColor.value,
       fontGray: fontGray.value,
       skin: skin.value,
-      bgMode: bgMode.value
+      bgMode: bgMode.value,
     });
     // 用户数据
     ls.set('user', {
@@ -232,7 +231,7 @@ onMounted(() => {
       musicDownload: musicDownload.value,
       mvDownload: mvDownload.value,
       songRecord: songRecord.value,
-      videoRecord: videoRecord.value
+      videoRecord: videoRecord.value,
     });
   });
 });
@@ -289,10 +288,12 @@ getUrlOntime();
       background-color: @side-background;
       display: flex;
       justify-content: center;
+      width: 200px;
     }
 
     .main {
       background-color: @other-background;
+      width: calc(100% - 200px);
 
       //头部与底部高度
       .header,
@@ -310,7 +311,7 @@ getUrlOntime();
       .content {
         padding: 0;
         height: @main-height;
-        width: 87vw;
+        width: 100%;
         overflow: hidden;
       }
     }

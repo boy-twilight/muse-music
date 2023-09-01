@@ -71,14 +71,14 @@ const first = inject('firstLoading') as Ref<boolean>;
 // 播放音乐
 const { playMusic } = usePlayMusic();
 
-const getData = async() => {
+const getData = async () => {
   first.value = true;
   try {
     const responses: any[] = await Promise.all([
       getBanner(),
       getRecPlaylist(10),
       getDeafultSong(40),
-      getMv(10, '内地', '全部', '最新')
+      getMv(10, '内地', '全部', '最新'),
     ]);
     responses.forEach((response, index) => {
       // 获取banner
@@ -88,7 +88,7 @@ const getData = async() => {
           const { imageUrl, targetId } = item;
           banners.push({
             id: targetId,
-            pic: imageUrl
+            pic: imageUrl,
           });
         });
       }
@@ -104,7 +104,7 @@ const getData = async() => {
               playCount,
               description,
               tags,
-              creator
+              creator,
             } = item;
             playLists.push({
               name,
@@ -115,8 +115,8 @@ const getData = async() => {
               tag: tags,
               creator: {
                 avatarUrl: creator.avatarUrl,
-                nickname: creator.nickname
-              }
+                nickname: creator.nickname,
+              },
             });
           }
         });
@@ -124,7 +124,7 @@ const getData = async() => {
       // 获取推荐歌曲
       else if (index == 2) {
         const {
-          data: { list }
+          data: { list },
         } = response;
         // 获取歌曲的基本信息
         for (let item of list) {
@@ -149,7 +149,7 @@ const getData = async() => {
             name: name as string,
             image: cover as string,
             playCount: playCount as string,
-            artist: artistName as string
+            artist: artistName as string,
           });
         });
       }
@@ -197,10 +197,12 @@ getData();
         width: 40vw;
         position: relative;
 
+        @common-width: 3.2552vw;
+        @common-height: 7.0707vh;
         .mask {
           position: absolute;
-          height: 50px;
-          width: 50px;
+          height: @common-height;
+          width: @common-width;
           background-color: rgba(0, 0, 0, 0.5);
           border-radius: 10px;
           z-index: 2;
@@ -216,7 +218,6 @@ getData();
           &:hover + .left {
             transform: translateY(-5px);
           }
-
           span {
             color: rgba(255, 255, 255, 0.4);
             transition: 0.4s;
@@ -228,8 +229,8 @@ getData();
         }
         .left {
           cursor: pointer;
-          width: 50px;
-          height: 50px;
+          height: @common-height;
+          width: @common-width;
           object-fit: cover;
           border-radius: 10px;
           box-shadow: @shadow;

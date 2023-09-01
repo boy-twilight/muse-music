@@ -58,7 +58,7 @@ const disabled = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
 
 // 获取电台下的分类
-const getRadioData = async() => {
+const getRadioData = async () => {
   const response: any = await getRadios(radioType[curIndex.value].id);
   const { djRadios } = response;
   radios.push([]);
@@ -71,7 +71,7 @@ const getRadioData = async() => {
       playCount,
       creator: { nickname: '', avatarUrl: '' },
       tag: [],
-      description: ''
+      description: '',
     });
   });
   disabled.value = false;
@@ -98,18 +98,18 @@ const go = (id: string) => {
     name: 'playlist',
     query: {
       id: id,
-      type: 'radio'
-    }
+      type: 'radio',
+    },
   });
 };
 
 // 获取初始数据
-const getData = async() => {
+const getData = async () => {
   first.value = true;
   try {
     const responses: any[] = await Promise.all([
       getRadioBanner(),
-      getRadioType()
+      getRadioType(),
     ]);
     responses.forEach((response, index) => {
       // 获取电台banner
@@ -119,7 +119,7 @@ const getData = async() => {
           const { targetId, pic } = item;
           banner.push({
             id: targetId,
-            pic
+            pic,
           });
         });
       }
@@ -130,7 +130,7 @@ const getData = async() => {
           const { id, name } = item;
           radioType.push({
             id,
-            name
+            name,
           });
         });
       }
@@ -158,23 +158,24 @@ getData();
     margin: 20px 0;
   }
   .playlist {
-    @common: 186px;
+    @common-width: 12.1093vw;
+    @common-height: 26.3vw;
+    @common-top: 21.9174vw;
     &:deep(.content) {
       width: 80vw;
-    }
-    &:deep(.content .list .mask) {
-      width: @common;
-      height: @common;
-    }
-    &:deep(.content .list .playcount) {
-      top: 155px;
-    }
-    &:deep(.content .list .el-image) {
-      width: @common;
-      height: @common;
-    }
-    &:deep(.content .list .name) {
-      width: @common;
+      .list {
+        .mask,
+        .el-image {
+          width: @common-height;
+          height: @common-width;
+        }
+        .name {
+          width: @common-width;
+        }
+        .playcount {
+          top: @common-top;
+        }
+      }
     }
   }
 

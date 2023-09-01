@@ -69,7 +69,7 @@ const props = withDefaults(
     showDelete: false,
     transitionName: '',
     showPagination: false,
-    type: 'playlist'
+    type: 'playlist',
   }
 );
 
@@ -100,8 +100,8 @@ const toPlayList = (list: Playlist) => {
     name: 'playlist',
     query: {
       id: list.id,
-      type: props.type
-    }
+      type: props.type,
+    },
   });
 };
 </script>
@@ -112,11 +112,15 @@ const toPlayList = (list: Playlist) => {
 @font-color-gray: v-bind(fontGray);
 @theme-color: v-bind(themeColor);
 @font-color-white: #ffffff;
-@common-width: 230px;
+@common-width: 14.97vw;
+@common-height: 32.504vh;
+@common-top: 28.264vh;
+@common-margin-top: 2.826vh;
+@common-margin-left: 0.58593vw;
 .playlist {
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
+  margin-bottom: @common-margin-top;
 
   .pagination-container {
     margin-top: 10px;
@@ -128,7 +132,7 @@ const toPlayList = (list: Playlist) => {
     letter-spacing: 1px;
     width: 81vw;
     color: @font-color;
-    padding-left: 9px;
+    padding-left: @common-margin-left;
   }
   .content {
     width: 81vw;
@@ -138,12 +142,12 @@ const toPlayList = (list: Playlist) => {
     .list {
       display: flex;
       flex-direction: column;
-      margin: 20px 9px 0;
+      margin: @common-margin-top @common-margin-left 0;
       position: relative;
       cursor: pointer;
       .mask {
         width: @common-width;
-        height: @common-width;
+        height: @common-height;
         background-color: rgba(0, 0, 0, 0.5);
         position: absolute;
         top: 0;
@@ -183,7 +187,7 @@ const toPlayList = (list: Playlist) => {
       transition: 0.5s;
       .image {
         width: @common-width;
-        height: @common-width;
+        height: @common-height;
         border-radius: 10px;
         object-fit: cover;
         box-shadow: @shadow;
@@ -202,7 +206,7 @@ const toPlayList = (list: Playlist) => {
         background-color: rgba(0, 0, 0, 0.8);
         border-radius: 10px;
         position: absolute;
-        top: 200px;
+        top: @common-top;
         right: 12px;
       }
       .name {

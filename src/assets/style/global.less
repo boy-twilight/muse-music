@@ -101,12 +101,26 @@
   position: absolute !important;
 }
 
+// 视频播放页面视频播放结束过后的过渡
+.show-enter-from,
+.show-leave-to {
+  opacity: 0;
+}
+.show-enter-to,
+.show-leave-from {
+  opacity: 1;
+}
+
+.show-enter-active,
+.show-leave-active {
+  transition: all 0.5s ease-out;
+}
+
 //滚动容器
 .scroll-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 87vw;
   padding-top: 10px;
   overflow: auto;
 }

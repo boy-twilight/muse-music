@@ -68,7 +68,7 @@ const props = withDefaults(
   {
     showDelete: false,
     transitionName: '',
-    avatarNum: 10
+    avatarNum: 10,
   }
 );
 
@@ -93,8 +93,8 @@ const toArtist = (id: string, score: string) => {
     name: 'artist',
     query: {
       id,
-      score
-    }
+      score,
+    },
   });
 };
 </script>
@@ -104,13 +104,17 @@ const toArtist = (id: string, score: string) => {
 @shadow: v-bind(boxShadow);
 @font-color-gray: v-bind(fontGray);
 @theme-color: v-bind(themeColor);
+@common-width: 12.369vw;
+@common-height: 26.851vh;
+@common-margin-top: 2.826vh;
+@common-mrgin-left: 0.55338vw;
 .singer-container {
   .singer-list {
     display: flex;
     width: 81vw;
     flex-wrap: wrap;
     .singer {
-      margin: 20px 8.5px 0;
+      margin: @common-margin-top @common-mrgin-left 0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -120,8 +124,8 @@ const toArtist = (id: string, score: string) => {
       }
 
       .image {
-        width: 190px;
-        height: 190px;
+        width: @common-width;
+        height: @common-height;
         object-fit: cover;
         border-radius: 50%;
         box-shadow: @shadow;
@@ -129,7 +133,7 @@ const toArtist = (id: string, score: string) => {
       }
 
       span {
-        width: 190px;
+        width: @common-width;
         cursor: pointer;
         &:hover {
           color: @theme-color;
