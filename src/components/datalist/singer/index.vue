@@ -68,7 +68,7 @@ const props = withDefaults(
   {
     showDelete: false,
     transitionName: '',
-    avatarNum: 10,
+    avatarNum: 10
   }
 );
 
@@ -93,8 +93,8 @@ const toArtist = (id: string, score: string) => {
     name: 'artist',
     query: {
       id,
-      score,
-    },
+      score
+    }
   });
 };
 </script>

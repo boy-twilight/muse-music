@@ -87,7 +87,7 @@ const deleteDownLoad = (id: string) => {
 };
 
 // 获取初始数据
-const getData = async () => {
+const getData = async() => {
   first.value = true;
   await getMusicUrls(musicDownload.value);
   user.initLoveMusic(musicDownload.value);

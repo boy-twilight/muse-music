@@ -69,7 +69,7 @@ const props = withDefaults(
     title: '',
     showDelete: false,
     transitionName: '',
-    showPagination: false,
+    showPagination: false
   }
 );
 
@@ -99,8 +99,8 @@ const toMv = (id: string) => {
   router.push({
     name: 'video',
     query: {
-      id,
-    },
+      id
+    }
   });
 };
 </script>

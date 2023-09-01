@@ -89,7 +89,7 @@ const deleteVideoRecord = (id: string) => {
 };
 
 // 获取初始数据
-const getData = async () => {
+const getData = async() => {
   first.value = true;
   await getMusicUrls(songRecord.value);
   user.initLoveMusic(songRecord.value);
