@@ -159,15 +159,15 @@ getData();
   }
   .playlist {
     @common-width: 12.1093vw;
-    @common-height: 26.3vw;
-    @common-top: 21.9174vw;
+    @common-height: 26.3vh;
+    @common-top: 21.9174vh;
     &:deep(.content) {
       width: 80vw;
       .list {
         .mask,
         .el-image {
-          width: @common-height;
-          height: @common-width;
+          width: @common-width;
+          height: @common-height;
         }
         .name {
           width: @common-width;

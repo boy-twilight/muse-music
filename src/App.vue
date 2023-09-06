@@ -162,7 +162,7 @@ hotkeys(keys.join(','), (event: KeyboardEvent, handler: HotkeysEvent) => {
                 album: al.name,
                 available: fee,
                 time: dt,
-                url: '',
+                url: loveSongs.value[index].url,
                 isLove: true,
               };
             });
@@ -332,7 +332,6 @@ getUrlOntime();
       .footer,
       .content {
         padding: 0;
-        overflow: hidden;
       }
       .header-container,
       .footer-container,
@@ -343,6 +342,7 @@ getUrlOntime();
       // 内容高度
       .content {
         height: @main-height;
+        overflow: hidden;
       }
     }
   }
