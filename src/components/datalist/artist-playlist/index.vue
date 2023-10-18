@@ -69,7 +69,7 @@ const props = withDefaults(
     showDelete: false,
     transitionName: '',
     showPagination: false,
-    type: 'playlist'
+    type: 'playlist',
   }
 );
 
@@ -100,8 +100,8 @@ const toPlayList = (list: Playlist) => {
     name: 'playlist',
     query: {
       id: list.id,
-      type: props.type
-    }
+      type: props.type,
+    },
   });
 };
 </script>

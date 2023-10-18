@@ -90,7 +90,7 @@ import {
   getMusicUrls,
   message,
   share,
-  sleep
+  sleep,
 } from '@/utils';
 import { MessageType, SLEEP_TIME } from '@/constants/common';
 import useUserStore from '@/store/user';
@@ -116,7 +116,7 @@ const albumInfo = reactive<Album>({
   name: '',
   cover: '',
   artist: '',
-  publishTime: ''
+  publishTime: '',
 });
 // 歌手其它专辑
 const otherAlbum = reactive<Album[]>([]);
@@ -141,12 +141,12 @@ const shareAlbum = () => {
 };
 
 // 请求页面数据
-const getData = async() => {
+const getData = async () => {
   first.value = true;
   try {
     const responses: any[] = await Promise.all([
       getArtistAlbum(artistId),
-      getAlbumDetail(id)
+      getAlbumDetail(id),
     ]);
     responses.forEach((response, index) => {
       // 获取该艺术家的其它专辑
@@ -161,7 +161,7 @@ const getData = async() => {
               id: albumId,
               cover: picUrl,
               publishTime: formatTime(publishTime),
-              artistId: artistId + ''
+              artistId: artistId + '',
             });
           } else if (otherAlbum.length > 5) {
             break;
@@ -172,7 +172,7 @@ const getData = async() => {
       else if (index == 1) {
         const {
           album: { picUrl, artist, publishTime, name, company, description },
-          songs
+          songs,
         } = response;
         albumInfo.name = name;
         albumInfo.cover = picUrl;
@@ -212,9 +212,11 @@ getData();
   .header {
     display: flex;
     width: 80vw;
+    @image-width: 11.067vw;
+    @image-height: 24.038vh;
     .left {
-      height: 170px;
-      width: 170px;
+      height: @image-height;
+      width: @image-width;
       box-shadow: @shadow;
       border-radius: 10px;
       margin-right: 20px;
