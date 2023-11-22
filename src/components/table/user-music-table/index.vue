@@ -39,7 +39,7 @@ import {
   SearchButton,
   SortButton,
   PlayButton,
-  CommonButton
+  CommonButton,
 } from '@components/button';
 import Pagination from '@components/pagination';
 
@@ -132,7 +132,7 @@ const clearAll = () => {
 
 defineExpose({
   getPage,
-  getPageSize
+  getPageSize,
 });
 </script>
 

@@ -140,7 +140,7 @@ const props = withDefaults(
     sort: undefined,
     isCancelSort: false,
     showHeader: true,
-    pageSize: 0
+    pageSize: 0,
   }
 );
 
@@ -277,7 +277,7 @@ defineExpose({
   clearSelect,
   getSelectItems,
   openSelectBox,
-  closeSelectBox
+  closeSelectBox,
 });
 </script>
 

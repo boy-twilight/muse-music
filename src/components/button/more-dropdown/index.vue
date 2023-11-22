@@ -75,54 +75,54 @@ const dropItems: DropDownItem[] = [
     name: '播放',
     icon: '&#xea6e;',
     style: 'margin: 0 9px 0 2px; font-size: 15px;',
-    command: 'playMusic'
+    command: 'playMusic',
   },
   {
     name: '下一首播放',
     icon: '&#xe63c;',
     style: 'margin: 0 7px 0 0px; font-size: 20px',
-    command: 'playNext'
+    command: 'playNext',
   },
   {
     name: '播放相似单曲',
     icon: '&#xe602;',
     style: 'margin: 0 8px 0 3px;',
     command: 'playSimi',
-    isIcon1: true
+    isIcon1: true,
   },
   {
     name: '复制歌曲信息',
     icon: '&#xe63b;',
     style: 'margin: 1px 7px 0 4px;',
-    command: 'copyMusic'
+    command: 'copyMusic',
   },
 
   {
     name: '我喜欢',
     icon: '&#xe761;',
     style: 'margin: 0 7px 0 4px;',
-    command: 'love'
+    command: 'love',
   },
   {
     name: '查看评论',
     icon: '&#xe60b;',
     style: 'margin: 1px 7px 0 4px;',
-    command: 'comment'
+    command: 'comment',
   },
 
   {
     name: '下载歌词',
     icon: '&#xe602;',
     style: 'margin: 0 7px 0 4px;',
-    command: 'downLyric'
+    command: 'downLyric',
   },
 
   {
     name: '下载歌曲',
     icon: '&#xf0304;',
     style: 'margin: 0 8px 0 3px; font-size: 16px;',
-    command: 'downloadMusic'
-  }
+    command: 'downloadMusic',
+  },
 ];
 // 评论
 const soucreComments = inject('soucreComments') as Comment[];
@@ -133,14 +133,14 @@ const showComments = inject('showComments') as Ref<boolean>;
 const { playMusic, playMusicNext, playSimiMusic } = usePlayMusic();
 
 // 点击显示下拉框
-const showDropMenu = async() => {
+const showDropMenu = async () => {
   showDrop.value = true;
   await nextTick();
   more.value?.click();
 };
 
 // 点击更多操作
-const handleClick = async(command: string) => {
+const handleClick = async (command: string) => {
   const song = props.song;
   if (command == 'love') {
     user.addLove(song, user.loveSongs, user.loveMusicId);

@@ -130,7 +130,7 @@ const {
   skinUrl,
   drawerMode,
   bgMode,
-  setTheme
+  setTheme,
 } = useTheme();
 const footer = useFooterStore();
 const {
@@ -141,7 +141,7 @@ const {
   songNum,
   playProcess,
   playTime,
-  showDetail
+  showDetail,
 } = storeToRefs(footer);
 // 设置主题相关
 // 标题数组
@@ -151,7 +151,7 @@ const titleArr = reactive<string[]>([
   '请选择字体副色调：',
   '请选择背景色调：',
   '请选择菜单色调：',
-  '请选择菜单激活时的色调：'
+  '请选择菜单激活时的色调：',
 ]);
 // 值数组
 let valueArr = reactive<Ref<string>[]>([
@@ -160,7 +160,7 @@ let valueArr = reactive<Ref<string>[]>([
   ref<string>(fontGray.value),
   ref<string>(background.value),
   ref<string>(menuColor.value),
-  ref<string>(menuActive.value)
+  ref<string>(menuActive.value),
 ]);
 
 // 在播放列表点击播放
@@ -173,7 +173,7 @@ const listPlay = (index: number) => {
 };
 
 // 在播放列表删除歌曲
-const listDelete = async(index: number) => {
+const listDelete = async (index: number) => {
   if (current.value == index) {
     if (isPlay.value) {
       isPlay.value = false;
@@ -203,7 +203,7 @@ const listDelete = async(index: number) => {
 };
 
 // 列表删除全部歌曲
-const deleteAll = async() => {
+const deleteAll = async () => {
   if (isPlay.value) {
     isPlay.value = false;
   }
@@ -227,13 +227,13 @@ const playMV = (song: Song) => {
 // 动态切换皮肤
 watch(
   bgMode,
-  async() => {
+  async () => {
     await nextTick();
     const drawer = document.querySelector('.playlist-drawer') as HTMLDivElement;
     drawer.style.background = `${background.value} url(${skinUrl.value}) no-repeat center/cover`;
   },
   {
-    immediate: true
+    immediate: true,
   }
 );
 
@@ -253,7 +253,7 @@ const cancel = () => {
     ref<string>(fontGray.value),
     ref<string>(background.value),
     ref<string>(menuColor.value),
-    ref<string>(menuActive.value)
+    ref<string>(menuActive.value),
   ]);
   message(MessageType.SUCCESS, '主题取消保存成功！');
 };

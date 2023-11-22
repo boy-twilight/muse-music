@@ -57,32 +57,32 @@ const menuData: Menu[][] = [
       label: '推荐',
       icon: '\ue73d',
       index: '/recommend',
-      spanClass: 'recommend'
+      spanClass: 'recommend',
     },
     {
       label: '音乐馆',
       icon: '\ue62d',
       index: '/hall',
-      spanClass: 'hall'
+      spanClass: 'hall',
     },
     {
       label: '视频',
       icon: '\ue622',
       index: '/rvideo',
-      spanClass: 'video'
+      spanClass: 'video',
     },
     {
       label: '电台',
       icon: '\ue693',
       index: '/station',
-      spanClass: 'station'
+      spanClass: 'station',
     },
     {
       label: '歌手榜',
       icon: '\ue8b3',
       index: '/artistlist',
-      spanClass: 'artist'
-    }
+      spanClass: 'artist',
+    },
   ],
   // 用户个人中心
   [
@@ -90,21 +90,21 @@ const menuData: Menu[][] = [
       label: '我喜欢',
       icon: '\ue760',
       index: '/love',
-      spanClass: 'love'
+      spanClass: 'love',
     },
     {
       label: '下载记录',
       icon: '\ue629',
       index: '/download',
-      spanClass: 'download'
+      spanClass: 'download',
     },
     {
       label: '最近播放',
       icon: '\ue6d7',
       index: '/recent',
-      spanClass: 'recent'
-    }
-  ]
+      spanClass: 'recent',
+    },
+  ],
 ];
 // 默认活跃的菜单路径
 const active = ref<string>(ss.get('activeMenu') || '/recommend');

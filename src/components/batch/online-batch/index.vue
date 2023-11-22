@@ -100,7 +100,7 @@ const loveSelect = () => {
 
 defineExpose({
   closeSelectBox,
-  openSelectBox
+  openSelectBox,
 });
 </script>
 
